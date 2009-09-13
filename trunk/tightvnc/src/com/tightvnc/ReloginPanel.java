@@ -1,3 +1,4 @@
+package com.tightvnc;
 //
 //  Copyright (C) 2002 Cendio Systems.  All Rights Reserved.
 //  Copyright (C) 2002 Constantin Kaplinsky.  All Rights Reserved.

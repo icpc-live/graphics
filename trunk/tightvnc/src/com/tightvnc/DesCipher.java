@@ -1,3 +1,4 @@
+package com.tightvnc;
 //
 // This DES class has been extracted from package Acme.Crypto for use in VNC.
 // The bytebit[] array has been reversed so that the most significant bit

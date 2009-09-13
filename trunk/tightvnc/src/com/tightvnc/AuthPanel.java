@@ -1,3 +1,4 @@
+package com.tightvnc;
 //
 //  Copyright (C) 1999 AT&T Laboratories Cambridge.  All Rights Reserved.
 //  Copyright (C) 2002-2006 Constantin Kaplinsky.  All Rights Reserved.

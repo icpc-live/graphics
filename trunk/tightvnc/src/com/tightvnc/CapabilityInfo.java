@@ -1,3 +1,4 @@
+package com.tightvnc;
 //
 //  Copyright (C) 2003 Constantin Kaplinsky.  All Rights Reserved.
 //

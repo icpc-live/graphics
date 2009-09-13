@@ -1,3 +1,4 @@
+package com.tightvnc;
 //
 //  Copyright (C) 2001-2004 HorizonLive.com, Inc.  All Rights Reserved.
 //  Copyright (C) 2001-2006 Constantin Kaplinsky.  All Rights Reserved.

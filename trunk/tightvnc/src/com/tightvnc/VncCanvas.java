@@ -1,3 +1,4 @@
+package com.tightvnc;
 //
 //  Copyright (C) 2004 Horizon Wimba.  All Rights Reserved.
 //  Copyright (C) 2001-2003 HorizonLive.com, Inc.  All Rights Reserved.

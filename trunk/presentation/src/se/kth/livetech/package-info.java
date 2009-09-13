@@ -7,7 +7,7 @@ package se.kth.livetech;
  * 
  * Properties: latest version from ICPC Live 2009 + ui classes
  * 
- * Thift + class loading: latest version from kth.communication
+ * Thrift + class loading: latest version from kth.communication
  * 
  * Layout + animation: inspired by ICPC Live 2009 classes
  * 

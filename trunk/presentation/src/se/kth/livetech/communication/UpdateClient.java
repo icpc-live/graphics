@@ -12,7 +12,7 @@ import kth.communication.Attrs;
 import kth.communication.Node;
 import kth.communication.SpiderService;
 import kth.communication.UpdateService;
-import se.kth.livetech.presentation.Frame;
+import se.kth.livetech.old.Frame;
 
 import com.facebook.thrift.TException;
 import com.facebook.thrift.transport.TTransportException;

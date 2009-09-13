@@ -16,6 +16,7 @@ public class BoxTest extends JPanel {
 		this.setPreferredSize(new Dimension(600, 600));
 	}
 	public void paintComponent(Graphics gr) {
+		super.paintComponent(gr);
 		Graphics2D g = (Graphics2D) gr;
 
 		Box<Integer> b = new Box<Integer>();

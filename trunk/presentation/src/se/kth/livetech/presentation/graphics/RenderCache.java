@@ -22,6 +22,12 @@ public class RenderCache {
 		public int hashCode() {
 			return r.hashCode() * 31 + d.hashCode();
 		}
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (this.getClass() != o.getClass()) return false;
+			Key that = (Key) o;
+			return this.r.equals(that.r) && this.d.equals(that.d);
+		}
 		Renderable r;
 		Dimension d;
 	}
@@ -33,13 +39,21 @@ public class RenderCache {
 
 	private SoftHashMap<Key, Value> map;
 
+	public RenderCache() {
+		map = new SoftHashMap<Key, Value>();
+	}
+
+	public boolean hasImageFor(Renderable r, Dimension d) {
+		return map.containsKey(new Key(r, d));
+	}
+
 	/**
 	 * 
 	 * @param r
 	 * @param d
 	 * @return
 	 */
-	BufferedImage getImageFor(Renderable r, Dimension d) {
+	public BufferedImage getImageFor(Renderable r, Dimension d) {
 		Key k = new Key(r, d);
 		Value v = map.get(k);
 		if (v == null) {

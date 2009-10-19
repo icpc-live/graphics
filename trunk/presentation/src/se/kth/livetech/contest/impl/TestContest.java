@@ -30,18 +30,18 @@ public class TestContest {
     }
     public static ContestImpl testContest(int teams, int problems) {
 	ContestImpl c = new ContestImpl();
+	c = new ContestImpl(c, testLanguage(0, "c"));
+	c = new ContestImpl(c, testLanguage(1, "c++"));
+	c = new ContestImpl(c, testLanguage(2, "java"));
+	for (int problem = 0; problem < problems; ++problem) {
+	    Problem p = testProblem(problem, "" + (char) ('A' + problem));
+	    c = new ContestImpl(c, p);
+	}
 	for (int team = 0; team < teams; ++team) {
 	    Team t = testTeam(team, "Team " + team +
 		    " (UN" + team  + "/C" + team + ")");
 	    c = new ContestImpl(c, t);
 	}
-	for (int problem = 0; problem < problems; ++problem) {
-	    Problem p = testProblem(problem, "" + (char) ('A' + problem));
-	    c = new ContestImpl(c, p);
-	}
-	c = new ContestImpl(c, testLanguage(0, "c"));
-	c = new ContestImpl(c, testLanguage(1, "c++"));
-	c = new ContestImpl(c, testLanguage(2, "java"));
 	return c;
     }
     public static Run testRun(int id, int team, int problem, int time) {

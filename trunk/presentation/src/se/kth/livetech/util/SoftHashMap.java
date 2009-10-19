@@ -24,7 +24,8 @@ public class SoftHashMap<K,V> extends AbstractMap<K,V> {
 	public int size() {
 		return hash.size();
 	}
-	public Set<java.util.Map.Entry<K, V>> entrySet() {
-		throw new UnsupportedOperationException();
+	public Set<Map.Entry<K, V>> entrySet() {
+		// TODO: why:? throw new UnsupportedOperationException();
+		return hash.entrySet();
 	}	
 }

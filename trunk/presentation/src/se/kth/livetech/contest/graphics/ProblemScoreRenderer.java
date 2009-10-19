@@ -44,8 +44,9 @@ public class ProblemScoreRenderer implements Renderable {
 		}
 		g.fillRect(0, 0, d.width, d.height);
 		g.setColor(Color.BLACK);
+		//g.drawLine(0, 0, 4, 5);
 
-		double base = .75, asc = .5;
+		double base = .9, asc = .8;
 		// scale the font to be based at base, normal height asc,
 		// as a factor of total height
 		

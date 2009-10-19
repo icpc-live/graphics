@@ -14,4 +14,11 @@ package se.kth.livetech;
  * 3D graphics: kth.scene + surveillance
  * 
  * 
+ * Overall TODO:
+ * 
+ * Update thrift files and generation,
+ * start using property system for control,
+ * improve graphics, layout, animations,
+ * 
+ * 
  */

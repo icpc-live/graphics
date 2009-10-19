@@ -14,6 +14,7 @@ public class ProblemScoreRenderer implements Renderable {
 		this.problemScore = problemScore;
 	}
 	// TODO: base hashCode/equals on text and style!
+	// TODO: separate content, style and rendering!
 	@Override
 	public int hashCode() {
 		return this.problemScore.hashCode();

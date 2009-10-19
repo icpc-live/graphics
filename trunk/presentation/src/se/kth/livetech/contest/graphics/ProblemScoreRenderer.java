@@ -13,6 +13,7 @@ public class ProblemScoreRenderer implements Renderable {
 	public ProblemScoreRenderer(ProblemScore problemScore) {
 		this.problemScore = problemScore;
 	}
+	// TODO: base hashCode/equals on text and style!
 	@Override
 	public int hashCode() {
 		return this.problemScore.hashCode();
@@ -20,10 +21,10 @@ public class ProblemScoreRenderer implements Renderable {
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
+		if (o == null) return false;
 		if (this.getClass() != o.getClass()) return false;
 		ProblemScoreRenderer that = (ProblemScoreRenderer) o;
-		boolean eq = this.problemScore != that.problemScore;
-		return this.problemScore == that.problemScore;
+		return this.problemScore.equals(that.problemScore);
 	}
 	public void render(Graphics2D g, Dimension d) {
 		int n = this.problemScore.getAttempts();

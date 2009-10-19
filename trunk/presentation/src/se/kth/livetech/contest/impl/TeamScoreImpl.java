@@ -27,7 +27,52 @@ public class TeamScoreImpl implements TeamScore {
 	    }
 	}
     }
-    public int getTeam() { return team; }
+    @Override
+	public int hashCode() {
+		final int prime = 3331;
+		int result = 1;
+		result = prime * result + attemptTime;
+		result = prime * result + attempts;
+		result = prime * result + (pending ? 1231 : 1237);
+		result = prime * result
+				+ ((problemScores == null) ? 0 : problemScores.hashCode());
+		result = prime * result + score;
+		result = prime * result + solutionTime;
+		result = prime * result + solved;
+		result = prime * result + team;
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TeamScoreImpl other = (TeamScoreImpl) obj;
+		if (attemptTime != other.attemptTime)
+			return false;
+		if (attempts != other.attempts)
+			return false;
+		if (pending != other.pending)
+			return false;
+		if (problemScores == null) {
+			if (other.problemScores != null)
+				return false;
+		} else if (!problemScores.equals(other.problemScores))
+			return false;
+		if (score != other.score)
+			return false;
+		if (solutionTime != other.solutionTime)
+			return false;
+		if (solved != other.solved)
+			return false;
+		if (team != other.team)
+			return false;
+		return true;
+	}
+	public int getTeam() { return team; }
     public int getSolved() { return solved; }
     public int getAttempts() { return attempts; }
     public ProblemScore getProblemScore(int problem) { return problemScores.get(problem); }

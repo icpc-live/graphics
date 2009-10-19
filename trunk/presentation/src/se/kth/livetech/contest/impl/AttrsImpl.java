@@ -11,6 +11,19 @@ public class AttrsImpl implements Attrs {
 	this.attrs = attrs;
     }
     
+    @Override
+    public int hashCode() {
+    	return this.attrs.hashCode();
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+    	if (this == o) return true;
+    	if (this.getClass() != o.getClass()) return false;
+    	AttrsImpl that = (AttrsImpl) o;
+    	return this.attrs.equals(that.attrs);
+    }
+    
     protected Map<String, String> attrs;
     
     public Set<String> getProperties() {

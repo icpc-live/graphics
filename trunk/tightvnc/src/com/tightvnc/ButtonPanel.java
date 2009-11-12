@@ -110,7 +110,7 @@ class ButtonPanel extends Panel implements ActionListener {
   // Event processing.
   //
 
-  public void actionPerformed(ActionEvent evt) {
+public void actionPerformed(ActionEvent evt) {
 
     viewer.moveFocusToDesktop();
 
@@ -130,13 +130,15 @@ class ButtonPanel extends Panel implements ActionListener {
       try {
         final int modifiers = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
 
-        KeyEvent ctrlAltDelEvent =
+        @SuppressWarnings("deprecation") // TODO: Deprecated KeyEvent constructor
+        KeyEvent ctrlAltDelEvent1 =
           new KeyEvent(this, KeyEvent.KEY_PRESSED, 0, modifiers, 127);
-        viewer.rfb.writeKeyEvent(ctrlAltDelEvent);
+        viewer.rfb.writeKeyEvent(ctrlAltDelEvent1);
 
-        ctrlAltDelEvent =
+        @SuppressWarnings("deprecation") // TODO: Deprecated KeyEvent constructor
+        KeyEvent ctrlAltDelEvent2 =
           new KeyEvent(this, KeyEvent.KEY_RELEASED, 0, modifiers, 127);
-        viewer.rfb.writeKeyEvent(ctrlAltDelEvent);
+        viewer.rfb.writeKeyEvent(ctrlAltDelEvent2);
 
       } catch (IOException e) {
         e.printStackTrace();

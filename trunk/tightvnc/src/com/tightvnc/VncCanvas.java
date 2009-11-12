@@ -26,7 +26,6 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import java.io.*;
-import java.lang.*;
 import java.util.zip.*;
 
 

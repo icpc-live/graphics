@@ -27,7 +27,7 @@ package com.tightvnc;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.applet.*;
+//import java.applet.*;
 
 //
 // The panel which implements the Relogin button

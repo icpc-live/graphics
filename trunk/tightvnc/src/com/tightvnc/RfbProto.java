@@ -26,7 +26,7 @@ package com.tightvnc;
 //
 
 import java.io.*;
-import java.awt.*;
+//import java.awt.*;
 import java.awt.event.*;
 import java.net.Socket;
 import java.util.zip.*;
@@ -230,7 +230,7 @@ class RfbProto {
       sock = new Socket(host, port);
     } else {
       try {
-	Class factoryClass = Class.forName(viewer.socketFactory);
+	Class<?> factoryClass = Class.forName(viewer.socketFactory);
 	SocketFactory factory = (SocketFactory)factoryClass.newInstance();
 	if (viewer.inAnApplet)
 	  sock = factory.createSocket(host, port, viewer);

@@ -52,7 +52,7 @@ class VncCanvas2 extends VncCanvas {
 
   private void disableFocusTraversalKeys() {
     try {
-      Class[] argClasses = { Boolean.TYPE };
+      Class<?>[] argClasses = { Boolean.TYPE };
       java.lang.reflect.Method method =
         getClass().getMethod("setFocusTraversalKeysEnabled", argClasses);
       Object[] argObjects = { new Boolean(false) };

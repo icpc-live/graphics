@@ -71,7 +71,7 @@ package com.tightvnc;
 // fine Java utilities: http://www.acme.com/java/
 
 
-import java.io.*;
+//import java.io.*;
 
 /// The DES encryption method.
 // <P>

@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.util.Map;
 
 import javax.media.j3d.Texture;
 
@@ -76,7 +75,7 @@ public class RenderCache {
 	 * @param d
 	 * @return
 	 */
-	public BufferedImage getImageFor(Renderable r, Dimension d) {
+	private Value getValueFor(Renderable r, Dimension d) {
 		Key k = new Key(r, d);
 		Value v = map.get(k);
 		if (v == null) {
@@ -88,6 +87,16 @@ public class RenderCache {
 			g.dispose();
 			map.put(k, v);
 		}
+		return v;
+	}
+	public BufferedImage getImageFor(Renderable r, Dimension d) {
+		Value v = getValueFor(r, d);
 		return v.bi;
+	}
+	
+	public Texture getTextureFor(Renderable r, Dimension d) {
+		Value v = getValueFor(r, d);
+		// TODO: create t if null
+		return v.t;
 	}
 }

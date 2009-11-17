@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import kth.communication.Attr;
 import kth.communication.Attrs;
 import kth.communication.SpiderService;
-import se.kth.livetech.contest.AttrsUpdateEvent;
-import se.kth.livetech.contest.AttrsUpdateListener;
-import se.kth.livetech.contest.impl.AttrsUpdateEventImpl;
+import se.kth.livetech.contest.model.AttrsUpdateEvent;
+import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 
 import com.facebook.thrift.TException;
 

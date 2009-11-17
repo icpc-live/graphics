@@ -3,7 +3,7 @@ package se.kth.livetech.old.sketch;
 import java.awt.geom.Rectangle2D;
 import java.util.EnumMap;
 
-import se.kth.livetech.contest.Contest;
+import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.old.layout.Part;
 import se.kth.livetech.old.layout.Positioner;
 import se.kth.livetech.old.layout.Rect;

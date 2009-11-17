@@ -10,11 +10,11 @@ import java.awt.Image;
 import javax.swing.JPanel;
 import javax.vecmath.Point3d;
 
-import se.kth.livetech.contest.Contest;
-import se.kth.livetech.contest.ProblemScore;
-import se.kth.livetech.contest.TeamScore;
 import se.kth.livetech.contest.graphics.ProblemScoreRenderer;
-import se.kth.livetech.contest.impl.TestContest;
+import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.ProblemScore;
+import se.kth.livetech.contest.model.TeamScore;
+import se.kth.livetech.contest.model.impl.TestContest;
 import se.kth.livetech.old.Frame;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;

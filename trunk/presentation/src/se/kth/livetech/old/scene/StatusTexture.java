@@ -15,7 +15,7 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.TexCoord2f;
 
-import se.kth.livetech.contest.ProblemScore;
+import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.old.sketch.SketchCell;
 
 import com.sun.j3d.utils.image.TextureLoader;

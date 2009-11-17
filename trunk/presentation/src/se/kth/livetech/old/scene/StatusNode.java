@@ -6,8 +6,8 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Leaf;
 import javax.media.j3d.TransformGroup;
 
-import se.kth.livetech.contest.Contest;
-import se.kth.livetech.contest.ProblemScore;
+import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.ProblemScore;
 
 public class StatusNode implements Scene {
 	private BranchGroup root;

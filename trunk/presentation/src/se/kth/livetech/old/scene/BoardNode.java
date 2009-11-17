@@ -7,8 +7,8 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 
-import se.kth.livetech.contest.Contest;
-import se.kth.livetech.contest.Team;
+import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.old.layout.Positioner;
 
 /** A board node keeps a set of translated team nodes and

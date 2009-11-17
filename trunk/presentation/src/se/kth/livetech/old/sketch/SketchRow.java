@@ -4,9 +4,9 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
-import se.kth.livetech.contest.ProblemScore;
-import se.kth.livetech.contest.Team;
-import se.kth.livetech.contest.TeamScore;
+import se.kth.livetech.contest.model.ProblemScore;
+import se.kth.livetech.contest.model.Team;
+import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.old.graphics.Round;
 import se.kth.livetech.old.layout.Part;
 import se.kth.livetech.old.layout.Positioner;

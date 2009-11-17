@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
-import se.kth.livetech.contest.ProblemScore;
+import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.old.graphics.Text;
 import se.kth.livetech.presentation.graphics.Renderable;
 

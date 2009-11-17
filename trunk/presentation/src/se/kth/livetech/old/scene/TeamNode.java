@@ -9,9 +9,9 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.Vector3d;
 
-import se.kth.livetech.contest.Contest;
-import se.kth.livetech.contest.ProblemScore;
-import se.kth.livetech.contest.TeamScore;
+import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.ProblemScore;
+import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.old.layout.Part;
 import se.kth.livetech.old.layout.Positioner;
 

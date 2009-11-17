@@ -2,9 +2,9 @@ package se.kth.livetech.old.sketch;
 
 import java.awt.Graphics2D;
 
-import se.kth.livetech.contest.Contest;
-import se.kth.livetech.contest.Team;
-import se.kth.livetech.contest.TeamScore;
+import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.Team;
+import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.old.layout.Positioner;
 
 public class SketchBoard {

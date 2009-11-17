@@ -13,8 +13,8 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.TransformGroup;
 import javax.swing.JFrame;
 
-import se.kth.livetech.contest.Contest;
-import se.kth.livetech.contest.impl.TestContest;
+import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.impl.TestContest;
 import se.kth.livetech.old.layout.Positioner;
 import se.kth.livetech.old.sketch.SketchPositioner;
 

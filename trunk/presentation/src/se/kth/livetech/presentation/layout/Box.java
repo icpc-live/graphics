@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.vecmath.Point3d;
-import javax.vecmath.Vector3d;
 
 public class Box<T> {
 	private static class Part<T> {

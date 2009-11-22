@@ -52,6 +52,8 @@ public class SketchRow {
 					}
 					break;
 					//case total: text = "" + tscore.getScore(); break;
+				default:
+					break;
 				}
 				g.setColor(c);
 				g.draw(rf);

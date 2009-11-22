@@ -143,6 +143,8 @@ public class RowPositioner implements Positioner {
 				hf = .3;
 				part = Part.name;
 				break;
+			default:
+				break;
 			}
 		}
 		
@@ -158,7 +160,13 @@ public class RowPositioner implements Positioner {
 			case solved:
 			case score:
 				rect = Rect.subRect(rect, 0, .1, 1, 1);
+				break;
+			default:
+				break;
 			}
+			break;
+		default:
+			break;
 		}
 		return rect;
 	}

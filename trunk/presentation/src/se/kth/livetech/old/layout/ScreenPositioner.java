@@ -79,6 +79,8 @@ public class ScreenPositioner {
 				return Rect.subRect(bounds, 0, PROBLEMS_HEADER_ROWS/total, 1, rows/total);
 			case clock:
 				return Rect.subRect(bounds, 0, 0, .1, PROBLEMS_HEADER_ROWS/total);
+			default:
+				return null;
 			}
 			
 		case interview:
@@ -92,8 +94,9 @@ public class ScreenPositioner {
 			case contestants:
 				double m = .15;
 				return Rect.subRect(bounds, m, 0.78, 1 - 2 * m, 0.05);
+			default:
+				return null;
 			}
-			break;
 			
 		case judgeQueue:
 			switch (component) {
@@ -103,8 +106,9 @@ public class ScreenPositioner {
 				return Rect.subRect(bounds, 0.65-(1-safeX)/2, 0.05, 0.35, 0.55); // TODO: adjust to safe area
 			case clock:
 				return Rect.subRect(bounds, 0, 0, .1, PROBLEMS_HEADER_ROWS/total);
+			default:
+				return null;
 			}
-			break;
 		}
 		return null;
 	}

@@ -1,7 +1,7 @@
 package se.kth.livetech.old.graphics;
 
 import java.awt.Color;
-import java.awt.GradientPaint;
+//import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;

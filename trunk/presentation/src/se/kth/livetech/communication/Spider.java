@@ -3,20 +3,20 @@ package se.kth.livetech.communication;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import com.facebook.thrift.TException;
-import com.facebook.thrift.TProcessor;
-import com.facebook.thrift.protocol.TBinaryProtocol;
-import com.facebook.thrift.protocol.TProtocol;
-import com.facebook.thrift.server.TServer;
-import com.facebook.thrift.server.TSimpleServer;
-import com.facebook.thrift.server.TThreadPoolServer;
-import com.facebook.thrift.transport.TServerSocket;
-import com.facebook.thrift.transport.TServerTransport;
-import com.facebook.thrift.transport.TSocket;
-import com.facebook.thrift.transport.TTransport;
-import com.facebook.thrift.transport.TTransportException;
+import org.apache.thrift.TException;
+import org.apache.thrift.TProcessor;
+import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.server.TServer;
+import org.apache.thrift.server.TSimpleServer;
+import org.apache.thrift.server.TThreadPoolServer;
+import org.apache.thrift.transport.TServerSocket;
+import org.apache.thrift.transport.TServerTransport;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
+import org.apache.thrift.transport.TTransportException;
 
-import kth.communication.SpiderService;
+import se.kth.livetech.communication.thrift.LiveService;
 
 
 /** Centre of the hub. */
@@ -67,7 +67,7 @@ public class Spider {
 		try {
 			System.out.println("Starting the server...");
 			SpiderHandler handler = new SpiderHandler();
-			SpiderService.Processor processor = new SpiderService.Processor(handler);
+			LiveService.Processor processor = new LiveService.Processor(handler);
 			listen(processor, 9090, true);
 			// TODO: Synchronize time
 		} catch (Exception x) {

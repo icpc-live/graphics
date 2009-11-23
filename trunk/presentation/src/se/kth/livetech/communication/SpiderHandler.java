@@ -8,22 +8,23 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import kth.communication.Attrs;
-import kth.communication.Node;
-import kth.communication.SpiderService;
-import kth.communication.UpdateService;
+import org.apache.thrift.TException;
 
-import com.facebook.thrift.TException;
+import se.kth.livetech.communication.thrift.ContestEvent;
+import se.kth.livetech.communication.thrift.LiveService;
+import se.kth.livetech.communication.thrift.LogEvent;
+import se.kth.livetech.communication.thrift.Node;
+import se.kth.livetech.communication.thrift.NodeStatus;
+import se.kth.livetech.communication.thrift.PropertyEvent;
 
-public class SpiderHandler extends ServiceHandler implements
-SpiderService.Iface {
+public class SpiderHandler extends ServiceHandler implements LiveService.Iface {
 	Map<String, Node> nodes;
-	Map<String, UpdateService.Client> clients;
+	Map<String, LiveService.Client> clients;
 	Map<String, Map<String, String>> parameters;
 
 	public SpiderHandler() {
 		nodes = new TreeMap<String, Node>();
-		clients = new TreeMap<String, UpdateService.Client>();
+		clients = new TreeMap<String, LiveService.Client>();
 		parameters = new TreeMap<String, Map<String, String>>();
 		new Thread(new LoadCheck()).start();
 	}
@@ -54,7 +55,7 @@ SpiderService.Iface {
 	}
 
 	private String nodeString(Node node) {
-		return node.kind + '/' + node.addr + ':' + node.port;
+		return node.name + '/' + node.address + ':' + node.port;
 	}
 
 	public void addNode(Node node) throws TException {
@@ -64,8 +65,8 @@ SpiderService.Iface {
 
 	private void connect(Node node) {
 		try {
-			UpdateService.Client client = Spider.connect(
-					UpdateService.Client.class, node.addr, node.port);
+			LiveService.Client client = Spider.connect(
+					LiveService.Client.class, node.address, node.port);
 			clients.put(nodeString(node), client);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -78,14 +79,6 @@ SpiderService.Iface {
 
 	public List<Node> getNodes() throws TException {
 		return new ArrayList<Node>(nodes.values());
-	}
-
-	public List<Node> getNodesOfKind(String kind) throws TException {
-		List<Node> list = new ArrayList<Node>();
-		for (Node node : nodes.values())
-			if (node.kind.equals(kind))
-				list.add(node);
-		return list;
 	}
 
 	public Map<String, String> getParameters(Node node) {
@@ -104,26 +97,94 @@ SpiderService.Iface {
 	public void setParameter(Node node, String key, String value)
 	throws TException {
 		getParameters(node).put(key, value);
-		UpdateService.Client client = clients.get(nodeString(node));
+		LiveService.Client client = clients.get(nodeString(node));
+		PropertyEvent e = new PropertyEvent();
+		e.key = key;
+		e.value = value;
 		if (client != null) {
-			client.parameterUpdate(key, value);
+			client.propertyUpdate(e);
 		}
 	}
 
 	public void classUpdate(String className) throws TException {
-		for (UpdateService.Client client : clients.values())
+		for (LiveService.Client client : clients.values())
 			client.classUpdate(className);
 	}
 
-	public void contestUpdate(Attrs attrs) throws TException {
+	public void contestUpdate(ContestEvent event) throws TException {
 		// TODO: store updates!
-		System.out.println(attrs);
-		for (UpdateService.Client client : clients.values())
+		System.out.println(event);
+		for (LiveService.Client client : clients.values())
 			try {
-				client.contestUpdate(attrs);
+				client.contestUpdate(event);
 			} catch (TException e) {
 				//TODO: !
 				e.printStackTrace();
 			}
+	}
+
+	// FIXME: All of the following methods either:
+	// * have an updated signature
+	// * belong in service handler
+	// * are new and unimplemented
+
+	public void attach(Node node) throws TException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void detach() throws TException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public List<NodeStatus> getNodeStatus() throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Map<String, String> getProperties() throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getProperty(String key) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public byte[] getResource(String resourceName) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void logEvent(LogEvent event) throws TException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void logSubscribe(LogEvent template) throws TException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void logUnsubscribe(LogEvent template) throws TException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void propertyUpdate(PropertyEvent event) throws TException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void resourceUpdate(String resourceName) throws TException {
+		// TODO Auto-generated method stub
+
+	}
+
+	public void setProperty(String key, String value) throws TException {
+		// TODO Auto-generated method stub
+
 	}
 }

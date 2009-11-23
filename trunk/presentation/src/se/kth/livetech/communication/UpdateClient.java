@@ -4,27 +4,30 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JPanel;
 
-import kth.communication.Attrs;
-import kth.communication.Node;
-import kth.communication.SpiderService;
-import kth.communication.UpdateService;
+import org.apache.thrift.TException;
+import org.apache.thrift.transport.TTransportException;
+
+import se.kth.livetech.communication.thrift.ContestEvent;
+import se.kth.livetech.communication.thrift.LiveService;
+import se.kth.livetech.communication.thrift.LogEvent;
+import se.kth.livetech.communication.thrift.Node;
+import se.kth.livetech.communication.thrift.NodeStatus;
+import se.kth.livetech.communication.thrift.PropertyEvent;
 import se.kth.livetech.old.Frame;
 
-import com.facebook.thrift.TException;
-import com.facebook.thrift.transport.TTransportException;
-
 public class UpdateClient implements Runnable {
-	String kind, host;
+	String name, host;
 	int port, listen;
 	Loader loader;
-	SpiderService.Client client;
+	LiveService.Client client;
 	long skew;
 	public UpdateClient(String kind, String host, int port, int listen) {
-		this.kind = kind;
+		this.name = kind;
 		this.host = host;
 		this.port = port;
 		this.listen = listen;
@@ -37,17 +40,17 @@ public class UpdateClient implements Runnable {
 			try {
 				// Time synchronization:
 				long tic = System.currentTimeMillis();
-				long time = client.ping(tic);
+				long time = client.time();
 				long toc = System.currentTimeMillis();
 				long ping = toc - tic;
 				skew = (15 * skew + time - (tic + toc) / 2) / 16;
-				client.asyncPing(localNode(), toc, ping);
+				//client.asyncPing(localNode(), toc, ping);
 				Thread.sleep(100);
 			} catch (TException e) {
 				System.err.println("Ping failed: " + e);
 				running = false;
-			} catch (UnknownHostException e) {
-				System.err.println("Unknown local address: " + e);
+				//} catch (UnknownHostException e) {
+				//	System.err.println("Unknown local address: " + e);
 			} catch (InterruptedException e) {
 			}
 		}
@@ -81,7 +84,7 @@ public class UpdateClient implements Runnable {
 		}
 	}
 	volatile boolean running = true;
-	class Handler extends ServiceHandler implements UpdateService.Iface {
+	class Handler extends ServiceHandler implements LiveService.Iface {
 		public void classUpdate(String className) throws TException {
 			System.out.println("Class update " + className);
 			if (loader.invalidate(className)) {
@@ -96,9 +99,86 @@ public class UpdateClient implements Runnable {
 			}
 		}
 
-		public void contestUpdate(Attrs attrs) throws TException {
+		public void contestUpdate(ContestEvent event) throws TException {
 			//TODO: store updates
-			System.out.println(attrs);
+			System.out.println(event);
+		}
+
+		// FIXME lots of methods with new signatures, @see SpiderHandler
+
+		public void addNode(Node node) throws TException {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void attach(Node node) throws TException {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void detach() throws TException {
+			// TODO Auto-generated method stub
+
+		}
+
+		public List<NodeStatus> getNodeStatus() throws TException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public List<Node> getNodes() throws TException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public Map<String, String> getProperties() throws TException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public String getProperty(String key) throws TException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public byte[] getResource(String resourceName) throws TException {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public void logEvent(LogEvent event) throws TException {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void logSubscribe(LogEvent template) throws TException {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void logUnsubscribe(LogEvent template) throws TException {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void propertyUpdate(PropertyEvent event) throws TException {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void removeNode(Node node) throws TException {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void resourceUpdate(String resourceName) throws TException {
+			// TODO Auto-generated method stub
+
+		}
+
+		public void setProperty(String key, String value) throws TException {
+			// TODO Auto-generated method stub
+
 		}
 	}
 	class Listen implements Runnable {
@@ -106,7 +186,7 @@ public class UpdateClient implements Runnable {
 			while (running) {
 				try {
 					Handler handler = new Handler();
-					UpdateService.Processor processor = new UpdateService.Processor(handler);
+					LiveService.Processor processor = new LiveService.Processor(handler);
 					Spider.listen(processor, listen, false);
 				} catch (TTransportException e) {
 					System.err.println("Failed to listen on port " + listen + ": " + e);
@@ -121,14 +201,14 @@ public class UpdateClient implements Runnable {
 	private Node localNode() throws UnknownHostException {
 		InetAddress addr = InetAddress.getLocalHost();
 		Node node = new Node();
-		node.kind = kind;
-		node.addr = addr.getHostName();
+		node.name = name;
+		node.address = addr.getHostName();
 		node.port = listen;
 		return node;
 	}
 	public void connect() {
 		try {
-			client = Spider.connect(SpiderService.Client.class, host, port);
+			client = Spider.connect(LiveService.Client.class, host, port);
 			System.out.println("Connected client: " + client);
 		} catch (TTransportException e) {
 			System.err.println("No connection to " + host + ':' + port);

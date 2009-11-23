@@ -3,8 +3,6 @@ import java.io.IOException;
 
 
 public class Viewtest {
-	
-
 	/**
 	 * @param args
 	 */
@@ -15,6 +13,7 @@ public class Viewtest {
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+			return;
 		}
 		for(int i = 0; i < 2; ++i) {
 			switch(i % 2) {
@@ -34,5 +33,4 @@ public class Viewtest {
 		}
 		viewer.stop();
 	}
-
 }

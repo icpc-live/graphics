@@ -7,23 +7,16 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.TreeMap;
 
-import kth.communication.Node;
-import kth.communication.Service;
+import org.apache.thrift.TException;
 
-import com.facebook.thrift.TException;
+import se.kth.livetech.communication.thrift.LiveService;
+import se.kth.livetech.communication.thrift.Node;
 
-public abstract class ServiceHandler implements Service.Iface {
+public abstract class ServiceHandler implements LiveService.Iface {
 	protected Map<String, Long> loaded = new TreeMap<String, Long>();
 
 	public long time() throws TException {
 		return System.currentTimeMillis();
-	}
-
-	public long ping(long clock) throws TException {
-		return System.currentTimeMillis();
-	}
-
-	public void asyncPing(Node node, long clock, long ping) {
 	}
 
 	protected File getClassFile(String className) {

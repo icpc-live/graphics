@@ -3,27 +3,35 @@ package se.kth.livetech.presentation.graphics;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 /**
  * Utility class for common graphics functions.
  */
 public class Utility {
-	public static Color[] getColorsBetween(Color c1, Color c2, int steps) {
-		Color[] colors = new Color[steps];
-		float[] c1rgb = c1.getRGBComponents(null);
-		float[] c2rgb = c2.getRGBComponents(null);
-		
-		float[] f = new float[4];
-		for (int i = 0; i < steps; i++) {
-			float x = (i / (float) (steps - 1));
-			for (int j = 0; j < 4; j++) {
-				f[j] = c1rgb[j] * (1f - x) + c2rgb[j] * x;
-			}
-			colors[i] = new Color(f[0], f[1], f[2], f[3]);
-		}
-		return colors;
+	private static int shade(int component, double f) {
+		if (f < .5)
+			return (int) (2 * component * f);
+		else
+			return 255 - (int) (2 * (255 - component) * (1 - f));
+	}
+
+	public static Color shade(Color base, double a) {
+		return new Color(
+				shade(base.getRed(), a),
+				shade(base.getGreen(), a),
+				shade(base.getBlue(), a));
+	}
+
+	public static GradientPaint shade(Rectangle2D bounds, Color base, double a1, double a2) {
+		return new GradientPaint(
+				new Point2D.Double(bounds.getCenterX(), bounds.getMinY()),
+				shade(base, a1),
+				new Point2D.Double(bounds.getCenterX(), bounds.getMaxY()),
+				shade(base, a2));
 	}
 
 	public static Color alpha(Color c, int alpha) {

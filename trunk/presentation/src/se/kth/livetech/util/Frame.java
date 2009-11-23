@@ -1,4 +1,4 @@
-package se.kth.livetech.old;
+package se.kth.livetech.util;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;

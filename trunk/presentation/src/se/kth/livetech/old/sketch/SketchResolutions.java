@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
-import se.kth.livetech.old.Frame;
+import se.kth.livetech.util.Frame;
 
 public class SketchResolutions extends JPanel {
 	public SketchResolutions() {

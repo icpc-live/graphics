@@ -13,11 +13,12 @@ import javax.vecmath.Point3d;
 import se.kth.livetech.contest.graphics.ProblemScoreRenderer;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
+import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.impl.TestContest;
-import se.kth.livetech.old.Frame;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
+import se.kth.livetech.util.Frame;
 
 public class BoxTest2 extends JPanel {
 	Contest c;
@@ -44,7 +45,9 @@ public class BoxTest2 extends JPanel {
 		br0.set(s0, t0, (double) 8 * getHeight() / 10 / N);
 		br1.set(s1, t1, (double) 8 * getHeight() / 10 / N);
 		
-		for (int i : c.getTeams()) {
+		for (int r = 0; r < c.getTeams().size(); ++r) {
+		    Team team = c.getRankedTeam(r + 1);
+		    int i = team.getId();
 			br0.add(i, 1, true);
 			br1.add(i, 1, true);
 		}
@@ -53,8 +56,11 @@ public class BoxTest2 extends JPanel {
 		Box<Integer> b = new Box<Integer>();
 		for (int j : c.getProblems())
 			b.add(j, 1, false);
-		
-		for (int i : c.getTeams()) {
+
+		for (int r = 0; r < c.getTeams().size(); ++r) {
+		    Team team = c.getRankedTeam(r + 1);
+		    int i = team.getId();
+		    //int rank = c.getTeamRank(i);
 
 			Point3d s = br0.getPosition(i);
 			Point3d t = br1.getPosition(i);
@@ -71,9 +77,9 @@ public class BoxTest2 extends JPanel {
 				Dimension d = new Dimension(w, h);
 				TeamScore ts = c.getTeamScore(i);
 				ProblemScore ps = ts.getProblemScore(j);
-				Renderable r = new ProblemScoreRenderer(ps);
-				boolean has = renderCache.hasImageFor(r, d);
-				Image img = renderCache.getImageFor(r, d);
+				Renderable psr = new ProblemScoreRenderer(ps);
+				boolean has = renderCache.hasImageFor(psr, d);
+				Image img = renderCache.getImageFor(psr, d);
 				g.drawImage(img, (int) (p.x - w / 2), (int) (p.y - h / 2), this);
 				g.setColor(Color.RED);
 				if (!has)

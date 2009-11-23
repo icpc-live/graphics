@@ -18,7 +18,7 @@ import se.kth.livetech.communication.thrift.LogEvent;
 import se.kth.livetech.communication.thrift.Node;
 import se.kth.livetech.communication.thrift.NodeStatus;
 import se.kth.livetech.communication.thrift.PropertyEvent;
-import se.kth.livetech.old.Frame;
+import se.kth.livetech.util.Frame;
 
 public class UpdateClient implements Runnable {
 	String name, host;

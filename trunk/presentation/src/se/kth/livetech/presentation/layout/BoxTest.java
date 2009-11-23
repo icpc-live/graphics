@@ -8,8 +8,8 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 import javax.vecmath.Point3d;
 
-import se.kth.livetech.old.Frame;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
+import se.kth.livetech.util.Frame;
 
 public class BoxTest extends JPanel {
 	public BoxTest() {

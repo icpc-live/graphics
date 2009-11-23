@@ -15,8 +15,8 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.TexCoord2f;
 
+import se.kth.livetech.contest.graphics.ProblemScoreRenderer;
 import se.kth.livetech.contest.model.ProblemScore;
-import se.kth.livetech.old.sketch.SketchCell;
 
 import com.sun.j3d.utils.image.TextureLoader;
 
@@ -71,7 +71,10 @@ public class StatusTexture {
 		Quad q = new Quad(size);
 		Graphics2D g = q.getGraphics();
 		Rectangle2D rect = new Rectangle2D.Double(0, 0, size.width, size.height);
-		SketchCell.paint(g, rect, pscore);
+		ProblemScoreRenderer psr = new ProblemScoreRenderer(pscore);
+		g.translate(rect.getX(), rect.getY());
+		int w = (int) rect.getWidth(), h = (int) rect.getHeight();
+		psr.render(g, new Dimension(w, h));
 		return q.textured();
 	}
 }

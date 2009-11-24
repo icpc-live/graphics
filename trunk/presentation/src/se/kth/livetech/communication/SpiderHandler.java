@@ -17,7 +17,7 @@ import se.kth.livetech.communication.thrift.Node;
 import se.kth.livetech.communication.thrift.NodeStatus;
 import se.kth.livetech.communication.thrift.PropertyEvent;
 
-public class SpiderHandler extends ServiceHandler implements LiveService.Iface {
+public class SpiderHandler extends BaseHandler implements LiveService.Iface {
 	Map<String, Node> nodes;
 	Map<String, LiveService.Client> clients;
 	Map<String, Map<String, String>> parameters;

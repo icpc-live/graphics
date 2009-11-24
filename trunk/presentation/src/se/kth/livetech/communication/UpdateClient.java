@@ -84,7 +84,7 @@ public class UpdateClient implements Runnable {
 		}
 	}
 	volatile boolean running = true;
-	class Handler extends ServiceHandler implements LiveService.Iface {
+	class Handler extends BaseHandler implements LiveService.Iface {
 		public void classUpdate(String className) throws TException {
 			System.out.println("Class update " + className);
 			if (loader.invalidate(className)) {

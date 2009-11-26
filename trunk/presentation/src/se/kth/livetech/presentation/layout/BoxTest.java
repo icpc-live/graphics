@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 import javax.vecmath.Point3d;
 
-import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.util.Frame;
 
 public class BoxTest extends JPanel {
@@ -24,6 +23,7 @@ public class BoxTest extends JPanel {
 
 		Box<Integer> b0 = new Box<Integer>();
 		Box<Integer> b1 = new Box<Integer>();
+		@SuppressWarnings("unchecked")
 		Box<Integer>[] bs = new Box[N];
 		for (int i = 0; i < N; ++i) {
 			bs[i] = new Box<Integer>();
@@ -57,12 +57,12 @@ public class BoxTest extends JPanel {
 			for (int j = 0; j < 4; ++j) {
 				Point3d p = b.getPosition(j);
 				double size = b.getSize(j), h = b.getH();
-				ColoredTextBox c = new ColoredTextBox();
+				//ColoredTextBox c = new ColoredTextBox();
 				g.drawRect((int) (p.x - size / 2), (int) (p.y - h / 2), (int) size, (int) h);
 			}
 		}
 	}
 	public static void main(String[] args) {
-		Frame f = new Frame("BoxTest", new BoxTest());
+		new Frame("BoxTest", new BoxTest());
 	}
 }

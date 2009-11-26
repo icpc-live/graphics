@@ -52,7 +52,7 @@ public class BoxTest2 extends JPanel {
 			br1.add(i, 1, true);
 		}
 
-		int P = c.getProblems().size();
+		//int P = c.getProblems().size();
 		Box<Integer> b = new Box<Integer>();
 		for (int j : c.getProblems())
 			b.add(j, 1, false);
@@ -103,7 +103,7 @@ public class BoxTest2 extends JPanel {
 		tc.fail(id1);
 		int id2 = tc.submit(3, 4, 21);
 		tc.solve(id2);
-		int id3 = tc.submit(1, 3, 23);
+		tc.submit(1, 3, 23);
 		Contest c1 = tc.getContest();
 		RenderCache renderCache = new RenderCache();
 		Frame frame = new Frame("BoxTest", new BoxTest2(c1, renderCache));

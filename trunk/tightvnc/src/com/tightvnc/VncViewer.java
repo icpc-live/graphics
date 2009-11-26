@@ -322,7 +322,8 @@ public class VncViewer extends java.applet.Applet implements
         showConnectionStatus("Initializing...");
         if (inSeparateFrame) {
             vncFrame.pack();
-            vncFrame.show();
+            //vncFrame.show();
+            vncFrame.setVisible(true);
         } else {
             validate();
         }
@@ -874,6 +875,7 @@ public class VncViewer extends java.applet.Applet implements
     // FIXME: Do we really need two versions of the fatalError() method?
     //
 
+    @SuppressWarnings("deprecation") // TODO: is Thread.stop needed?
     synchronized public void fatalError(String str) {
         System.out.println(str);
 
@@ -990,7 +992,8 @@ public class VncViewer extends java.applet.Applet implements
         if (rfb != null)
             disconnect();
 
-        vncContainer.hide();
+        //vncContainer.hide();
+        vncContainer.setVisible(false);
 
         if (!inAnApplet) {
             System.exit(0);

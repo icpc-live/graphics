@@ -406,22 +406,22 @@ class VncCanvas extends Canvas
 	  int rx = rfb.updateRectX, ry = rfb.updateRectY;
 	  int rw = rfb.updateRectW, rh = rfb.updateRectH;
 
-	  if (rfb.updateRectEncoding == rfb.EncodingLastRect)
+	  if (rfb.updateRectEncoding == RfbProto.EncodingLastRect)
 	    break;
 
-	  if (rfb.updateRectEncoding == rfb.EncodingNewFBSize) {
+	  if (rfb.updateRectEncoding == RfbProto.EncodingNewFBSize) {
 	    rfb.setFramebufferSize(rw, rh);
 	    updateFramebufferSize();
 	    break;
 	  }
 
-	  if (rfb.updateRectEncoding == rfb.EncodingXCursor ||
-	      rfb.updateRectEncoding == rfb.EncodingRichCursor) {
+	  if (rfb.updateRectEncoding == RfbProto.EncodingXCursor ||
+	      rfb.updateRectEncoding == RfbProto.EncodingRichCursor) {
 	    handleCursorShapeUpdate(rfb.updateRectEncoding, rx, ry, rw, rh);
 	    continue;
 	  }
 
-	  if (rfb.updateRectEncoding == rfb.EncodingPointerPos) {
+	  if (rfb.updateRectEncoding == RfbProto.EncodingPointerPos) {
 	    softCursorMove(rx, ry);
 	    cursorPosReceived = true;
 	    continue;
@@ -730,14 +730,14 @@ class VncCanvas extends Canvas
     }
 
     // Is it a raw-encoded sub-rectangle?
-    if ((subencoding & rfb.HextileRaw) != 0) {
+    if ((subencoding & RfbProto.HextileRaw) != 0) {
       handleRawRect(tx, ty, tw, th, false);
       return;
     }
 
     // Read and draw the background if specified.
     byte[] cbuf = new byte[bytesPixel];
-    if ((subencoding & rfb.HextileBackgroundSpecified) != 0) {
+    if ((subencoding & RfbProto.HextileBackgroundSpecified) != 0) {
       rfb.readFully(cbuf);
       if (bytesPixel == 1) {
 	hextile_bg = colors[cbuf[0] & 0xFF];
@@ -752,7 +752,7 @@ class VncCanvas extends Canvas
     memGraphics.fillRect(tx, ty, tw, th);
 
     // Read the foreground color if specified.
-    if ((subencoding & rfb.HextileForegroundSpecified) != 0) {
+    if ((subencoding & RfbProto.HextileForegroundSpecified) != 0) {
       rfb.readFully(cbuf);
       if (bytesPixel == 1) {
 	hextile_fg = colors[cbuf[0] & 0xFF];
@@ -765,12 +765,12 @@ class VncCanvas extends Canvas
     }
 
     // Done with this tile if there is no sub-rectangles.
-    if ((subencoding & rfb.HextileAnySubrects) == 0)
+    if ((subencoding & RfbProto.HextileAnySubrects) == 0)
       return;
 
     int nSubrects = rfb.readU8();
     int bufsize = nSubrects * 2;
-    if ((subencoding & rfb.HextileSubrectsColoured) != 0) {
+    if ((subencoding & RfbProto.HextileSubrectsColoured) != 0) {
       bufsize += nSubrects * bytesPixel;
     }
     byte[] buf = new byte[bufsize];
@@ -783,7 +783,7 @@ class VncCanvas extends Canvas
     int b1, b2, sx, sy, sw, sh;
     int i = 0;
 
-    if ((subencoding & rfb.HextileSubrectsColoured) == 0) {
+    if ((subencoding & RfbProto.HextileSubrectsColoured) == 0) {
 
       // Sub-rectangles are all of the same color.
       memGraphics.setColor(hextile_fg);
@@ -929,7 +929,7 @@ class VncCanvas extends Canvas
   }
 
   void readPixels(InStream is, int[] dst, int count) throws Exception {
-    int pix;
+    //int pix;
     if (bytesPixel == 1) {
       byte[] buf = new byte[count];
       is.readBytes(buf, 0, count);
@@ -1124,8 +1124,8 @@ class VncCanvas extends Canvas
     int comp_ctl = rfb.readU8();
     if (rfb.rec != null) {
       if (rfb.recordFromBeginning ||
-	  comp_ctl == (rfb.TightFill << 4) ||
-	  comp_ctl == (rfb.TightJpeg << 4)) {
+	  comp_ctl == (RfbProto.TightFill << 4) ||
+	  comp_ctl == (RfbProto.TightJpeg << 4)) {
 	// Send data exactly as received.
 	rfb.rec.writeByte(comp_ctl);
       } else {
@@ -1143,12 +1143,12 @@ class VncCanvas extends Canvas
     }
 
     // Check correctness of subencoding value.
-    if (comp_ctl > rfb.TightMaxSubencoding) {
+    if (comp_ctl > RfbProto.TightMaxSubencoding) {
       throw new Exception("Incorrect tight subencoding: " + comp_ctl);
     }
 
     // Handle solid-color rectangles.
-    if (comp_ctl == rfb.TightFill) {
+    if (comp_ctl == RfbProto.TightFill) {
 
       if (bytesPixel == 1) {
 	int idx = rfb.readU8();
@@ -1172,7 +1172,7 @@ class VncCanvas extends Canvas
 
     }
 
-    if (comp_ctl == rfb.TightJpeg) {
+    if (comp_ctl == RfbProto.TightJpeg) {
 
       statNumRectsTightJPEG++;
 
@@ -1215,12 +1215,12 @@ class VncCanvas extends Canvas
     byte[] palette8 = new byte[2];
     int[] palette24 = new int[256];
     boolean useGradient = false;
-    if ((comp_ctl & rfb.TightExplicitFilter) != 0) {
+    if ((comp_ctl & RfbProto.TightExplicitFilter) != 0) {
       int filter_id = rfb.readU8();
       if (rfb.rec != null) {
 	rfb.rec.writeByte(filter_id);
       }
-      if (filter_id == rfb.TightFilterPalette) {
+      if (filter_id == RfbProto.TightFilterPalette) {
 	numColors = rfb.readU8() + 1;
 	if (rfb.rec != null) {
 	  rfb.rec.writeByte(numColors - 1);
@@ -1247,9 +1247,9 @@ class VncCanvas extends Canvas
 	}
 	if (numColors == 2)
 	  rowSize = (w + 7) / 8;
-      } else if (filter_id == rfb.TightFilterGradient) {
+      } else if (filter_id == RfbProto.TightFilterGradient) {
 	useGradient = true;
-      } else if (filter_id != rfb.TightFilterCopy) {
+      } else if (filter_id != RfbProto.TightFilterCopy) {
 	throw new Exception("Incorrect tight filter id: " + filter_id);
       }
     }
@@ -1258,7 +1258,7 @@ class VncCanvas extends Canvas
 
     // Read, optionally uncompress and decode data.
     int dataSize = h * rowSize;
-    if (dataSize < rfb.TightMinToCompress) {
+    if (dataSize < RfbProto.TightMinToCompress) {
       // Data size is small - not compressed with zlib.
       if (numColors != 0) {
 	// Indexed colors.
@@ -1651,7 +1651,7 @@ class VncCanvas extends Canvas
       int bytesPerRow = (width + 7) / 8;
       int bytesMaskData = bytesPerRow * height;
 
-      if (encodingType == rfb.EncodingXCursor) {
+      if (encodingType == RfbProto.EncodingXCursor) {
 	rfb.skipBytes(6 + bytesMaskData * 2);
       } else {
 	// rfb.EncodingRichCursor
@@ -1692,7 +1692,7 @@ class VncCanvas extends Canvas
 
     int[] softCursorPixels = new int[width * height];
 
-    if (encodingType == rfb.EncodingXCursor) {
+    if (encodingType == RfbProto.EncodingXCursor) {
 
       // Read foreground and background colors of the cursor.
       byte[] rgb = new byte[6];
@@ -1745,7 +1745,7 @@ class VncCanvas extends Canvas
       rfb.readFully(maskBuf);
 
       // Decode pixel data into softCursorPixels[].
-      byte pixByte, maskByte;
+      byte /*pixByte, */maskByte;
       int x, y, n, result;
       int i = 0;
       for (y = 0; y < height; y++) {

@@ -29,6 +29,7 @@ import java.io.*;
 
 class HTTPConnectSocket extends Socket {
 
+  @SuppressWarnings("deprecation")
   public HTTPConnectSocket(String host, int port,
 			   String proxyHost, int proxyPort)
     throws IOException {

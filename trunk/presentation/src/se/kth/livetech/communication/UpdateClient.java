@@ -15,7 +15,7 @@ import org.apache.thrift.transport.TTransportException;
 import se.kth.livetech.communication.thrift.ContestEvent;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.LogEvent;
-import se.kth.livetech.communication.thrift.Node;
+import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.communication.thrift.NodeStatus;
 import se.kth.livetech.communication.thrift.PropertyEvent;
 import se.kth.livetech.util.Frame;
@@ -106,12 +106,12 @@ public class UpdateClient implements Runnable {
 
 		// FIXME lots of methods with new signatures, @see SpiderHandler
 
-		public void addNode(Node node) throws TException {
+		public void addNode(NodeId node) throws TException {
 			// TODO Auto-generated method stub
 
 		}
 
-		public void attach(Node node) throws TException {
+		public void attach(NodeId node) throws TException {
 			// TODO Auto-generated method stub
 
 		}
@@ -126,7 +126,7 @@ public class UpdateClient implements Runnable {
 			return null;
 		}
 
-		public List<Node> getNodes() throws TException {
+		public List<NodeId> getNodes() throws TException {
 			// TODO Auto-generated method stub
 			return null;
 		}
@@ -166,7 +166,7 @@ public class UpdateClient implements Runnable {
 
 		}
 
-		public void removeNode(Node node) throws TException {
+		public void removeNode(NodeId node) throws TException {
 			// TODO Auto-generated method stub
 
 		}
@@ -198,9 +198,9 @@ public class UpdateClient implements Runnable {
 			}
 		}
 	}
-	private Node localNode() throws UnknownHostException {
+	private NodeId localNode() throws UnknownHostException {
 		InetAddress addr = InetAddress.getLocalHost();
-		Node node = new Node();
+		NodeId node = new NodeId();
 		node.name = name;
 		node.address = addr.getHostName();
 		node.port = listen;
@@ -217,7 +217,7 @@ public class UpdateClient implements Runnable {
 			System.err.println("Client creation failed: " + e);
 			return;
 		}
-		Node node;
+		NodeId node;
 		try {
 			node = localNode();
 		} catch (UnknownHostException e) {

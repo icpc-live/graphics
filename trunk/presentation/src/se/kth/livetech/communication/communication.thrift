@@ -6,7 +6,7 @@
 
 namespace java se.kth.livetech.communication.thrift
 
-struct Node {
+struct NodeId {
 	1: string name, // our client name id
 	2: string host, // machine's hostname
 	3: string address, // reverse lookup name, use this to connect
@@ -17,7 +17,9 @@ struct Node {
 struct NodeStatus {
 	1: string name,
 	2: i64 lastContact,
-	3: i32 ping,
+	3: i64 lastPingIn,
+	4: i64 lastPingReply,
+	5: i32 ping,
 }
 
 struct ContestId {
@@ -28,9 +30,16 @@ struct ContestId {
 }
 
 struct ContestEvent {
-	1: i64 time,
-	2: string type,
-	3: map<string, string> attributes,
+	1: optional i32 id,
+	2: i64 time,
+	3: string type,
+	4: map<string, string> attributes,
+}
+
+struct ContestDump {
+	1: ContestId id,
+	2: list<ContestEvent> setup,
+	3: list<ContestEvent> events,
 }
 
 struct PropertyEvent {
@@ -58,13 +67,13 @@ exception LiveException {
 
 service LiveService {
 	// Node registration
-	void attach(1:Node node),
+	void attach(1:NodeId node),
 	void detach(),
 
 	// Nodes
-	void addNode(1:Node node),
-	void removeNode(1:Node node),
-	list<Node> getNodes(),
+	void addNode(1:NodeId node),
+	void removeNode(1:NodeId node),
+	list<NodeId> getNodes(),
 	list<NodeStatus> getNodeStatus(),
 
 	// Server time
@@ -84,7 +93,7 @@ service LiveService {
 	void setProperty(1:string key, 2:string value),
 
 	// Contest
-	list<ContestEvent> getContest(1:ContestId contest),
+	ContestDump getContest(1:ContestId contest),
 	void addContest(1:ContestId contest),
 	void removeContest(1:ContestId contest),
 

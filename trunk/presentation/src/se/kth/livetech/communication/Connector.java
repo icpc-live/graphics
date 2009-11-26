@@ -16,7 +16,7 @@ import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
 import se.kth.livetech.communication.thrift.LiveService;
-import se.kth.livetech.communication.thrift.Node;
+import se.kth.livetech.communication.thrift.NodeId;
 
 
 /** Establish two-way connections between nodes. */
@@ -27,7 +27,7 @@ public class Connector {
 		TProtocol protocol = new TBinaryProtocol(transport);
 		LiveService.Client client = new LiveService.Client(protocol);
 		transport.open();
-		Node localnode = new Node();
+		NodeId localnode = new NodeId();
 		// TODO: localnode override
 	    try {
 			localnode.ip = InetAddress.getLocalHost().getHostAddress();

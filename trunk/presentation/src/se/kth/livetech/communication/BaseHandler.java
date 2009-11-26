@@ -10,11 +10,12 @@ import java.util.TreeMap;
 
 import org.apache.thrift.TException;
 
+import se.kth.livetech.communication.thrift.ContestDump;
 import se.kth.livetech.communication.thrift.ContestEvent;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.LogEvent;
-import se.kth.livetech.communication.thrift.Node;
+import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.communication.thrift.NodeStatus;
 import se.kth.livetech.communication.thrift.PropertyEvent;
 import se.kth.livetech.properties.IProperty;
@@ -23,7 +24,7 @@ import se.kth.livetech.properties.PropertyListener;
 
 public class BaseHandler implements LiveService.Iface {
 	PropertyHierarchy hierarchy;
-	ThreadLocal<Node> attachedNode;
+	ThreadLocal<NodeId> attachedNode;
 	LocalPropertyListener listener;
 	
 	private class LocalPropertyListener implements PropertyListener {
@@ -35,7 +36,7 @@ public class BaseHandler implements LiveService.Iface {
 	
 	public BaseHandler() {
 		hierarchy = new PropertyHierarchy();
-		attachedNode = new ThreadLocal<Node>();
+		attachedNode = new ThreadLocal<NodeId>();
 		listener = new LocalPropertyListener();
 		hierarchy.getProperty("").addPropertyListener(listener);
 	}
@@ -81,12 +82,12 @@ public class BaseHandler implements LiveService.Iface {
 	}
 
 	@Override
-	public void addNode(Node node) throws TException {
+	public void addNode(NodeId node) throws TException {
 		// TODO Auto-generated method stub
 	}
 
 	@Override
-	public void attach(Node node) throws TException {
+	public void attach(NodeId node) throws TException {
 		this.attachedNode.set(node);
 		// TODO connect back
 	}
@@ -116,7 +117,7 @@ public class BaseHandler implements LiveService.Iface {
 	}
 
 	@Override
-	public List<Node> getNodes() throws TException {
+	public List<NodeId> getNodes() throws TException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -164,7 +165,7 @@ public class BaseHandler implements LiveService.Iface {
 	}
 
 	@Override
-	public void removeNode(Node node) throws TException {
+	public void removeNode(NodeId node) throws TException {
 		// TODO Auto-generated method stub
 		
 	}
@@ -182,7 +183,7 @@ public class BaseHandler implements LiveService.Iface {
 	}
 
 	@Override
-	public List<ContestEvent> getContest(ContestId contest) throws TException {
+	public ContestDump getContest(ContestId contest) throws TException {
 		// TODO Auto-generated method stub
 		return null;
 	}

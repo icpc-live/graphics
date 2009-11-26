@@ -14,17 +14,17 @@ import se.kth.livetech.communication.thrift.ContestEvent;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.LogEvent;
-import se.kth.livetech.communication.thrift.Node;
+import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.communication.thrift.NodeStatus;
 import se.kth.livetech.communication.thrift.PropertyEvent;
 
 public class SpiderHandler extends BaseHandler implements LiveService.Iface {
-	Map<String, Node> nodes;
+	Map<String, NodeId> nodes;
 	Map<String, LiveService.Client> clients;
 	Map<String, Map<String, String>> parameters;
 
 	public SpiderHandler() {
-		nodes = new TreeMap<String, Node>();
+		nodes = new TreeMap<String, NodeId>();
 		clients = new TreeMap<String, LiveService.Client>();
 		parameters = new TreeMap<String, Map<String, String>>();
 		new Thread(new LoadCheck()).start();
@@ -55,16 +55,16 @@ public class SpiderHandler extends BaseHandler implements LiveService.Iface {
 		}
 	}
 
-	private String nodeString(Node node) {
+	private String nodeString(NodeId node) {
 		return node.name + '/' + node.address + ':' + node.port;
 	}
 
-	public void addNode(Node node) throws TException {
+	public void addNode(NodeId node) throws TException {
 		nodes.put(nodeString(node), node);
 		connect(node);
 	}
 
-	private void connect(Node node) {
+	private void connect(NodeId node) {
 		try {
 			LiveService.Client client = Spider.connect(
 					LiveService.Client.class, node.address, node.port);
@@ -74,15 +74,15 @@ public class SpiderHandler extends BaseHandler implements LiveService.Iface {
 		}
 	}
 
-	public void removeNode(Node node) throws TException {
+	public void removeNode(NodeId node) throws TException {
 		nodes.remove(nodeString(node));
 	}
 
-	public List<Node> getNodes() throws TException {
-		return new ArrayList<Node>(nodes.values());
+	public List<NodeId> getNodes() throws TException {
+		return new ArrayList<NodeId>(nodes.values());
 	}
 
-	public Map<String, String> getParameters(Node node) {
+	public Map<String, String> getParameters(NodeId node) {
 		Map<String, String> map = parameters.get(nodeString(node));
 		if (map == null) {
 			map = new TreeMap<String, String>();
@@ -91,11 +91,11 @@ public class SpiderHandler extends BaseHandler implements LiveService.Iface {
 		return map;
 	}
 
-	public String getParameter(Node node, String key) throws TException {
+	public String getParameter(NodeId node, String key) throws TException {
 		return getParameters(node).get(key);
 	}
 
-	public void setParameter(Node node, String key, String value)
+	public void setParameter(NodeId node, String key, String value)
 	throws TException {
 		getParameters(node).put(key, value);
 		LiveService.Client client = clients.get(nodeString(node));
@@ -129,7 +129,7 @@ public class SpiderHandler extends BaseHandler implements LiveService.Iface {
 	// * belong in service handler
 	// * are new and unimplemented
 
-	public void attach(Node node) throws TException {
+	public void attach(NodeId node) throws TException {
 		// TODO Auto-generated method stub
 
 	}

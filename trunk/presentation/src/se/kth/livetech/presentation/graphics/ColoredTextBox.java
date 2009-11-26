@@ -22,6 +22,7 @@ public class ColoredTextBox implements Renderable {
 	}
 	public boolean equals(Object that) {
 		if (this == that) return true;
+		if (that == null) return false;
 		if (this.getClass() != that.getClass()) return false;
 		ColoredTextBox b = (ColoredTextBox) that;
 		if (!color.equals(b.color)) return false;

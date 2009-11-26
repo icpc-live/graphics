@@ -42,7 +42,7 @@ public class UpdateClient implements Runnable {
 				long tic = System.currentTimeMillis();
 				long time = client.time();
 				long toc = System.currentTimeMillis();
-				long ping = toc - tic;
+				//long ping = toc - tic;
 				skew = (15 * skew + time - (tic + toc) / 2) / 16;
 				//client.asyncPing(localNode(), toc, ping);
 				Thread.sleep(100);
@@ -131,7 +131,7 @@ public class UpdateClient implements Runnable {
 			return null;
 		}
 
-		public Map<String, String> getProperties() throws TException {
+		public List<PropertyEvent> getProperties() throws TException {
 			// TODO Auto-generated method stub
 			return null;
 		}

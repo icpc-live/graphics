@@ -7,15 +7,24 @@
 namespace java se.kth.livetech.communication.thrift
 
 struct Node {
-	1: string name,
-	2: string address,
-	3: i32 port,
+	1: string name, // our client name id
+	2: string host, // machine's hostname
+	3: string address, // reverse lookup name
+	4: string ip, // ip address
+	5: i32 port, // listen port
 }
 
 struct NodeStatus {
 	1: string name,
 	2: i64 lastContact,
 	3: i32 ping,
+}
+
+struct ContestId {
+	1: string name,
+	2: i64 starttime,
+	3: optional bool replayFlag,
+	4: optional string replayName,
 }
 
 struct ContestEvent {
@@ -26,7 +35,8 @@ struct ContestEvent {
 
 struct PropertyEvent {
 	1: string key,
-	2: string value,
+	2: optional string value,
+	3: optional string link,
 }
 
 enum LogLevel {
@@ -69,13 +79,18 @@ service LiveService {
 	oneway void resourceUpdate(1:string resourceName),
 
 	// Properties
-	map<string, string> getProperties(),
+	list<PropertyEvent> getProperties(),
 	string getProperty(1:string key),
 	void setProperty(1:string key, 2:string value),
 
+	// Contest
+	list<ContestEvent> getContest(1:ContestId contest),
+	void addContest(1:ContestId contest),
+	void removeContest(1:ContestId contest),
+
 	// Updates
 	oneway void propertyUpdate(1:PropertyEvent event),
-	oneway void contestUpdate(1:ContestEvent event),
+	oneway void contestUpdate(2:ContestId contest, 1:ContestEvent event),
 
 	// Logging
 	oneway void logEvent(1:LogEvent event),

@@ -11,6 +11,7 @@ import java.util.TreeMap;
 import org.apache.thrift.TException;
 
 import se.kth.livetech.communication.thrift.ContestEvent;
+import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.LogEvent;
 import se.kth.livetech.communication.thrift.Node;
@@ -111,12 +112,12 @@ public class SpiderHandler extends BaseHandler implements LiveService.Iface {
 			client.classUpdate(className);
 	}
 
-	public void contestUpdate(ContestEvent event) throws TException {
+	public void contestUpdate(ContestId contest, ContestEvent event) throws TException {
 		// TODO: store updates!
 		System.out.println(event);
 		for (LiveService.Client client : clients.values())
 			try {
-				client.contestUpdate(event);
+				client.contestUpdate(contest, event);
 			} catch (TException e) {
 				//TODO: !
 				e.printStackTrace();
@@ -143,7 +144,7 @@ public class SpiderHandler extends BaseHandler implements LiveService.Iface {
 		return null;
 	}
 
-	public Map<String, String> getProperties() throws TException {
+	public List<PropertyEvent> getProperties() throws TException {
 		// TODO Auto-generated method stub
 		return null;
 	}

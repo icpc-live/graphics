@@ -11,22 +11,48 @@ import java.util.TreeMap;
 import org.apache.thrift.TException;
 
 import se.kth.livetech.communication.thrift.ContestEvent;
+import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.LogEvent;
 import se.kth.livetech.communication.thrift.Node;
 import se.kth.livetech.communication.thrift.NodeStatus;
 import se.kth.livetech.communication.thrift.PropertyEvent;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyHierarchy;
+import se.kth.livetech.properties.PropertyListener;
 
 public class BaseHandler implements LiveService.Iface {
-	protected Map<String, Long> loaded = new TreeMap<String, Long>();
-
+	PropertyHierarchy hierarchy;
+	ThreadLocal<Node> attachedNode;
+	LocalPropertyListener listener;
+	
+	private class LocalPropertyListener implements PropertyListener {
+		@Override
+		public void propertyChanged(IProperty changed) {
+			// TODO: send off the change to remote nodes
+		}
+	}
+	
+	public BaseHandler() {
+		hierarchy = new PropertyHierarchy();
+		attachedNode = new ThreadLocal<Node>();
+		listener = new LocalPropertyListener();
+		hierarchy.getProperty("").addPropertyListener(listener);
+	}
+	
 	public long time() throws TException {
 		return System.currentTimeMillis();
 	}
 
+	// TODO: move to class load utility class
+	protected Map<String, Long> loaded = new TreeMap<String, Long>();
+
+	// TODO: move to class load utility class
 	protected File getClassFile(String className) {
 		return new File("bin/" + className.replace('.', '/') + ".class");
 	}
+
+	// TODO: move to class load utility class
 	public static byte[] getBytesFromFile(File file) throws IOException {
 		InputStream is = new FileInputStream(file);
 		long length = file.length();
@@ -43,6 +69,7 @@ public class BaseHandler implements LiveService.Iface {
 		return bytes;
 	}
 
+	// TODO: move to class load utility class
 	public byte[] getClass(String className) throws TException {
 		File classFile = getClassFile(className);
 		try {
@@ -56,13 +83,12 @@ public class BaseHandler implements LiveService.Iface {
 	@Override
 	public void addNode(Node node) throws TException {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	public void attach(Node node) throws TException {
-		// TODO Auto-generated method stub
-		
+		this.attachedNode.set(node);
+		// TODO connect back
 	}
 
 	@Override
@@ -72,15 +98,15 @@ public class BaseHandler implements LiveService.Iface {
 	}
 
 	@Override
-	public void contestUpdate(ContestEvent event) throws TException {
+	public void contestUpdate(ContestId contest, ContestEvent event) throws TException {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void detach() throws TException {
-		// TODO Auto-generated method stub
-		
+		this.attachedNode.set(null);
+		// TODO Disconnect, remove, etc
 	}
 
 	@Override
@@ -96,7 +122,7 @@ public class BaseHandler implements LiveService.Iface {
 	}
 
 	@Override
-	public Map<String, String> getProperties() throws TException {
+	public List<PropertyEvent> getProperties() throws TException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -155,5 +181,22 @@ public class BaseHandler implements LiveService.Iface {
 		
 	}
 
-	//public abstract void classUpdate(String className) throws TException;
+	@Override
+	public List<ContestEvent> getContest(ContestId contest) throws TException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addContest(ContestId contest) throws TException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeContest(ContestId contest) throws TException {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

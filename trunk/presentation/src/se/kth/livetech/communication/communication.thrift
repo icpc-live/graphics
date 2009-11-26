@@ -9,7 +9,7 @@ namespace java se.kth.livetech.communication.thrift
 struct Node {
 	1: string name, // our client name id
 	2: string host, // machine's hostname
-	3: string address, // reverse lookup name
+	3: string address, // reverse lookup name, use this to connect
 	4: string ip, // ip address
 	5: i32 port, // listen port
 }

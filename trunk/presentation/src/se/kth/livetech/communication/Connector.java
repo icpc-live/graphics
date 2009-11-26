@@ -52,6 +52,7 @@ public class Connector {
 		server.serve();
 	}
 
+	// TODO: configurable backoff, handled by node registry
 	final int MIN_BACKOFF = 100;
 	final float F_BACKOFF = 2f;
 	final int MAX_BACKOFF = 10000;
@@ -77,6 +78,8 @@ public class Connector {
 			}
 		};
 	}
+	// TODO: to close a non-responsive client:
+	// client.getOutputProtocol().getTransport().close();
 
 	public static void main(String[] args) {
 		try {

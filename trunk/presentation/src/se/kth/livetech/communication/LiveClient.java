@@ -9,9 +9,7 @@ import uk.co.flamingpenguin.jewel.cli.Unparsed;
 
 public class LiveClient {
 	// Any class constructable from String may be used
-	// pattern="regexp"
-	// defaultValue="text"
-	// description="text"
+	// shortName, longName, pattern="regexp", defaultValue="text", description="text"
 	// @see http://jewelcli.sourceforge.net/apidocs/uk/co/flamingpenguin/jewel/cli/Option.html
 	public interface Options {
 		@Option(shortName="s",

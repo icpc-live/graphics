@@ -20,6 +20,7 @@ struct NodeStatus {
 	3: i64 lastPingIn,
 	4: i64 lastPingReply,
 	5: i32 ping,
+	6: i64 clockSkew,
 }
 
 struct ContestId {

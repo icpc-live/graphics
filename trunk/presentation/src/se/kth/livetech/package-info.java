@@ -21,4 +21,11 @@ package se.kth.livetech;
  * improve graphics, layout, animations,
  * 
  * 
+ * 
+ * Libraries:
+ * 
+ * Thrift, http://incubator.apache.org/thrift/
+ * Netbeans outline tree-table, http://bits.nbextras.org/dev/javadoc/org-netbeans-swing-outline/
+ * JewelCLI command line iterface, http://jewelcli.sourceforge.net/
+ * 
  */

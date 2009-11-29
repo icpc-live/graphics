@@ -21,23 +21,28 @@ import se.kth.livetech.communication.thrift.NodeId;
 
 /** Establish two-way connections between nodes. */
 public class Connector {
-	public final static int PORT = 9099;
+	public static int PORT = 9099;
+	
+	public static NodeId getLocalNode() {
+		NodeId localNode = new NodeId();
+		// TODO: localNode override
+	    try {
+			localNode.ip = InetAddress.getLocalHost().getHostAddress();
+			localNode.address = InetAddress.getLocalHost().getCanonicalHostName();
+			localNode.host = InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+		}
+		localNode.name = localNode.host;
+		localNode.port = PORT;
+		return localNode;
+	}
+	
 	public static LiveService.Client connect(String host, int port) throws TTransportException, TException {
 		TTransport transport = new TSocket(host, port);
 		TProtocol protocol = new TBinaryProtocol(transport);
 		LiveService.Client client = new LiveService.Client(protocol);
 		transport.open();
-		NodeId localnode = new NodeId();
-		// TODO: localnode override
-	    try {
-			localnode.ip = InetAddress.getLocalHost().getHostAddress();
-			localnode.address = InetAddress.getLocalHost().getCanonicalHostName();
-			localnode.host = InetAddress.getLocalHost().getHostName();
-		} catch (UnknownHostException e) {
-		}
-		localnode.name = localnode.host;
-		localnode.port = PORT;
-		client.attach(localnode);
+		client.attach(getLocalNode());
 		return client;
 	}
 

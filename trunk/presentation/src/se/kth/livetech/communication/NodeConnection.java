@@ -56,6 +56,7 @@ public class NodeConnection {
 
 				// Time sync every second
 				while (true) {
+					System.err.println("time");
 					try {
 						Thread.sleep(1000);
 					} catch (InterruptedException e) {
@@ -71,6 +72,7 @@ public class NodeConnection {
 						break;
 					}
 					long t1 = System.currentTimeMillis();
+					System.err.println("ping " + (t1 - t0));
 					NodeConnection.this.timeSync.ping(t0, remoteTime, t1);
 				}
 			}

@@ -28,6 +28,11 @@ public class LogSpeaker {
 		stream = new BufferedInputStream(new FileInputStream(logName));
 		listeners = new CopyOnWriteArrayList<AttrsUpdateListener>();
 	}
+	
+	public LogSpeaker(InputStream stream) {
+		this.stream = stream;
+		listeners = new CopyOnWriteArrayList<AttrsUpdateListener>();
+	}
 
 	public void addAttrsUpdateListener(AttrsUpdateListener listener) {
 		listeners.add(listener);

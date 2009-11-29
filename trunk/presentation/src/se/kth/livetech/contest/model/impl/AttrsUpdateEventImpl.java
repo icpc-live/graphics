@@ -87,8 +87,7 @@ public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 		s.append(type);
 		s.append('{');
 		for (String p : getProperties()) {
-			if (!p.equals("id"))
-				s.append(", ");
+			s.append(", ");
 			s.append(p);
 			s.append('=');
 			s.append(getProperty(p));

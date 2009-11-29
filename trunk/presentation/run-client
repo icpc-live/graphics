@@ -1,0 +1,1 @@
+java -cp lib/jewelcli-0.6.jar:lib/libthrift.jar:thrift/gen-java.jar:lib/slf4j-api-1.5.8.jar:lib/slf4j-simple-1.5.8.jar:bin/ se.kth.livetech.communication.LiveClient "$@"

@@ -3,11 +3,9 @@ package se.kth.livetech.contest.graphics;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-
 
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.presentation.graphics.Alignment;

@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.Transparency;
+import java.awt.geom.Ellipse2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -169,14 +170,23 @@ public class ShadedRectangle {
 		//DebugTrace.trace("Hits/misses " + hits/((double)(hits+misses)));
 	}
 
-	public static void drawShadedRoundRect(Graphics2D g, Color base, int x, int y, int w, int h, float r){
+	public static void drawShadedRoundRect(Graphics2D g, Color base, int x, int y, int w, int h, float r) {
 		Color light = Utility.shade(base, 0.8);
-		Color dark = base;
+		Color dark = Utility.shade(base, 0.4);
 		GradientPaint paint = new GradientPaint(0, y, light, 0, y+h, dark);
 		g.setPaint(paint);
 		RoundRectangle2D roundedRectangle = new RoundRectangle2D.Float(x, y, w, h, r, r);
         g.fill(roundedRectangle); 
 	}	
+
+	public static void drawShadedEllipse(Graphics2D g, Color base, int x, int y, int w, int h) {
+		Color light = Utility.shade(base, 0.8);
+		Color dark = Utility.shade(base, 0.4);
+		GradientPaint paint = new GradientPaint(0, y, light, 0, y+h, dark);
+		g.setPaint(paint);
+		Ellipse2D ellipse = new Ellipse2D.Float(x, y, w, h);
+        g.fill(ellipse);
+	}
 	
 	private static Image drawRoundRectCache(int w, int h, Paint c, Paint p2, String s) {
 		Image image = new BufferedImage(w, h, Transparency.TRANSLUCENT);

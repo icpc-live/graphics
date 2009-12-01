@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
 
 import javax.swing.JPanel;
 import javax.vecmath.Point3d;
@@ -29,10 +30,10 @@ public class BoxTest extends JPanel {
 			bs[i] = new Box<Integer>();
 		}
 		
-		Point3d p0 = new Point3d(getWidth() / 10, getHeight() / 10, 0);
-		Point3d p1 = new Point3d(9 * getWidth() / 10, getHeight() / 10, 0);
-		Point3d p2 = new Point3d(getWidth() / 10, 9 * getHeight() / 10, 0);
-		Point3d p3 = new Point3d(9 * getWidth() / 10, 9 * getHeight() / 10, 0);
+		Point2D p0 = new Point2D.Double(getWidth() / 10, getHeight() / 10);
+		Point2D p1 = new Point2D.Double(9 * getWidth() / 10, getHeight() / 10);
+		Point2D p2 = new Point2D.Double(getWidth() / 10, 9 * getHeight() / 10);
+		Point2D p3 = new Point2D.Double(9 * getWidth() / 10, 9 * getHeight() / 10);
 		
 		b0.set(p0, p2, 8 * getHeight() / 10 / N);
 		b1.set(p1, p3, 8 * getHeight() / 10 / N);
@@ -55,10 +56,10 @@ public class BoxTest extends JPanel {
 		for (int i = 0; i < N; ++i) {
 			Box<Integer> b = bs[i];
 			for (int j = 0; j < 4; ++j) {
-				Point3d p = b.getPosition(j);
+				Point2D p = b.getPosition(j);
 				double size = b.getSize(j), h = b.getH();
 				//ColoredTextBox c = new ColoredTextBox();
-				g.drawRect((int) (p.x - size / 2), (int) (p.y - h / 2), (int) size, (int) h);
+				g.drawRect((int) (p.getX() - size / 2), (int) (p.getY() - h / 2), (int) size, (int) h);
 			}
 		}
 	}

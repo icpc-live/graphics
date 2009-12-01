@@ -1,4 +1,4 @@
-package se.kth.livetech.contest.model.impl;
+package se.kth.livetech.contest.replay;
 
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
@@ -12,6 +12,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 
 import com.sun.org.apache.xml.internal.serialize.OutputFormat;
 import com.sun.org.apache.xml.internal.serialize.XMLSerializer;

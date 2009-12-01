@@ -1,4 +1,4 @@
-package se.kth.livetech.contest.model.impl;
+package se.kth.livetech.contest.replay;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -6,6 +6,9 @@ import java.util.Set;
 import se.kth.livetech.contest.model.Attrs;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.Team;
+import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
+import se.kth.livetech.contest.model.impl.ContestImpl;
+import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
 
 /**
  * ContestReplay updates a contest with AttrUpdates out of order. Run events are

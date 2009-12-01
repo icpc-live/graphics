@@ -19,14 +19,14 @@
  * {@link se.kth.livetech.contest.TeamScore} and
  * {@link se.kth.livetech.contest.ProblemScore}.</p>
  * 
- * <p>{@link se.kth.livetech.contest.impl.LogListener} writes a log file, which
- * {@link se.kth.livetech.contest.impl.LogSpeaker} reads.</p>
+ * <p>{@link se.kth.livetech.contest.replay.impl.LogListener} writes a log file, which
+ * {@link se.kth.livetech.contest.replay.impl.LogSpeaker} reads.</p>
  * 
- * <p>{@link se.kth.livetech.contest.impl.ContestPlayer}s replays
+ * <p>{@link se.kth.livetech.contest.replay.impl.ContestPlayer}s replays
  * {@link se.kth.livetech.contest.AttrsUpdateEvent}s.
- * {@link se.kth.livetech.contest.impl.ContestReplay} in order and
- * {@link se.kth.livetech.contest.impl.ContestReorder} reorders problem submissions.
- * {@link se.kth.livetech.contest.impl.TimeDelay}
+ * {@link se.kth.livetech.contest.replay.impl.ContestReplay} in order and
+ * {@link se.kth.livetech.contest.replay.impl.ContestReorder} reorders problem submissions.
+ * {@link se.kth.livetech.contest.replay.impl.TimeDelay}
  * replays contest updates with a delay.
  * </p>
  * 

@@ -8,7 +8,7 @@ public class ContestUpdateEventImpl implements ContestUpdateEvent {
 	Contest oldContest, newContest;
 	Attrs update;
 
-	ContestUpdateEventImpl(Contest oldContest, Attrs update, Contest newContest) {
+	public ContestUpdateEventImpl(Contest oldContest, Attrs update, Contest newContest) {
 		this.oldContest = oldContest;
 		this.update = update;
 		this.newContest = newContest;

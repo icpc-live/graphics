@@ -9,13 +9,9 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import se.kth.livetech.communication.NodeRegistry;
-import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdaterImpl;
-import se.kth.livetech.contest.model.impl.LogListener;
-import se.kth.livetech.contest.model.impl.LogSpeaker;
 
 public class KattisClient extends AttrsUpdaterImpl {
 	

@@ -1,4 +1,4 @@
-package se.kth.livetech.contest.model.impl;
+package se.kth.livetech.contest.replay;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;

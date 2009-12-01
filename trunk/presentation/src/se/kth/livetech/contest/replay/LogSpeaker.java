@@ -1,4 +1,4 @@
-package se.kth.livetech.contest.model.impl;
+package se.kth.livetech.contest.replay;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -15,6 +15,8 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
+import se.kth.livetech.contest.model.impl.AttrsUpdaterImpl;
 
 /** Reads a log file, report it to {@link AttrsUpdateListener}s. */
 public class LogSpeaker extends AttrsUpdaterImpl {

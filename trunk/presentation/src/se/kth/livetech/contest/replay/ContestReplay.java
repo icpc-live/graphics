@@ -1,7 +1,9 @@
-package se.kth.livetech.contest.model.impl;
+package se.kth.livetech.contest.replay;
 
 import se.kth.livetech.contest.model.Attrs;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
+import se.kth.livetech.contest.model.impl.ContestImpl;
+import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
 
 /** ContestReplay updates a contest with AttrUpdates in order. */
 public class ContestReplay extends ContestPlayer {

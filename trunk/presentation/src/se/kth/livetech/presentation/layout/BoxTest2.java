@@ -6,9 +6,9 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.Point2D;
 
 import javax.swing.JPanel;
-import javax.vecmath.Point3d;
 
 import se.kth.livetech.contest.graphics.ProblemScoreRenderer;
 import se.kth.livetech.contest.model.Contest;
@@ -36,10 +36,10 @@ public class BoxTest2 extends JPanel {
 		Box<Integer> br0 = new Box<Integer>();
 		Box<Integer> br1 = new Box<Integer>();
 
-		Point3d s0 = new Point3d(getWidth() / 10, getHeight() / 10, 0);
-		Point3d t0 = new Point3d(getWidth() / 10, 9 * getHeight() / 10, 0);
-		Point3d s1 = new Point3d(9 * getWidth() / 10, getHeight() / 10, 0);
-		Point3d t1 = new Point3d(9 * getWidth() / 10, 9 * getHeight() / 10, 0);
+		Point2D s0 = new Point2D.Double(getWidth() / 10, getHeight() / 10);
+		Point2D t0 = new Point2D.Double(getWidth() / 10, 9 * getHeight() / 10);
+		Point2D s1 = new Point2D.Double(9 * getWidth() / 10, getHeight() / 10);
+		Point2D t1 = new Point2D.Double(9 * getWidth() / 10, 9 * getHeight() / 10);
 
 		int N = 20; // c.getTeams().size();
 		br0.set(s0, t0, (double) 8 * getHeight() / 10 / N);
@@ -62,8 +62,8 @@ public class BoxTest2 extends JPanel {
 		    int i = team.getId();
 		    //int rank = c.getTeamRank(i);
 
-			Point3d s = br0.getPosition(i);
-			Point3d t = br1.getPosition(i);
+			Point2D s = br0.getPosition(i);
+			Point2D t = br1.getPosition(i);
 
 			g.setColor(new Color(191, 191, 255));
 			//g.drawLine((int) s.x, (int) s.y, (int) t.x, (int) t.y); 
@@ -71,7 +71,7 @@ public class BoxTest2 extends JPanel {
 			b.set(s, t, br0.getSize(i));
 
 			for (int j : c.getProblems()) {
-				Point3d p = b.getPosition(j);
+				Point2D p = b.getPosition(j);
 				double dw = b.getSize(i), dh = b.getH();
 				int w = (int) dw, h = (int) dh;
 				Dimension d = new Dimension(w, h);
@@ -80,10 +80,10 @@ public class BoxTest2 extends JPanel {
 				Renderable psr = new ProblemScoreRenderer(ps);
 				boolean has = renderCache.hasImageFor(psr, d);
 				Image img = renderCache.getImageFor(psr, d);
-				g.drawImage(img, (int) (p.x - w / 2), (int) (p.y - h / 2), this);
+				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
 				g.setColor(Color.RED);
 				if (!has)
-					g.drawLine((int) (p.x - w / 2), (int) (p.y + h / 2), (int) (p.x + w / 2), (int) (p.y - h / 2));
+					g.drawLine((int) (p.getX() - w / 2), (int) (p.getY() + h / 2), (int) (p.getX() + w / 2), (int) (p.getY() - h / 2));
 			}
 		}
 	}

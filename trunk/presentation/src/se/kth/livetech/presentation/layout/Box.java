@@ -1,11 +1,11 @@
 package se.kth.livetech.presentation.layout;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.vecmath.Point3d;
 
 public class Box<T> {
 	private static class Part<T> {
@@ -19,11 +19,11 @@ public class Box<T> {
 		boolean fixed;
 	}
 	private static class Placement {
-		Point3d p;
+		Point2D p;
 		double a;
-		public Placement() { p = new Point3d(); }
+		public Placement() { p = new Point2D.Double(); }
 	}
-	Point3d s, t;
+	Point2D s, t;
 	double d, h;
 	private List<Part<T>> parts;
 	private Map<T, Placement> placements;
@@ -34,7 +34,7 @@ public class Box<T> {
 		placements = new HashMap<T, Placement>();
 		valid = false;
 	}
-	public void set(Point3d s, Point3d t, double h) {
+	public void set(Point2D s, Point2D t, double h) {
 		this.s = s;
 		this.t = t;
 		this.d = s.distance(t);
@@ -46,7 +46,7 @@ public class Box<T> {
 		parts.add(new Part<T>(part, weight, fixed));
 		valid = false;
 	}
-	public Point3d getPosition(T part) {
+	public Point2D getPosition(T part) {
 		if (!valid)
 			validate();
 		return placements.get(part).p;
@@ -76,7 +76,11 @@ public class Box<T> {
 				p = new Placement();
 				placements.put(part.part, p);
 			}
-			p.p.interpolate(s, t, sum + a / 2);
+			double tf = sum + a / 2, sf = 1 - tf;
+			p.p.setLocation(
+					sf * s.getX() + tf * t.getX(),
+					sf * s.getY() + tf * t.getY());
+			// TODO 3D: p.p.interpolate(s, t, sum + a / 2);
 			p.a = a;
 			sum += a;
 		}

@@ -27,9 +27,10 @@ public class BoxTest2 extends JPanel {
 	public BoxTest2(Contest c, RenderCache renderCache) {
 		this.c = c;
 		this.renderCache = renderCache;
-		this.setBackground(Color.BLUE);
-		this.setPreferredSize(new Dimension(1024, 768));
+		this.setBackground(Color.BLUE.darker().darker());
+		this.setPreferredSize(new Dimension(1024, 576));
 	}
+	boolean firstPaint = true;
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
 		Graphics2D g = (Graphics2D) gr;
@@ -72,10 +73,12 @@ public class BoxTest2 extends JPanel {
 			b.set(s, t, br0.getSize(i));
 			
 			Renderable rfr;
+			Color row1 = new Color(63, 63, 191); // Color.WHITE
+			Color row2 = new Color(31, 31, 127); // Color.PINK
 			if((r&1) == 1)
-				rfr = new RowFrameRenderer(Color.WHITE, Color.PINK);
-			else 
-				rfr = new RowFrameRenderer(Color.PINK, Color.WHITE);
+				rfr = new RowFrameRenderer(row1, row2);
+			else
+				rfr = new RowFrameRenderer(row2, row1);
 			
 			Dimension d = new Dimension((int)(s1.getX()-s0.getX()), (int)b.getH() + 1);
 			Image img = renderCache.getImageFor(rfr, d);
@@ -108,11 +111,13 @@ public class BoxTest2 extends JPanel {
 				boolean has = renderCache.hasImageFor(psr, d);
 				Image img = renderCache.getImageFor(psr, d);
 				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
-				g.setColor(Color.RED);
-				if (!has)
+				if (!has && !firstPaint) {
+					g.setColor(new Color(255, 0, 0, 63));
 					g.drawLine((int) (p.getX() - w / 2), (int) (p.getY() + h / 2), (int) (p.getX() + w / 2), (int) (p.getY() - h / 2));
+				}
 			}
 		}
+		firstPaint = false;
 	}
 	private static class IconRenderer implements Renderable {
 		public void render(Graphics2D g, Dimension d) {

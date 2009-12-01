@@ -58,7 +58,7 @@ public class LiveClient {
 					nodeRegistry.add(remoteNode);
 				}
 			}
-			LiveService.Iface handler = new BaseHandler();
+			LiveService.Iface handler = new BaseHandler(nodeRegistry);
 			Connector.listen(handler, Connector.PORT, true);
 		} catch (ArgumentValidationException e) {
 			System.err.println(e.getMessage());

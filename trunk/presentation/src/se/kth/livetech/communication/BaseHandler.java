@@ -21,11 +21,13 @@ import se.kth.livetech.communication.thrift.PropertyEvent;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.PropertyListener;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class BaseHandler implements LiveService.Iface {
 	PropertyHierarchy hierarchy;
 	ThreadLocal<NodeId> attachedNode;
 	LocalPropertyListener listener;
+	NodeRegistry registry;
 	
 	private class LocalPropertyListener implements PropertyListener {
 		@Override
@@ -35,10 +37,16 @@ public class BaseHandler implements LiveService.Iface {
 	}
 	
 	public BaseHandler() {
+		// TODO: Needed by SpiderHandler and maybe other legacy stuff
+		throw new NotImplementedException();
+	}
+	
+	public BaseHandler(NodeRegistry registry) {
 		hierarchy = new PropertyHierarchy();
 		attachedNode = new ThreadLocal<NodeId>();
 		listener = new LocalPropertyListener();
 		hierarchy.getProperty("").addPropertyListener(listener);
+		this.registry = registry;
 	}
 	
 	public long time() throws TException {

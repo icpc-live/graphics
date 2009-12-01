@@ -4,9 +4,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
+
 
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.presentation.graphics.Renderable;
+import se.kth.livetech.presentation.graphics.ShadedRectangle;
+import se.kth.livetech.presentation.graphics.Utility;
+import sun.tools.jstat.Alignment;
 
 public class ProblemScoreRenderer implements Renderable {
 	ProblemScore problemScore;
@@ -31,23 +36,24 @@ public class ProblemScoreRenderer implements Renderable {
 		int n = this.problemScore.getAttempts();
 		n += this.problemScore.getPendings();
 		String text = "" + n;
+		Color baseColor;
 		if (this.problemScore.isSolved()) {
-			g.setColor(Color.GREEN);
+			baseColor = Color.GREEN;
 			text += " / " + this.problemScore.getSolutionTime();
 		}
 		else if (this.problemScore.isPending()) {
-			g.setColor(Color.BLUE.brighter());
+			baseColor = Color.BLUE.brighter();
 		}
 		else if (this.problemScore.getAttempts() > 0) {
-			g.setColor(Color.RED);
+			baseColor = Color.RED;
 		}
 		else {
-			g.setColor(new Color(0, 0, 0, 0));
+			baseColor = new Color(0, 0, 0, 0);
 		}
-		g.fillRect(0, 0, d.width, d.height);
+		//g.fillRect(0, 0, d.width, d.height);
+		ShadedRectangle.drawShadedRoundRect(g, baseColor, 0, 0, d.width, d.height, d.height/3f);
 		g.setColor(Color.BLACK);
-		//g.drawLine(0, 0, 4, 5);
-
+		
 		double base = .8, asc = .8;
 		// scale the font to be based at base, normal height asc,
 		// as a factor of total height
@@ -59,5 +65,6 @@ public class ProblemScoreRenderer implements Renderable {
 		fm = g.getFontMetrics(); // TODO: text scaling etc...
 		int width = fm.stringWidth(text);
 		g.drawString(text, -width / 2f, 0);
+	//	Utility.drawString3D(g, text, (Rectangle2D)new Rectangle2D.Float(0, 0, d.width, d.height), g.getFont(), Alignment.CENTER);
 	}
 }

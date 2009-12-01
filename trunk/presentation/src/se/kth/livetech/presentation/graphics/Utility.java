@@ -23,7 +23,8 @@ public class Utility {
 		return new Color(
 				shade(base.getRed(), a),
 				shade(base.getGreen(), a),
-				shade(base.getBlue(), a));
+				shade(base.getBlue(), a),
+				base.getAlpha());
 	}
 
 	public static GradientPaint shade(Rectangle2D bounds, Color base, double a1, double a2) {

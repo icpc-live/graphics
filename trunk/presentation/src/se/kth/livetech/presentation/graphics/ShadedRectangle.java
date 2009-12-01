@@ -10,6 +10,7 @@ import java.awt.RenderingHints;
 import java.awt.Transparency;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
@@ -168,6 +169,15 @@ public class ShadedRectangle {
 		//DebugTrace.trace("Hits/misses " + hits/((double)(hits+misses)));
 	}
 
+	public static void drawShadedRoundRect(Graphics2D g, Color base, int x, int y, int w, int h, float r){
+		Color light = Utility.shade(base, 0.8);
+		Color dark = base;
+		GradientPaint paint = new GradientPaint(0, y, light, 0, y+h, dark);
+		g.setPaint(paint);
+		RoundRectangle2D roundedRectangle = new RoundRectangle2D.Float(x, y, w, h, r, r);
+        g.fill(roundedRectangle); 
+	}	
+	
 	private static Image drawRoundRectCache(int w, int h, Paint c, Paint p2, String s) {
 		Image image = new BufferedImage(w, h, Transparency.TRANSLUCENT);
 		Graphics2D g = (Graphics2D) image.getGraphics();

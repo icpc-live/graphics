@@ -5,8 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
@@ -16,35 +14,18 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 
 /** Reads a log file, report it to {@link AttrsUpdateListener}s. */
-public class LogSpeaker {
+public class LogSpeaker extends AttrsUpdaterImpl {
 	InputStream stream;
-	List<AttrsUpdateListener> listeners;
 
 	public LogSpeaker(String logName) throws FileNotFoundException {
 		stream = new BufferedInputStream(new FileInputStream(logName));
-		listeners = new CopyOnWriteArrayList<AttrsUpdateListener>();
 	}
 	
 	public LogSpeaker(InputStream stream) {
 		this.stream = stream;
-		listeners = new CopyOnWriteArrayList<AttrsUpdateListener>();
-	}
-
-	public void addAttrsUpdateListener(AttrsUpdateListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeAttrsUpdateListener(AttrsUpdateListener listener) {
-		listeners.remove(listener);
-	}
-
-	public void send(AttrsUpdateEvent e) {
-		for (AttrsUpdateListener listener : listeners)
-			listener.attrsUpdated(e);
 	}
 
 	public void parse() throws IOException {
@@ -73,9 +54,11 @@ public class LogSpeaker {
 							new Error(qName + " != contest").printStackTrace();
 						break;
 					case 2:
-						// TODO: Check what the old code actually did here.
-						// Might we get the time somehow?
-						attrs = new AttrsUpdateEventImpl(0, qName);
+						long time = 0;
+						String timeString = attributes.getValue("time");
+						if(timeString!=null)
+							time = Long.parseLong(timeString);
+						attrs = new AttrsUpdateEventImpl(time, qName);
 						break;
 					case 3:
 						name = qName;
@@ -108,6 +91,13 @@ public class LogSpeaker {
 						break;
 					default:
 						new Error("invalid xml depth " + (level+1)).printStackTrace();
+					}
+				}
+
+				@Override
+				public void endDocument() throws SAXException {
+					if(level!=0) {
+						new Error("XML file ended without closing all tags at level "+level).printStackTrace();
 					}
 				}
 

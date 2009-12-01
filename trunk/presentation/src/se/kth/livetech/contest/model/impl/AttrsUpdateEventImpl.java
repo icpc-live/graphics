@@ -38,6 +38,9 @@ public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 
 	public void setProperty(String name, String value) {
 		update.put(name, value);
+		if(time==0 && name.equals("timestamp") && value != null) {
+			time = Math.round(Double.parseDouble(value)*1000);
+		}
 	}
 
 	private Map<String, String> mergeProperties(Attrs attrs) {

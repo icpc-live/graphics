@@ -4,40 +4,25 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
-import java.util.concurrent.CopyOnWriteArrayList;
 
+import se.kth.livetech.communication.NodeRegistry;
+import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.contest.model.impl.AttrsUpdaterImpl;
+import se.kth.livetech.contest.model.impl.LogListener;
 import se.kth.livetech.contest.model.impl.LogSpeaker;
 
-public class KattisClient {
+public class KattisClient extends AttrsUpdaterImpl {
 	
 	private String kattisBaseUrl = "http://icpc-dev.netlab.csc.kth.se/python/events.py";
-	private Vector<AttrsUpdateEvent> attrsUpdateEvents= new Vector<AttrsUpdateEvent>();
 	private int offset = 0;
 	private static final int REFRESH_DELAY = 2000; // In milliseconds
-	private List<AttrsUpdateListener> listeners;
-	
-	public KattisClient() {
-		listeners = new CopyOnWriteArrayList<AttrsUpdateListener>();
-	}
-	
-	public void addAttrsUpdateListener(AttrsUpdateListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeAttrsUpdateListener(AttrsUpdateListener listener) {
-		listeners.remove(listener);
-	}
-
-	public void send(AttrsUpdateEvent e) {
-		for (AttrsUpdateListener listener : listeners)
-			listener.attrsUpdated(e);
-	}
+	private Timer timer = null;
 	
 	public void readFromKattis() {
 		try {
@@ -52,7 +37,6 @@ public class KattisClient {
 							offset = Math.max(Integer.parseInt(offsetString), offset);
 						}
 					}
-					attrsUpdateEvents.add(e);
 					send(e);
 				}
 			});
@@ -70,15 +54,26 @@ public class KattisClient {
 	public void resetOffset(int offset) {
 		this.offset = offset;
 	}
-
-	public static void main(String[] args) {
-		final KattisClient replayClient = new KattisClient();
-		Timer timer = new Timer();
+	
+	public void startReading() {
+		timer = new Timer();
 		timer.schedule(new TimerTask() {
-				public void run() {
-					replayClient.readFromKattis();
-					System.out.println(replayClient.offset);
-				}
-			}, REFRESH_DELAY, REFRESH_DELAY);
+			public void run() {
+				readFromKattis();
+				System.out.println(offset);
+				System.out.println(new SimpleDateFormat("HH:mm:ss.S").format(new Date()));
+			}
+		}, REFRESH_DELAY, REFRESH_DELAY);
 	}
+	
+	public void stopReading() {
+		timer.cancel();
+	}
+
+/*	public static void main(String[] args) {
+		final KattisClient kattisClient = new KattisClient();
+		kattisClient.startReading();
+		final LogListener log = new LogListener("kattislog.txt");
+		kattisClient.addAttrsUpdateListener(log);
+	}*/
 }

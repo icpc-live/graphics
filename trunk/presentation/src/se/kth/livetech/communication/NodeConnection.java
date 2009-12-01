@@ -5,8 +5,10 @@ import org.apache.thrift.TException;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.communication.thrift.NodeStatus;
+import se.kth.livetech.contest.model.AttrsUpdateEvent;
+import se.kth.livetech.contest.model.AttrsUpdateListener;
 
-public class NodeConnection {
+public class NodeConnection implements AttrsUpdateListener {
 	private NodeId id;
 	private NodeStatus status;
 	private TimeSync timeSync;
@@ -102,5 +104,11 @@ public class NodeConnection {
 
 	public synchronized NodeStatus getStatus() {
 		return status;
+	}
+
+	@Override
+	public void attrsUpdated(AttrsUpdateEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -55,7 +55,7 @@ public class LiveClient {
 					NodeId remoteNode = new NodeId();
 					remoteNode.address = hostPort.host;
 					remoteNode.port = hostPort.port;
-					nodeRegistry.add(remoteNode);
+					nodeRegistry.addNode(remoteNode);
 				}
 			}
 			LiveService.Iface handler = new BaseHandler(nodeRegistry);

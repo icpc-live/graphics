@@ -92,7 +92,6 @@ public class Utility {
 		g.scale(rat, 1);
 		drawString3D(g, s, 0, 0);
 		g.setTransform(gtrans);
-		
 /*		
 		if (width <= rect.getWidth())
 			drawString3D(g, s, (float) x, (float) y);

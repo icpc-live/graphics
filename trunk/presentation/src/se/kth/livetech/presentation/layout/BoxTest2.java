@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ProblemScoreRenderer;
+import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
@@ -56,7 +57,33 @@ public class BoxTest2 extends JPanel {
 		Box<Integer> b = new Box<Integer>();
 		for (int j : c.getProblems())
 			b.add(j, 1, false);
+		
+		for (int r = 0; r < c.getTeams().size(); ++r) {
+			Team team = c.getRankedTeam(r + 1);
+		    int i = team.getId();
+		    //int rank = c.getTeamRank(i);
 
+			Point2D s = br0.getPosition(i);
+			Point2D t = br1.getPosition(i);
+
+			g.setColor(new Color(191, 191, 255));
+			//g.drawLine((int) s.x, (int) s.y, (int) t.x, (int) t.y); 
+
+			b.set(s, t, br0.getSize(i));
+			
+			Renderable rfr;
+			if((r&1) == 1)
+				rfr = new RowFrameRenderer(Color.WHITE, Color.PINK);
+			else 
+				rfr = new RowFrameRenderer(Color.PINK, Color.WHITE);
+			
+			Dimension d = new Dimension((int)(s1.getX()-s0.getX()), (int)b.getH() + 1);
+			Image img = renderCache.getImageFor(rfr, d);
+			Point2D p = b.getPosition(0);
+			p.setLocation(p.getX() - b.getSize(0) / 2, p.getY() - b.getH() / 2);
+			g.drawImage(img, (int)p.getX(), (int)p.getY(), this);
+		}
+		
 		for (int r = 0; r < c.getTeams().size(); ++r) {
 		    Team team = c.getRankedTeam(r + 1);
 		    int i = team.getId();
@@ -69,7 +96,7 @@ public class BoxTest2 extends JPanel {
 			//g.drawLine((int) s.x, (int) s.y, (int) t.x, (int) t.y); 
 
 			b.set(s, t, br0.getSize(i));
-
+			
 			for (int j : c.getProblems()) {
 				Point2D p = b.getPosition(j);
 				double dw = b.getSize(i), dh = b.getH();

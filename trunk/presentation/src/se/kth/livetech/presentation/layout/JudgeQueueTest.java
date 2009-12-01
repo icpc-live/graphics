@@ -18,6 +18,7 @@ import se.kth.livetech.util.Frame;
 public class JudgeQueueTest extends JPanel {
 	final int N = 20;
 	final int P = 10;
+	final int T = 17;
 	RenderCache renderCache = new RenderCache();
 	int[] state = new int[N];
 	public JudgeQueueTest() {
@@ -30,16 +31,24 @@ public class JudgeQueueTest extends JPanel {
 			// TODO More realistic judge simulation...
 			while (true) {
 				try {
-					sleep((int) (Math.random() * 7));
+					sleep((int) (Math.random() * T));
 				} catch (InterruptedException e) { }
-				for (int i = 0; i < N; ++i)
-					if (state[i] < P) {
-						int p = (int) (Math.random() * P * N);
-						if (p <= state[i])
+				for (int i = 0; i < N; ++i) {
+					int p = (int) (Math.random() * P * N * 100);
+					if (state[i] < 0 && p == 0)
+						state[i] = P + 5;
+					if (state[i] < P + 5) {
+						if (p < 10 && state[i] != 0)
+							state[i] = -state[i];
+						else if (p <= state[i] * 100)
 							++state[i];
 					}
-					else
-						state[i] = 0;
+					else {
+						for (int j = i + 1; j < N; ++j)
+							state[j - 1] = state[j];
+						state[N - 1] = 0;
+					}
+				}
 				repaint();
 			}
 		}
@@ -88,10 +97,12 @@ public class JudgeQueueTest extends JPanel {
 				//g.drawRect((int) (p.getX() - w / 2), (int) (p.getY() - h / 2), (int) w, (int) h);
 				Dimension d = new Dimension((int) w, (int) h);
 				TestcaseStatusRenderer.Status status;
-				if (j < state[i])
+				if (j < Math.abs(state[i]))
 					status = TestcaseStatusRenderer.Status.passed;
 				else if (j == state[i])
 					status = TestcaseStatusRenderer.Status.active;
+				else if (j == -state[i])
+					status = TestcaseStatusRenderer.Status.failed;
 				else
 					status = TestcaseStatusRenderer.Status.none;
 				Renderable psr = new TestcaseStatusRenderer(status);
@@ -106,6 +117,6 @@ public class JudgeQueueTest extends JPanel {
 		}
 	}
 	public static void main(String[] args) {
-		new Frame("BoxTest", new JudgeQueueTest());
+		new Frame("JudgeQueueTest", new JudgeQueueTest());
 	}
 }

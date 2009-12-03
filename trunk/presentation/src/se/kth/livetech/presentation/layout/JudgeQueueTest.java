@@ -9,7 +9,9 @@ import java.awt.geom.Point2D;
 
 import javax.swing.JPanel;
 
+import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.TestcaseStatusRenderer;
+import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.util.Frame;
@@ -90,6 +92,18 @@ public class JudgeQueueTest extends JPanel {
 		g.setColor(new Color(191, 191, 255));
 		for (int i = 0; i < N; ++i) {
 			Box<Integer> b = bs[i];
+			{
+				final int j = -1;
+				Point2D p = b.getPosition(j);
+				double w = b.getSize(j), h = b.getH();
+				//ColoredTextBox c = new ColoredTextBox();
+				//g.drawRect((int) (p.getX() - w / 2), (int) (p.getY() - h / 2), (int) w, (int) h);
+				Dimension d = new Dimension((int) w, (int) h);
+				// TODO: team name should be in a TeamSubmissionState...
+				Renderable r = new ColoredTextBox("team" + i, ContentProvider.getTeamNameStyle());
+				Image img = renderCache.getImageFor(r, d);
+				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
+			}
 			for (int j = 0; j < P; ++j) {
 				Point2D p = b.getPosition(j);
 				double w = b.getSize(j), h = b.getH();

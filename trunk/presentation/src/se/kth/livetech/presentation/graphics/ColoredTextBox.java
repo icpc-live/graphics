@@ -82,14 +82,16 @@ public class ColoredTextBox implements Renderable {
 	}
 	public void render(Graphics2D g, Dimension d) {
 		Color base = style.getColor();
-		switch (style.getShape()) {
-		default:
-		case roundRect:
-			ShadedRectangle.drawShadedRoundRect(g, base, 0, 0, d.width, d.height, d.height/3f);
-			break;
-		case ellipse:
-			ShadedRectangle.drawShadedEllipse(g, base, 0, 0, d.width, d.height);
-			break;
+		if (base != null) {
+			switch (style.getShape()) {
+			default:
+			case roundRect:
+				ShadedRectangle.drawShadedRoundRect(g, base, 0, 0, d.width, d.height, d.height/3f);
+				break;
+			case ellipse:
+				ShadedRectangle.drawShadedEllipse(g, base, 0, 0, d.width, d.height);
+				break;
+			}
 		}
 
 		g.setColor(Color.BLACK);

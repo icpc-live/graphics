@@ -1,7 +1,6 @@
 package se.kth.livetech.contest.graphics;
 
 import java.awt.Color;
-import java.awt.Font;
 
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
@@ -9,11 +8,13 @@ import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 
 public class ContentProvider {
-	private static final Font TEAM_FONT = new Font("Helvetica", Font.PLAIN,  22);
-
 	public static String getRankText(Contest contest, Team team) {
 		// TODO "" + (TeamScore) teamScore.getRank();
 		return "" + contest.getTeamRank(team.getId());
+	}
+	
+	public static ColoredTextBox.Style getTeamNameStyle() {
+		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect);
 	}
 
 	public static String getProblemScoreText(ProblemScore problemScore) {

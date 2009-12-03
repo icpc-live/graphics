@@ -4,7 +4,7 @@ import java.lang.ref.*;
 import java.util.*;
 import java.io.Serializable;
 
-public class SoftHashMap <K, V> extends AbstractMap<K, V> implements Serializable {
+public class SoftHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
 	/** The internal HashMap that will hold the SoftReference. */
 	private final Map<K, SoftReference<V>> hash = new HashMap<K, SoftReference<V>>();
 	private final Map<SoftReference<V>, K> reverseLookup = new HashMap<SoftReference<V>, K>();

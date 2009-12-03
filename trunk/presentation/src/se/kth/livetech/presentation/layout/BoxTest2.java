@@ -10,13 +10,14 @@ import java.awt.geom.Point2D;
 
 import javax.swing.JPanel;
 
-import se.kth.livetech.contest.graphics.ProblemScoreRenderer;
+import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.impl.TestContest;
+import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.util.Frame;
@@ -107,7 +108,10 @@ public class BoxTest2 extends JPanel {
 				Dimension d = new Dimension(w, h);
 				TeamScore ts = c.getTeamScore(i);
 				ProblemScore ps = ts.getProblemScore(j);
-				Renderable psr = new ProblemScoreRenderer(ps);
+				//Renderable psr = new ProblemScoreRenderer(ps);
+				String text = ContentProvider.getProblemScoreText(ps);
+				ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
+				ColoredTextBox psr = new ColoredTextBox(text, style);
 				boolean has = renderCache.hasImageFor(psr, d);
 				Image img = renderCache.getImageFor(psr, d);
 				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);

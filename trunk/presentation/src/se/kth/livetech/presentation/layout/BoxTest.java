@@ -7,7 +7,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 
 import javax.swing.JPanel;
-import javax.vecmath.Point3d;
 
 import se.kth.livetech.util.Frame;
 

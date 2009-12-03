@@ -171,8 +171,8 @@ public class ShadedRectangle {
 	}
 
 	public static void drawShadedRoundRect(Graphics2D g, Color base, int x, int y, int w, int h, float r) {
-		Color light = Utility.shade(base, 0.8);
-		Color dark = Utility.shade(base, 0.4);
+		Color light = Utility.shade(base, 0.7);
+		Color dark = Utility.shade(base, 0.45);
 		GradientPaint paint = new GradientPaint(0, y, light, 0, y+h, dark);
 		g.setPaint(paint);
 		RoundRectangle2D roundedRectangle = new RoundRectangle2D.Float(x, y, w, h, r, r);

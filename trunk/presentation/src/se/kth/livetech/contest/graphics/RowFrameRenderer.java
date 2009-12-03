@@ -10,7 +10,7 @@ import se.kth.livetech.presentation.graphics.Renderable;
 
 //TODO: make hashable
 public class RowFrameRenderer implements Renderable{
-	Color color1; 
+	Color color1;
 	Color color2;
 	public RowFrameRenderer(Color color1, Color color2){
 		this.color1 = color1;

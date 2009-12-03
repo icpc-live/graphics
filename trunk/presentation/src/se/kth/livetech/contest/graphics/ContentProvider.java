@@ -10,7 +10,6 @@ import se.kth.livetech.presentation.graphics.ColoredTextBox;
 
 public class ContentProvider {
 	private static final Font TEAM_FONT = new Font("Helvetica", Font.PLAIN,  22);
-	private static final Font PROBLEM_SCORE_FONT = new Font("Helvetica", Font.PLAIN,  22);
 
 	public static String getRankText(Contest contest, Team team) {
 		// TODO "" + (TeamScore) teamScore.getRank();
@@ -34,16 +33,24 @@ public class ContentProvider {
 		return text;
 	}
 
-	private static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 	private static class ProblemScoreStyle extends ColoredTextBox.BaseStyle {
 		public ProblemScoreStyle(Color base) {
-			super(base, PROBLEM_SCORE_FONT, Shape.roundRect);
+			super(base, ICPCFonts.PROBLEM_SCORE_FONT, Shape.roundRect);
 		}
 	}
-	private static final ProblemScoreStyle SOLVED = new ProblemScoreStyle(Color.GREEN);
-	private static final ProblemScoreStyle PENDING = new ProblemScoreStyle(Color.BLUE);
-	private static final ProblemScoreStyle FAILED = new ProblemScoreStyle(Color.RED);
-	private static final ProblemScoreStyle NONE = new ProblemScoreStyle(TRANSPARENT);
+	private static ProblemScoreStyle psStyle(Color base) {
+		return new ProblemScoreStyle(base);
+	}
+	private static final ProblemScoreStyle SOLVED;
+	private static final ProblemScoreStyle PENDING;
+	private static final ProblemScoreStyle FAILED;
+	private static final ProblemScoreStyle NONE;
+	static {
+		SOLVED = psStyle(ICPCColors.SOLVED_COLOR);
+		PENDING = psStyle(ICPCColors.PENDING_COLOR);
+		FAILED = psStyle(ICPCColors.FAILED_COLOR);
+		NONE = psStyle(ICPCColors.TRANSPARENT);
+	}
 	public static ColoredTextBox.Style getProblemScoreStyle(ProblemScore problemScore) {
 		if (problemScore.isSolved()) {
 			return SOLVED;

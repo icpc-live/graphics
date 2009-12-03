@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ContentProvider;
+import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
@@ -74,8 +75,8 @@ public class BoxTest2 extends JPanel {
 			b.set(s, t, br0.getSize(i));
 			
 			Renderable rfr;
-			Color row1 = new Color(63, 63, 191); // Color.WHITE
-			Color row2 = new Color(31, 31, 127); // Color.PINK
+			Color row1 = ICPCColors.BG_COLOR_1;
+			Color row2 = ICPCColors.BG_COLOR_2;
 			if((r&1) == 1)
 				rfr = new RowFrameRenderer(row1, row2);
 			else

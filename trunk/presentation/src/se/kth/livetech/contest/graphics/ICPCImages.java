@@ -3,6 +3,8 @@
  */
 package se.kth.livetech.contest.graphics;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -43,6 +45,16 @@ public class ICPCImages {
 	
 	private static String IMAGE_ROOT = "images/";
 
+	private static BufferedImage NO_IMAGE;
+	
+	static {
+		NO_IMAGE = new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = (Graphics2D) NO_IMAGE.getGraphics();
+		g.setColor(Color.RED);
+		g.drawLine(1, 1, 3, 3);
+		g.drawLine(1, 3, 3, 1);
+	}
+	
 	private static BufferedImage[] images;
 
 	private static Map<Integer, BufferedImage> teamLogos = new HashMap<Integer, BufferedImage>();
@@ -93,6 +105,8 @@ public class ICPCImages {
 			DebugTrace.trace("Error loading image: " + e);
 			if (i != 0)
 				teamLogos.put(i, teamLogos.get(0));
+			else
+				teamLogos.put(0, NO_IMAGE);
 		}
 	}
 
@@ -102,6 +116,7 @@ public class ICPCImages {
 			flags.put(countryCode, flag);
 		} catch (Exception e) {
 			DebugTrace.trace("Error loading flag: " + countryCode);
+			flags.put(countryCode, NO_IMAGE);
 		}
 	}
 

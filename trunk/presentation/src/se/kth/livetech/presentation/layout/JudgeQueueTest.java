@@ -71,33 +71,37 @@ public class JudgeQueueTest extends JPanel {
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
 		for (int i = 0; i < N; ++i) {
-			Color row1 = ICPCColors.BG_COLOR_1;
-			Color row2 = ICPCColors.BG_COLOR_2;
-			Renderable back;
-			if (i % 2 == 0)
-				back = new RowFrameRenderer(row1, row2);
-			else
-				back = new RowFrameRenderer(row2, row1);
+			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
 
-			PartitionedRowRenderer<Integer> r =
-				new PartitionedRowRenderer<Integer>(Optional.v(back));
+			{ // Background
+				Color row1 = ICPCColors.BG_COLOR_1;
+				Color row2 = ICPCColors.BG_COLOR_2;
+				if (i % 2 == 0)
+					r.setBackground(new RowFrameRenderer(row1, row2));
+				else
+					r.setBackground(new RowFrameRenderer(row2, row1));
+			}
 
-			{
+			{ // Flag
 				String country = ICPCImages.COUNTRY_CODES[i];
 				BufferedImage image = ICPCImages.getFlag(country);
 				Renderable flag = new ImageRenderer("flag " + country, image);
 				r.add(-3, flag, 1, true);
 			}
-			{
+
+			{ // Logo
 				BufferedImage image = ICPCImages.getTeamLogo(i);
 				Renderable logo = new ImageRenderer("logo " + i, image);
 				r.add(-2, logo, 1, true);
 			}
-			{
+
+			{ // Team name
 				// TODO: team name should be in a TeamSubmissionState...
 				Renderable teamName = new ColoredTextBox("team" + i, ContentProvider.getTeamNameStyle());
 				r.add(-1, teamName, 1, false);
 			}
+
+			// Testcases
 			for (int j = 0; j < P; ++j) {
 				TestcaseStatusRenderer.Status status;
 				if (j < Math.abs(state[i]))
@@ -112,13 +116,15 @@ public class JudgeQueueTest extends JPanel {
 				r.add(j, testcase, 1, true);
 			}
 
-			Rect.setRow(rect, i, N, row);
-			Rect.setDim(row, dim);
-			int x = (int) row.getX();
-			int y = (int) row.getY();
-			g.translate(x, y);
-			r.render(g, dim);
-			g.translate(-x, -y);
+			{ // Render
+				Rect.setRow(rect, i, N, row);
+				Rect.setDim(row, dim);
+				int x = (int) row.getX();
+				int y = (int) row.getY();
+				g.translate(x, y);
+				r.render(g, dim);
+				g.translate(-x, -y);
+			}
 		}
 	}
 	public static void main(String[] args) {

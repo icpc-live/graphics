@@ -15,9 +15,13 @@ public class PartitionedRowRenderer<T> implements Renderable {
 	Optional<Renderable> background;
 	Map<T, Renderable> parts = new HashMap<T, Renderable>();
 	Partitioner<T> partitioner = new Partitioner<T>();
+
+	public PartitionedRowRenderer() {
+		background = new Optional<Renderable>();
+	}
 	
-	public PartitionedRowRenderer(Optional<Renderable> background) {
-		this.background = background;
+	public void setBackground(Renderable background) {
+		this.background.set(background);
 	}
 	
 	public void add(T key, Renderable renderer, double weight, boolean fixed) {

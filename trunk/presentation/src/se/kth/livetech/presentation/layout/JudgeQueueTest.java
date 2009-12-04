@@ -4,20 +4,23 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ContentProvider;
+import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCImages;
+import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.graphics.TestcaseStatusRenderer;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
-import se.kth.livetech.presentation.graphics.RenderCache;
+import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.Renderable;
+import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
+import se.kth.livetech.util.Optional;
 
 @SuppressWarnings("serial")
 public class JudgeQueueTest extends JPanel {
@@ -61,80 +64,41 @@ public class JudgeQueueTest extends JPanel {
 		super.paintComponent(gr);
 		Graphics2D g = (Graphics2D) gr;
 
+		Rectangle2D rect = new Rectangle2D.Double(
+				getWidth() / 10, getHeight() / 10,
+				8 * getWidth() / 10, 8 * getHeight() / 10);
 
-		Partitioner<Integer> b0 = new Partitioner<Integer>(); // Left screen edge
-		Partitioner<Integer> b1 = new Partitioner<Integer>(); // Right screen edge
-		@SuppressWarnings("unchecked")
-		Partitioner<Integer>[] bs = new Partitioner[N];
+		Rectangle2D row = new Rectangle2D.Double();
+		Dimension dim = new Dimension();
 		for (int i = 0; i < N; ++i) {
-			bs[i] = new Partitioner<Integer>();
-		}
-		
-		Point2D p0 = new Point2D.Double(getWidth() / 10, getHeight() / 10);
-		Point2D p1 = new Point2D.Double(9 * getWidth() / 10, getHeight() / 10);
-		Point2D p2 = new Point2D.Double(getWidth() / 10, 9 * getHeight() / 10);
-		Point2D p3 = new Point2D.Double(9 * getWidth() / 10, 9 * getHeight() / 10);
-		
-		b0.set(p0, p2, 8 * getHeight() / 10 / N);
-		b1.set(p1, p3, 8 * getHeight() / 10 / N);
+			Color row1 = ICPCColors.BG_COLOR_1;
+			Color row2 = ICPCColors.BG_COLOR_2;
+			Renderable back;
+			if (i % 2 == 0)
+				back = new RowFrameRenderer(row1, row2);
+			else
+				back = new RowFrameRenderer(row2, row1);
 
-		for (int i = 0; i < N; ++i) {
-			b0.add(i, 1, false);
-			b1.add(i, 1, false);
-		}
-		
-		for (int i = 0; i < N; ++i) {
-			Partitioner<Integer> b = bs[i];
-			b.set(b0.getPosition(i), b1.getPosition(i), b0.getSize(i));
-			b.add(-3, 1, true);
-			b.add(-2, 1, true);
-			b.add(-1, 1, false);
-			for (int j = 0; j < P; ++j)
-				b.add(j, 1, true);
-		}
+			PartitionedRowRenderer<Integer> r =
+				new PartitionedRowRenderer<Integer>(Optional.v(back));
 
-		g.setColor(new Color(191, 191, 255));
-		for (int i = 0; i < N; ++i) {
-			Partitioner<Integer> b = bs[i];
 			{
-				final int j = -3;
-				Point2D p = b.getPosition(j);
-				double w = b.getSize(j), h = b.getH();
-				Dimension d = new Dimension((int) w, (int) h);
 				String country = ICPCImages.COUNTRY_CODES[i];
 				BufferedImage image = ICPCImages.getFlag(country);
-				Renderable r = new ImageRenderer("flag " + country, image);
-				Image img = RenderCache.getRenderCache().getImageFor(r, d);
-				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
+				Renderable flag = new ImageRenderer("flag " + country, image);
+				r.add(-3, flag, 1, true);
 			}
 			{
-				final int j = -2;
-				Point2D p = b.getPosition(j);
-				double w = b.getSize(j), h = b.getH();
-				Dimension d = new Dimension((int) w, (int) h);
 				BufferedImage image = ICPCImages.getTeamLogo(i);
-				Renderable r = new ImageRenderer("logo " + i, image);
-				Image img = RenderCache.getRenderCache().getImageFor(r, d);
-				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
+				Renderable logo = new ImageRenderer("logo " + i, image);
+				r.add(-2, logo, 1, true);
 			}
 			{
-				final int j = -1;
-				Point2D p = b.getPosition(j);
-				double w = b.getSize(j), h = b.getH();
-				//ColoredTextBox c = new ColoredTextBox();
-				//g.drawRect((int) (p.getX() - w / 2), (int) (p.getY() - h / 2), (int) w, (int) h);
-				Dimension d = new Dimension((int) w, (int) h);
 				// TODO: team name should be in a TeamSubmissionState...
-				Renderable r = new ColoredTextBox("team" + i, ContentProvider.getTeamNameStyle());
-				Image img = RenderCache.getRenderCache().getImageFor(r, d);
-				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
+				Renderable teamName = new ColoredTextBox("team" + i, ContentProvider.getTeamNameStyle());
+				r.add(-1, teamName, 1, false);
 			}
 			for (int j = 0; j < P; ++j) {
-				Point2D p = b.getPosition(j);
-				double w = b.getSize(j), h = b.getH();
-				//ColoredTextBox c = new ColoredTextBox();
-				//g.drawRect((int) (p.getX() - w / 2), (int) (p.getY() - h / 2), (int) w, (int) h);
-				Dimension d = new Dimension((int) w, (int) h);
 				TestcaseStatusRenderer.Status status;
 				if (j < Math.abs(state[i]))
 					status = TestcaseStatusRenderer.Status.passed;
@@ -144,15 +108,17 @@ public class JudgeQueueTest extends JPanel {
 					status = TestcaseStatusRenderer.Status.failed;
 				else
 					status = TestcaseStatusRenderer.Status.none;
-				Renderable psr = new TestcaseStatusRenderer(status);
-				boolean has = RenderCache.getRenderCache().hasImageFor(psr, d);
-				Image img = RenderCache.getRenderCache().getImageFor(psr, d);
-				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
-				if (!has) {
-					g.setColor(Color.RED);
-					g.drawRect((int) (p.getX() - w / 2), (int) (p.getY() - h / 2), (int) w, (int) h);
-				}
+				Renderable testcase = new TestcaseStatusRenderer(status);
+				r.add(j, testcase, 1, true);
 			}
+
+			Rect.setRow(rect, i, N, row);
+			Rect.setDim(row, dim);
+			int x = (int) row.getX();
+			int y = (int) row.getY();
+			g.translate(x, y);
+			r.render(g, dim);
+			g.translate(-x, -y);
 		}
 	}
 	public static void main(String[] args) {

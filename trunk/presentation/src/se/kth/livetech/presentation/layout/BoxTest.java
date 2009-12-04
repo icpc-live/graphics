@@ -21,12 +21,12 @@ public class BoxTest extends JPanel {
 
 		final int N = 10;
 
-		Box<Integer> b0 = new Box<Integer>();
-		Box<Integer> b1 = new Box<Integer>();
+		Partitioner<Integer> b0 = new Partitioner<Integer>();
+		Partitioner<Integer> b1 = new Partitioner<Integer>();
 		@SuppressWarnings("unchecked")
-		Box<Integer>[] bs = new Box[N];
+		Partitioner<Integer>[] bs = new Partitioner[N];
 		for (int i = 0; i < N; ++i) {
-			bs[i] = new Box<Integer>();
+			bs[i] = new Partitioner<Integer>();
 		}
 		
 		Point2D p0 = new Point2D.Double(getWidth() / 10, getHeight() / 10);
@@ -43,7 +43,7 @@ public class BoxTest extends JPanel {
 		}
 		
 		for (int i = 0; i < N; ++i) {
-			Box<Integer> b = bs[i];
+			Partitioner<Integer> b = bs[i];
 			b.set(b0.getPosition(i), b1.getPosition(i), b0.getSize(i));
 			b.add(0, 1, true);
 			b.add(1, 1, false);
@@ -53,7 +53,7 @@ public class BoxTest extends JPanel {
 
 		g.setColor(new Color(191, 191, 255));
 		for (int i = 0; i < N; ++i) {
-			Box<Integer> b = bs[i];
+			Partitioner<Integer> b = bs[i];
 			for (int j = 0; j < 4; ++j) {
 				Point2D p = b.getPosition(j);
 				double size = b.getSize(j), h = b.getH();

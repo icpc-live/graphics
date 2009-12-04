@@ -37,8 +37,8 @@ public class BoxTest2 extends JPanel {
 		super.paintComponent(gr);
 		Graphics2D g = (Graphics2D) gr;
 
-		Box<Integer> br0 = new Box<Integer>();
-		Box<Integer> br1 = new Box<Integer>();
+		Partitioner<Integer> br0 = new Partitioner<Integer>();
+		Partitioner<Integer> br1 = new Partitioner<Integer>();
 
 		Point2D s0 = new Point2D.Double(getWidth() / 10, getHeight() / 10);
 		Point2D t0 = new Point2D.Double(getWidth() / 10, 9 * getHeight() / 10);
@@ -57,7 +57,7 @@ public class BoxTest2 extends JPanel {
 		}
 
 		//int P = c.getProblems().size();
-		Box<Integer> b = new Box<Integer>();
+		Partitioner<Integer> b = new Partitioner<Integer>();
 		for (int j : c.getProblems())
 			b.add(j, 1, false);
 		

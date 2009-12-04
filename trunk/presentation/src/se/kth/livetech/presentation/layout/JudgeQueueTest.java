@@ -63,12 +63,12 @@ public class JudgeQueueTest extends JPanel {
 		Graphics2D g = (Graphics2D) gr;
 
 
-		Box<Integer> b0 = new Box<Integer>(); // Left screen edge
-		Box<Integer> b1 = new Box<Integer>(); // Right screen edge
+		Partitioner<Integer> b0 = new Partitioner<Integer>(); // Left screen edge
+		Partitioner<Integer> b1 = new Partitioner<Integer>(); // Right screen edge
 		@SuppressWarnings("unchecked")
-		Box<Integer>[] bs = new Box[N];
+		Partitioner<Integer>[] bs = new Partitioner[N];
 		for (int i = 0; i < N; ++i) {
-			bs[i] = new Box<Integer>();
+			bs[i] = new Partitioner<Integer>();
 		}
 		
 		Point2D p0 = new Point2D.Double(getWidth() / 10, getHeight() / 10);
@@ -85,7 +85,7 @@ public class JudgeQueueTest extends JPanel {
 		}
 		
 		for (int i = 0; i < N; ++i) {
-			Box<Integer> b = bs[i];
+			Partitioner<Integer> b = bs[i];
 			b.set(b0.getPosition(i), b1.getPosition(i), b0.getSize(i));
 			b.add(-3, 1, true);
 			b.add(-2, 1, true);
@@ -96,7 +96,7 @@ public class JudgeQueueTest extends JPanel {
 
 		g.setColor(new Color(191, 191, 255));
 		for (int i = 0; i < N; ++i) {
-			Box<Integer> b = bs[i];
+			Partitioner<Integer> b = bs[i];
 			{
 				final int j = -3;
 				Point2D p = b.getPosition(j);

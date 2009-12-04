@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Box<T> {
+public class Partitioner<T> {
 	private static class Part<T> {
 		public Part(T part, double weight, boolean fixed) {
 			this.part = part;
@@ -29,7 +29,7 @@ public class Box<T> {
 	private Map<T, Placement> placements;
 	boolean valid;
 	
-	public Box() {
+	public Partitioner() {
 		parts = new ArrayList<Part<T>>();
 		placements = new HashMap<T, Placement>();
 		valid = false;

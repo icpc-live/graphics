@@ -1,5 +1,8 @@
 package se.kth.livetech.communication;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -11,10 +14,35 @@ public class NodeRegistry {
 	NodeId localNode;
 	Map<NodeId, NodeConnection> connections;
 	Map<ContestId, AttrsUpdater> contests;
+	
+	private static class NodeIdComparator implements Comparator<NodeId> {
+		@Override
+		public int compare(NodeId o1, NodeId o2) {
+			if (o1.ip == null) {
+				try {
+					o1.ip = InetAddress.getByName(o1.host).getHostAddress();
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			if (o2.ip == null) {
+				try {
+					o2.ip = InetAddress.getByName(o2.host).getHostAddress();
+				} catch (UnknownHostException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			
+			return o1.ip.compareTo(o2.ip);
+		}
+	}
 
 	public NodeRegistry(NodeId localNode) {
 		this.localNode = localNode;
-		connections = new TreeMap<NodeId, NodeConnection>();
+		connections = new TreeMap<NodeId, NodeConnection>(new NodeIdComparator());
 		contests = new TreeMap<ContestId, AttrsUpdater>();
 	}
 	

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -95,9 +96,14 @@ public class BaseHandler implements LiveService.Iface {
 	}
 
 	@Override
+	public NodeId getNodeId() throws TException {
+		return this.registry.getLocalNode();
+	}
+
+	@Override
 	public void attach(NodeId node) throws TException {
 		this.attachedNode.set(node);
-		// TODO connect back
+		this.registry.addNode(node);
 	}
 
 	@Override
@@ -114,8 +120,11 @@ public class BaseHandler implements LiveService.Iface {
 
 	@Override
 	public void detach() throws TException {
+		NodeId nid = this.attachedNode.get();
 		this.attachedNode.set(null);
-		// TODO Disconnect, remove, etc
+		if (nid != null) {
+			this.registry.removeNode(nid);
+		}
 	}
 
 	@Override
@@ -127,7 +136,7 @@ public class BaseHandler implements LiveService.Iface {
 	@Override
 	public List<NodeId> getNodes() throws TException {
 		// TODO Auto-generated method stub
-		return null;
+		return new ArrayList<NodeId>(this.registry.getNodes());
 	}
 
 	@Override
@@ -174,8 +183,7 @@ public class BaseHandler implements LiveService.Iface {
 
 	@Override
 	public void removeNode(NodeId node) throws TException {
-		// TODO Auto-generated method stub
-		
+		this.registry.removeNode(node);
 	}
 
 	@Override
@@ -207,5 +215,4 @@ public class BaseHandler implements LiveService.Iface {
 		// TODO Auto-generated method stub
 		
 	}
-
 }

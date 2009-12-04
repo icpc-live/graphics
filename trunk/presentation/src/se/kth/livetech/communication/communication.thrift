@@ -68,6 +68,7 @@ exception LiveException {
 
 service LiveService {
 	// Node registration
+	NodeId getNodeId(),
 	void attach(1:NodeId node),
 	void detach(),
 

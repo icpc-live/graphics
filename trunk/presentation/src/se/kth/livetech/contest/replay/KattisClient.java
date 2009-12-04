@@ -14,11 +14,42 @@ import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdaterImpl;
 
 public class KattisClient extends AttrsUpdaterImpl {
+	private static final String DEFAULT_KATTIS_HOST = "icpc-dev.netlab.csc.kth.se";
+	private static final int    DEFAULT_KATTIS_PORT = 80;
+	private static final String DEFAULT_KATTIS_URI = "/python/events.py";
 	
-	private String kattisBaseUrl = "http://icpc-dev.netlab.csc.kth.se/python/events.py";
+	private String kattisBaseUrl;
+	private String kattisUri;
+	private String kattisHost;
+	private int kattisPort = 80;
+	
 	private int offset = 0;
 	private static final int REFRESH_DELAY = 2000; // In milliseconds
 	private Timer timer = null;
+	
+	public KattisClient() {
+		this(DEFAULT_KATTIS_HOST, DEFAULT_KATTIS_PORT, DEFAULT_KATTIS_URI);
+	}
+	
+	public KattisClient(String kattisHost) {
+		this(kattisHost, DEFAULT_KATTIS_PORT, DEFAULT_KATTIS_URI);		
+	}
+	
+	public KattisClient(String kattisHost, String kattisUri) {
+		this(kattisHost, DEFAULT_KATTIS_PORT, kattisUri);		
+	}
+
+	public KattisClient(String kattisHost, int kattisPort) {
+		this(kattisHost, kattisPort, DEFAULT_KATTIS_URI);		
+	}
+	
+	public KattisClient(String kattisHost, int kattisPort, String kattisUri) {
+		this.kattisHost = kattisHost;
+		this.kattisPort = kattisPort;
+		this.kattisUri = kattisUri;
+		
+		kattisBaseUrl = "http://" + kattisHost + ":" + kattisPort + kattisUri;
+	}
 	
 	public void readFromKattis() {
 		try {

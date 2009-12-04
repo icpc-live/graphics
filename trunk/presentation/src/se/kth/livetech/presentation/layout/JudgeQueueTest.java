@@ -24,7 +24,6 @@ public class JudgeQueueTest extends JPanel {
 	final int N = 20;
 	final int P = 10;
 	final int T = 17;
-	RenderCache renderCache = new RenderCache();
 	int[] state = new int[N];
 	public JudgeQueueTest() {
 		this.setBackground(Color.BLUE.darker());
@@ -105,7 +104,7 @@ public class JudgeQueueTest extends JPanel {
 				String country = ICPCImages.COUNTRY_CODES[i];
 				BufferedImage image = ICPCImages.getFlag(country);
 				Renderable r = new ImageRenderer("flag " + country, image);
-				Image img = renderCache.getImageFor(r, d);
+				Image img = RenderCache.getRenderCache().getImageFor(r, d);
 				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
 			}
 			{
@@ -115,7 +114,7 @@ public class JudgeQueueTest extends JPanel {
 				Dimension d = new Dimension((int) w, (int) h);
 				BufferedImage image = ICPCImages.getTeamLogo(i);
 				Renderable r = new ImageRenderer("logo " + i, image);
-				Image img = renderCache.getImageFor(r, d);
+				Image img = RenderCache.getRenderCache().getImageFor(r, d);
 				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
 			}
 			{
@@ -127,7 +126,7 @@ public class JudgeQueueTest extends JPanel {
 				Dimension d = new Dimension((int) w, (int) h);
 				// TODO: team name should be in a TeamSubmissionState...
 				Renderable r = new ColoredTextBox("team" + i, ContentProvider.getTeamNameStyle());
-				Image img = renderCache.getImageFor(r, d);
+				Image img = RenderCache.getRenderCache().getImageFor(r, d);
 				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
 			}
 			for (int j = 0; j < P; ++j) {
@@ -146,8 +145,8 @@ public class JudgeQueueTest extends JPanel {
 				else
 					status = TestcaseStatusRenderer.Status.none;
 				Renderable psr = new TestcaseStatusRenderer(status);
-				boolean has = renderCache.hasImageFor(psr, d);
-				Image img = renderCache.getImageFor(psr, d);
+				boolean has = RenderCache.getRenderCache().hasImageFor(psr, d);
+				Image img = RenderCache.getRenderCache().getImageFor(psr, d);
 				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
 				if (!has) {
 					g.setColor(Color.RED);

@@ -25,10 +25,8 @@ import se.kth.livetech.util.Frame;
 
 public class BoxTest2 extends JPanel {
 	Contest c;
-	RenderCache renderCache;
-	public BoxTest2(Contest c, RenderCache renderCache) {
+	public BoxTest2(Contest c) {
 		this.c = c;
-		this.renderCache = renderCache;
 		this.setBackground(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
 	}
@@ -83,7 +81,7 @@ public class BoxTest2 extends JPanel {
 				rfr = new RowFrameRenderer(row2, row1);
 			
 			Dimension d = new Dimension((int)(s1.getX()-s0.getX()), (int)b.getH() + 1);
-			Image img = renderCache.getImageFor(rfr, d);
+			Image img = RenderCache.getRenderCache().getImageFor(rfr, d);
 			Point2D p = b.getPosition(0);
 			p.setLocation(p.getX() - b.getSize(0) / 2, p.getY() - b.getH() / 2);
 			g.drawImage(img, (int)p.getX(), (int)p.getY(), this);
@@ -113,8 +111,8 @@ public class BoxTest2 extends JPanel {
 				String text = ContentProvider.getProblemScoreText(ps);
 				ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
 				ColoredTextBox psr = new ColoredTextBox(text, style);
-				boolean has = renderCache.hasImageFor(psr, d);
-				Image img = renderCache.getImageFor(psr, d);
+				boolean has = RenderCache.getRenderCache().hasImageFor(psr, d);
+				Image img = RenderCache.getRenderCache().getImageFor(psr, d);
 				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
 				if (!has && !firstPaint) {
 					g.setColor(new Color(255, 0, 0, 63));
@@ -142,8 +140,7 @@ public class BoxTest2 extends JPanel {
 		tc.solve(id2);
 		tc.submit(1, 3, 23);
 		Contest c1 = tc.getContest();
-		RenderCache renderCache = new RenderCache();
-		Frame frame = new Frame("BoxTest", new BoxTest2(c1, renderCache));
-		frame.setIconImage(renderCache.getImageFor(new IconRenderer(), new Dimension(128, 128)));
+		Frame frame = new Frame("BoxTest", new BoxTest2(c1));
+		frame.setIconImage(RenderCache.getRenderCache().getImageFor(new IconRenderer(), new Dimension(128, 128)));
 	}
 }

@@ -15,6 +15,18 @@ import se.kth.livetech.util.SoftHashMap;
  *
  */
 public class RenderCache {
+	private static RenderCache renderCache;
+	
+	public static RenderCache getRenderCache() {
+		if (renderCache == null)
+			renderCache = new RenderCache();
+		return renderCache;
+	}
+	
+	private RenderCache() {
+		map = new SoftHashMap<Key, Value>();
+	}
+
 	private static class Key {
 		public Key(Renderable r, Dimension d) {
 			this.r = r;
@@ -40,10 +52,6 @@ public class RenderCache {
 	}
 
 	private SoftHashMap<Key, Value> map;
-
-	public RenderCache() {
-		map = new SoftHashMap<Key, Value>();
-	}
 
 	public boolean hasImageFor(Renderable r, Dimension d) {
 		return map.containsKey(new Key(r, d));

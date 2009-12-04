@@ -4,8 +4,13 @@ import java.util.List;
 
 import org.apache.thrift.transport.TTransportException;
 
+import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.NodeId;
+import se.kth.livetech.contest.model.AttrsUpdateEvent;
+import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.contest.replay.KattisClient;
+import se.kth.livetech.contest.replay.LogListener;
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -25,6 +30,22 @@ public class LiveClient {
 		int getPort();
 		boolean isPort();
 
+		@Option(shortName="k",
+				longName="kattis")
+		boolean isKattis();
+		
+		@Option(longName="kattis-host")
+		String getKattisHost();
+		boolean isKattisHost();
+		
+		@Option(longName="kattis-port")
+		int getKattisPort();
+		boolean isKattisPort();
+		
+		@Option(longName="kattis-uri")
+		String getKattisUri();
+		boolean isKattisUri();
+		
 		@Option(helpRequest=true)
 		boolean getHelp();
 
@@ -34,7 +55,7 @@ public class LiveClient {
 	}
 	public static class HostPort {
 		String host;
-		int port;
+   		int port;
 		public HostPort(String addr) {
 			String[] parts = addr.split(":");
 			host = parts[0];
@@ -59,6 +80,35 @@ public class LiveClient {
 				}
 			}
 			LiveService.Iface handler = new BaseHandler(nodeRegistry);
+			
+			if (opts.isKattis()) {
+				final KattisClient kattisClient;
+				
+				if (opts.isKattisHost()) {
+					if (opts.isKattisPort()) {
+						if (opts.isKattisUri()) {
+							kattisClient = new KattisClient(opts.getKattisHost(), opts.getKattisPort(), opts.getKattisUri());
+						} else {
+							kattisClient = new KattisClient(opts.getKattisHost(), opts.getKattisPort());
+						}
+					} else {
+						if (opts.isKattisUri()) {
+							kattisClient = new KattisClient(opts.getKattisHost(), opts.getKattisUri());
+						} else {
+							kattisClient = new KattisClient(opts.getKattisHost());
+						}
+					}
+				} else {
+					kattisClient = new KattisClient();
+				}
+				
+				kattisClient.startReading();
+				final LogListener log = new LogListener("kattislog.txt");
+				kattisClient.addAttrsUpdateListener(log);
+				
+				nodeRegistry.addContest(new ContestId("Live", 0), kattisClient);
+			}
+
 			Connector.listen(handler, Connector.PORT, true);
 		} catch (ArgumentValidationException e) {
 			System.err.println(e.getMessage());

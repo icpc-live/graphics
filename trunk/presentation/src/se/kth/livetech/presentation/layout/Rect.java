@@ -12,4 +12,8 @@ public class Rect {
 	public static void setDim(Rectangle2D rect, Dimension dim) {
 		dim.setSize(rect.getWidth(), rect.getHeight());
 	}
+	public static Rectangle2D screenRect(int width, int height, double margin) {
+		double edge = margin * Math.min(width, height);
+		return new Rectangle2D.Double(edge, edge, width - 2 * edge, height - 2 * edge);
+	}
 }

@@ -32,10 +32,11 @@ public class TestcaseStatusRenderer implements Renderable {
 		switch (status) {
 		default:
 		case none: baseColor = new Color(0, 0, 0, 0); break;
-		case active: baseColor = Color.BLUE.brighter(); break;
-		case failed: baseColor = Color.RED; break;
-		case passed: baseColor = Color.GREEN; break;
+		case active: baseColor = ICPCColors.YELLOW; break;
+		case failed: baseColor = ICPCColors.FAILED_COLOR; break;
+		case passed: baseColor = ICPCColors.SOLVED_COLOR; break;
 		}
-		ShadedRectangle.drawShadedEllipse(g, baseColor, 0, 0, d.width, d.height);
+		int w = d.width, h = d.height, m = h / 5;
+		ShadedRectangle.drawShadedEllipse(g, baseColor, m, m, w - 2 * m, h - 2 * m);
 	}
 }

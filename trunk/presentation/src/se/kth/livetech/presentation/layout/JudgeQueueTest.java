@@ -30,7 +30,7 @@ public class JudgeQueueTest extends JPanel {
 	int[] state = new int[N];
 	public JudgeQueueTest() {
 		this.setBackground(Color.BLUE.darker());
-		this.setPreferredSize(new Dimension(600, 600));
+		this.setPreferredSize(new Dimension(512, 576));
 		new TestJudge().start();
 	}
 	private class TestJudge extends Thread {
@@ -64,9 +64,7 @@ public class JudgeQueueTest extends JPanel {
 		super.paintComponent(gr);
 		Graphics2D g = (Graphics2D) gr;
 
-		Rectangle2D rect = new Rectangle2D.Double(
-				getWidth() / 10, getHeight() / 10,
-				8 * getWidth() / 10, 8 * getHeight() / 10);
+		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
 
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
@@ -97,7 +95,7 @@ public class JudgeQueueTest extends JPanel {
 
 			{ // Team name
 				// TODO: team name should be in a TeamSubmissionState...
-				Renderable teamName = new ColoredTextBox("team" + i, ContentProvider.getTeamNameStyle());
+				Renderable teamName = new ColoredTextBox("University " + i, ContentProvider.getTeamNameStyle());
 				r.add(-1, teamName, 1, false);
 			}
 

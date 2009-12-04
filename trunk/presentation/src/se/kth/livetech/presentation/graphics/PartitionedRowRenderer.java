@@ -44,9 +44,10 @@ public class PartitionedRowRenderer<T> implements Renderable {
 				d.height);
 		int y0 = 0, y1 = d.height;
 		for (Map.Entry<T, Renderable> it : this.parts.entrySet()) {
+			Renderable renderer = it.getValue();
+			if (renderer == null) continue;
 			T key = it.getKey();
 			Point2D mid = partitioner.getPosition(key);
-			Renderable renderer = it.getValue();
 			double width = partitioner.getSize(key);
 			int x0 = (int) (mid.getX() - width / 2);
 			int x1 = (int) (mid.getX() + width / 2);

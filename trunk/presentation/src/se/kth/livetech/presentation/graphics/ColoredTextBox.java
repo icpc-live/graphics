@@ -96,18 +96,19 @@ public class ColoredTextBox implements Renderable {
 	public void render(Graphics2D g, Dimension d) {
 		Color base = style.getColor();
 		if (base != null) {
+			int w = d.width, h = d.height;
 			switch (style.getShape()) {
 			default:
 			case roundRect:
-				ShadedRectangle.drawShadedRoundRect(g, base, 0, 0, d.width, d.height, d.height/3f);
+				ShadedRectangle.drawShadedRoundRect(g, base, 0, 0, w, h, h/3f);
 				break;
 			case ellipse:
-				ShadedRectangle.drawShadedEllipse(g, base, 0, 0, d.width, d.height);
+				ShadedRectangle.drawShadedEllipse(g, base, 0, 0, w, h);
 				break;
 			}
 		}
 
-		g.setColor(Color.BLACK);
+		g.setColor(Color.WHITE);
 		Font font = style.getFont();
 		double magicScale = d.height / 24d; // TODO constant
 		Font nfont = font.deriveFont(AffineTransform.getScaleInstance(magicScale, magicScale));

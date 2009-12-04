@@ -3,6 +3,7 @@ package se.kth.livetech.contest.model.impl;
 import java.util.Map;
 import java.util.TreeMap;
 
+import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.Language;
 import se.kth.livetech.contest.model.Problem;
@@ -43,8 +44,9 @@ public class TestContest {
 			c = new ContestImpl(c, p);
 		}
 		for (int team = 0; team < teams; ++team) {
-			Team t = testTeam(team, "Team " + team + " (UN" + team + "/C"
-					+ team + ")");
+			String[] COUNTRY_CODES = ICPCImages.COUNTRY_CODES;
+			Team t = testTeam(team, "Team " + team + " (University " + team + "/"
+					+ COUNTRY_CODES[team % COUNTRY_CODES.length] + ")");
 			c = new ContestImpl(c, t);
 		}
 		return c;

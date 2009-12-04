@@ -5,20 +5,24 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
+import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.impl.TestContest;
+import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
+import se.kth.livetech.presentation.graphics.ImageRenderer;
+import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.util.Frame;
@@ -35,92 +39,91 @@ public class BoxTest2 extends JPanel {
 		super.paintComponent(gr);
 		Graphics2D g = (Graphics2D) gr;
 
-		Partitioner<Integer> br0 = new Partitioner<Integer>();
-		Partitioner<Integer> br1 = new Partitioner<Integer>();
+		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
 
-		Point2D s0 = new Point2D.Double(getWidth() / 10, getHeight() / 10);
-		Point2D t0 = new Point2D.Double(getWidth() / 10, 9 * getHeight() / 10);
-		Point2D s1 = new Point2D.Double(9 * getWidth() / 10, getHeight() / 10);
-		Point2D t1 = new Point2D.Double(9 * getWidth() / 10, 9 * getHeight() / 10);
-
-		int N = 20; // c.getTeams().size();
-		br0.set(s0, t0, (double) 8 * getHeight() / 10 / N);
-		br1.set(s1, t1, (double) 8 * getHeight() / 10 / N);
+		final int N = 20; // c.getTeams().size();
+		final double NAME_WEIGHT = 5;
 		
-		for (int r = 0; r < c.getTeams().size(); ++r) {
-		    Team team = c.getRankedTeam(r + 1);
-		    int i = team.getId();
-			br0.add(i, 1, true);
-			br1.add(i, 1, true);
-		}
-
-		//int P = c.getProblems().size();
-		Partitioner<Integer> b = new Partitioner<Integer>();
-		for (int j : c.getProblems())
-			b.add(j, 1, false);
+		Rectangle2D row = new Rectangle2D.Double();
+		Dimension dim = new Dimension();
 		
-		for (int r = 0; r < c.getTeams().size(); ++r) {
-			Team team = c.getRankedTeam(r + 1);
-		    int i = team.getId();
-		    //int rank = c.getTeamRank(i);
 
-			Point2D s = br0.getPosition(i);
-			Point2D t = br1.getPosition(i);
-
-			g.setColor(new Color(191, 191, 255));
-			//g.drawLine((int) s.x, (int) s.y, (int) t.x, (int) t.y); 
-
-			b.set(s, t, br0.getSize(i));
-			
-			Renderable rfr;
-			Color row1 = ICPCColors.BG_COLOR_1;
-			Color row2 = ICPCColors.BG_COLOR_2;
-			if((r&1) == 1)
-				rfr = new RowFrameRenderer(row1, row2);
-			else
-				rfr = new RowFrameRenderer(row2, row1);
-			
-			Dimension d = new Dimension((int)(s1.getX()-s0.getX()), (int)b.getH() + 1);
-			Image img = RenderCache.getRenderCache().getImageFor(rfr, d);
-			Point2D p = b.getPosition(0);
-			p.setLocation(p.getX() - b.getSize(0) / 2, p.getY() - b.getH() / 2);
-			g.drawImage(img, (int)p.getX(), (int)p.getY(), this);
-		}
-		
-		for (int r = 0; r < c.getTeams().size(); ++r) {
-		    Team team = c.getRankedTeam(r + 1);
-		    int i = team.getId();
-		    //int rank = c.getTeamRank(i);
-
-			Point2D s = br0.getPosition(i);
-			Point2D t = br1.getPosition(i);
-
-			g.setColor(new Color(191, 191, 255));
-			//g.drawLine((int) s.x, (int) s.y, (int) t.x, (int) t.y); 
-
-			b.set(s, t, br0.getSize(i));
-			
+		{ // Header
+			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
+			r.add(-3, null, 1, true);
+			r.add(-2, null, 1, true);
+			Renderable teamName = new ColoredTextBox("Team", ContentProvider.getHeaderStyle(Alignment.left));
+			r.add(-1, teamName, NAME_WEIGHT, false);
 			for (int j : c.getProblems()) {
-				Point2D p = b.getPosition(j);
-				double dw = b.getSize(i), dh = b.getH();
-				int w = (int) dw, h = (int) dh;
-				Dimension d = new Dimension(w, h);
-				TeamScore ts = c.getTeamScore(i);
-				ProblemScore ps = ts.getProblemScore(j);
-				//Renderable psr = new ProblemScoreRenderer(ps);
-				String text = ContentProvider.getProblemScoreText(ps);
-				ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
-				ColoredTextBox psr = new ColoredTextBox(text, style);
-				boolean has = RenderCache.getRenderCache().hasImageFor(psr, d);
-				Image img = RenderCache.getRenderCache().getImageFor(psr, d);
-				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
-				if (!has && !firstPaint) {
-					g.setColor(new Color(255, 0, 0, 63));
-					g.drawLine((int) (p.getX() - w / 2), (int) (p.getY() + h / 2), (int) (p.getX() + w / 2), (int) (p.getY() - h / 2));
-				}
+				Renderable problem = new ColoredTextBox("" + (char) ('A' + j), ContentProvider.getHeaderStyle(Alignment.center));
+				r.add(j, problem, 1, false);
+			}
+
+			{ // Render
+				Rect.setRow(rect, 0, N, row);
+				Rect.setDim(row, dim);
+				int x = (int) row.getX();
+				int y = (int) row.getY();
+				g.translate(x, y);
+				r.render(g, dim);
+				g.translate(-x, -y);
 			}
 		}
-		firstPaint = false;
+
+		for (int i = 1; i < Math.min(c.getTeams().size(), N); ++i) {
+			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
+
+			Team team = c.getRankedTeam(i);
+			int id = team.getId();
+			
+			{ // Background
+				Color row1 = ICPCColors.BG_COLOR_1;
+				Color row2 = ICPCColors.BG_COLOR_2;
+				if (i % 2 == 0)
+					r.setBackground(new RowFrameRenderer(row1, row2));
+				else
+					r.setBackground(new RowFrameRenderer(row2, row1));
+			}
+
+			{ // Flag
+				String country = team.getNationality();
+				BufferedImage image = ICPCImages.getFlag(country);
+				Renderable flag = new ImageRenderer("flag " + country, image);
+				r.add(-3, flag, 1, true);
+			}
+
+			{ // Logo
+				BufferedImage image = ICPCImages.getTeamLogo(id);
+				Renderable logo = new ImageRenderer("logo " + id, image);
+				r.add(-2, logo, 1, true);
+			}
+
+			{ // Team name
+				String name = team.getUniversity();
+				Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
+				r.add(-1, teamName, NAME_WEIGHT, false);
+			}
+
+			for (int j : c.getProblems()) {
+				TeamScore ts = c.getTeamScore(id);
+				ProblemScore ps = ts.getProblemScore(j);
+				String text = ContentProvider.getProblemScoreText(ps);
+				ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
+				ColoredTextBox problem = new ColoredTextBox(text, style);
+				r.add(j, problem, 1, false);
+			}
+
+			{ // Render
+				Rect.setRow(rect, i, N, row);
+				Rect.setDim(row, dim);
+				int x = (int) row.getX();
+				int y = (int) row.getY();
+				g.translate(x, y);
+				r.render(g, dim);
+				g.translate(-x, -y);
+			}
+		}
+
 	}
 	private static class IconRenderer implements Renderable {
 		public void render(Graphics2D g, Dimension d) {
@@ -131,7 +134,7 @@ public class BoxTest2 extends JPanel {
 		}
 	}
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(10, 10);
+		TestContest tc = new TestContest(50, 10);
 		int id0 = tc.submit(1, 2, 11);
 		tc.solve(id0);
 		int id1 = tc.submit(2, 3, 17);

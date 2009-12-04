@@ -45,7 +45,7 @@ public class ICPCImages {
 
 	private static BufferedImage[] images;
 
-	private static BufferedImage[] teamLogos;
+	private static Map<Integer, BufferedImage> teamLogos = new HashMap<Integer, BufferedImage>();
 
 	private static Map<String, BufferedImage> flags = new HashMap<String, BufferedImage>();
 
@@ -54,7 +54,7 @@ public class ICPCImages {
 		return file;
 	}
 
-	static {
+	static void loadMisc() {
 		images = new BufferedImage[22];
 		try {
 			images[0] = ImageIO.read(resource("balloon3.png"));
@@ -81,30 +81,33 @@ public class ICPCImages {
 		} catch (Exception e) {
 			DebugTrace.trace("Error loading images %s", e);
 		}
+	}
 
-		teamLogos = new BufferedImage[101];
+	static void loadLogo(int i) {
 		try {
-			DebugTrace.trace("loading team logos");
-			teamLogos[0] = ImageIO.read(resource("logos/unknown.png"));
-			for (int i = 1; i <= 100; ++i) {
-				teamLogos[i] = ImageIO.read(resource(String.format("logos/%d.png", i)));
-			}
-			DebugTrace.trace("loaded team logos");
+			if (i == 0)
+				teamLogos.put(0, ImageIO.read(resource("logos/unknown.png")));
+			else
+				teamLogos.put(i, ImageIO.read(resource(String.format("logos/%d.png", i))));
 		} catch (Exception e) {
-			DebugTrace.trace("Error loading image: "+e);
+			DebugTrace.trace("Error loading image: " + e);
+			if (i != 0)
+				teamLogos.put(i, teamLogos.get(0));
 		}
+	}
 
-		for (String countryCode : COUNTRY_CODES) {
-			try {
-				BufferedImage flag = ImageIO.read(resource("flags/" + countryCode + ".png"));
-				flags.put(countryCode, flag);
-			} catch (Exception e) {
-				DebugTrace.trace("Error loading flag: "+countryCode);
-			}
+	static void loadFlag(String countryCode) {
+		try {
+			BufferedImage flag = ImageIO.read(resource("flags/" + countryCode + ".png"));
+			flags.put(countryCode, flag);
+		} catch (Exception e) {
+			DebugTrace.trace("Error loading flag: " + countryCode);
 		}
 	}
 
 	public static BufferedImage getImage(int x) {
+		if (images == null)
+			loadMisc();
 		return images[x];
 	}
 
@@ -116,15 +119,16 @@ public class ICPCImages {
 		teamMap.put(teamName, teamId); 	// FIXME: Team id!
 		return teamId;
 	}
+
 	public static BufferedImage getTeamLogo(int teamId) {
-		try {
-			return teamLogos[teamId];
-		} catch (ArrayIndexOutOfBoundsException e) {
-			return null;
-		}
+		if (!teamLogos.containsKey(teamId))
+			loadLogo(teamId);
+		return teamLogos.get(teamId);
 	}
 
 	public static BufferedImage getFlag(String countryCode) {
+		if (!flags.containsKey(countryCode))
+			loadFlag(countryCode);
 		return flags.get(countryCode);
 	}
 

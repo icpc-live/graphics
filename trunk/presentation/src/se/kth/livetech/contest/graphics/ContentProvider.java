@@ -5,6 +5,7 @@ import java.awt.Color;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
+import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 
 public class ContentProvider {
@@ -14,7 +15,7 @@ public class ContentProvider {
 	}
 	
 	public static ColoredTextBox.Style getTeamNameStyle() {
-		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect);
+		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.left);
 	}
 
 	public static String getProblemScoreText(ProblemScore problemScore) {
@@ -36,7 +37,7 @@ public class ContentProvider {
 
 	private static class ProblemScoreStyle extends ColoredTextBox.BaseStyle {
 		public ProblemScoreStyle(Color base) {
-			super(base, ICPCFonts.PROBLEM_SCORE_FONT, Shape.roundRect);
+			super(base, ICPCFonts.PROBLEM_SCORE_FONT, Shape.roundRect, Alignment.center);
 		}
 	}
 	private static ProblemScoreStyle psStyle(Color base) {

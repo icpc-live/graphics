@@ -15,15 +15,18 @@ public class ColoredTextBox implements Renderable {
 			roundRect, ellipse
 		}
 		public Shape getShape();
+		public Alignment getAlignment();
 	}
 	public static class BaseStyle implements Style {
 		Color color;
 		Font font;
 		Shape shape;
-		public BaseStyle(Color color, Font font, Shape shape) {
+		Alignment alignment;
+		public BaseStyle(Color color, Font font, Shape shape, Alignment alignment) {
 			this.color = color;
 			this.font = font;
 			this.shape = shape;
+			this.alignment = alignment;
 		}
 		@Override
 		public Color getColor() {
@@ -38,12 +41,17 @@ public class ColoredTextBox implements Renderable {
 			return shape;
 		}
 		@Override
+		public Alignment getAlignment() {
+			return alignment;
+		}
+		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + ((color == null) ? 0 : color.hashCode());
 			result = prime * result + ((font == null) ? 0 : font.hashCode());
 			result = prime * result + ((shape == null) ? 0 : shape.hashCode());
+			result = prime * result + ((alignment == null) ? 0 : alignment.hashCode());
 			return result;
 		}
 		@Override
@@ -69,6 +77,11 @@ public class ColoredTextBox implements Renderable {
 				if (other.shape != null)
 					return false;
 			} else if (!shape.equals(other.shape))
+				return false;
+			if (alignment == null) {
+				if (other.alignment != null)
+					return false;
+			} else if (!alignment.equals(other.alignment))
 				return false;
 			return true;
 		}
@@ -99,7 +112,7 @@ public class ColoredTextBox implements Renderable {
 		double magicScale = d.height / 24d; // TODO constant
 		Font nfont = font.deriveFont(AffineTransform.getScaleInstance(magicScale, magicScale));
 		Rectangle2D rect = new Rectangle2D.Double(0, 0, d.width, d.height);
-		Utility.drawString3D(g, text, rect, nfont, Alignment.center);
+		Utility.drawString3D(g, text, rect, nfont, style.getAlignment());
 	}
 	public int hashCode() {
 		return style.hashCode() * 31 + text.hashCode();

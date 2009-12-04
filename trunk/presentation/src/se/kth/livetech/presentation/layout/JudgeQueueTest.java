@@ -6,12 +6,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ContentProvider;
+import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.graphics.TestcaseStatusRenderer;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
+import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.util.Frame;
@@ -84,6 +87,8 @@ public class JudgeQueueTest extends JPanel {
 		for (int i = 0; i < N; ++i) {
 			Box<Integer> b = bs[i];
 			b.set(b0.getPosition(i), b1.getPosition(i), b0.getSize(i));
+			b.add(-3, 1, true);
+			b.add(-2, 1, true);
 			b.add(-1, 1, false);
 			for (int j = 0; j < P; ++j)
 				b.add(j, 1, true);
@@ -92,6 +97,27 @@ public class JudgeQueueTest extends JPanel {
 		g.setColor(new Color(191, 191, 255));
 		for (int i = 0; i < N; ++i) {
 			Box<Integer> b = bs[i];
+			{
+				final int j = -3;
+				Point2D p = b.getPosition(j);
+				double w = b.getSize(j), h = b.getH();
+				Dimension d = new Dimension((int) w, (int) h);
+				String country = ICPCImages.COUNTRY_CODES[i];
+				BufferedImage image = ICPCImages.getFlag(country);
+				Renderable r = new ImageRenderer("flag " + country, image);
+				Image img = renderCache.getImageFor(r, d);
+				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
+			}
+			{
+				final int j = -2;
+				Point2D p = b.getPosition(j);
+				double w = b.getSize(j), h = b.getH();
+				Dimension d = new Dimension((int) w, (int) h);
+				BufferedImage image = ICPCImages.getTeamLogo(i);
+				Renderable r = new ImageRenderer("logo " + i, image);
+				Image img = renderCache.getImageFor(r, d);
+				g.drawImage(img, (int) (p.getX() - w / 2), (int) (p.getY() - h / 2), this);
+			}
 			{
 				final int j = -1;
 				Point2D p = b.getPosition(j);

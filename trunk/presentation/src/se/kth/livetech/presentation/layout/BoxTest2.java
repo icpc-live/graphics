@@ -34,6 +34,12 @@ public class BoxTest2 extends JPanel {
 		this.setBackground(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
 	}
+	
+	public void setContest(Contest nc) {
+		c = nc;
+		repaint();
+	}
+	
 	boolean firstPaint = true;
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);

@@ -1,4 +1,4 @@
-package se.kth.livetech.contest.model.impl;
+package se.kth.livetech.contest.model.test;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -9,6 +9,11 @@ import se.kth.livetech.contest.model.Language;
 import se.kth.livetech.contest.model.Problem;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Team;
+import se.kth.livetech.contest.model.impl.ContestImpl;
+import se.kth.livetech.contest.model.impl.LanguageImpl;
+import se.kth.livetech.contest.model.impl.ProblemImpl;
+import se.kth.livetech.contest.model.impl.RunImpl;
+import se.kth.livetech.contest.model.impl.TeamImpl;
 
 public class TestContest {
 	public static Team testTeam(int id, String name, String univ, String nat) {
@@ -89,7 +94,7 @@ public class TestContest {
 		update(testRun(id, team, problem, time));
 		return id;
 	}
-
+	
 	public void solve(int id) {
 		update(testUpdate(c, id, true));
 	}

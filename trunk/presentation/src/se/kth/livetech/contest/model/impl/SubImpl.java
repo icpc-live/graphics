@@ -15,7 +15,7 @@ public class SubImpl extends AttrsImpl implements Sub {
 		problem = Integer.valueOf(attrs.get("problem"));
 		status = Status.valueOf(attrs.get("status"));
 		team = Integer.valueOf(attrs.get("team"));
-		time = Integer.valueOf(attrs.get("time"));
+		time = (int) (Double.valueOf(attrs.get("time")) * 60); // FIXME: decide on minutes/seconds
 	}
 
 	public int getId() {

@@ -106,7 +106,8 @@ public class BoxTest2 extends JPanel {
 			}
 
 			{ // Team name
-				String name = team.getUniversity();
+				String name = team.getName(); // TODO: Contest parameter for team name display?
+				//String name = team.getUniversity();
 				Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
 				r.add(-1, teamName, NAME_WEIGHT, false);
 			}

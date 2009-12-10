@@ -13,8 +13,8 @@ public class InfoImpl extends AttrsImpl implements Info {
 		super(attrs);
 		title = attrs.get("title");
 		started = Boolean.valueOf(attrs.get("started"));
-		if (attrs.containsKey("length"))
-			length = Integer.valueOf(attrs.get("length"));
+		if (attrs.containsKey("length")) // FIXME: Parse time format 05:00:00
+			length = 300;//length = Integer.valueOf(attrs.get("length"));
 		else
 			length = 300;
 		if (attrs.containsKey("penalty"))

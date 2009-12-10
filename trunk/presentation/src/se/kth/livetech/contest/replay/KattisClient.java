@@ -19,8 +19,11 @@ public class KattisClient extends AttrsUpdaterImpl {
 	private static final String DEFAULT_KATTIS_URI = "/python/events.py";
 	
 	private String kattisBaseUrl;
+	@SuppressWarnings("unused")
 	private String kattisUri;
+	@SuppressWarnings("unused")
 	private String kattisHost;
+	@SuppressWarnings("unused")
 	private int kattisPort = 80;
 	
 	private int offset = 0;
@@ -58,11 +61,9 @@ public class KattisClient extends AttrsUpdaterImpl {
 			LogSpeaker logSpeaker = new LogSpeaker(in);
 			logSpeaker.addAttrsUpdateListener(new AttrsUpdateListener() {
 				public void attrsUpdated(AttrsUpdateEvent e) {
-					if(e.getType().equals("run")) { // Save max id as offset
-						String offsetString = e.getProperty("id");
-						if(offsetString != null) {
-							offset = Math.max(Integer.parseInt(offsetString), offset);
-						}
+					if(e.getType().equals("run")) {
+						// Increase offset id
+						++offset;
 					}
 					send(e);
 				}
@@ -97,10 +98,10 @@ public class KattisClient extends AttrsUpdaterImpl {
 		timer.cancel();
 	}
 
-/*	public static void main(String[] args) {
+	public static void main(String[] args) {
 		final KattisClient kattisClient = new KattisClient();
 		kattisClient.startReading();
 		final LogListener log = new LogListener("kattislog.txt");
 		kattisClient.addAttrsUpdateListener(log);
-	}*/
+	}
 }

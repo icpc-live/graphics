@@ -44,7 +44,7 @@ public class ReplayTest {
 		new Frame("ReplayTest", bt2);
 		
 		ContestReplayer replayer = new ContestReplayer();
-		replayer.setFreezeTime(200);
+		replayer.setFreezeTime(100);
 		replayer.setPaused(false);
 		replayer.addContestUpdateListener(new ContestUpdateListener() {
 			@Override
@@ -52,9 +52,15 @@ public class ReplayTest {
 				bt2.setContest(e.getNewContest());
 			}
 		});
-		LogSpeaker logSpeaker;
+		
+		// Read directly from Kattis
+		/*KattisClient kattis = new KattisClient();
+		kattis.addAttrsUpdateListener(replayer);
+		kattis.startReading();*/
+		
+		// Read from log file
 		try {
-			logSpeaker = new LogSpeaker("kattislog.txt");
+			LogSpeaker logSpeaker = new LogSpeaker("kattislog.txt");
 			logSpeaker.addAttrsUpdateListener(replayer);
 			logSpeaker.parse();
 		} catch (FileNotFoundException e1) {

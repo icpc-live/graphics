@@ -57,10 +57,11 @@ public class BoxTest2 extends JPanel {
 
 		{ // Header
 			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
+			r.add(-4, null, 1, true);
 			r.add(-3, null, 1, true);
-			r.add(-2, null, 1, true);
 			Renderable teamName = new ColoredTextBox("Team", ContentProvider.getHeaderStyle(Alignment.left));
-			r.add(-1, teamName, NAME_WEIGHT, false);
+			r.add(-2, teamName, NAME_WEIGHT, false);
+			r.add(-1, null, 1, false);
 			for (int j : c.getProblems()) {
 				Renderable problem = new ColoredTextBox("" + (char) ('A' + j), ContentProvider.getHeaderStyle(Alignment.center));
 				r.add(j, problem, 1, false);
@@ -96,22 +97,30 @@ public class BoxTest2 extends JPanel {
 				String country = team.getNationality();
 				BufferedImage image = ICPCImages.getFlag(country);
 				Renderable flag = new ImageRenderer("flag " + country, image);
-				r.add(-3, flag, 1, true);
+				r.add(-4, flag, 1, true);
 			}
 
 			{ // Logo
 				BufferedImage image = ICPCImages.getTeamLogo(id);
 				Renderable logo = new ImageRenderer("logo " + id, image);
-				r.add(-2, logo, 1, true);
-			}
-
+				r.add(-3, logo, 1, true);
+			}	
+			
 			{ // Team name
 				String name = team.getName(); // TODO: Contest parameter for team name display?
 				//String name = team.getUniversity();
 				Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
-				r.add(-1, teamName, NAME_WEIGHT, false);
+				r.add(-2, teamName, NAME_WEIGHT, false);
 			}
 
+			
+			{ // Stats
+				TeamScore ts = c.getTeamScore(id);
+				String statstr = "" + ts.getSolved();
+				Renderable stat = new ColoredTextBox(statstr, ContentProvider.getTeamNameStyle());
+				r.add(-1, stat, 1, false);
+			}
+			
 			for (int j : c.getProblems()) {
 				TeamScore ts = c.getTeamScore(id);
 				ProblemScore ps = ts.getProblemScore(j);

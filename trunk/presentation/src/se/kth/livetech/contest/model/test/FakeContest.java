@@ -13,6 +13,8 @@ import se.kth.livetech.util.Frame;
 
 public class FakeContest extends Thread {
 	TestContest test;
+	final static int teams = 100;
+	final static int problems = 10;
 	public FakeContest(TestContest test) {
 		super("Fake contest");
 		this.test = test;
@@ -23,29 +25,44 @@ public class FakeContest extends Thread {
 	}
 	public void run() {
 		int time = 0;
+		Contest contest = test.getContest();
+		double teamSkill[][] = new double[teams][problems];
+		boolean solved[][] = new boolean[teams][problems];
+		
+		for(int i = 0; i<problems; ++i){
+			double base = .75*Math.random();
+			for (int j = 0; j < teams; j++) {
+				teamSkill[j][i] = base + ((.5 * Math.random())-.25);
+			}
+		}
+		
 		while (true) {
 			try {
-				sleep(100);
+				sleep(1000);
 			} catch (InterruptedException e) {
 			}
-			Contest contest = test.getContest();
-			int problem = (int) (Math.random() * contest.getProblems().size());
-			int team = (int) (Math.random() * contest.getTeams().size());
 			++time;
-			int id = test.submit(team, problem, time);
-			if (Math.random() < .5)
-				test.solve(id);
-			else
-				test.fail(id);
-			Contest newContest = test.getContest();
-			Run run = newContest.getRun(id);
-			ContestUpdateEvent update = new ContestUpdateEventImpl(contest, run, newContest);
-			for (ContestUpdateListener listener : listeners)
-				listener.contestUpdated(update);
+			for(int i = 0; i<problems; ++i){
+				for (int j = 0; j < teams; j++) {
+					if(!solved[j][i] && Math.random() < 0.01*teamSkill[j][i]){
+						int id = test.submit(j, i, time);
+						if (Math.random() < .8){
+							test.solve(id);
+							solved[j][i] = true;
+						}
+						else
+							test.fail(id);
+						Contest newContest = test.getContest();
+						Run run = newContest.getRun(id);
+						ContestUpdateEvent update = new ContestUpdateEventImpl(contest, run, newContest);
+						for (ContestUpdateListener listener : listeners)
+							listener.contestUpdated(update);
+					}
+				}
+			}
 		}
 	}
 	public static void main(String[] args) {
-		final int teams = 100, problems = 10;
 		TestContest tc = new TestContest(teams, problems);
 		FakeContest fc = new FakeContest(tc);
 		final BoxTest2 bt = new BoxTest2(tc.getContest());

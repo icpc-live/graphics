@@ -44,7 +44,7 @@ public class FakeContest extends Thread {
 				listener.contestUpdated(update);
 		}
 	}
-	static void main(String[] args) {
+	public static void main(String[] args) {
 		final int teams = 100, problems = 10;
 		TestContest tc = new TestContest(teams, problems);
 		FakeContest fc = new FakeContest(tc);

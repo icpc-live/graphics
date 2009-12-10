@@ -18,7 +18,7 @@ import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
-import se.kth.livetech.contest.model.impl.TestContest;
+import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
@@ -35,7 +35,7 @@ public class BoxTest2 extends JPanel {
 		this.setPreferredSize(new Dimension(1024, 576));
 	}
 	
-	public void setContest(Contest nc) {
+	public synchronized void setContest(Contest nc) {
 		c = nc;
 		repaint();
 	}
@@ -43,6 +43,7 @@ public class BoxTest2 extends JPanel {
 	boolean firstPaint = true;
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
+		Contest c = this.c;
 		Graphics2D g = (Graphics2D) gr;
 
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);

@@ -15,6 +15,8 @@ import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.ContestUpdateEvent;
+import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
@@ -27,7 +29,7 @@ import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.util.Frame;
 
-public class BoxTest2 extends JPanel {
+public class BoxTest2 extends JPanel implements ContestUpdateListener {
 	Contest c;
 	public BoxTest2(Contest c) {
 		this.c = c;
@@ -38,6 +40,11 @@ public class BoxTest2 extends JPanel {
 	public synchronized void setContest(Contest nc) {
 		c = nc;
 		repaint();
+	}
+	
+	@Override
+	public void contestUpdated(ContestUpdateEvent e) {
+		setContest(e.getNewContest());
 	}
 	
 	boolean firstPaint = true;

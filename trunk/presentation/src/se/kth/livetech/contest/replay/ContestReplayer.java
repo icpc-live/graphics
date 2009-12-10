@@ -1,6 +1,7 @@
 package se.kth.livetech.contest.replay;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -16,6 +17,7 @@ public class ContestReplayer extends ContestPlayer {
 
 	private ContestImpl contest;
 	private Set<AttrsUpdateEvent> updates;
+	private Set<AttrsUpdateEvent> usedUpdates; 
 	private long freezeTime = 0;
 	private boolean paused = false;
 	private Timer timer = null;
@@ -23,6 +25,7 @@ public class ContestReplayer extends ContestPlayer {
 	public ContestReplayer() {
 		contest = new ContestImpl();
 		updates = Collections.synchronizedSet(new LinkedHashSet<AttrsUpdateEvent>());
+		usedUpdates = Collections.synchronizedSet(new HashSet<AttrsUpdateEvent>());
 	}
 
 	public boolean isPaused() {
@@ -30,6 +33,7 @@ public class ContestReplayer extends ContestPlayer {
 	}
 
 	public void setPaused(boolean paused) {
+		System.out.println("paused = " + paused);
 		this.paused = paused;
 		changed();
 	}
@@ -44,7 +48,7 @@ public class ContestReplayer extends ContestPlayer {
 		updateTask.run();
 	}
 
-	public void setFreezeTime(long time) {
+	public synchronized void setFreezeTime(long time) {
 		if(time != freezeTime) {
 			if(timer!=null) {
 				timer.cancel();
@@ -56,11 +60,13 @@ public class ContestReplayer extends ContestPlayer {
 	}
 
 	public synchronized void attrsUpdated(AttrsUpdateEvent e) {
-		updates.add(e);
-		changed();
+		if(!usedUpdates.contains(e)) {
+			updates.add(e);
+			changed();
+		}
 	}
 
-	private void changed() {
+	private synchronized void changed() {
 		if(paused || updates.isEmpty()) {
 			if(timer != null) {
 				timer.cancel();
@@ -95,10 +101,11 @@ public class ContestReplayer extends ContestPlayer {
 				if(it.hasNext()) {
 					// Propagate and erase ...
 					AttrsUpdateEvent event = it.next();
+					usedUpdates.add(event);
 					propagate(event);
 					it.remove();
 				}
-				if(updates.isEmpty()) {
+				if(updates.isEmpty() && timer != null) {
 					timer.cancel();
 					timer = null;
 				}

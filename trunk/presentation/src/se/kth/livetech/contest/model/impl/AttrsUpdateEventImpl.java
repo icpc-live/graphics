@@ -84,6 +84,19 @@ public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 		}
 		return attrs;
 	}
+	
+	@Override
+	public int hashCode() {
+		return update.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(!(obj instanceof AttrsUpdateEventImpl))
+			return false;
+		AttrsUpdateEventImpl event = (AttrsUpdateEventImpl) obj;
+		return type.equals(event.type) && update.equals(event.update);
+	}
 
 	public String toString() {
 		StringBuffer s = new StringBuffer();

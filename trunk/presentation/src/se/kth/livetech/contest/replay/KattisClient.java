@@ -88,8 +88,7 @@ public class KattisClient extends AttrsUpdaterImpl {
 		timer.schedule(new TimerTask() {
 			public void run() {
 				readFromKattis();
-				System.out.println(offset);
-				System.out.println(new SimpleDateFormat("HH:mm:ss.S").format(new Date()));
+				System.err.println("Reading from kattis, offset = " + offset + ", time = " + new SimpleDateFormat("HH:mm:ss.S").format(new Date()));
 			}
 		}, REFRESH_DELAY, REFRESH_DELAY);
 	}

@@ -1,12 +1,7 @@
 package se.kth.livetech.contest.replay;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
 import javax.swing.JPanel;
 
-import se.kth.livetech.contest.model.ContestUpdateEvent;
-import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.presentation.layout.BoxTest2;
 import se.kth.livetech.properties.IProperty;
@@ -18,6 +13,11 @@ import se.kth.livetech.util.Frame;
 
 public class ReplayTest {
 	
+	private static PropertyListener l,l2,l3;
+	private static IProperty propertyBase;
+	private static IProperty propertyPause;
+	private static IProperty propertyPace;
+	
 	public static class Listen implements PropertyListener {
 		@Override
 		public void propertyChanged(IProperty changed) {
@@ -28,12 +28,11 @@ public class ReplayTest {
 	@SuppressWarnings("serial")
 	private static class Control extends JPanel {
 		public Control(IProperty base) {
-			this.add(new CheckBox(base.get("pause"), "Pause"));
-			this.add(new Slider(base.get("pace"), 0, 100));
+			this.add(new CheckBox(propertyPause, "Pause"));
+			this.add(new Slider(propertyPace, 0, 2000));
 		}
 	}
 
-	static Listen l;
 	public static void main(String[] args) {
 		/*TestContest tc = new TestContest(10, 10);
 		int id0 = tc.submit(1, 2, 11);
@@ -43,23 +42,17 @@ public class ReplayTest {
 		final BoxTest2 bt2 = new BoxTest2(new ContestImpl());
 		new Frame("ReplayTest", bt2);
 		
-		ContestReplayer replayer = new ContestReplayer();
-		replayer.setFreezeTime(100);
+		final ContestReplayer replayer = new ContestReplayer();
 		replayer.setPaused(false);
-		replayer.addContestUpdateListener(new ContestUpdateListener() {
-			@Override
-			public void contestUpdated(ContestUpdateEvent e) {
-				bt2.setContest(e.getNewContest());
-			}
-		});
+		replayer.addContestUpdateListener(bt2);
 		
 		// Read directly from Kattis
-		/*KattisClient kattis = new KattisClient();
+		KattisClient kattis = new KattisClient();
 		kattis.addAttrsUpdateListener(replayer);
-		kattis.startReading();*/
+		kattis.startReading();
 		
 		// Read from log file
-		try {
+		/*try {
 			LogSpeaker logSpeaker = new LogSpeaker("kattislog.txt");
 			logSpeaker.addAttrsUpdateListener(replayer);
 			logSpeaker.parse();
@@ -67,12 +60,29 @@ public class ReplayTest {
 			e1.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 
 		PropertyHierarchy ph = new PropertyHierarchy();
-		IProperty base = ph.getProperty("base");
-		new Frame("ReplayControl", new Control(base));
+		propertyBase = ph.getProperty("base");
+		propertyPause = propertyBase.get("pause");
+		propertyPace = propertyBase.get("pace");
+		new Frame("ReplayControl", new Control(propertyBase));
 		l = new Listen();
-		base.addPropertyListener(l);
+		propertyBase.addPropertyListener(l);
+		l2 = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				System.out.println("propertyPause changed");
+				replayer.setPaused(changed.getBooleanValue());
+			}
+		};
+		propertyPause.addPropertyListener(l2);
+		l3 = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				replayer.setFreezeTime((int)changed.getDoubleValue());
+			}
+		};
+		propertyPace.addPropertyListener(l3);
 	}
 }

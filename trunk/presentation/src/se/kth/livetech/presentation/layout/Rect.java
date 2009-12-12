@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 
 public class Rect {
-	public static void setRow(Rectangle2D rect, int i, int n, Rectangle2D rowOut) {
+	public static void setRow(Rectangle2D rect, double i, int n, Rectangle2D rowOut) {
 		rowOut.setRect(
 				rect.getX(), rect.getY() + i * rect.getHeight() / n,
 				rect.getWidth(), rect.getHeight() / n);

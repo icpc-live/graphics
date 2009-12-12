@@ -5,13 +5,14 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
+import se.kth.livetech.contest.graphics.ICPCFonts;
 import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.model.Contest;
@@ -21,12 +22,16 @@ import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.test.TestContest;
+import se.kth.livetech.presentation.animation.AnimationStack;
+import se.kth.livetech.presentation.animation.Interpolated;
 import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
+import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
+import se.kth.livetech.presentation.graphics.Utility;
 import se.kth.livetech.util.Frame;
 
 public class BoxTest2 extends JPanel implements ContestUpdateListener {
@@ -46,8 +51,11 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 	public void contestUpdated(ContestUpdateEvent e) {
 		setContest(e.getNewContest());
 	}
-	
+
+	AnimationStack<Integer, Integer> stack = new AnimationStack<Integer, Integer>();
+
 	boolean firstPaint = true;
+	long lastTime;
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
 		Contest c = this.c;
@@ -60,7 +68,18 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
-		
+
+		{ // Advance
+			long now = System.currentTimeMillis();
+			if (firstPaint) {
+				this.lastTime = now;
+				firstPaint = false;
+			}
+			if (this.stack.advance((now - this.lastTime) / 1000.0)) {
+				repaint();
+			}
+			this.lastTime = now;
+		}
 
 		{ // Header
 			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
@@ -85,12 +104,10 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			}
 		}
 
-		for (int i = 1; i < Math.min(c.getTeams().size(), N); ++i) {
+		int n = Math.min(c.getTeams().size(), N);
+		for (int i = 1; i < n; ++i) {
 			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
 
-			Team team = c.getRankedTeam(i);
-			int id = team.getId();
-			
 			{ // Background
 				Color row1 = ICPCColors.BG_COLOR_1;
 				Color row2 = ICPCColors.BG_COLOR_2;
@@ -100,15 +117,41 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 					r.setBackground(new RowFrameRenderer(row2, row1));
 			}
 
+			{ // Render
+				Rect.setRow(rect, i, N, row);
+				Rect.setDim(row, dim);
+				int x = (int) row.getX();
+				int y = (int) row.getY();
+				g.translate(x, y);
+				r.render(g, dim);
+				g.translate(-x, -y);
+			}
+		}
+
+		for (int i = 1; i < c.getTeams().size(); ++i) {
+			Team team = c.getRankedTeam(i);
+			int id = team.getId();
+			stack.setPosition(id, i);
+		}
+
+		Shape clip = g.getClip();
+		g.setClip(rect);
+		
+		for (int i = c.getTeams().size(); i-- > 1; ) {
+			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
+
+			Team team = c.getRankedTeam(i);
+			int id = team.getId();
+
 			{ // Flag
 				String country = team.getNationality();
-				BufferedImage image = ICPCImages.getFlag(country);
+				ImageResource image = ICPCImages.getFlag(country);
 				Renderable flag = new ImageRenderer("flag " + country, image);
 				r.add(-4, flag, 1, true);
 			}
 
 			{ // Logo
-				BufferedImage image = ICPCImages.getTeamLogo(id);
+				ImageResource image = ICPCImages.getTeamLogo(id);
 				Renderable logo = new ImageRenderer("logo " + id, image);
 				r.add(-3, logo, 1, true);
 			}	
@@ -138,7 +181,9 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			}
 
 			{ // Render
-				Rect.setRow(rect, i, N, row);
+				Interpolated.Double interpolator = new Interpolated.Double(i);
+				stack.interpolate(id, interpolator);
+				Rect.setRow(rect, interpolator.getValue(), N, row);
 				Rect.setDim(row, dim);
 				int x = (int) row.getX();
 				int y = (int) row.getY();
@@ -148,6 +193,17 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			}
 		}
 
+		g.setClip(clip);
+
+		{ // FPS count
+			Rectangle2D r = new Rectangle2D.Double(5, 5, 50, 20);
+			g.setColor(Color.BLUE);
+			Utility.drawString3D(g, String.format("%.1f", Frame.fps(1)), r, ICPCFonts.HEADER_FONT, Alignment.right);
+		}
+		
+		if (this.stack.advance(0)) {
+			repaint();
+		}
 	}
 	private static class IconRenderer implements Renderable {
 		public void render(Graphics2D g, Dimension d) {

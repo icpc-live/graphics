@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 
 import javax.swing.JPanel;
 
@@ -16,11 +15,10 @@ import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.graphics.TestcaseStatusRenderer;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
+import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.Renderable;
-import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
-import se.kth.livetech.util.Optional;
 
 @SuppressWarnings("serial")
 public class JudgeQueueTest extends JPanel {
@@ -82,13 +80,13 @@ public class JudgeQueueTest extends JPanel {
 
 			{ // Flag
 				String country = ICPCImages.COUNTRY_CODES[i];
-				BufferedImage image = ICPCImages.getFlag(country);
+				ImageResource image = ICPCImages.getFlag(country);
 				Renderable flag = new ImageRenderer("flag " + country, image);
 				r.add(-3, flag, 1, true);
 			}
 
 			{ // Logo
-				BufferedImage image = ICPCImages.getTeamLogo(i);
+				ImageResource image = ICPCImages.getTeamLogo(i);
 				Renderable logo = new ImageRenderer("logo " + i, image);
 				r.add(-2, logo, 1, true);
 			}

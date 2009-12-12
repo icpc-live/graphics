@@ -9,15 +9,15 @@ import java.awt.image.BufferedImage;
 
 public class ImageRenderer implements Renderable {
 	Object key;
-	BufferedImage image;
-	public ImageRenderer(Object key, BufferedImage image) {
+	ImageResource image;
+	public ImageRenderer(Object key, ImageResource image) {
 		this.key = key;
 		this.image = image;
 	}
 	@Override
 	public void render(Graphics2D g, Dimension d) {
 		if (image != null) {
-			Image img = image.getScaledInstance(d.width, d.height, Image.SCALE_SMOOTH);
+			Image img = image.getScaledInstance(d);
 			//BufferedImage img = ImageRenderer.getScaledInstance(image, d.width, d.height,
 			//		RenderingHints.VALUE_INTERPOLATION_BICUBIC, true);
 			g.drawImage(img, 0, 0, d.width, d.height, null);

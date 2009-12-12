@@ -3,16 +3,12 @@
  */
 package se.kth.livetech.contest.graphics;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
-
+import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.util.DebugTrace;
 /**
  * 
@@ -43,84 +39,54 @@ public class ICPCImages {
 	
 	public static final String[] COUNTRY_CODES = "egy zaf irn bgd chn idn hkg vnm ind kor sgp twn jpn rus blr geo pol swe ukr esp gbr fra col bra mex arg usa can nzl aus".split(" ");
 	
-	private static String IMAGE_ROOT = "images/";
+	private static ImageResource[] images;
 
-	private static BufferedImage NO_IMAGE;
-	
-	static {
-		NO_IMAGE = new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = (Graphics2D) NO_IMAGE.getGraphics();
-		g.setColor(Color.RED);
-		g.drawLine(1, 1, 3, 3);
-		g.drawLine(1, 3, 3, 1);
-	}
-	
-	private static BufferedImage[] images;
+	private static Map<Integer, ImageResource> teamLogos = new HashMap<Integer, ImageResource>();
 
-	private static Map<Integer, BufferedImage> teamLogos = new HashMap<Integer, BufferedImage>();
-
-	private static Map<String, BufferedImage> flags = new HashMap<String, BufferedImage>();
-
-	private static File resource(String path) {
-		File file = new File(IMAGE_ROOT + path);
-		return file;
-	}
+	private static Map<String, ImageResource> flags = new HashMap<String, ImageResource>();
 
 	static void loadMisc() {
-		images = new BufferedImage[22];
+		images = new ImageResource[22];
 		try {
-			images[0] = ImageIO.read(resource("balloon3.png"));
-			images[1] = ImageIO.read(resource("logo2.png"));
-			images[2] = ImageIO.read(resource("calgary3.png"));
-			images[3] = ImageIO.read(resource("ibm4.png"));
-			images[4] = ImageIO.read(resource("canada3.gif"));
-			images[5] = ImageIO.read(resource("bill3.jpg"));
-			images[6] = ImageIO.read(resource("id6.png"));
-			images[7] = ImageIO.read(resource("john2.png"));
-			images[8] = ImageIO.read(resource("johnM3.png"));
-			images[9] = ImageIO.read(resource("icons/languageChartIcon.gif"));
-			images[10] = ImageIO.read(resource("icons/problemChartIcon.gif"));
-			images[11] = ImageIO.read(resource("icons/submissionChartIcon.gif"));
-			images[12] = ImageIO.read(resource("icons/timelineIcon.gif"));
-			images[13] = ImageIO.read(resource("icons/problemSummaryIcon.gif"));
-			images[14] = ImageIO.read(resource("icons/logIcon.gif"));
-			images[15] = ImageIO.read(resource("icons/teamsIcon.gif"));
-			images[17] = ImageIO.read(resource("icons/logoIcon.gif"));
-			images[18] = ImageIO.read(resource("icons/calgaryIcon.gif"));
-			images[19] = ImageIO.read(resource("stop2.png"));
-			images[20] = ImageIO.read(resource("icons/banffIcon.gif"));
-			images[21] = ImageIO.read(resource("kth.png"));
+			images[0] = new ImageResource("balloon3.png");
+			images[1] = new ImageResource("logo2.png");
+			images[2] = new ImageResource("calgary3.png");
+			images[3] = new ImageResource("ibm4.png");
+			images[4] = new ImageResource("canada3.gif");
+			images[5] = new ImageResource("bill3.jpg");
+			images[6] = new ImageResource("id6.png");
+			images[7] = new ImageResource("john2.png");
+			images[8] = new ImageResource("johnM3.png");
+			images[9] = new ImageResource("icons/languageChartIcon.gif");
+			images[10] = new ImageResource("icons/problemChartIcon.gif");
+			images[11] = new ImageResource("icons/submissionChartIcon.gif");
+			images[12] = new ImageResource("icons/timelineIcon.gif");
+			images[13] = new ImageResource("icons/problemSummaryIcon.gif");
+			images[14] = new ImageResource("icons/logIcon.gif");
+			images[15] = new ImageResource("icons/teamsIcon.gif");
+			images[17] = new ImageResource("icons/logoIcon.gif");
+			images[18] = new ImageResource("icons/calgaryIcon.gif");
+			images[19] = new ImageResource("stop2.png");
+			images[20] = new ImageResource("icons/banffIcon.gif");
+			images[21] = new ImageResource("kth.png");
 		} catch (Exception e) {
 			DebugTrace.trace("Error loading images %s", e);
 		}
 	}
 
 	static void loadLogo(int i) {
-		try {
-			if (i == 0)
-				teamLogos.put(0, ImageIO.read(resource("logos/unknown.png")));
-			else
-				teamLogos.put(i, ImageIO.read(resource(String.format("logos/%d.png", i))));
-		} catch (Exception e) {
-			DebugTrace.trace("Error loading image: " + e);
-			if (i != 0)
-				teamLogos.put(i, teamLogos.get(0));
-			else
-				teamLogos.put(0, NO_IMAGE);
-		}
+		if (i == 0)
+			teamLogos.put(0, new ImageResource("logos/unknown.png"));
+		else
+			teamLogos.put(i, new ImageResource(String.format("logos/%d.png", i)));
 	}
 
 	static void loadFlag(String countryCode) {
-		try {
-			BufferedImage flag = ImageIO.read(resource("flags/" + countryCode + ".png"));
-			flags.put(countryCode, flag);
-		} catch (Exception e) {
-			DebugTrace.trace("Error loading flag: " + countryCode);
-			flags.put(countryCode, NO_IMAGE);
-		}
+		ImageResource flag = new ImageResource("flags/" + countryCode + ".png");
+		flags.put(countryCode, flag);
 	}
 
-	public static BufferedImage getImage(int x) {
+	public static ImageResource getImage(int x) {
 		if (images == null)
 			loadMisc();
 		return images[x];
@@ -135,13 +101,13 @@ public class ICPCImages {
 		return teamId;
 	}
 
-	public static BufferedImage getTeamLogo(int teamId) {
+	public static ImageResource getTeamLogo(int teamId) {
 		if (!teamLogos.containsKey(teamId))
 			loadLogo(teamId);
 		return teamLogos.get(teamId);
 	}
 
-	public static BufferedImage getFlag(String countryCode) {
+	public static ImageResource getFlag(String countryCode) {
 		if (!flags.containsKey(countryCode))
 			loadFlag(countryCode);
 		return flags.get(countryCode);

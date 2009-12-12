@@ -7,8 +7,6 @@ import org.apache.thrift.transport.TTransportException;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.NodeId;
-import se.kth.livetech.contest.model.AttrsUpdateEvent;
-import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.contest.replay.LogListener;
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;

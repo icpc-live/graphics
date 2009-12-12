@@ -31,4 +31,30 @@ public class Frame extends JFrame {
 			System.exit(0);
 		}
 	}
+
+	// FPS counter
+	private static int evenCount, oddCount, prevSecond;
+	public static double fps(int add) {
+		long millis = System.currentTimeMillis();
+		int second = (int) (millis / 1000), part = (int) (millis % 1000);
+		boolean even = second % 2 == 0;
+		if (second != prevSecond) {
+			if (second != prevSecond + 1) {
+				evenCount = 0;
+				oddCount = 0;
+			}
+			prevSecond = second;
+			if (even)
+				evenCount = 0;
+			else
+				oddCount = 0;
+		}
+		if (even)
+			evenCount += add;
+		else
+			oddCount += add;
+		int count = even ? evenCount : oddCount;
+		int other = !even ? evenCount : oddCount;
+		return count + (999 - part) * other / 1000d;
+	}
 }

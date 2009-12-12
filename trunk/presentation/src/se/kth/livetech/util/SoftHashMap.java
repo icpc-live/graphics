@@ -30,11 +30,12 @@ public class SoftHashMap<K, V> extends AbstractMap<K, V> implements Serializable
 		}
 		return result;
 	}
-
+	public volatile int expungeCount;
 	private void expungeStaleEntries() {
 		Reference<? extends V> sv;
 		while ((sv = queue.poll()) != null) {
 			hash.remove(reverseLookup.remove(sv));
+			++expungeCount;
 		}
 	}
 

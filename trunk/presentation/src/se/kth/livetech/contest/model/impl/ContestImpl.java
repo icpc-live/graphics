@@ -195,7 +195,7 @@ public class ContestImpl implements Contest {
 	}
 
 	private void update(Attrs a) {
-		System.err.println("update " + a);
+		//System.err.println("update " + a);
 		if (a instanceof Run) {
 			Run r = (Run) a;
 			int i = r.getId(), t = r.getTeam(), p = r.getProblem();

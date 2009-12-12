@@ -1,9 +1,7 @@
 package se.kth.livetech.presentation.graphics;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.geom.Point2D;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +30,9 @@ public class PartitionedRowRenderer<T> implements Renderable {
 	public void renderBackground(Graphics2D g, Dimension d) {
 		if (this.background.is()) {
 			Renderable background = this.background.get();
-			Image img = RenderCache.getRenderCache().getImageFor(background, d);
-			g.drawImage(img, 0, 0, null);
+			//Image img = RenderCache.getRenderCache().getImageFor(background, d);
+			//g.drawImage(img, 0, 0, null);
+			RenderCache.getRenderCache().render(g, 0, 0, background, d);
 		}
 	}
 
@@ -42,7 +41,7 @@ public class PartitionedRowRenderer<T> implements Renderable {
 				new Point2D.Double(0, d.height / 2.0),
 				new Point2D.Double(d.width, d.height / 2.0),
 				d.height);
-		int y0 = 0, y1 = d.height;
+		int y0 = 1, y1 = d.height;
 		for (Map.Entry<T, Renderable> it : this.parts.entrySet()) {
 			Renderable renderer = it.getValue();
 			if (renderer == null) continue;
@@ -52,13 +51,7 @@ public class PartitionedRowRenderer<T> implements Renderable {
 			int x0 = (int) (mid.getX() - width / 2);
 			int x1 = (int) (mid.getX() + width / 2);
 			Dimension dim = new Dimension(x1 - x0, y1 - y0);
-			boolean has = RenderCache.getRenderCache().hasImageFor(renderer, dim);
-			Image img = RenderCache.getRenderCache().getImageFor(renderer, dim);
-			g.drawImage(img, x0, y0, null);
-			if (!has) {
-				g.setColor(new Color(255, 0, 0, 127));
-				g.drawLine(x0, y1, x1, y0);
-			}
+			RenderCache.getRenderCache().render(g, x0, y0, renderer, dim);
 		}
 	}
 

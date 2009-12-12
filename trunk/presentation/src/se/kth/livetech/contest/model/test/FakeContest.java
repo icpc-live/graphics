@@ -38,13 +38,13 @@ public class FakeContest extends Thread {
 		
 		while (true) {
 			try {
-				sleep(1000);
+				sleep(100);
 			} catch (InterruptedException e) {
 			}
 			++time;
 			for(int i = 0; i<problems; ++i){
 				for (int j = 0; j < teams; j++) {
-					if(!solved[j][i] && Math.random() < 0.01*teamSkill[j][i]){
+					if(!solved[j][i] && Math.random() < 0.001*teamSkill[j][i]){
 						int id = test.submit(j, i, time);
 						if (Math.random() < .8){
 							test.solve(id);

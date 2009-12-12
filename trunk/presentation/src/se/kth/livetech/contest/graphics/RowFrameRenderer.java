@@ -22,5 +22,19 @@ public class RowFrameRenderer implements Renderable {
 		g.setPaint(paint);
 		g.fill(rect);
 	}
-
+	@Override
+	public int hashCode() {
+		int prime = 31, hash = this.getClass().hashCode();
+		hash = prime * hash + color1.hashCode();
+		hash = prime * hash + color2.hashCode();
+		return hash;
+	}
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null) return false;
+		if (this.getClass() != o.getClass()) return false;
+		RowFrameRenderer that = (RowFrameRenderer) o;
+		return this.color1.equals(that.color1) && this.color2.equals(that.color2);
+	}
 }

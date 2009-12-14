@@ -18,6 +18,10 @@ public class ContentProvider {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.left);
 	}
 
+	public static ColoredTextBox.Style getTeamSolvedStyle() {
+		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
+	}
+
 	public static ColoredTextBox.Style getHeaderStyle(Alignment alignment) {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.HEADER_FONT, ColoredTextBox.Style.Shape.roundRect, alignment);
 	}

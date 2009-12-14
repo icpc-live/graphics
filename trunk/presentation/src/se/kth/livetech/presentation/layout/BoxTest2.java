@@ -11,6 +11,7 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ContentProvider;
+import se.kth.livetech.contest.graphics.GlowRenderer;
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCFonts;
 import se.kth.livetech.contest.graphics.ICPCImages;
@@ -24,6 +25,7 @@ import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.presentation.animation.AnimationStack;
 import se.kth.livetech.presentation.animation.Interpolated;
+import se.kth.livetech.presentation.animation.RecentChange;
 import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
@@ -35,6 +37,15 @@ import se.kth.livetech.presentation.graphics.Utility;
 import se.kth.livetech.util.Frame;
 
 public class BoxTest2 extends JPanel implements ContestUpdateListener {
+	public static final double ANIMATION_TIME = 1500; // ms
+	public static final double RECENT_TIME = 5000; // ms
+	public static final double RECENT_MID_TIME = 500; // ms
+	public static final double RECENT_MID_ALPHA = .7;
+	public static final double RECENT_FADE_TIME = 500; // ms
+	final int ROWS = 20; // c.getTeams().size();
+	final double NAME_WEIGHT = 5;
+	
+
 	Contest c;
 	public BoxTest2(Contest c) {
 		this.c = c;
@@ -53,6 +64,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 	}
 
 	AnimationStack<Integer, Integer> stack = new AnimationStack<Integer, Integer>();
+	RecentChange<Integer, TeamScore> recent = new RecentChange<Integer, TeamScore>();
 
 	boolean firstPaint = true;
 	long lastTime;
@@ -62,10 +74,6 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		Graphics2D g = (Graphics2D) gr;
 
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
-
-		final int N = 20; // c.getTeams().size();
-		final double NAME_WEIGHT = 5;
-		
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
 
@@ -75,26 +83,30 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 				this.lastTime = now;
 				firstPaint = false;
 			}
-			if (this.stack.advance((now - this.lastTime) / 1000.0)) {
+			long dt = now - this.lastTime;
+			this.lastTime = now;
+			boolean update = false;
+			update |= this.stack.advance(dt / ANIMATION_TIME);
+			update |= this.recent.advance(dt / RECENT_TIME);
+			if (update) {
 				repaint();
 			}
-			this.lastTime = now;
 		}
 
 		{ // Header
 			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
-			r.add(-4, null, 1, true);
-			r.add(-3, null, 1, true);
+			r.add(-4, null, 1, 1, true);
+			r.add(-3, null, 1, 1, true);
 			Renderable teamName = new ColoredTextBox("Team", ContentProvider.getHeaderStyle(Alignment.left));
-			r.add(-2, teamName, NAME_WEIGHT, false);
-			r.add(-1, null, 1, false);
+			r.add(-2, teamName, NAME_WEIGHT, 1, false);
+			r.add(-1, null, 1, 1, false);
 			for (int j : c.getProblems()) {
 				Renderable problem = new ColoredTextBox("" + (char) ('A' + j), ContentProvider.getHeaderStyle(Alignment.center));
-				r.add(j, problem, 1, false);
+				r.add(j, problem, 1, 1, false);
 			}
 
 			{ // Render
-				Rect.setRow(rect, 0, N, row);
+				Rect.setRow(rect, 0, ROWS, row);
 				Rect.setDim(row, dim);
 				int x = (int) row.getX();
 				int y = (int) row.getY();
@@ -104,7 +116,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			}
 		}
 
-		int n = Math.min(c.getTeams().size(), N);
+		int n = Math.min(c.getTeams().size(), ROWS);
 		for (int i = 1; i < n; ++i) {
 			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
 
@@ -118,7 +130,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			}
 
 			{ // Render
-				Rect.setRow(rect, i, N, row);
+				Rect.setRow(rect, i, ROWS, row);
 				Rect.setDim(row, dim);
 				int x = (int) row.getX();
 				int y = (int) row.getY();
@@ -132,69 +144,123 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			Team team = c.getRankedTeam(i);
 			int id = team.getId();
 			stack.setPosition(id, i);
+			recent.set(id, c.getTeamScore(id));
 		}
 
 		Shape clip = g.getClip();
 		g.setClip(rect);
-		
+
 		for (int i = c.getTeams().size(); i-- > 1; ) {
-			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
+			paintRow(g, c, i, PartitionedRowRenderer.Layer.decorations, false);
+		}
 
-			Team team = c.getRankedTeam(i);
-			int id = team.getId();
+		for (int i = c.getTeams().size(); i-- > 1; ) {
+			paintRow(g, c, i, PartitionedRowRenderer.Layer.contents, false);
+		}
 
-			{ // Flag
-				String country = team.getNationality();
-				ImageResource image = ICPCImages.getFlag(country);
-				Renderable flag = new ImageRenderer("flag " + country, image);
-				r.add(-4, flag, 1, true);
-			}
+		for (int i = c.getTeams().size(); i-- > 1; ) {
+			paintRow(g, c, i, PartitionedRowRenderer.Layer.decorations, true);
+		}
 
-			{ // Logo
-				ImageResource image = ICPCImages.getTeamLogo(id);
-				Renderable logo = new ImageRenderer("logo " + id, image);
-				r.add(-3, logo, 1, true);
-			}	
-			
-			{ // Team name
-				String name = team.getName(); // TODO: Contest parameter for team name display?
-				//String name = team.getUniversity();
-				Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
-				r.add(-2, teamName, NAME_WEIGHT, false);
-			}
+		for (int i = c.getTeams().size(); i-- > 1; ) {
+			paintRow(g, c, i, PartitionedRowRenderer.Layer.contents, true);
+		}
+		
+		g.setClip(clip);
 
-			
-			{ // Stats
-				TeamScore ts = c.getTeamScore(id);
-				String statstr = "" + ts.getSolved();
-				Renderable stat = new ColoredTextBox(statstr, ContentProvider.getTeamNameStyle());
-				r.add(-1, stat, 1, false);
-			}
-			
-			for (int j : c.getProblems()) {
-				TeamScore ts = c.getTeamScore(id);
-				ProblemScore ps = ts.getProblemScore(j);
-				String text = ContentProvider.getProblemScoreText(ps);
-				ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
-				ColoredTextBox problem = new ColoredTextBox(text, style);
-				r.add(j, problem, 1, false);
-			}
+		paintFps(g);
+	}
 
-			{ // Render
-				Interpolated.Double interpolator = new Interpolated.Double(i);
-				stack.interpolate(id, interpolator);
-				Rect.setRow(rect, interpolator.getValue(), N, row);
-				Rect.setDim(row, dim);
-				int x = (int) row.getX();
-				int y = (int) row.getY();
-				g.translate(x, y);
-				r.render(g, dim);
-				g.translate(-x, -y);
+	public void paintRow(Graphics2D g, Contest c, int i, PartitionedRowRenderer.Layer layer, boolean up) {
+		Team team = c.getRankedTeam(i);
+		int id = team.getId();
+		
+		if (stack.isUp(id) != up)
+			return;
+
+		// TODO: remove duplicate objects/code
+		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
+		Rectangle2D row = new Rectangle2D.Double();
+		Dimension dim = new Dimension();
+
+		PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
+
+		{ // Flag
+			String country = team.getNationality();
+			ImageResource image = ICPCImages.getFlag(country);
+			Renderable flag = new ImageRenderer("flag " + country, image);
+			r.add(-4, flag, 1, .9, true);
+		}
+
+		{ // Logo
+			ImageResource image = ICPCImages.getTeamLogo(id);
+			Renderable logo = new ImageRenderer("logo " + id, image);
+			r.add(-3, logo, 1, .9, true);
+		}	
+
+		{ // Team name
+			String name = team.getName(); // TODO: Contest parameter for team name display?
+			//String name = team.getUniversity();
+			Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
+			r.add(-2, teamName, NAME_WEIGHT, 1, false);
+		}
+
+
+		TeamScore ts = c.getTeamScore(id);
+		TeamScore prev = recent.get(id);
+		double glowProgress = recent.recentProgress(id), glowAlpha;
+		if (glowProgress * RECENT_TIME < RECENT_MID_TIME) {
+			glowAlpha = 1 - RECENT_MID_ALPHA * glowProgress * RECENT_TIME / RECENT_MID_TIME;
+		}
+		else if (glowProgress * RECENT_TIME < RECENT_TIME - RECENT_FADE_TIME) {
+			glowAlpha = RECENT_MID_ALPHA;
+		}
+		else {
+			glowAlpha = RECENT_MID_ALPHA * (1 - glowProgress) * RECENT_TIME / RECENT_FADE_TIME;
+		}
+		final double ALPHA_STEPS = 256;
+		glowAlpha = (int) (ALPHA_STEPS * glowAlpha) / ALPHA_STEPS;
+
+		final double STATS_GLOW_MARGIN = 1.3;
+		final double PROBLEM_GLOW_MARGIN = 1.9;
+
+		{ // Stats
+			String statstr = "" + ts.getSolved();
+			Renderable stat = new ColoredTextBox(statstr, ContentProvider.getTeamSolvedStyle());
+			r.add(-1, stat, 1, 1, true);
+			if (ts.getSolved() != prev.getSolved()) {
+				GlowRenderer glow = new GlowRenderer(ICPCColors.YELLOW, STATS_GLOW_MARGIN, true, glowAlpha); // TODO: style
+				r.setDecoration(-1, glow, STATS_GLOW_MARGIN);
 			}
 		}
 
-		g.setClip(clip);
+		for (int j : c.getProblems()) {
+			ProblemScore ps = ts.getProblemScore(j);
+			ProblemScore pps = prev.getProblemScore(j);
+			String text = ContentProvider.getProblemScoreText(ps);
+			ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
+			ColoredTextBox problem = new ColoredTextBox(text, style);
+			r.add(j, problem, 1, .95, false);
+			if (!ps.equals(pps)) {
+				GlowRenderer glow = new GlowRenderer(style.getColor(), PROBLEM_GLOW_MARGIN, false, glowAlpha); // TODO: alpha per problem
+				r.setDecoration(j, glow, PROBLEM_GLOW_MARGIN);
+			}
+		}
 
+		{ // Render
+			Interpolated.Double interpolator = new Interpolated.Double(i);
+			stack.interpolate(id, interpolator);
+			Rect.setRow(rect, interpolator.getValue(), ROWS, row);
+			Rect.setDim(row, dim);
+			int x = (int) row.getX();
+			int y = (int) row.getY();
+			g.translate(x, y);
+			r.render(g, dim, layer);
+			g.translate(-x, -y);
+		}
+	}
+
+	public void paintFps(Graphics2D g) {
 		{ // FPS count
 			Rectangle2D r = new Rectangle2D.Double(5, 5, 50, 20);
 			g.setColor(Color.BLUE);
@@ -205,6 +271,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			repaint();
 		}
 	}
+
 	private static class IconRenderer implements Renderable {
 		public void render(Graphics2D g, Dimension d) {
 			g.setColor(Color.GREEN);

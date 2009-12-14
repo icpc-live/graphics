@@ -19,15 +19,20 @@ public class AnimationStack<Key, Position extends Comparable<Position>> {
 			states.put(key, state);
 		}
 	}
-	
+
+	public boolean isUp(Key key) {
+		State state = states.get(key);
+		return state.up;
+	}
+
 	public void interpolate(Key key, Interpolated<Position> interpolator) {
 		State state = states.get(key);
 		if (state != null) {
 			double fraction = 1;
 			while (state.chain != null) {
 				double progress = state.chainTime;
-				boolean up = state.position.compareTo(state.chain.position) < 0;
-				progress = Acceleration.getPosition(progress, up ? 0 : .5);
+				//boolean up = state.position.compareTo(state.chain.position) < 0;
+				progress = Acceleration.getPosition(progress, state.up ? 0 : .5);
 
 				fraction *= 1 - progress;
 				interpolator.interpolateTo(state.chain.position, fraction);
@@ -49,26 +54,23 @@ public class AnimationStack<Key, Position extends Comparable<Position>> {
 			this.chain = null;
 			this.chainTime = 1;
 			this.position = position;
+			this.up = false;
 		}
 		public State(State state) {
 			this.chain = state.chain;
 			this.chainTime = state.chainTime;
 			this.position = state.position;
+			this.up = state.up;
 		}
 		State chain;
 		double chainTime;
 		Position position;
+		boolean up;
 		public void chain(Position newPosition) {
 			chain = new State(this);
 			chainTime = 0;
 			this.position = newPosition;
-			/*
 			up = this.position.compareTo(chain.position) < 0;
-			if (up)
-				compositePositioner.setLinear(0);
-			else
-				compositePositioner.setLinear(0.5);
-			*/
 		}
 		public boolean advance(double advance) {
 			this.chainTime += advance;

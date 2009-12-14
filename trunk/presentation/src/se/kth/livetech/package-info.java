@@ -20,6 +20,9 @@ package se.kth.livetech;
  * start using property system for control,
  * improve graphics, layout, animations,
  * 
+ * Animation:
+ *  * up-flag, draw order: plain rows, up decorations, up rows
+ *  * glowing decoration outside row box (special clipping..)
  * 
  * 
  * Libraries:

@@ -11,8 +11,17 @@ import se.kth.livetech.util.Optional;
 
 public class PartitionedRowRenderer<T> implements Renderable {
 	Optional<Renderable> background;
-	Map<T, Renderable> parts = new HashMap<T, Renderable>();
+	Map<T, Part> parts = new HashMap<T, Part>();
 	Partitioner<T> partitioner = new Partitioner<T>();
+	
+	private static class Part {
+		Renderable renderer, decorationRenderer;
+		double margin, decorationMargin;
+		public Part(Renderable renderer, double margin) {
+			this.renderer = renderer;
+			this.margin = margin;
+		}
+	}
 
 	public PartitionedRowRenderer() {
 		background = new Optional<Renderable>();
@@ -22,34 +31,59 @@ public class PartitionedRowRenderer<T> implements Renderable {
 		this.background.set(background);
 	}
 	
-	public void add(T key, Renderable renderer, double weight, boolean fixed) {
-		parts.put(key, renderer);
+	public void add(T key, Renderable renderer, double weight, double margin, boolean fixed) {
+		Part part = new Part(renderer, margin);
+		parts.put(key, part);
 		partitioner.add(key, weight, fixed);
 	}
 	
-	public void renderBackground(Graphics2D g, Dimension d) {
-		if (this.background.is()) {
-			Renderable background = this.background.get();
-			//Image img = RenderCache.getRenderCache().getImageFor(background, d);
-			//g.drawImage(img, 0, 0, null);
-			RenderCache.getRenderCache().render(g, 0, 0, background, d);
-		}
+	public void setDecoration(T key, Renderable decoration, double margin) {
+		Part part = parts.get(key);
+		part.decorationRenderer = decoration;
+		part.decorationMargin = margin;
+	}
+	
+	public static enum Layer {
+		background, decorations, contents
 	}
 
-	public void renderParts(Graphics2D g, Dimension d) {
+	public void render(Graphics2D g, Dimension d, Layer layer) {
+		if (layer == Layer.background) {
+			if (this.background.is()) {
+				Renderable background = this.background.get();
+				RenderCache.getRenderCache().render(g, 0, 0, background, d);
+			}
+			return;
+		}
 		partitioner.set(
 				new Point2D.Double(0, d.height / 2.0),
 				new Point2D.Double(d.width, d.height / 2.0),
 				d.height);
-		int y0 = 1, y1 = d.height;
-		for (Map.Entry<T, Renderable> it : this.parts.entrySet()) {
-			Renderable renderer = it.getValue();
-			if (renderer == null) continue;
+		for (Map.Entry<T, Part> it : this.parts.entrySet()) {
 			T key = it.getKey();
+			Part part = it.getValue();
+			Renderable renderer;
+			double margin;
+			switch (layer) {
+			case contents:
+				renderer = part.renderer;
+				margin = part.margin;
+				break;
+			case decorations:
+				renderer = part.decorationRenderer;
+				margin = part.decorationMargin;
+				break;
+			default:
+				return;
+			}
+			if (renderer == null) continue;
 			Point2D mid = partitioner.getPosition(key);
-			double width = partitioner.getSize(key);
+			double width = partitioner.getSize(key) - (1 - margin) * partitioner.getH();
+			double height = margin * partitioner.getH();
 			int x0 = (int) (mid.getX() - width / 2);
 			int x1 = (int) (mid.getX() + width / 2);
+			int y0 = (int) (mid.getY() - height / 2);
+			int y1 = (int) (mid.getY() + height / 2);
 			Dimension dim = new Dimension(x1 - x0, y1 - y0);
 			RenderCache.getRenderCache().render(g, x0, y0, renderer, dim);
 		}
@@ -57,7 +91,8 @@ public class PartitionedRowRenderer<T> implements Renderable {
 
 	@Override
 	public void render(Graphics2D g, Dimension d) {
-		renderBackground(g, d);
-		renderParts(g, d);
+		render(g, d, Layer.background);
+		render(g, d, Layer.decorations);
+		render(g, d, Layer.contents);
 	}
 }

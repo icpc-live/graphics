@@ -8,7 +8,6 @@ import java.awt.geom.Rectangle2D;
 
 import se.kth.livetech.presentation.graphics.Renderable;
 
-//TODO: make hashable
 public class RowFrameRenderer implements Renderable {
 	Color color1;
 	Color color2;

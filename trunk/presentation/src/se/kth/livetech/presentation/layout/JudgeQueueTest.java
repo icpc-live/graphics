@@ -82,19 +82,19 @@ public class JudgeQueueTest extends JPanel {
 				String country = ICPCImages.COUNTRY_CODES[i];
 				ImageResource image = ICPCImages.getFlag(country);
 				Renderable flag = new ImageRenderer("flag " + country, image);
-				r.add(-3, flag, 1, true);
+				r.add(-3, flag, 1, .9, true);
 			}
 
 			{ // Logo
 				ImageResource image = ICPCImages.getTeamLogo(i);
 				Renderable logo = new ImageRenderer("logo " + i, image);
-				r.add(-2, logo, 1, true);
+				r.add(-2, logo, 1, .9, true);
 			}
 
 			{ // Team name
 				// TODO: team name should be in a TeamSubmissionState...
 				Renderable teamName = new ColoredTextBox("University " + i, ContentProvider.getTeamNameStyle());
-				r.add(-1, teamName, 1, false);
+				r.add(-1, teamName, 1, 1, false);
 			}
 
 			// Testcases
@@ -109,7 +109,7 @@ public class JudgeQueueTest extends JPanel {
 				else
 					status = TestcaseStatusRenderer.Status.none;
 				Renderable testcase = new TestcaseStatusRenderer(status);
-				r.add(j, testcase, 1, true);
+				r.add(j, testcase, 1, .95, true);
 			}
 
 			{ // Render

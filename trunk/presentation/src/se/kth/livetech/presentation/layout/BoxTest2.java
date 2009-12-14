@@ -210,7 +210,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		TeamScore prev = recent.get(id);
 		double glowProgress = recent.recentProgress(id), glowAlpha;
 		if (glowProgress * RECENT_TIME < RECENT_MID_TIME) {
-			glowAlpha = 1 - RECENT_MID_ALPHA * glowProgress * RECENT_TIME / RECENT_MID_TIME;
+			glowAlpha = 1 - (1 - RECENT_MID_ALPHA) * glowProgress * RECENT_TIME / RECENT_MID_TIME;
 		}
 		else if (glowProgress * RECENT_TIME < RECENT_TIME - RECENT_FADE_TIME) {
 			glowAlpha = RECENT_MID_ALPHA;
@@ -221,8 +221,8 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		final double ALPHA_STEPS = 256;
 		glowAlpha = (int) (ALPHA_STEPS * glowAlpha) / ALPHA_STEPS;
 
-		final double STATS_GLOW_MARGIN = 1.3;
-		final double PROBLEM_GLOW_MARGIN = 1.9;
+		final double STATS_GLOW_MARGIN = 1.5;
+		final double PROBLEM_GLOW_MARGIN = 2.5;
 
 		{ // Stats
 			String statstr = "" + ts.getSolved();

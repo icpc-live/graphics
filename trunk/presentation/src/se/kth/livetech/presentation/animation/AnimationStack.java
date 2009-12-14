@@ -22,7 +22,7 @@ public class AnimationStack<Key, Position extends Comparable<Position>> {
 
 	public boolean isUp(Key key) {
 		State state = states.get(key);
-		return state.up;
+		return state.chainTime < 1 && state.up;
 	}
 
 	public void interpolate(Key key, Interpolated<Position> interpolator) {

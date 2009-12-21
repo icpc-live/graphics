@@ -22,6 +22,7 @@ import org.netbeans.swing.outline.RowModel;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 
+@SuppressWarnings("serial")
 public class PropertyOutline extends Outline implements PropertyListener {
 	private IProperty property;
 	private Model model;

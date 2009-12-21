@@ -18,6 +18,7 @@ import se.kth.livetech.properties.ui.CheckBox;
 import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
 
+@SuppressWarnings("serial")
 public class ProductionPanel extends JPanel implements ActionListener {
 
 	String[] interviewPresets = new String[] {

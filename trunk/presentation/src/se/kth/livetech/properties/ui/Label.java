@@ -5,6 +5,7 @@ import javax.swing.JLabel;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 
+@SuppressWarnings("serial")
 public class Label extends JLabel implements PropertyListener {
 	IProperty property;
 	public Label(IProperty property) {

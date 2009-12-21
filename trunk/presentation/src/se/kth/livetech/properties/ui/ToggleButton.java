@@ -8,6 +8,7 @@ import javax.swing.JToggleButton;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 
+@SuppressWarnings("serial")
 public class ToggleButton extends JToggleButton implements ActionListener, PropertyListener {
 	IProperty property;
 	String value;

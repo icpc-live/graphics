@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 
 import se.kth.livetech.util.Frame;
 
+@SuppressWarnings("serial")
 public class SketchResolutions extends JPanel {
 	public SketchResolutions() {
 		setBackground(Color.BLUE.darker());

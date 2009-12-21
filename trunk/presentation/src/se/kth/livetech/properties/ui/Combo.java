@@ -8,6 +8,7 @@ import javax.swing.JComboBox;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 
+@SuppressWarnings("serial")
 public class Combo extends JComboBox implements ActionListener, PropertyListener {
 	IProperty property;
 	String name;

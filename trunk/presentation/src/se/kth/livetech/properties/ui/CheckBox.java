@@ -8,6 +8,7 @@ import javax.swing.JCheckBox;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 
+@SuppressWarnings("serial")
 public class CheckBox extends JCheckBox implements ActionListener, PropertyListener {
 	IProperty property;
 	public CheckBox(IProperty property, String title) {

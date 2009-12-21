@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 
 import se.kth.livetech.util.Frame;
 
+@SuppressWarnings("serial")
 public class BoxTest extends JPanel {
 	public BoxTest() {
 		this.setBackground(Color.BLUE);

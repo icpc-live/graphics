@@ -7,6 +7,7 @@ import javax.swing.WindowConstants;
 
 import se.kth.livetech.properties.PropertyHierarchy;
 
+@SuppressWarnings("serial")
 public class PropertyFrame extends JFrame {
 	private Outline outline;
 	

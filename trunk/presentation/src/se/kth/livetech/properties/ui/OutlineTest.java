@@ -11,6 +11,7 @@ import org.netbeans.swing.outline.RowModel;
 
 import se.kth.livetech.properties.IProperty;
 
+@SuppressWarnings("serial")
 public class OutlineTest extends Outline {
 	IProperty property;
 	public OutlineTest(IProperty property) {

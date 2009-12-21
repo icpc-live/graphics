@@ -12,6 +12,7 @@ import javax.swing.event.ChangeListener;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 
+@SuppressWarnings("serial")
 public class Hue extends Box implements PropertyListener, ChangeListener {
 	IProperty property;
 	String name;

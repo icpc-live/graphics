@@ -4,6 +4,7 @@ import java.lang.ref.*;
 import java.util.*;
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class SoftHashMap<K, V> extends AbstractMap<K, V> implements Serializable {
 	/** The internal HashMap that will hold the SoftReference. */
 	private final Map<K, SoftReference<V>> hash = new HashMap<K, SoftReference<V>>();

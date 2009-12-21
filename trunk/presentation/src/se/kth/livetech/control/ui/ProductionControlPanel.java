@@ -9,6 +9,7 @@ import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
 
+@SuppressWarnings("serial")
 public class ProductionControlPanel  extends JPanel implements PropertyListener{
 	Box box=new Box(BoxLayout.Y_AXIS);
 	int index=-1;

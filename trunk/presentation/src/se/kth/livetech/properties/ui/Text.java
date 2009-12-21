@@ -8,6 +8,7 @@ import javax.swing.JTextField;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 
+@SuppressWarnings("serial")
 public class Text extends JTextField implements ActionListener, PropertyListener {
 	IProperty property;
 	String name;

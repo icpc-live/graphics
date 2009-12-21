@@ -36,6 +36,7 @@ import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.presentation.graphics.Utility;
 import se.kth.livetech.util.Frame;
 
+@SuppressWarnings("serial")
 public class BoxTest2 extends JPanel implements ContestUpdateListener {
 	public static final double ANIMATION_TIME = 1500; // ms
 	public static final double RECENT_TIME = 5000; // ms

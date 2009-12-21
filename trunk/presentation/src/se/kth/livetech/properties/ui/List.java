@@ -8,6 +8,7 @@ import javax.swing.event.ListSelectionListener;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 
+@SuppressWarnings("serial")
 public class List extends JList implements ListSelectionListener, PropertyListener {
 	IProperty property;
 	String name;

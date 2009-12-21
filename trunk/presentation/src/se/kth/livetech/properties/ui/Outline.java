@@ -15,6 +15,7 @@ import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.ui.PropertyOutline.PropertySelectionChangedListener;
 
+@SuppressWarnings("serial")
 public class Outline extends JPanel {
 	private PropertyOutline outlineControl;
 	private PropertyHierarchy properties;

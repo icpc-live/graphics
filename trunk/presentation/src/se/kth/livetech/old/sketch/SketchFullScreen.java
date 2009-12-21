@@ -12,6 +12,7 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class SketchFullScreen extends JPanel {
 	public void paintComponent(Graphics gr) {
 		Graphics2D g = (Graphics2D) gr;

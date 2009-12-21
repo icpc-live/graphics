@@ -17,6 +17,7 @@ import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.PropertyListener;
 
+@SuppressWarnings("serial")
 public class TestTriangle extends JPanel implements PropertyListener {
 	IProperty base;
 	public TestTriangle(IProperty base) {

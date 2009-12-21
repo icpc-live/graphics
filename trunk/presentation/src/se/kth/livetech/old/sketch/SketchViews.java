@@ -8,6 +8,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class SketchViews extends JPanel {
 	public SketchViews() {
 		setBackground(Color.BLUE.darker());

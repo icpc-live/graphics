@@ -11,6 +11,7 @@ import se.kth.livetech.properties.ui.Combo;
 import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
 
+@SuppressWarnings("serial")
 public class ProductionSettingsFrame extends JFrame{
 	
 	IProperty base;

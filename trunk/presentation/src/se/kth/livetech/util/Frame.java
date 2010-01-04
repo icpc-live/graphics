@@ -1,5 +1,8 @@
 package se.kth.livetech.util;
 
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -15,13 +18,18 @@ public class Frame extends JFrame {
 		this(title, panel, null);
 	}
 	public Frame(String title, JPanel panel, Runnable exitCall) {
+		this(title, panel, exitCall, true);
+	}
+	public Frame(String title, JPanel panel, Runnable exitCall, boolean setVisible) {
 		super(title);
 		this.exitCall = exitCall;
 		addWindowListener(new Window());
 		//setIconImage(SketchIcon.getIcon());
 		getContentPane().add(panel);
-		pack();
-		setVisible(true);
+		if (setVisible) {
+			pack();
+			setVisible(true);
+		}
 	}
 	Runnable exitCall;
 	private class Window extends WindowAdapter {
@@ -29,6 +37,26 @@ public class Frame extends JFrame {
 			if (exitCall != null)
 				exitCall.run();
 			System.exit(0);
+		}
+	}
+	
+	// Full screen
+	public void fullScreen(int screen) {
+		setUndecorated(true);
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice gd = ge.getDefaultScreenDevice();
+		DisplayMode dm = gd.getDisplayMode();
+		try {
+			gd.setFullScreenWindow(this);
+			Thread.sleep(24 * 3600 * 1000l); // TODO
+		} catch (InterruptedException e) {
+		}
+		finally {
+			try {
+				gd.setDisplayMode(dm);
+			} finally {
+				gd.setFullScreenWindow(null);
+			}
 		}
 	}
 

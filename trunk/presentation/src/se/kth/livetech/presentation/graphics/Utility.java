@@ -87,7 +87,9 @@ public class Utility {
 		}
 		g.setTransform(gtrans);
 		double x = getStringX(s, rect, rat*width, alignment);
-		double y = rect.getCenterY() + fm.getHeight() / 2d - fm.getDescent();
+		//double y = rect.getCenterY() + fm.getHeight() / 2d - fm.getDescent();
+		//y += rect.getHeight() / 10; // TODO: text is not vertically centered
+		double y = rect.getCenterY() + fm.getAscent() / 2.2d;
 		g.translate(x, y);
 		g.scale(rat, 1);
 		drawString3D(g, s, 0, 0);

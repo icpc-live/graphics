@@ -14,7 +14,8 @@ import se.kth.livetech.util.Frame;
 public class FakeContest extends Thread {
 	TestContest test;
 	final static int teams = 100;
-	final static int problems = 10;
+	final static int problems = 12;
+	final static boolean FULL_SCREEN = false;
 	public FakeContest(TestContest test) {
 		super("Fake contest");
 		this.test = test;
@@ -72,7 +73,14 @@ public class FakeContest extends Thread {
 				bt.setContest(e.getNewContest());
 			}
 		});
-		new Frame("Fake Contest", bt);
+		Frame frame = new Frame("Fake Contest", bt, null, false);
 		fc.start();
+		if (FULL_SCREEN) {
+			frame.fullScreen(0);
+		}
+		else {
+			frame.pack();
+			frame.setVisible(true);
+		}
 	}
 }

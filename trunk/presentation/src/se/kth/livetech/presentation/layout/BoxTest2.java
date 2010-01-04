@@ -39,11 +39,12 @@ import se.kth.livetech.util.Frame;
 @SuppressWarnings("serial")
 public class BoxTest2 extends JPanel implements ContestUpdateListener {
 	public static final double ANIMATION_TIME = 1500; // ms
+	public static final double ROW_TIME = 1000; // ms
 	public static final double RECENT_TIME = 5000; // ms
 	public static final double RECENT_MID_TIME = 500; // ms
 	public static final double RECENT_MID_ALPHA = .7;
 	public static final double RECENT_FADE_TIME = 500; // ms
-	final int ROWS = 20; // c.getTeams().size();
+	final int ROWS = 25;
 	final double NAME_WEIGHT = 5;
 	
 
@@ -69,6 +70,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 
 	boolean firstPaint = true;
 	long lastTime;
+	double startRow = 0;
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
 		Contest c = this.c;
@@ -92,6 +94,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			if (update) {
 				repaint();
 			}
+			startRow += dt / ROW_TIME;
 		}
 
 		{ // Header
@@ -251,7 +254,10 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		{ // Render
 			Interpolated.Double interpolator = new Interpolated.Double(i);
 			stack.interpolate(id, interpolator);
-			Rect.setRow(rect, interpolator.getValue(), ROWS, row);
+			double rowPos = interpolator.getValue();
+			//double maxStartRow = c.getTeams().size() - ROWS / 2.0;
+			//rowPos -= Math.IEEEremainder(startRow - maxStartRow / 2, maxStartRow) + maxStartRow / 2;
+			Rect.setRow(rect, rowPos, ROWS, row);
 			Rect.setDim(row, dim);
 			int x = (int) row.getX();
 			int y = (int) row.getY();

@@ -13,6 +13,10 @@ import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.graphics.TestcaseStatusRenderer;
+import se.kth.livetech.contest.model.ContestUpdateEvent;
+import se.kth.livetech.contest.model.ContestUpdateListener;
+import se.kth.livetech.contest.model.Run;
+import se.kth.livetech.presentation.animation.AnimationStack;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.ImageResource;
@@ -21,7 +25,7 @@ import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
-public class JudgeQueueTest extends JPanel {
+public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	final int N = 20;
 	final int P = 10;
 	final int T = 17;
@@ -31,6 +35,7 @@ public class JudgeQueueTest extends JPanel {
 		this.setPreferredSize(new Dimension(512, 576));
 		new TestJudge().start();
 	}
+	AnimationStack<Integer, Integer> stack = new AnimationStack<Integer, Integer>();
 	private class TestJudge extends Thread {
 		public void run() {
 			// TODO More realistic judge simulation...
@@ -125,5 +130,16 @@ public class JudgeQueueTest extends JPanel {
 	}
 	public static void main(String[] args) {
 		new Frame("JudgeQueueTest", new JudgeQueueTest());
+	}
+	@Override
+	public void contestUpdated(ContestUpdateEvent e) {
+		if (e.getUpdate() instanceof Run) {
+			//Run run = (Run) e.getUpdate();
+			//if (!state.contains(run.getId())) {
+			//	state.put(run.getId(), new JudgeState());
+			//  // TODO: smooth insertion during previous animation...
+			//  stack.setPosition(run.getId(), state.size() + 1);
+			//}
+		}
 	}
 }

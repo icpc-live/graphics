@@ -82,10 +82,7 @@ public class LiveClient {
 					String arg = opts.getArgs().get(i);
 					System.out.println(arg);
 					HostPort hostPort = new HostPort(arg);
-					NodeId remoteNode = new NodeId();
-					remoteNode.address = hostPort.host;
-					remoteNode.port = hostPort.port;
-					nodeRegistry.addNode(remoteNode);
+					nodeRegistry.connect(hostPort.host, hostPort.port);
 				}
 			}
 			LiveService.Iface handler = new BaseHandler(nodeRegistry);

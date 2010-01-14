@@ -1,5 +1,9 @@
 package se.kth.livetech.communication;
 
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.thrift.TException;
 
 import se.kth.livetech.communication.thrift.LiveService;
@@ -9,16 +13,32 @@ import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 
 public class NodeConnection implements AttrsUpdateListener {
+	
+	static enum State {
+		DISCONNECTED,
+		CONNECTED,
+		PENDING,
+		RECONNECTING
+	}
+	
 	private NodeId localNode;
 	private NodeId id;
 	private NodeStatus status;
 	private TimeSync timeSync;
 	private Connection connection;
 	private LiveService.Client client;
+	private State state;
+	private BlockingQueue<AttrsUpdateEvent> sendQueue;
+
+	public State getState() {
+		return state;
+	}
 
 	public NodeConnection(NodeId localNode, NodeId id) {
+		this.sendQueue = new LinkedBlockingQueue<AttrsUpdateEvent>();
 		this.localNode = localNode;
 		this.id = id;
+		this.state = State.PENDING;
 		this.status = new NodeStatus();
 		this.status.name = id.name;
 		this.timeSync = new TimeSync();
@@ -50,22 +70,36 @@ public class NodeConnection implements AttrsUpdateListener {
 
 				try {
 					client = Connector.connect(localNode, id.address, id.port);
+					NodeConnection.this.setId(client.getNodeId());
 				} catch (TException e) {
 					// TODO Reporting
 					e.printStackTrace();
 					continue;
 				}
 
-				NodeConnection.this.setClient(client);
+				NodeConnection.this.client = client;
+				NodeConnection.this.state = NodeConnection.State.CONNECTED;
 
 				// Time sync every second
 				while (true) {
 					System.err.println("time");
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						continue;
+					
+					while (true) {
+						AttrsUpdateEvent e;
+						
+						try {
+							e = sendQueue.poll(1, TimeUnit.SECONDS);
+						} catch (InterruptedException ie) {
+							break;
+						}
+						
+						if (e == null) {
+							break;
+						}
+						
+						/* TODO: Send event. */
 					}
+					
 					long t0 = System.currentTimeMillis();
 					long remoteTime;
 					try {
@@ -110,7 +144,15 @@ public class NodeConnection implements AttrsUpdateListener {
 
 	@Override
 	public void attrsUpdated(AttrsUpdateEvent e) {
-		// TODO Auto-generated method stub
-		
+		sendQueue.add(e);
 	}
+
+	public void setId(NodeId id) {
+		this.id = id;
+	}
+
+	public NodeId getId() {
+		return id;
+	}
+
 }

@@ -20,33 +20,20 @@ import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.communication.thrift.NodeStatus;
 import se.kth.livetech.communication.thrift.PropertyEvent;
 import se.kth.livetech.properties.IProperty;
-import se.kth.livetech.properties.PropertyHierarchy;
-import se.kth.livetech.properties.PropertyListener;
+import se.kth.livetech.util.DebugTrace;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class BaseHandler implements LiveService.Iface {
-	PropertyHierarchy hierarchy;
 	ThreadLocal<NodeId> attachedNode;
-	LocalPropertyListener listener;
 	NodeRegistry registry;
-	
-	private class LocalPropertyListener implements PropertyListener {
-		@Override
-		public void propertyChanged(IProperty changed) {
-			// TODO: send off the change to remote nodes
-		}
-	}
-	
+
 	public BaseHandler() {
 		// TODO: Needed by SpiderHandler and maybe other legacy stuff
 		throw new NotImplementedException();
 	}
 	
 	public BaseHandler(NodeRegistry registry) {
-		hierarchy = new PropertyHierarchy();
 		attachedNode = new ThreadLocal<NodeId>();
-		listener = new LocalPropertyListener();
-		hierarchy.getProperty("").addPropertyListener(listener);
 		this.registry = registry;
 	}
 	
@@ -178,7 +165,16 @@ public class BaseHandler implements LiveService.Iface {
 	@Override
 	public void propertyUpdate(PropertyEvent event) throws TException {
 		// TODO Auto-generated method stub
-		
+		DebugTrace.trace("propertyUpdate %s -> %s", event.key, event.value);
+		IProperty p = registry.getLocalState().getHierarchy().getProperty(event.key);
+		if (event.isSetValue())
+			p.setValue(event.value);
+		else
+			p.clearValue();
+		if (event.isSetLink())
+			p.setLink(event.link);
+		else
+			p.clearLink();
 	}
 
 	@Override

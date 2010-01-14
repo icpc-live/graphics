@@ -32,10 +32,12 @@ public class LiveState {
 	}
 
 	public void addListeners(NodeConnection connection) {
-		// TODO: add listeners
+		this.hierarchy.getProperty("").addPropertyListener(connection);
+		// TODO: add contest listeners
 	}
 	public void removeListeners(NodeConnection connection) {
-		// TODO: remove listeners
+		this.hierarchy.getProperty("").removePropertyListener(connection);
+		// TODO: remove contest listeners
 	}
 
 	public boolean isSpiderFlag() {

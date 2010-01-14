@@ -13,6 +13,10 @@ public class NodeRegistry {
 	private NodeId localNode;
 	private LiveState localState;
 
+	public LiveState getLocalState() {
+		return localState;
+	}
+
 	private Map<NodeId, NodeConnection> connections;
 
 	public NodeRegistry(NodeId localNode, LiveState localState) {

@@ -6,13 +6,19 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.thrift.TException;
 
+import se.kth.livetech.communication.thrift.ContestEvent;
+import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.communication.thrift.NodeStatus;
+import se.kth.livetech.communication.thrift.PropertyEvent;
+import se.kth.livetech.communication.thrift.LiveService.Client;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyListener;
 
-public class NodeConnection implements AttrsUpdateListener {
+public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 	
 	static enum State {
 		DISCONNECTED,
@@ -28,14 +34,14 @@ public class NodeConnection implements AttrsUpdateListener {
 	private Connection connection;
 	private LiveService.Client client;
 	private State state;
-	private BlockingQueue<AttrsUpdateEvent> sendQueue;
+	private BlockingQueue<QueueItem> sendQueue;
 
 	public State getState() {
 		return state;
 	}
 
 	public NodeConnection(NodeRegistry nodeRegistry, NodeId id) {
-		this.sendQueue = new LinkedBlockingQueue<AttrsUpdateEvent>();
+		this.sendQueue = new LinkedBlockingQueue<QueueItem>();
 		this.nodeRegistry = nodeRegistry;
 		this.id = id;
 		this.state = State.PENDING;
@@ -48,6 +54,10 @@ public class NodeConnection implements AttrsUpdateListener {
 		// TODO state synchronization
 	}
 
+	private interface QueueItem {
+		public void send(LiveService.Client client) throws TException;
+	}
+	
 	private class Connection extends Thread {
 		public Connection() {
 			super("Node connection to " + id.name);
@@ -88,26 +98,20 @@ public class NodeConnection implements AttrsUpdateListener {
 				while (true) {
 					System.err.println("time");
 					
-					while (true) {
-						AttrsUpdateEvent e;
-						
-						try {
-							e = sendQueue.poll(1, TimeUnit.SECONDS);
-						} catch (InterruptedException ie) {
-							break;
-						}
-						
-						if (e == null) {
-							break;
-						}
-						
-						System.out.printf("Fake send event.%n");
-						/* TODO: Send event. */
+					QueueItem item;
+
+					try {
+						item = sendQueue.poll(1, TimeUnit.SECONDS);
+					} catch (InterruptedException ie) {
+						break;
 					}
-					
+
 					long t0 = System.currentTimeMillis();
 					long remoteTime;
 					try {
+						if (item != null) {
+							item.send(client);
+						}
 						remoteTime = client.time();
 					} catch (TException e) {
 						// TODO Reporting
@@ -149,7 +153,21 @@ public class NodeConnection implements AttrsUpdateListener {
 
 	@Override
 	public void attrsUpdated(AttrsUpdateEvent e) {
-		sendQueue.add(e);
+		final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
+		final ContestEvent update = new ContestEvent();
+		//update.id = TODO?;
+		update.time = e.getTime();
+		update.type = e.getType();
+		for (String name : e.getProperties()) {
+			update.attributes.put(name, e.getProperty(name));
+		}
+		sendQueue.add(new QueueItem() {
+			@Override
+			public void send(Client client) throws TException {
+				client.contestUpdate(contestId, update);
+			}
+			
+		});
 	}
 
 	public void setId(NodeId id) {
@@ -160,6 +178,21 @@ public class NodeConnection implements AttrsUpdateListener {
 
 	public NodeId getId() {
 		return id;
+	}
+
+	@Override
+	public void propertyChanged(IProperty changed) {
+		final PropertyEvent update = new PropertyEvent(changed.getName());
+		if (changed.isSet())
+			update.setValue(changed.getOwnValue());
+		if (changed.isLinked())
+			update.setLink(changed.getLink());
+		sendQueue.add(new QueueItem() {
+			@Override
+			public void send(Client client) throws TException {
+				client.propertyUpdate(update);
+			}
+		});
 	}
 
 }

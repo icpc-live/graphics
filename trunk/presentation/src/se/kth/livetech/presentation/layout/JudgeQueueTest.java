@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JPanel;
 
@@ -32,7 +34,15 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	final int N = 20;
 	final int P = 10;
 	final int T = 17;
-	int[] state = new int[N];
+	final int B = 45;
+	Map<Integer, JudgeState> state = new TreeMap<Integer, JudgeState>();
+	
+	private static class JudgeState {
+		int state = 0;
+		
+		
+	}
+	
 	public JudgeQueueTest() {
 		this.setBackground(Color.BLUE.darker());
 		this.setPreferredSize(new Dimension(512, 576));
@@ -46,20 +56,18 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				try {
 					sleep((int) (Math.random() * T));
 				} catch (InterruptedException e) { }
-				for (int i = 0; i < N; ++i) {
-					int p = (int) (Math.random() * P * N * 100);
-					if (state[i] < 0 && p == 0)
-						state[i] = P + 5;
-					if (state[i] < P + 5) {
-						if (p < 10 && state[i] != 0)
-							state[i] = -state[i];
-						else if (p <= state[i] * 100)
-							++state[i];
+				for (int i : state.keySet()) {
+					int p = (int) (Math.random() * P * N * 200);
+					if (state.get(i).state < 0 && p == 0)
+						state.remove(i);
+					if (state.get(i).state < P + 5) {
+						if (p < 10 && state.get(i).state != 0)
+							state.get(i).state = -state.get(i).state;
+						else if (p <= state.get(i).state * 50)
+							++state.get(i).state;
 					}
-					else {
-						for (int j = i + 1; j < N; ++j)
-							state[j - 1] = state[j];
-						state[N - 1] = 0;
+					else{
+					state.remove(i);
 					}
 				}
 				repaint();
@@ -108,11 +116,11 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			// Testcases
 			for (int j = 0; j < P; ++j) {
 				TestcaseStatusRenderer.Status status;
-				if (j < Math.abs(state[i]))
+				if (j < Math.abs(state.get(i).state))
 					status = TestcaseStatusRenderer.Status.passed;
-				else if (j == state[i])
+				else if (j == state.get(i).state)
 					status = TestcaseStatusRenderer.Status.active;
-				else if (j == -state[i])
+				else if (j == -state.get(i).state)
 					status = TestcaseStatusRenderer.Status.failed;
 				else
 					status = TestcaseStatusRenderer.Status.none;
@@ -150,12 +158,12 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
 		if (e.getUpdate() instanceof Run) {
-			//Run run = (Run) e.getUpdate();
-			//if (!state.contains(run.getId())) {
-			//	state.put(run.getId(), new JudgeState());
-			//  // TODO: smooth insertion during previous animation...
-			//  stack.setPosition(run.getId(), state.size() + 1);
-			//}
+			Run run = (Run) e.getUpdate();
+			if (!state.containsKey(run.getId())) {
+				state.put(run.getId(), new JudgeState());
+				// TODO: smooth insertion during previous animation...
+				stack.setPosition(run.getId(), state.size() + 1);
+			}
 		}
 	}
 }

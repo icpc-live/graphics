@@ -21,9 +21,9 @@ import se.kth.livetech.communication.thrift.NodeId;
 
 /** Establish two-way connections between nodes. */
 public class Connector {
-	public static int PORT = 9099;
+	//public static int PORT = 9099;
 	
-	public static NodeId getLocalNode(String name) {
+	public static NodeId getLocalNode(String name, int port) {
 		NodeId localNode = new NodeId();
 		// TODO: localNode override
 		localNode.name = name;
@@ -33,7 +33,7 @@ public class Connector {
 			localNode.host = InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
 		}
-		localNode.port = PORT;
+		localNode.port = port;
 		return localNode;
 	}
 	

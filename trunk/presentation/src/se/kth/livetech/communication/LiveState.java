@@ -6,7 +6,9 @@ import java.util.TreeMap;
 
 import se.kth.livetech.communication.thrift.ContestDump;
 import se.kth.livetech.communication.thrift.ContestId;
+import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
+import se.kth.livetech.util.DebugTrace;
 
 /** One class to hold all state for a Live node. */
 public class LiveState {
@@ -32,11 +34,14 @@ public class LiveState {
 	}
 
 	public void addListeners(NodeConnection connection) {
-		this.hierarchy.getProperty("").addPropertyListener(connection);
+		IProperty root = this.hierarchy.getProperty("x"); // TODO: root property
+		root.addPropertyListener(connection);
+		DebugTrace.trace("addListeners %s -> %s", root, connection);
 		// TODO: add contest listeners
 	}
 	public void removeListeners(NodeConnection connection) {
-		this.hierarchy.getProperty("").removePropertyListener(connection);
+		IProperty root = this.hierarchy.getProperty("x"); // TODO: root property
+		root.removePropertyListener(connection);
 		// TODO: remove contest listeners
 	}
 

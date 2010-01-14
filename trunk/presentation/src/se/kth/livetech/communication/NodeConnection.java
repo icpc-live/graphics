@@ -17,6 +17,7 @@ import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
+import se.kth.livetech.util.DebugTrace;
 
 public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 	
@@ -182,6 +183,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 
 	@Override
 	public void propertyChanged(IProperty changed) {
+		DebugTrace.trace("propertyChanged %s -> %s", changed.getName(), changed.getValue());
 		final PropertyEvent update = new PropertyEvent(changed.getName());
 		if (changed.isSet())
 			update.setValue(changed.getOwnValue());

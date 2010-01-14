@@ -16,6 +16,7 @@ import uk.co.flamingpenguin.jewel.cli.Option;
 import uk.co.flamingpenguin.jewel.cli.Unparsed;
 
 public class LiveClient {
+	public static int DEFAULT_PORT = 9099;
 	// Any class constructable from String may be used
 	// shortName, longName, pattern="regexp", defaultValue="text", description="text"
 	// @see http://jewelcli.sourceforge.net/apidocs/uk/co/flamingpenguin/jewel/cli/Option.html
@@ -24,6 +25,11 @@ public class LiveClient {
 		String getSpider();
 		boolean isSpider();
 		
+		@Option(shortName="h",
+				longName="host")
+		String getLocalHost();
+		boolean isLocalHost();
+
 		@Option(shortName="p",
 				longName="port")
 		int getPort();
@@ -33,11 +39,6 @@ public class LiveClient {
 				longName="kattis")
 		boolean isKattis();
 		
-		@Option(shortName="h",
-				longName="host")
-		String getLocalHost();
-		boolean isLocalHost();
-
 		@Option(longName="kattis-host")
 		String getKattisHost();
 		boolean isKattisHost();
@@ -80,9 +81,11 @@ public class LiveClient {
 			else {
 				name = opts.getArgs().get(0);
 			}
-			if (opts.isPort())
-				Connector.PORT = opts.getPort();
-			NodeId localNode = Connector.getLocalNode(name);
+			int port = DEFAULT_PORT;
+			if (opts.isPort()) {
+				port = opts.getPort();
+			}
+			NodeId localNode = Connector.getLocalNode(name, port);
 			if (opts.isLocalHost()) {
 				localNode.address = opts.getLocalHost();
 			}
@@ -131,8 +134,8 @@ public class LiveClient {
 				TestTriangle.test(localState.getHierarchy());
 			}
 
-			System.out.println("Listening on port " + Connector.PORT);
-			Connector.listen(handler, Connector.PORT, true);
+			System.out.println("Listening on port " + port);
+			Connector.listen(handler, port, true);
 		} catch (ArgumentValidationException e) {
 			System.err.println(e.getMessage());
 			System.exit(1);

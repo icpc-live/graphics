@@ -45,7 +45,7 @@ public class TestTriangle extends JPanel implements PropertyListener {
 			}
 		}
 
-		
+
 		double a = this.base.get("a").getDoubleValue();
 		double l = this.base.get("l").getDoubleValue();
 		//g.setColor(Color.GREEN);
@@ -56,12 +56,15 @@ public class TestTriangle extends JPanel implements PropertyListener {
 		g.drawLine(L, 0, -L, -L);
 		g.drawLine(-L, -L, -L, L);
 		g.drawLine(-L, L, L, 0);
-		
+
 	}
-	
+
 	public static void main(String[] args) {
-		JFrame f = new JFrame("Test");
 		PropertyHierarchy p = new PropertyHierarchy();
+		test(p);
+	}
+	public static void test(PropertyHierarchy p) {
+		JFrame f = new JFrame("Test");
 		Box b = new Box(BoxLayout.Y_AXIS);
 		b.add(new TestTriangle(p.getProperty("x")));
 		b.add(new Text(p.getProperty("x.l")));
@@ -90,5 +93,5 @@ public class TestTriangle extends JPanel implements PropertyListener {
 		f.add(b);
 		f.pack();
 		f.setVisible(true);
-}
+	}
 }

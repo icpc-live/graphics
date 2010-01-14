@@ -9,6 +9,7 @@ import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.contest.replay.LogListener;
+import se.kth.livetech.properties.ui.TestTriangle;
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -43,6 +44,9 @@ public class LiveClient {
 		@Option(longName="kattis-uri")
 		String getKattisUri();
 		boolean isKattisUri();
+		
+		@Option(longName="test-triangle")
+		boolean isTestTriangle();
 		
 		@Option(helpRequest=true)
 		boolean getHelp();
@@ -114,6 +118,11 @@ public class LiveClient {
 				
 				nodeRegistry.addContest(new ContestId("Live", 0), kattisClient);
 			}
+			
+			if (opts.isTestTriangle()) {
+				TestTriangle.test(localState.getHierarchy());
+			}
+
 			System.out.println("Listening on port " + Connector.PORT);
 			Connector.listen(handler, Connector.PORT, true);
 		} catch (ArgumentValidationException e) {

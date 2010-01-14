@@ -31,6 +31,13 @@ public class LiveState {
 		resources = new TreeMap<String, byte[]>();
 	}
 
+	public void addListeners(NodeConnection connection) {
+		// TODO: add listeners
+	}
+	public void removeListeners(NodeConnection connection) {
+		// TODO: remove listeners
+	}
+
 	public boolean isSpiderFlag() {
 		return spiderFlag;
 	}

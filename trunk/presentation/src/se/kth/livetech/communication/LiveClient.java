@@ -66,7 +66,8 @@ public class LiveClient {
 			if (opts.isPort())
 				Connector.PORT = opts.getPort();
 			NodeId localNode = Connector.getLocalNode();
-			NodeRegistry nodeRegistry = new NodeRegistry(localNode);
+			LiveState localState = new LiveState(opts.isSpider());
+			NodeRegistry nodeRegistry = new NodeRegistry(localNode, localState);
 			if (opts.isArgs()) {
 				for (String arg : opts.getArgs()) {
 					System.out.println(arg);

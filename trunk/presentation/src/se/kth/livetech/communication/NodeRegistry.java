@@ -53,9 +53,11 @@ public class NodeRegistry {
 	}
 
 	public void addNode(NodeId nid) {
-		NodeConnection connection = new NodeConnection(this, nid);
-		this.connections.put(nid, connection);
-		this.localState.addListeners(connection);
+		if (!this.connections.containsKey(nid)) {
+			NodeConnection connection = new NodeConnection(this, nid);
+			this.connections.put(nid, connection);
+			this.localState.addListeners(connection);
+		}
 	}
 
 	public void removeNode(NodeId nid) {

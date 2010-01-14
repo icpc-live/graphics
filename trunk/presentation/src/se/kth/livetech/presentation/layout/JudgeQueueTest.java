@@ -16,6 +16,8 @@ import se.kth.livetech.contest.graphics.TestcaseStatusRenderer;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Run;
+import se.kth.livetech.contest.model.test.FakeContest;
+import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.presentation.animation.AnimationStack;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
@@ -26,6 +28,7 @@ import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
 public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
+	public static final boolean FULL_SCREEN = false;
 	final int N = 20;
 	final int P = 10;
 	final int T = 17;
@@ -129,7 +132,20 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 		}
 	}
 	public static void main(String[] args) {
-		new Frame("JudgeQueueTest", new JudgeQueueTest());
+		final int teams = 100, problems = 12;
+		TestContest tc = new TestContest(teams, problems);
+		FakeContest fc = new FakeContest(tc);
+		JudgeQueueTest jqt = new JudgeQueueTest();
+		fc.addContestUpdateListener(jqt);
+		Frame frame = new Frame("JudgeQueueTest", jqt, null, false);
+		fc.start();
+		if (FULL_SCREEN) {
+			frame.fullScreen(0);
+		}
+		else {
+			frame.pack();
+			frame.setVisible(true);
+		}
 	}
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {

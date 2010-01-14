@@ -99,17 +99,24 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 
 		{ // Header
 			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
-			r.add(-4, null, 1, 1, true);
-			r.add(-3, null, 1, 1, true);
+			Renderable rankHeader = new ColoredTextBox("Rank", ContentProvider.getHeaderStyle(Alignment.center));
+			r.add(-5, rankHeader, 2, 1, true);
+			r.add(-4, null, 1, 0.9, true);
+			r.add(-3, null, 1, 0.9, true);
 			Renderable teamName = new ColoredTextBox("Team", ContentProvider.getHeaderStyle(Alignment.left));
 			r.add(-2, teamName, NAME_WEIGHT, 1, false);
-			r.add(-1, null, 1, 1, false);
 			for (int j : c.getProblems()) {
 				Renderable problem = new ColoredTextBox("" + (char) ('A' + j), ContentProvider.getHeaderStyle(Alignment.center));
-				r.add(j, problem, 1, 1, false);
+				r.add(j, problem, 1, 0.95, false);
 			}
+			
+			int j = c.getProblems().size();
+			Renderable solvedHeader = new ColoredTextBox("Solved", ContentProvider.getHeaderStyle(Alignment.center));
+			r.add(j, solvedHeader, 2, 1, true);
+			Renderable timeHeader = new ColoredTextBox("Time", ContentProvider.getHeaderStyle(Alignment.center));
+			r.add(j + 1, timeHeader, 2, 1, true);
 
-			{ // Render
+			{ // Render 
 				Rect.setRow(rect, 0, ROWS, row);
 				Rect.setDim(row, dim);
 				int x = (int) row.getX();
@@ -189,6 +196,11 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 
 		PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
 
+		{ // Rank
+			Renderable rankHeader = new ColoredTextBox("" + i, ContentProvider.getHeaderStyle(Alignment.center));
+			r.add(-5, rankHeader, 2, 1, true);
+		}
+		
 		{ // Flag
 			String country = team.getNationality();
 			ImageResource image = ICPCImages.getFlag(country);
@@ -228,16 +240,6 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		final double STATS_GLOW_MARGIN = 1.5;
 		final double PROBLEM_GLOW_MARGIN = 2.5;
 
-		{ // Stats
-			String statstr = "" + ts.getSolved();
-			Renderable stat = new ColoredTextBox(statstr, ContentProvider.getTeamSolvedStyle());
-			r.add(-1, stat, 1, 1, true);
-			if (ts.getSolved() != prev.getSolved()) {
-				GlowRenderer glow = new GlowRenderer(ICPCColors.YELLOW, STATS_GLOW_MARGIN, true, glowAlpha); // TODO: style
-				r.setDecoration(-1, glow, STATS_GLOW_MARGIN);
-			}
-		}
-
 		for (int j : c.getProblems()) {
 			ProblemScore ps = ts.getProblemScore(j);
 			ProblemScore pps = prev.getProblemScore(j);
@@ -250,6 +252,23 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 				r.setDecoration(j, glow, PROBLEM_GLOW_MARGIN);
 			}
 		}
+		
+		{
+			//Solved and Time
+			int j = c.getProblems().size();
+			
+			String statstr = "" + ts.getSolved();
+			Renderable solvedHeader = new ColoredTextBox(statstr, ContentProvider.getTeamSolvedStyle());
+			r.add(j, solvedHeader, 2, 1, true);
+			if (ts.getSolved() != prev.getSolved()) {
+				GlowRenderer glow = new GlowRenderer(ICPCColors.YELLOW, STATS_GLOW_MARGIN, true, glowAlpha); // TODO: style
+				r.setDecoration(j, glow, STATS_GLOW_MARGIN);
+			}
+			
+			Renderable timeHeader = new ColoredTextBox(""+ts.getScore(), ContentProvider.getTeamTimeStyle());
+			r.add(j + 1, timeHeader, 2, 1, true);
+		}
+		
 
 		{ // Render
 			Interpolated.Double interpolator = new Interpolated.Double(i);

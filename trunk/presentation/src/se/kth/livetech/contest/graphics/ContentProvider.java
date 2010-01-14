@@ -7,6 +7,7 @@ import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
+import se.kth.livetech.presentation.graphics.ColoredTextBox.Style;
 
 public class ContentProvider {
 	public static String getRankText(Contest contest, Team team) {
@@ -22,6 +23,10 @@ public class ContentProvider {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
 	}
 
+	public static Style getTeamTimeStyle() {
+		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
+	}
+	
 	public static ColoredTextBox.Style getHeaderStyle(Alignment alignment) {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.HEADER_FONT, ColoredTextBox.Style.Shape.roundRect, alignment);
 	}

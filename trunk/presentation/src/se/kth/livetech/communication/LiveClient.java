@@ -33,6 +33,11 @@ public class LiveClient {
 				longName="kattis")
 		boolean isKattis();
 		
+		@Option(shortName="h",
+				longName="host")
+		String getLocalHost();
+		boolean isLocalHost();
+
 		@Option(longName="kattis-host")
 		String getKattisHost();
 		boolean isKattisHost();
@@ -78,6 +83,9 @@ public class LiveClient {
 			if (opts.isPort())
 				Connector.PORT = opts.getPort();
 			NodeId localNode = Connector.getLocalNode(name);
+			if (opts.isLocalHost()) {
+				localNode.address = opts.getLocalHost();
+			}
 			LiveState localState = new LiveState(opts.isSpider());
 			System.out.println("I am " + localNode);
 			NodeRegistry nodeRegistry = new NodeRegistry(localNode, localState);

@@ -21,7 +21,7 @@ public class NodeConnection implements AttrsUpdateListener {
 		RECONNECTING
 	}
 	
-	private NodeId localNode;
+	private NodeRegistry nodeRegistry;
 	private NodeId id;
 	private NodeStatus status;
 	private TimeSync timeSync;
@@ -34,9 +34,9 @@ public class NodeConnection implements AttrsUpdateListener {
 		return state;
 	}
 
-	public NodeConnection(NodeId localNode, NodeId id) {
+	public NodeConnection(NodeRegistry nodeRegistry, NodeId id) {
 		this.sendQueue = new LinkedBlockingQueue<AttrsUpdateEvent>();
-		this.localNode = localNode;
+		this.nodeRegistry = nodeRegistry;
 		this.id = id;
 		this.state = State.PENDING;
 		this.status = new NodeStatus();
@@ -69,8 +69,12 @@ public class NodeConnection implements AttrsUpdateListener {
 				LiveService.Client client;
 
 				try {
-					client = Connector.connect(localNode, id.address, id.port);
-					NodeConnection.this.setId(client.getNodeId());
+					client = Connector.connect(nodeRegistry.getLocalNode(), id.address, id.port);
+					
+					NodeId newId = client.getNodeId();
+					newId.address = NodeConnection.this.id.address;
+					
+					NodeConnection.this.setId(newId);
 				} catch (TException e) {
 					// TODO Reporting
 					e.printStackTrace();
@@ -97,6 +101,7 @@ public class NodeConnection implements AttrsUpdateListener {
 							break;
 						}
 						
+						System.out.printf("Fake send event.%n");
 						/* TODO: Send event. */
 					}
 					
@@ -148,7 +153,9 @@ public class NodeConnection implements AttrsUpdateListener {
 	}
 
 	public void setId(NodeId id) {
+		NodeId oldId = this.id;
 		this.id = id;
+		nodeRegistry.remapNode(oldId);
 	}
 
 	public NodeId getId() {

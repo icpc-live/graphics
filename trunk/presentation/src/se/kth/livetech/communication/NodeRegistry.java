@@ -49,7 +49,7 @@ public class NodeRegistry {
 	}
 
 	public void addNode(NodeId nid) {
-		NodeConnection connection = new NodeConnection(localNode, nid);
+		NodeConnection connection = new NodeConnection(this, nid);
 		this.connections.put(nid, connection);
 		this.localState.addListeners(connection);
 	}
@@ -71,5 +71,13 @@ public class NodeRegistry {
 
 	Set<NodeId> getNodes() {
 		return connections.keySet();
+	}
+
+	public void remapNode(NodeId oldId) {
+		if (connections.containsKey(oldId)) {
+			NodeConnection node = connections.get(oldId);
+			connections.remove(oldId);
+			connections.put(node.getId(), node);
+		}
 	}
 }

@@ -8,10 +8,12 @@ import java.util.TreeMap;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.contest.model.AttrsUpdater;
+import se.kth.livetech.properties.IProperty;
 
 public class NodeRegistry {
 	private NodeId localNode;
 	private LiveState localState;
+	private IProperty updating;
 
 	public LiveState getLocalState() {
 		return localState;
@@ -85,5 +87,13 @@ public class NodeRegistry {
 			connections.remove(oldId);
 			connections.put(node.getId(), node);
 		}
+	}
+
+	public synchronized IProperty getUpdating() {
+		return updating;
+	}
+
+	public synchronized void setUpdating(IProperty updating) {
+		this.updating = updating;
 	}
 }

@@ -184,6 +184,10 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 	@Override
 	public void propertyChanged(IProperty changed) {
 		DebugTrace.trace("propertyChanged %s -> %s", changed.getName(), changed.getValue());
+		if (changed == this.nodeRegistry.getUpdating()) {
+			DebugTrace.trace("  ...updating");
+			return;
+		}
 		final PropertyEvent update = new PropertyEvent(changed.getName());
 		if (changed.isSet())
 			update.setValue(changed.getOwnValue());
@@ -196,5 +200,4 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 			}
 		});
 	}
-
 }

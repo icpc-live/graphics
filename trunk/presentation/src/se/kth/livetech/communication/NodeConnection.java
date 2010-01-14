@@ -9,13 +9,15 @@ import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 
 public class NodeConnection implements AttrsUpdateListener {
+	private NodeId localNode;
 	private NodeId id;
 	private NodeStatus status;
 	private TimeSync timeSync;
 	private Connection connection;
 	private LiveService.Client client;
 
-	public NodeConnection(NodeId id) {
+	public NodeConnection(NodeId localNode, NodeId id) {
+		this.localNode = localNode;
 		this.id = id;
 		this.status = new NodeStatus();
 		this.status.name = id.name;
@@ -47,7 +49,7 @@ public class NodeConnection implements AttrsUpdateListener {
 				LiveService.Client client;
 
 				try {
-					client = Connector.connect(id.address, id.port);
+					client = Connector.connect(localNode, id.address, id.port);
 				} catch (TException e) {
 					// TODO Reporting
 					e.printStackTrace();

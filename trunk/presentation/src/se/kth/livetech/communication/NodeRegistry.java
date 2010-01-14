@@ -94,7 +94,7 @@ public class NodeRegistry {
 	}
 
 	public void addNode(NodeId nid) {
-		NodeConnection connection = new NodeConnection(nid);
+		NodeConnection connection = new NodeConnection(localNode, nid);
 		this.connections.put(nid, connection);
 		this.localState.addListeners(connection);
 	}

@@ -63,13 +63,23 @@ public class LiveClient {
 	public static void main(String[] args) {
 		try {
 			Options opts = CliFactory.parseArguments(Options.class, args);
+			String name;
+			if (!opts.isArgs()) {
+				System.err.println("Warning: Missing client name!");
+				name = "noname";
+			}
+			else {
+				name = opts.getArgs().get(0);
+			}
 			if (opts.isPort())
 				Connector.PORT = opts.getPort();
-			NodeId localNode = Connector.getLocalNode();
+			NodeId localNode = Connector.getLocalNode(name);
 			LiveState localState = new LiveState(opts.isSpider());
+			System.out.println("I am " + localNode);
 			NodeRegistry nodeRegistry = new NodeRegistry(localNode, localState);
 			if (opts.isArgs()) {
-				for (String arg : opts.getArgs()) {
+				for (int i = 1; i < opts.getArgs().size(); ++i) {
+					String arg = opts.getArgs().get(i);
 					System.out.println(arg);
 					HostPort hostPort = new HostPort(arg);
 					NodeId remoteNode = new NodeId();
@@ -107,7 +117,7 @@ public class LiveClient {
 				
 				nodeRegistry.addContest(new ContestId("Live", 0), kattisClient);
 			}
-
+			System.out.println("Listening on port " + Connector.PORT);
 			Connector.listen(handler, Connector.PORT, true);
 		} catch (ArgumentValidationException e) {
 			System.err.println(e.getMessage());

@@ -123,7 +123,7 @@ public class LiveClient {
 					kattisClient = new KattisClient();
 				}
 				
-				kattisClient.startReading();
+				kattisClient.startPulling();
 				final LogListener log = new LogListener("kattislog.txt");
 				kattisClient.addAttrsUpdateListener(log);
 				

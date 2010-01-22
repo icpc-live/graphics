@@ -16,7 +16,8 @@ import se.kth.livetech.contest.model.impl.AttrsUpdaterImpl;
 public class KattisClient extends AttrsUpdaterImpl {
 	private static final String DEFAULT_KATTIS_HOST = "icpc-dev.netlab.csc.kth.se";
 	private static final int    DEFAULT_KATTIS_PORT = 80;
-	private static final String DEFAULT_KATTIS_URI = "/python/events.py";
+	private static final String DEFAULT_KATTIS_URI = "/python/events.py?with_def=1";
+	private static final int	PUSH_KATTIS_PORT = 4713;
 	
 	private String kattisBaseUrl;
 	@SuppressWarnings("unused")
@@ -26,7 +27,6 @@ public class KattisClient extends AttrsUpdaterImpl {
 	@SuppressWarnings("unused")
 	private int kattisPort = 80;
 	
-	private int offset = 0;
 	private static final int REFRESH_DELAY = 2000; // In milliseconds
 	private Timer timer = null;
 	
@@ -56,15 +56,11 @@ public class KattisClient extends AttrsUpdaterImpl {
 	
 	public void readFromKattis() {
 		try {
-			URL kattisUrl = new URL(kattisBaseUrl+"?with_def=1&offset="+offset);
+			URL kattisUrl = new URL(kattisBaseUrl);
 			BufferedInputStream in = new BufferedInputStream(kattisUrl.openStream());
 			LogSpeaker logSpeaker = new LogSpeaker(in);
 			logSpeaker.addAttrsUpdateListener(new AttrsUpdateListener() {
 				public void attrsUpdated(AttrsUpdateEvent e) {
-					if(e.getType().equals("run")) {
-						// Increase offset id
-						++offset;
-					}
 					send(e);
 				}
 			});
@@ -76,30 +72,24 @@ public class KattisClient extends AttrsUpdaterImpl {
 			e.printStackTrace();
 		}
 	}
-	
-	public void resetOffset() { offset = 0; }
-	
-	public void resetOffset(int offset) {
-		this.offset = offset;
-	}
-	
-	public void startReading() {
+		
+	public void startPulling() {
 		timer = new Timer();
 		timer.schedule(new TimerTask() {
 			public void run() {
 				readFromKattis();
-				System.err.println("Reading from kattis, offset = " + offset + ", time = " + new SimpleDateFormat("HH:mm:ss.S").format(new Date()));
+				System.err.println("Reading from kattis, time = " + new SimpleDateFormat("HH:mm:ss.S").format(new Date()));
 			}
 		}, REFRESH_DELAY, REFRESH_DELAY);
 	}
 	
-	public void stopReading() {
+	public void stopPulling() {
 		timer.cancel();
 	}
 
 	public static void main(String[] args) {
-		final KattisClient kattisClient = new KattisClient();
-		kattisClient.startReading();
+		final KattisClient kattisClient = new KattisClient(DEFAULT_KATTIS_HOST, PUSH_KATTIS_PORT);
+		kattisClient.readFromKattis();
 		final LogListener log = new LogListener("kattislog.txt");
 		kattisClient.addAttrsUpdateListener(log);
 	}

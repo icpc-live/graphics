@@ -18,6 +18,7 @@ import se.kth.livetech.contest.model.Problem;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
+import se.kth.livetech.contest.model.Testcase;
 
 public class ContestImpl implements Contest {
 	Info info;
@@ -208,6 +209,16 @@ public class ContestImpl implements Contest {
 			scores = remap(scores, t, new TeamScoreImpl(this, t));
 			ranking = relist(ranking, t, teamComp);
 			teamRows = rerow(ranking);
+		} else if(a instanceof Testcase) {
+			Testcase t = (Testcase) a;
+			Run r = getRun(t.getRunId());
+			if(r==null) {
+				new Error("Received Testcase for non-existing Run.").printStackTrace();
+			} else {
+				RunImpl impl = (RunImpl) r;
+				impl.addTestcase(t);
+				// TODO: remap?
+			}
 		} else if (a instanceof Clar) {
 			Clar c = (Clar) a;
 			clars = remap(clars, c.getId(), c);

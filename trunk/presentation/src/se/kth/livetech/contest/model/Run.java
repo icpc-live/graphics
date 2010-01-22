@@ -9,4 +9,7 @@ public interface Run extends Sub {
 	public boolean isSolved();
 
 	public boolean isJudged();
+	
+	/** @return Testcase nr i, or null if no such testcase exists. */
+	public Testcase getTestcase(int i);
 }

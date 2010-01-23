@@ -13,7 +13,7 @@ public class DebugTrace {
 		System.out.printf(location() + ' ' + format + '\n', args);
 	}
 	private static String location() {
-		StackTraceElement element = Thread.currentThread().getStackTrace()[4];
+		StackTraceElement element = Thread.currentThread().getStackTrace()[3];
 		return element.getFileName() + ':' + element.getLineNumber();
 	}
 }

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,6 +22,7 @@ import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.test.FakeContest;
 import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.presentation.animation.AnimationStack;
+import se.kth.livetech.presentation.animation.Interpolated;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.ImageResource;
@@ -33,14 +35,13 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	public static final boolean FULL_SCREEN = false;
 	final int N = 20;
 	final int P = 10;
-	final int T = 17;
+	final int T = 55;
 	final int B = 45;
-	Map<Integer, JudgeState> state = new TreeMap<Integer, JudgeState>();
+	Map<Integer, JudgeState> state = Collections.synchronizedMap(new TreeMap<Integer, JudgeState>());
 	
 	private static class JudgeState {
-		int state = 0;
-		
-		
+		int state = 1;
+				
 	}
 	
 	public JudgeQueueTest() {
@@ -56,10 +57,14 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				try {
 					sleep((int) (Math.random() * T));
 				} catch (InterruptedException e) { }
+				int row = 0;
 				for (int i : state.keySet()) {
+					stack.setPosition(i, row);
 					int p = (int) (Math.random() * P * N * 200);
-					if (state.get(i).state < 0 && p == 0)
+					if (state.get(i).state < 0 && p == 0) {
 						state.remove(i);
+						break;
+					}
 					if (state.get(i).state < P + 5) {
 						if (p < 10 && state.get(i).state != 0)
 							state.get(i).state = -state.get(i).state;
@@ -82,7 +87,8 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
-		for (int i = 0; i < N; ++i) {
+		int rowNumber = 0;
+		for (int i : state.keySet()) {
 			PartitionedRowRenderer r = new PartitionedRowRenderer();
 
 			{ // Background
@@ -129,7 +135,10 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			}
 
 			{ // Render
-				Rect.setRow(rect, i, N, row);
+				Interpolated.Double interpolator = new Interpolated.Double(rowNumber);
+				stack.interpolate(i, interpolator);
+				double rowPos = interpolator.getValue();
+				Rect.setRow(rect, rowPos, N, row);
 				Rect.setDim(row, dim);
 				int x = (int) row.getX();
 				int y = (int) row.getY();
@@ -137,8 +146,10 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				r.render(g, dim);
 				g.translate(-x, -y);
 			}
+			++rowNumber;
 		}
 	}
+	
 	public static void main(String[] args) {
 		final int teams = 100, problems = 12;
 		TestContest tc = new TestContest(teams, problems);
@@ -155,6 +166,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			frame.setVisible(true);
 		}
 	}
+	
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
 		if (e.getUpdate() instanceof Run) {

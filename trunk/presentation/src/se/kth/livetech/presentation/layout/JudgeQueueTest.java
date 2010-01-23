@@ -7,7 +7,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.JPanel;
 
@@ -19,6 +21,7 @@ import se.kth.livetech.contest.graphics.TestcaseStatusRenderer;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Run;
+import se.kth.livetech.contest.model.Testcase;
 import se.kth.livetech.contest.model.test.FakeContest;
 import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.presentation.animation.AnimationStack;
@@ -28,11 +31,13 @@ import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.Renderable;
+import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
 public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	public static final boolean FULL_SCREEN = false;
+	public static final double ANIMATION_TIME = 1000; // ms
 	final int N = 20;
 	final int P = 10;
 	final int T = 55;
@@ -41,7 +46,6 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	
 	private static class JudgeState {
 		int state = 1;
-				
 	}
 	
 	public JudgeQueueTest() {
@@ -57,10 +61,13 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				try {
 					sleep((int) (Math.random() * T));
 				} catch (InterruptedException e) { }
-				int row = 0;
-				for (int i : state.keySet()) {
-					stack.setPosition(i, row);
-					int p = (int) (Math.random() * P * N * 200);
+				Set<Integer> keys;
+				synchronized (state) {
+					keys = new TreeSet<Integer>(state.keySet());
+				}
+				for (int i : keys) {
+					//stack.setPosition(i, row);
+					int p = (int) (Math.random() * P * N * 100);
 					if (state.get(i).state < 0 && p == 0) {
 						state.remove(i);
 						break;
@@ -68,26 +75,45 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 					if (state.get(i).state < P + 5) {
 						if (p < 10 && state.get(i).state != 0)
 							state.get(i).state = -state.get(i).state;
-						else if (p <= state.get(i).state * 50)
+						else if (p <= state.get(i).state * 100)
 							++state.get(i).state;
 					}
 					else{
-					state.remove(i);
+						state.remove(i);
 					}
 				}
 				repaint();
 			}
 		}
 	}
+	boolean firstPaint = true;
+	long lastTime;
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
 		Graphics2D g = (Graphics2D) gr;
+
+		boolean update = false;
+		{ // Advance
+			long now = System.currentTimeMillis();
+			if (firstPaint) {
+				this.lastTime = now;
+				firstPaint = false;
+			}
+			long dt = now - this.lastTime;
+			this.lastTime = now;
+			update |= this.stack.advance(dt / ANIMATION_TIME);
+			//update |= this.recent.advance(dt / RECENT_TIME);
+		}
 
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
 
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
 		int rowNumber = 0;
+		Map<Integer, JudgeState> state;
+		synchronized (this.state) {
+			state = new TreeMap<Integer, JudgeState>(this.state);
+		}
 		for (int i : state.keySet()) {
 			PartitionedRowRenderer r = new PartitionedRowRenderer();
 
@@ -101,7 +127,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			}
 
 			{ // Flag
-				String country = ICPCImages.COUNTRY_CODES[i];
+				String country = ICPCImages.COUNTRY_CODES[i % ICPCImages.COUNTRY_CODES.length];
 				ImageResource image = ICPCImages.getFlag(country);
 				Renderable flag = new ImageRenderer("flag " + country, image);
 				r.add(flag, 1, .9, true);
@@ -136,6 +162,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 
 			{ // Render
 				Interpolated.Double interpolator = new Interpolated.Double(rowNumber);
+				stack.setPosition(i, rowNumber);
 				stack.interpolate(i, interpolator);
 				double rowPos = interpolator.getValue();
 				Rect.setRow(rect, rowPos, N, row);
@@ -147,6 +174,13 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				g.translate(-x, -y);
 			}
 			++rowNumber;
+		}
+		
+		{ // Update?
+			update |= this.stack.advance(0d);
+			if (update) {
+				repaint();
+			}
 		}
 	}
 	
@@ -174,8 +208,19 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			if (!state.containsKey(run.getId())) {
 				state.put(run.getId(), new JudgeState());
 				// TODO: smooth insertion during previous animation...
-				stack.setPosition(run.getId(), state.size() + 1);
+				//stack.setPosition(run.getId(), state.size() + 1);
 			}
+			repaint();
+		}
+		else if (e.getUpdate() instanceof Testcase) {
+			Testcase testcase = (Testcase) e.getUpdate();
+			DebugTrace.trace("JudgeQueue Testcase %s", testcase);
+			JudgeState state = this.state.get(testcase.getRunId());
+			if (state != null) {
+				// TODO: look at testcase.isJudged/Solved
+				state.state = testcase.getI();
+			}
+			repaint();
 		}
 	}
 }

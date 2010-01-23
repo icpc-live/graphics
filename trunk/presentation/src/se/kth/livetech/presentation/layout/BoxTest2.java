@@ -46,7 +46,6 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 	public static final double RECENT_FADE_TIME = 500; // ms
 	final int ROWS = 25;
 	final double NAME_WEIGHT = 5;
-	
 
 	Contest c;
 	public BoxTest2(Contest c) {

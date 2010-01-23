@@ -130,8 +130,8 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			}
 		}
 
-		int n = Math.min(c.getTeams().size(), ROWS);
-		for (int i = 1; i < n; ++i) {
+		int n = Math.min(c.getTeams().size(), ROWS - 1);
+		for (int i = 1; i <= n; ++i) {
 			PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
 
 			{ // Background
@@ -154,7 +154,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			}
 		}
 
-		for (int i = 1; i < c.getTeams().size(); ++i) {
+		for (int i = 1; i <= c.getTeams().size(); ++i) {
 			Team team = c.getRankedTeam(i);
 			int id = team.getId();
 			stack.setPosition(id, i);
@@ -164,19 +164,19 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		Shape clip = g.getClip();
 		g.setClip(rect);
 
-		for (int i = c.getTeams().size(); i-- > 1; ) {
+		for (int i = c.getTeams().size(); i >= 1; --i) {
 			paintRow(g, c, i, PartitionedRowRenderer.Layer.decorations, false);
 		}
 
-		for (int i = c.getTeams().size(); i-- > 1; ) {
+		for (int i = c.getTeams().size(); i >= 1; --i) {
 			paintRow(g, c, i, PartitionedRowRenderer.Layer.contents, false);
 		}
 
-		for (int i = c.getTeams().size(); i-- > 1; ) {
+		for (int i = c.getTeams().size(); i >= 1; --i) {
 			paintRow(g, c, i, PartitionedRowRenderer.Layer.decorations, true);
 		}
 
-		for (int i = c.getTeams().size(); i-- > 1; ) {
+		for (int i = c.getTeams().size(); i >= 1; --i) {
 			paintRow(g, c, i, PartitionedRowRenderer.Layer.contents, true);
 		}
 		

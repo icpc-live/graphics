@@ -4,16 +4,19 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import se.kth.livetech.contest.graphics.ICPCImages;
+import se.kth.livetech.contest.model.Attrs;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.Language;
 import se.kth.livetech.contest.model.Problem;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Team;
+import se.kth.livetech.contest.model.Testcase;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.model.impl.LanguageImpl;
 import se.kth.livetech.contest.model.impl.ProblemImpl;
 import se.kth.livetech.contest.model.impl.RunImpl;
 import se.kth.livetech.contest.model.impl.TeamImpl;
+import se.kth.livetech.contest.model.impl.TestcaseImpl;
 
 public class TestContest {
 	public static Team testTeam(int id, String name, String univ, String nat) {
@@ -66,6 +69,16 @@ public class TestContest {
 		m.put("time", "" + time);
 		return new RunImpl(m);
 	}
+	
+	public static Testcase testCase(int id, int i, int n, boolean judged, boolean solved) {
+		Map<String, String> m = new TreeMap<String, String>();
+		m.put("run-id", "" + id);
+		m.put("i", "" + i);
+		m.put("n", "" + n);
+		m.put("judged", "" + judged);
+		m.put("solved", "" + solved);
+		return new TestcaseImpl(m);
+	}
 
 	public static Run testUpdate(Contest c, int id, boolean solved) {
 		RunImpl r = (RunImpl) c.getRun(id);
@@ -86,7 +99,7 @@ public class TestContest {
 		c = testContest(teams, problems);
 	}
 
-	private void update(Run r) {
+	private void update(Attrs r) {
 		c = new ContestImpl(c, r);
 	}
 
@@ -102,6 +115,10 @@ public class TestContest {
 
 	public void fail(int id) {
 		update(testUpdate(c, id, false));
+	}
+	
+	public void testcase(int id, int i, int n, boolean judged, boolean solved) {
+		update(testCase(id, i, n, judged, solved));
 	}
 
 	public Contest getContest() {

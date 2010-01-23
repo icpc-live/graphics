@@ -9,7 +9,7 @@ public class TestcaseImpl extends AttrsImpl implements Testcase {
 	int runId, i, n;
 	boolean judged, solved;
 	
-	TestcaseImpl(Map<String, String> attrs) {
+	public TestcaseImpl(Map<String, String> attrs) {
 		super(attrs);
 		result = attrs.get("result");
 		runId = Integer.valueOf(attrs.get("run-id"));

@@ -28,6 +28,7 @@ public class RenderCache {
 	public static boolean BUFFERED_IMAGES = true;
 	public static boolean VOLATILE_IMAGES = true;
 	public static boolean DRAW_RED_LINES = false;
+	public static boolean DEBUG_TRACE = false;
 
 	public static final Color HALF_RED = new Color(255, 0, 0, 127);
 
@@ -108,8 +109,10 @@ public class RenderCache {
 			v = new Value();
 			//renderValue(v, r, d);
 			map.put(k, v);
-			DebugTrace.trace("size %d expunge %d render %d",
+			if (DEBUG_TRACE) {
+				DebugTrace.trace("size %d expunge %d render %d",
 						this.map.size(), this.map.expungeCount, renderCount);
+			}
 		}
 		return v;
 	}

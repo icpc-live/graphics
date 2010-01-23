@@ -14,6 +14,8 @@ public class DebugTrace {
 	}
 	private static String location() {
 		StackTraceElement element = Thread.currentThread().getStackTrace()[3];
-		return element.getFileName() + ':' + element.getLineNumber();
+		String position = element.getFileName() + ':' + element.getLineNumber();
+		String method = element.getMethodName();
+		return method + '(' + position + ')';
 	}
 }

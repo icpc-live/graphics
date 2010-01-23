@@ -49,7 +49,7 @@ public class ReplayTest {
 		// Read directly from Kattis
 		KattisClient kattis = new KattisClient();
 		kattis.addAttrsUpdateListener(replayer);
-		kattis.startPulling();
+		kattis.startPushReading();
 		
 		// Read from log file
 		/*try {

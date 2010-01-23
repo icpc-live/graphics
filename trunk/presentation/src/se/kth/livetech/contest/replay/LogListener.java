@@ -6,6 +6,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.sax.SAXTransformerFactory;
+
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -24,6 +30,20 @@ public class LogListener implements AttrsUpdateListener {
 	private ContentHandler contentHandler = null;
 
 	public LogListener(String logName) {
+/*		// New code TODO Replace XMLSerializer. It has an internal buffert :-(
+		try {
+			Transformer tr = SAXTransformerFactory.newInstance().newTransformer();
+			tr.setOutputProperty(OutputKeys.INDENT, "yes");
+			tr.setOutputProperty(OutputKeys.METHOD, "xml");
+			tr.transform(xmlSource, outputTarget)
+		} catch (TransformerConfigurationException e1) {
+			e1.printStackTrace();
+		} catch (TransformerFactoryConfigurationError e1) {
+			e1.printStackTrace();
+		}
+		
+		// Old code*/
+		
 		out = System.out;
 		try {
 			if(logName != null)
@@ -70,7 +90,10 @@ public class LogListener implements AttrsUpdateListener {
 				contentHandler.endElement("", "", attr);
 			}
 			contentHandler.endElement("", "", event.getType());
+			out.flush();
 		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}

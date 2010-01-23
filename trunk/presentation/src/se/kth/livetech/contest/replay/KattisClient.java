@@ -29,9 +29,10 @@ public class KattisClient extends AttrsUpdaterImpl {
 	
 	private static final int REFRESH_DELAY = 2000; // In milliseconds
 	private Timer timer = null;
+	private Thread thread = null;
 	
 	public KattisClient() {
-		this(DEFAULT_KATTIS_HOST, DEFAULT_KATTIS_PORT, DEFAULT_KATTIS_URI);
+		this(DEFAULT_KATTIS_HOST, PUSH_KATTIS_PORT, DEFAULT_KATTIS_URI);
 	}
 	
 	public KattisClient(String kattisHost) {
@@ -54,7 +55,7 @@ public class KattisClient extends AttrsUpdaterImpl {
 		kattisBaseUrl = "http://" + kattisHost + ":" + kattisPort + kattisUri;
 	}
 	
-	public void readFromKattis() {
+	private void readFromKattis() {
 		try {
 			URL kattisUrl = new URL(kattisBaseUrl);
 			BufferedInputStream in = new BufferedInputStream(kattisUrl.openStream());
@@ -74,6 +75,7 @@ public class KattisClient extends AttrsUpdaterImpl {
 	}
 		
 	public void startPulling() {
+		if(timer != null) stopPulling();
 		timer = new Timer();
 		timer.schedule(new TimerTask() {
 			public void run() {
@@ -85,12 +87,49 @@ public class KattisClient extends AttrsUpdaterImpl {
 	
 	public void stopPulling() {
 		timer.cancel();
+		timer = null;
 	}
+	
+	public void startPushReading() {
+		//if(thread != null) stopPushReading();
+		thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				readFromKattis();
+				System.err.println("End of Kattis stream.");
+			}
+		});
+		thread.setDaemon(false);
+		thread.start();
+	}
+	
+	/*public void stopPushReading() {
+		System.err.println("stopPushReading");
+		thread.interrupt();
+		thread = null;
+	}*/
 
 	public static void main(String[] args) {
 		final KattisClient kattisClient = new KattisClient(DEFAULT_KATTIS_HOST, PUSH_KATTIS_PORT);
-		kattisClient.readFromKattis();
 		final LogListener log = new LogListener("kattislog.txt");
 		kattisClient.addAttrsUpdateListener(log);
+		//kattisClient.addAttrsUpdateListener(new LogListener(null));
+		/*kattisClient.addAttrsUpdateListener(new AttrsUpdateListener() {
+			
+			@Override
+			public void attrsUpdated(AttrsUpdateEvent e) {
+				System.out.println(e.getType());
+				
+			}
+		});*/
+		kattisClient.startPushReading();
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		//kattisClient.stopPushReading();
+		log.finish();
+		//kattisClient.startPulling();
 	}
 }

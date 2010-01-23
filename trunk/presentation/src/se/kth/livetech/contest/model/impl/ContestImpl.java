@@ -30,6 +30,7 @@ public class ContestImpl implements Contest {
 	Map<Integer, Clar> clars;
 	Map<Integer, Map<Integer, List<Integer>>> runtable;
 	Map<Integer, TeamScore> scores;
+	Map<Integer, Map<Integer,Testcase>> testcases;
 	List<Integer> ranking;
 	private TeamComp teamComp;
 	Map<Integer, Integer> teamRows;
@@ -47,7 +48,7 @@ public class ContestImpl implements Contest {
 			return -getTeamScore(a).compareTo(getTeamScore(b));
 		}
 	}
-
+	
 	public ContestImpl() {
 		info = new InfoImpl(new TreeMap<String, String>());
 		teams = new TreeMap<Integer, Team>();
@@ -61,6 +62,7 @@ public class ContestImpl implements Contest {
 		ranking = new ArrayList<Integer>();
 		teamComp = new TeamComp();
 		teamRows = new TreeMap<Integer, Integer>();
+		testcases = new TreeMap<Integer, Map<Integer,Testcase>>();
 	}
 
 	public ContestImpl(ContestImpl old, Attrs a) {
@@ -76,6 +78,7 @@ public class ContestImpl implements Contest {
 		ranking = old.ranking;
 		teamComp = new TeamComp();
 		teamRows = old.teamRows;
+		testcases = old.testcases;
 		update(a);
 	}
 
@@ -121,6 +124,16 @@ public class ContestImpl implements Contest {
 
 	public Run getRun(int i) {
 		return runs.get(i);
+	}
+	
+	public Testcase getTestcase(int run, int i) {
+		if(testcases.containsKey(run))
+			return testcases.get(run).get(i);
+		else return null;
+	}
+	
+	public Map<Integer, Testcase> getTestcases(int run) {
+		return testcases.get(run);
 	}
 
 	public Set<Integer> getClars() {
@@ -211,14 +224,14 @@ public class ContestImpl implements Contest {
 			teamRows = rerow(ranking);
 		} else if(a instanceof Testcase) {
 			Testcase t = (Testcase) a;
-			Run r = getRun(t.getRunId());
-			if(r==null) {
-				new Error("Received Testcase for non-existing Run.").printStackTrace();
+			Map<Integer, Testcase> runTestcases = testcases.get(t.getRunId());
+			if(runTestcases==null) {
+				runTestcases = new TreeMap<Integer, Testcase>();
+				runTestcases.put(t.getI(), t);
 			} else {
-				RunImpl impl = (RunImpl) r;
-				impl.addTestcase(t);
-				// TODO: remap?
+				runTestcases = remap(runTestcases, t.getI(), t);
 			}
+			testcases = remap(testcases, t.getRunId(), runTestcases);
 		} else if (a instanceof Clar) {
 			Clar c = (Clar) a;
 			clars = remap(clars, c.getId(), c);

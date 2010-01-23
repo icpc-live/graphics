@@ -3,7 +3,9 @@ package se.kth.livetech.contest.model;
 public interface Testcase extends Attrs {
 	public int getRunId();
 	
-	public int getNr();
+	public int getI();
+	
+	public int getN();
 
 	public String getResult();
 

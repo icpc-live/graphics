@@ -46,8 +46,9 @@ public class LogSpeaker extends AttrsUpdaterImpl {
 					String value = new String(ch, start, length);
 					if (this.value == null)
 						this.value = value;
-					else
+					else {
 						this.value += value;
+					}
 				}
 
 				@Override

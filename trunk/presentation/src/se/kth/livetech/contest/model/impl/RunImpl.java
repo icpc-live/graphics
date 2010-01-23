@@ -1,15 +1,12 @@
 package se.kth.livetech.contest.model.impl;
 
 import java.util.Map;
-import java.util.TreeMap;
 
 import se.kth.livetech.contest.model.Run;
-import se.kth.livetech.contest.model.Testcase;
 
 public class RunImpl extends SubImpl implements Run {
 	String language, result;
 	boolean judged, solved, penalty;
-	Map<Integer, Testcase> testcases;
 
 	public RunImpl(Map<String, String> attrs) {
 		super(attrs);
@@ -20,9 +17,8 @@ public class RunImpl extends SubImpl implements Run {
 		if (attrs.containsKey("penalty")) {
 			penalty = Boolean.valueOf(attrs.get("penalty"));
 		}
-		testcases = new TreeMap<Integer, Testcase>();
 	}
-
+	
 	public String getLanguage() {
 		return language;
 	}
@@ -41,13 +37,5 @@ public class RunImpl extends SubImpl implements Run {
 	
 	public boolean isPenalty() {
 		return penalty;
-	}
-	
-	public Testcase getTestcase(int i) {
-		return testcases.get(i);
-	}
-
-	public void addTestcase(Testcase testcase) {
-		testcases.put(testcase.getNr(), testcase);
 	}
 }

@@ -8,7 +8,6 @@ import se.kth.livetech.contest.model.Attrs;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.Judgement;
-import se.kth.livetech.contest.model.Run;
 
 public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 	long time;
@@ -67,15 +66,11 @@ public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 			String id = j.getAcronym();
 			attrs = new JudgementImpl(mergeProperties(contest.getJudgement(id)));
 		} else if (type.equals("testcase")) {
-			int runId = 0, nr = 0;
 			if(update.containsKey("run-id") && update.containsKey("i")) {
-				runId = Integer.valueOf(update.get("run-id"));
-				nr = Integer.valueOf(update.get("i"));
-			}
-			Run r = contest.getRun(runId);
-			if(r!=null)
-				attrs = new TestcaseImpl(mergeProperties(r.getTestcase(nr)));
-			else {
+				int run = Integer.valueOf(update.get("run-id"));
+				int i = Integer.valueOf(update.get("i"));
+				attrs = new TestcaseImpl(mergeProperties(contest.getTestcase(run, i)));
+			} else {
 				new Error("Received Testcase for non-existing Run.").printStackTrace();
 				attrs = new TestcaseImpl(update);
 			}

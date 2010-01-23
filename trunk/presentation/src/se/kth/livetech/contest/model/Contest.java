@@ -1,5 +1,6 @@
 package se.kth.livetech.contest.model;
 
+import java.util.Map;
 import java.util.Set;
 
 /** Contest gathers all data about a contest. */
@@ -25,6 +26,10 @@ public interface Contest {
 	public Set<Integer> getRuns();
 
 	public Run getRun(int i);
+	
+	public Testcase getTestcase(int run, int i);
+	
+	public Map<Integer, Testcase> getTestcases(int run);
 
 	public Set<Integer> getClars();
 

@@ -80,6 +80,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
 
+		boolean update = false;
 		{ // Advance
 			long now = System.currentTimeMillis();
 			if (firstPaint) {
@@ -88,12 +89,8 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			}
 			long dt = now - this.lastTime;
 			this.lastTime = now;
-			boolean update = false;
 			update |= this.stack.advance(dt / ANIMATION_TIME);
 			update |= this.recent.advance(dt / RECENT_TIME);
-			if (update) {
-				repaint();
-			}
 			startRow += dt / ROW_TIME;
 		}
 
@@ -183,6 +180,14 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		g.setClip(clip);
 
 		paintFps(g);
+
+		{ // Update?
+			update |= this.stack.advance(0d);
+			update |= this.recent.advance(0d);
+			if (update) {
+				repaint();
+			}
+		}
 	}
 
 	public void paintRow(Graphics2D g, Contest c, int i, PartitionedRowRenderer.Layer layer, boolean up) {
@@ -294,10 +299,6 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			Rectangle2D r = new Rectangle2D.Double(5, 5, 50, 20);
 			g.setColor(Color.BLUE);
 			Utility.drawString3D(g, String.format("%.1f", Frame.fps(1)), r, ICPCFonts.HEADER_FONT, Alignment.right);
-		}
-		
-		if (this.stack.advance(0)) {
-			repaint();
 		}
 	}
 

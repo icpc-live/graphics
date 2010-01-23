@@ -10,9 +10,11 @@ import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.ContestImpl;
+import se.kth.livetech.contest.replay.ContestReplay;
 import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.contest.replay.LogListener;
 import se.kth.livetech.presentation.layout.BoxTest2;
+import se.kth.livetech.presentation.layout.JudgeQueueTest;
 import se.kth.livetech.properties.ui.TestTriangle;
 import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
@@ -62,6 +64,9 @@ public class LiveClient {
 		
 		@Option(longName="test-scoreboard")
 		boolean isTestScoreboard();
+		
+		@Option(longName="test-judge-queue")
+		boolean isTestJudgeQueue();
 		
 		@Option(longName="fullscreen")
 		boolean isFullscreen();
@@ -154,6 +159,20 @@ public class LiveClient {
 						}
 					});
 					Frame f = new Frame("TestContest", bt2, null, false);
+					if (opts.isFullscreen()) {
+						f.fullScreen(0);
+					}
+					else {
+						f.pack();
+						f.setVisible(true);
+					}
+				}
+				if (opts.isTestJudgeQueue()) {
+					final JudgeQueueTest jqt = new JudgeQueueTest();
+					final ContestReplay cr = new ContestReplay();
+					cr.addContestUpdateListener(jqt);
+					kattisClient.addAttrsUpdateListener(cr);
+					Frame f = new Frame("TestJudgeQueue", jqt, null, false);
 					if (opts.isFullscreen()) {
 						f.fullScreen(0);
 					}

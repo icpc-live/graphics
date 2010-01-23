@@ -36,6 +36,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 	private LiveService.Client client;
 	private State state;
 	private BlockingQueue<QueueItem> sendQueue;
+	private IProperty updating;
 
 	public State getState() {
 		return state;
@@ -184,7 +185,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 	@Override
 	public void propertyChanged(IProperty changed) {
 		DebugTrace.trace("propertyChanged %s -> %s", changed.getName(), changed.getValue());
-		if (changed == this.nodeRegistry.getUpdating()) {
+		if (changed == updating) {
 			DebugTrace.trace("  ...updating");
 			return;
 		}
@@ -199,5 +200,8 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 				client.propertyUpdate(update);
 			}
 		});
+	}
+	public void setUpdating(IProperty updating) {
+		this.updating = updating;
 	}
 }

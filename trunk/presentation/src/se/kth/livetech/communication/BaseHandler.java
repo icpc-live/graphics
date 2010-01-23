@@ -167,18 +167,17 @@ public class BaseHandler implements LiveService.Iface {
 		// TODO Auto-generated method stub
 		DebugTrace.trace("propertyUpdate %s -> %s", event.key, event.value);
 		IProperty p = registry.getLocalState().getHierarchy().getProperty(event.key);
-		this.registry.setUpdating(p); // TODO: !!!
+		NodeConnection conn = this.registry.getNodeConnection(this.attachedNode.get());
+		conn.setUpdating(p);
 		if (event.isSetValue())
 			p.setValue(event.value);
 		else
 			p.clearValue();
-		/* TODO
 		if (event.isSetLink())
 			p.setLink(event.link);
 		else
 			p.clearLink();
-		*/
-		this.registry.setUpdating(null);
+		conn.setUpdating(null);
 	}
 
 	@Override

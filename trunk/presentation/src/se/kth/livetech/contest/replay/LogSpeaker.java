@@ -43,7 +43,11 @@ public class LogSpeaker extends AttrsUpdaterImpl {
 				@Override
 				public void characters(char[] ch, int start, int length)
 						throws SAXException {
-					value = new String(ch, start, length);
+					String value = new String(ch, start, length);
+					if (this.value == null)
+						this.value = value;
+					else
+						this.value += value;
 				}
 
 				@Override
@@ -88,7 +92,7 @@ public class LogSpeaker extends AttrsUpdaterImpl {
 					case 3:
 						if (!name.equals(qName))
 							new Error(name + " != " + qName).printStackTrace();
-						attrs.setProperty(name, value);
+						attrs.setProperty(name, value == null ? "" : value);
 						name = null;
 						break;
 					default:

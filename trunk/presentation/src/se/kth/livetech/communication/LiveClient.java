@@ -13,8 +13,11 @@ import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.replay.ContestReplay;
 import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.contest.replay.LogListener;
+import se.kth.livetech.control.ui.ProductionFrame;
 import se.kth.livetech.presentation.layout.BoxTest2;
 import se.kth.livetech.presentation.layout.JudgeQueueTest;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.ui.TestTriangle;
 import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
@@ -67,6 +70,9 @@ public class LiveClient {
 		
 		@Option(longName="test-judge-queue")
 		boolean isTestJudgeQueue();
+		
+		@Option(longName="control")
+		boolean isControl();
 		
 		@Option(longName="fullscreen")
 		boolean isFullscreen();
@@ -181,6 +187,12 @@ public class LiveClient {
 						f.setVisible(true);
 					}
 				}
+			}
+			if (opts.isControl()) {
+				PropertyHierarchy hierarchy = localState.getHierarchy();
+				IProperty base = hierarchy.getProperty("live.control");
+				IProperty clients = hierarchy.getProperty("live.clients");
+				new ProductionFrame(hierarchy, base, clients);
 			}
 			
 			if (opts.isTestTriangle()) {

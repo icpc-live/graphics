@@ -75,6 +75,7 @@ public class TestContest {
 		m.put("status", "done");
 		m.put("judged", "" + true);
 		m.put("solved", "" + solved);
+		m.put("penalty", "" + !solved);
 		return new RunImpl(m);
 	}
 

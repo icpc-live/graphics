@@ -12,7 +12,12 @@ public class SubImpl extends AttrsImpl implements Sub {
 	SubImpl(Map<String, String> attrs) {
 		super(attrs);
 		id = Integer.valueOf(attrs.get("id"));
-		problem = Integer.valueOf(attrs.get("problem"));
+		if (attrs.containsKey("problem")) {
+			problem = Integer.valueOf(attrs.get("problem"));
+		}
+		else {
+			problem = -1;
+		}
 		status = Status.valueOf(attrs.get("status"));
 		team = Integer.valueOf(attrs.get("team"));
 		time = Double.valueOf(attrs.get("time")).intValue(); // FIXME: decide on minutes/seconds

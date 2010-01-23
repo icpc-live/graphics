@@ -7,7 +7,7 @@ import se.kth.livetech.contest.model.Run;
 public class ProblemScoreImpl implements ProblemScore {
 	int team, problem;
 	boolean solved, pending;
-	int attempts, pendings, time, score;
+	int attempts, pendings, time, penalty, score;
 
 	ProblemScoreImpl(Contest contest, int team, int problem) {
 		this.team = team;
@@ -15,16 +15,19 @@ public class ProblemScoreImpl implements ProblemScore {
 		int n = contest.getRuns(team, problem);
 		for (int i = 0; i < n; ++i) {
 			Run r = contest.getRun(team, problem, i);
-			time = r.getTime();
 			if (r.isJudged()) {
-				++attempts;
+				if (r.isSolved() || r.isPenalty()) {
+					time = r.getTime();
+					++attempts;
+				}
 				if (r.isSolved()) {
 					solved = true;
-					score = time + contest.getInfo().getPenalty()
-							* (attempts - 1);
+					penalty = contest.getInfo().getPenalty() * (attempts - 1);
+					score = time / contest.getInfo().getScoreFactor() + penalty;
 					break;
 				}
 			} else {
+				time = r.getTime();
 				pending = true;
 				++pendings;
 			}
@@ -39,6 +42,7 @@ public class ProblemScoreImpl implements ProblemScore {
 		result = prime * result + (pending ? 1231 : 1237);
 		result = prime * result + pendings;
 		result = prime * result + problem;
+		result = prime * result + penalty;
 		result = prime * result + score;
 		result = prime * result + (solved ? 1231 : 1237);
 		result = prime * result + team;
@@ -55,6 +59,8 @@ public class ProblemScoreImpl implements ProblemScore {
 			return false;
 		ProblemScoreImpl other = (ProblemScoreImpl) obj;
 		if (attempts != other.attempts)
+			return false;
+		if (penalty != other.penalty)
 			return false;
 		if (pending != other.pending)
 			return false;
@@ -103,6 +109,10 @@ public class ProblemScoreImpl implements ProblemScore {
 
 	public int getSolutionTime() {
 		return time;
+	}
+	
+	public int getPenalty() {
+		return penalty;
 	}
 
 	public int getScore() {

@@ -13,5 +13,7 @@ public interface Info extends Attrs {
 
 	public int getLength();
 
+	public int getScoreFactor();
+
 	public int getPenalty();
 }

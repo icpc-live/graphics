@@ -10,6 +10,8 @@ public interface Run extends Sub {
 
 	public boolean isJudged();
 	
+	public boolean isPenalty();
+	
 	/** @return Testcase nr i, or null if no such testcase exists. */
 	public Testcase getTestcase(int i);
 }

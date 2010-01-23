@@ -7,7 +7,7 @@ import se.kth.livetech.contest.model.Info;
 public class InfoImpl extends AttrsImpl implements Info {
 	String title;
 	boolean started;
-	int length, penalty;
+	int length, scoreFactor, penalty;
 
 	InfoImpl(Map<String, String> attrs) {
 		super(attrs);
@@ -17,6 +17,10 @@ public class InfoImpl extends AttrsImpl implements Info {
 			length = 300;//length = Integer.valueOf(attrs.get("length"));
 		else
 			length = 300;
+		if (attrs.containsKey("score-factor"))
+			scoreFactor = Integer.valueOf(attrs.get("score-factor"));
+		else
+			scoreFactor = 60;
 		if (attrs.containsKey("penalty"))
 			penalty = Integer.valueOf(attrs.get("penalty"));
 		else
@@ -33,6 +37,10 @@ public class InfoImpl extends AttrsImpl implements Info {
 
 	public int getLength() {
 		return length;
+	}
+	
+	public int getScoreFactor() {
+		return scoreFactor;
 	}
 
 	public int getPenalty() {

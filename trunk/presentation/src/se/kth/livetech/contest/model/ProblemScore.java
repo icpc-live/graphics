@@ -19,4 +19,6 @@ public interface ProblemScore {
 	int getSolutionTime();
 
 	int getScore();
+	
+	int getPenalty();
 }

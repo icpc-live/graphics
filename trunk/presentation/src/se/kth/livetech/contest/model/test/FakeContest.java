@@ -47,7 +47,7 @@ public class FakeContest extends Thread {
 				for (int j = 0; j < teams; j++) {
 					if(!solved[j][i] && Math.random() < 0.001*teamSkill[j][i]){
 						int id = test.submit(j, i, time);
-						if (Math.random() < .8){
+						if (Math.random() < .8) {
 							test.solve(id);
 							solved[j][i] = true;
 						}

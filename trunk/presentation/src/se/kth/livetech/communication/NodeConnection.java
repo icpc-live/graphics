@@ -20,14 +20,14 @@ import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
 
 public class NodeConnection implements AttrsUpdateListener, PropertyListener {
-	
+
 	static enum State {
 		DISCONNECTED,
 		CONNECTED,
 		PENDING,
 		RECONNECTING
 	}
-	
+
 	private NodeRegistry nodeRegistry;
 	private NodeId id;
 	private NodeStatus status;
@@ -59,7 +59,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 	private interface QueueItem {
 		public void send(LiveService.Client client) throws TException;
 	}
-	
+
 	private class Connection extends Thread {
 		public Connection() {
 			super("Node connection to " + id.name);
@@ -82,14 +82,14 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 
 				try {
 					client = Connector.connect(nodeRegistry.getLocalNode(), id.address, id.port);
-					
+
 					NodeId newId = client.getNodeId();
 					newId.address = NodeConnection.this.id.address;
-					
+
 					NodeConnection.this.setId(newId);
 				} catch (TException e) {
+					DebugTrace.trace("Failed connection to " + id.name + ": " + e);
 					// TODO Reporting
-					e.printStackTrace();
 					continue;
 				}
 
@@ -98,8 +98,6 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 
 				// Time sync every second
 				while (true) {
-					System.err.println("time");
-					
 					QueueItem item;
 
 					try {
@@ -116,18 +114,18 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 						}
 						remoteTime = client.time();
 					} catch (TException e) {
+						DebugTrace.trace("Failed call to " + id.name + ": " + e);
 						// TODO Reporting
-						e.printStackTrace();
 						break;
 					}
 					long t1 = System.currentTimeMillis();
-					System.err.println("ping " + (t1 - t0));
+					//DebugTrace.trace("ping " + (t1 - t0));
 					NodeConnection.this.timeSync.ping(t0, remoteTime, t1);
 				}
 			}
 		}
 	}
-	
+
 	private class TimeSync {
 		public void ping(long t0, long remoteTime, long t1) {
 			long ping = t1 - t0;
@@ -168,7 +166,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 			public void send(Client client) throws TException {
 				client.contestUpdate(contestId, update);
 			}
-			
+
 		});
 	}
 

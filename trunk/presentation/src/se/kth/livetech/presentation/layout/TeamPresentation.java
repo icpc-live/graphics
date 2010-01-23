@@ -24,7 +24,6 @@ import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.presentation.animation.AnimationStack;
-import se.kth.livetech.presentation.animation.Interpolated;
 import se.kth.livetech.presentation.animation.RecentChange;
 import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
@@ -35,6 +34,7 @@ import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.presentation.graphics.Utility;
+import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
@@ -112,7 +112,8 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		}
 		
 		stack.setPosition(id, 0); //TODO: needed?
-		recent.set(id, c.getTeamScore(id));
+		if (c.getTeamScore(id) != null)
+			recent.set(id, c.getTeamScore(id));
 
 		Shape clip = g.getClip();
 		g.setClip(rect);
@@ -139,6 +140,10 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 
 	public void paintRow(Graphics2D g, Contest c, PartitionedRowRenderer.Layer layer, boolean up) {
 		Team team = c.getTeam(id);
+		if (team == null) {
+			DebugTrace.trace("TeamPresentation null team %d!", id);
+			return;
+		}
 		
 		if (stack.isUp(id) != up)
 			return;
@@ -200,29 +205,26 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 				String text = ContentProvider.getProblemScoreText(ps);
 				ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
 				ColoredTextBox problem = new ColoredTextBox(text, style);
-				r2.add(problem, 1, .95, false);
+				int key = r2.add(problem, 1, .95, false);
 				if (!ps.equals(pps)) {
 					GlowRenderer glow = new GlowRenderer(style.getColor(), PROBLEM_GLOW_MARGIN, false, glowAlpha); // TODO: alpha per problem
-					r2.setDecoration(j, glow, PROBLEM_GLOW_MARGIN);
+					r2.setDecoration(key, glow, PROBLEM_GLOW_MARGIN);
 				}
 			}
 			Renderable nameAndResults = new HorizontalSplitter(teamName, r2, 0.65);
 			r.add(nameAndResults, NAME_WEIGHT, 0.9, false);
 		
 		
-		{
-			//Solved and Time
-			int j = c.getProblems().size() + 100;
-			
+		{ //Solved and Time
 			String statstr = "" + ts.getSolved();
 			Renderable solvedHeader = new ColoredTextBox("Solved", ContentProvider.getHeaderStyle(Alignment.center));
 			Renderable solvedDisplay = new ColoredTextBox(statstr, ContentProvider.getTeamSolvedStyle());
 			Renderable hsplit1 = new HorizontalSplitter(solvedHeader, solvedDisplay, splitRatio);
 			
-			r.add(hsplit1, 1, 1, true);
+			int key = r.add(hsplit1, 1, 1, true);
 			if (ts.getSolved() != prev.getSolved()) {
 				GlowRenderer glow = new GlowRenderer(ICPCColors.YELLOW, STATS_GLOW_MARGIN, true, glowAlpha); // TODO: style
-				r.setDecoration(j, glow, STATS_GLOW_MARGIN);
+				r.setDecoration(key, glow, STATS_GLOW_MARGIN);
 			}
 			
 			Renderable timeHeader = new ColoredTextBox("Score", ContentProvider.getHeaderStyle(Alignment.center));

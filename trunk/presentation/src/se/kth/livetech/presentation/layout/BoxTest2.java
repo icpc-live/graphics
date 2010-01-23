@@ -105,12 +105,15 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			r.add(-3, null, 1, 0.9, true);
 			Renderable teamName = new ColoredTextBox("Team", ContentProvider.getHeaderStyle(Alignment.left));
 			r.add(-2, teamName, NAME_WEIGHT, 1, false);
+			char problemLetter = 'A';
 			for (int j : c.getProblems()) {
-				Renderable problem = new ColoredTextBox("" + (char) ('A' + j), ContentProvider.getHeaderStyle(Alignment.center));
+				String p = "" + problemLetter++;
+				//String p = c.getProblem(j).getName();
+				Renderable problem = new ColoredTextBox(p, ContentProvider.getHeaderStyle(Alignment.center));
 				r.add(j, problem, 1, 0.95, false);
 			}
 			
-			int j = c.getProblems().size();
+			int j = c.getProblems().size() + 100;
 			Renderable solvedHeader = new ColoredTextBox("Solved", ContentProvider.getHeaderStyle(Alignment.center));
 			r.add(j, solvedHeader, 2, 1, true);
 			Renderable timeHeader = new ColoredTextBox("Time", ContentProvider.getHeaderStyle(Alignment.center));
@@ -197,7 +200,8 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		PartitionedRowRenderer<Integer> r = new PartitionedRowRenderer<Integer>();
 
 		{ // Rank
-			Renderable rankHeader = new ColoredTextBox("" + i, ContentProvider.getHeaderStyle(Alignment.center));
+			String rank = ContentProvider.getRankText(c, team);
+			Renderable rankHeader = new ColoredTextBox(rank, ContentProvider.getTeamRankStyle());
 			r.add(-5, rankHeader, 2, 1, true);
 		}
 		
@@ -255,7 +259,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		
 		{
 			//Solved and Time
-			int j = c.getProblems().size();
+			int j = c.getProblems().size() + 100;
 			
 			String statstr = "" + ts.getSolved();
 			Renderable solvedHeader = new ColoredTextBox(statstr, ContentProvider.getTeamSolvedStyle());
@@ -265,10 +269,9 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 				r.setDecoration(j, glow, STATS_GLOW_MARGIN);
 			}
 			
-			Renderable timeHeader = new ColoredTextBox(""+ts.getScore(), ContentProvider.getTeamTimeStyle());
+			Renderable timeHeader = new ColoredTextBox("" + ts.getScore(), ContentProvider.getTeamScoreStyle());
 			r.add(j + 1, timeHeader, 2, 1, true);
 		}
-		
 
 		{ // Render
 			Interpolated.Double interpolator = new Interpolated.Double(i);

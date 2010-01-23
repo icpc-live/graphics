@@ -11,6 +11,7 @@ public class ICPCFonts {
 	}
 
 	public static final Font HEADER_FONT = derive(Font.BOLD, 12);
+	public static final Font TEAM_RANK_FONT = derive(Font.ITALIC, 22);
 	public static final Font TEAM_NAME_FONT = derive(Font.BOLD, 22);
 	public static final Font PROBLEM_SCORE_FONT = derive(Font.PLAIN, 20);
 	

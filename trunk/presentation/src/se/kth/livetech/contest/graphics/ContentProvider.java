@@ -15,6 +15,10 @@ public class ContentProvider {
 		return "" + contest.getTeamRank(team.getId());
 	}
 	
+	public static ColoredTextBox.Style getTeamRankStyle() {
+		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_RANK_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.right);
+	}
+
 	public static ColoredTextBox.Style getTeamNameStyle() {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.left);
 	}
@@ -23,7 +27,7 @@ public class ContentProvider {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
 	}
 
-	public static Style getTeamTimeStyle() {
+	public static Style getTeamScoreStyle() {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
 	}
 	
@@ -36,7 +40,7 @@ public class ContentProvider {
 		n += problemScore.getPendings();
 		String text = "" + n;
 		if (problemScore.isSolved()) {
-			text += " / " + problemScore.getSolutionTime();
+			text += " / " + (problemScore.getScore() - problemScore.getPenalty());
 		}
 		else if (problemScore.isPending()) {
 		}

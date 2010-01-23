@@ -102,7 +102,7 @@ public class BaseHandler implements LiveService.Iface {
 	@Override
 	public void contestUpdate(ContestId contest, ContestEvent event) throws TException {
 		// TODO Auto-generated method stub
-		
+		DebugTrace.trace("contestUpdate %s", event);
 	}
 
 	@Override

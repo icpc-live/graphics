@@ -66,29 +66,29 @@ public class TestTriangle extends JPanel implements PropertyListener {
 	public static void test(PropertyHierarchy p) {
 		JFrame f = new JFrame("Test");
 		Box b = new Box(BoxLayout.Y_AXIS);
-		b.add(new TestTriangle(p.getProperty("x")));
-		b.add(new Text(p.getProperty("x.l")));
-		b.add(new Slider(p.getProperty("x.l"), 1, 10));
-		b.add(new Text(p.getProperty("x.a")));
-		b.add(new Slider(p.getProperty("x.a"), 0, Math.PI * 2));
-		b.add(new Hue(p.getProperty("x.color")));
-		b.add(new Text(p.getProperty("x.color.r")));
-		b.add(new Text(p.getProperty("x.color.g")));
-		b.add(new Text(p.getProperty("x.color.b")));
+		b.add(new TestTriangle(p.getProperty("live.x")));
+		b.add(new Text(p.getProperty("live.x.l")));
+		b.add(new Slider(p.getProperty("live.x.l"), 1, 10));
+		b.add(new Text(p.getProperty("live.x.a")));
+		b.add(new Slider(p.getProperty("live.x.a"), 0, Math.PI * 2));
+		b.add(new Hue(p.getProperty("live.x.color")));
+		b.add(new Text(p.getProperty("live.x.color.r")));
+		b.add(new Text(p.getProperty("live.x.color.g")));
+		b.add(new Text(p.getProperty("live.x.color.b")));
 
 		JScrollPane jScrollPane1 = new JScrollPane();
-		jScrollPane1.setViewportView(new PropertyOutline(p.getProperty("x")));
-		//jScrollPane1.setViewportView(new OutlineTest(p.getProperty("x")));
+		jScrollPane1.setViewportView(new PropertyOutline(p.getProperty("live")));
+		//jScrollPane1.setViewportView(new OutlineTest(p.getProperty("live")));
 		b.add(jScrollPane1);
 
 		DefaultListModel l = new DefaultListModel();
 		l.addElement("1");
 		l.addElement("2");
 		l.addElement("3");
-		b.add(new List(p.getProperty("x.list"), l));
-		b.add(new Text(p.getProperty("x.list")));
-		p.getProperty("x.l").setDoubleValue(3);
-		p.getProperty("x.a").setDoubleValue(0);
+		b.add(new List(p.getProperty("live.x.list"), l));
+		b.add(new Text(p.getProperty("live.x.list")));
+		p.getProperty("live.x.l").setDoubleValue(3);
+		p.getProperty("live.x.a").setDoubleValue(0);
 
 		f.add(b);
 		f.pack();

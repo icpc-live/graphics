@@ -34,13 +34,13 @@ public class LiveState {
 	}
 
 	public void addListeners(NodeConnection connection) {
-		IProperty root = this.hierarchy.getProperty("x"); // TODO: root property
+		IProperty root = this.hierarchy.getProperty("live"); // TODO: root property
 		root.addPropertyListener(connection);
 		DebugTrace.trace("addListeners %s -> %s", root, connection);
 		// TODO: add contest listeners
 	}
 	public void removeListeners(NodeConnection connection) {
-		IProperty root = this.hierarchy.getProperty("x"); // TODO: root property
+		IProperty root = this.hierarchy.getProperty("live"); // TODO: root property
 		root.removePropertyListener(connection);
 		// TODO: remove contest listeners
 	}

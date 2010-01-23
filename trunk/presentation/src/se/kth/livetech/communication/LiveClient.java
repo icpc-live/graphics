@@ -7,9 +7,15 @@ import org.apache.thrift.transport.TTransportException;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.NodeId;
+import se.kth.livetech.contest.model.AttrsUpdateEvent;
+import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.contest.replay.LogListener;
+import se.kth.livetech.presentation.layout.BoxTest2;
 import se.kth.livetech.properties.ui.TestTriangle;
+import se.kth.livetech.util.DebugTrace;
+import se.kth.livetech.util.Frame;
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
 import uk.co.flamingpenguin.jewel.cli.Option;
@@ -53,6 +59,12 @@ public class LiveClient {
 		
 		@Option(longName="test-triangle")
 		boolean isTestTriangle();
+		
+		@Option(longName="test-scoreboard")
+		boolean isTestScoreboard();
+		
+		@Option(longName="fullscreen")
+		boolean isFullscreen();
 		
 		@Option(helpRequest=true)
 		boolean getHelp();
@@ -128,12 +140,34 @@ public class LiveClient {
 				kattisClient.addAttrsUpdateListener(log);
 				
 				nodeRegistry.addContest(new ContestId("Live", 0), kattisClient);
+
+				if (opts.isTestScoreboard()) {
+					final ContestImpl c = new ContestImpl();
+					final BoxTest2 bt2 = new BoxTest2(c);
+					kattisClient.addAttrsUpdateListener(new AttrsUpdateListener() {
+						ContestImpl c = new ContestImpl();
+						@Override
+						public void attrsUpdated(AttrsUpdateEvent e) {
+							DebugTrace.trace("attrs %s", e); // FIXME remove
+							c = new ContestImpl(c, e.merge(c));
+							bt2.setContest(c);
+						}
+					});
+					Frame f = new Frame("TestContest", bt2, null, false);
+					if (opts.isFullscreen()) {
+						f.fullScreen(0);
+					}
+					else {
+						f.pack();
+						f.setVisible(true);
+					}
+				}
 			}
 			
 			if (opts.isTestTriangle()) {
 				TestTriangle.test(localState.getHierarchy());
 			}
-
+			
 			System.out.println("Listening on port " + port);
 			Connector.listen(handler, port, true);
 		} catch (ArgumentValidationException e) {

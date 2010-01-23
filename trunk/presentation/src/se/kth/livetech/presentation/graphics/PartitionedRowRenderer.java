@@ -9,10 +9,11 @@ import java.util.Map;
 import se.kth.livetech.presentation.layout.Partitioner;
 import se.kth.livetech.util.Optional;
 
-public class PartitionedRowRenderer<T> implements Renderable {
+public class PartitionedRowRenderer implements Renderable {
 	Optional<Renderable> background;
-	Map<T, Part> parts = new HashMap<T, Part>();
-	Partitioner<T> partitioner = new Partitioner<T>();
+	int keyCounter = 0;
+	Map<Integer, Part> parts = new HashMap<Integer, Part>();
+	Partitioner<Integer> partitioner = new Partitioner<Integer>();
 	
 	private static class Part {
 		Renderable renderer, decorationRenderer;
@@ -31,13 +32,15 @@ public class PartitionedRowRenderer<T> implements Renderable {
 		this.background.set(background);
 	}
 	
-	public void add(T key, Renderable renderer, double weight, double margin, boolean fixed) {
+	public int add(Renderable renderer, double weight, double margin, boolean fixed) {
 		Part part = new Part(renderer, margin);
+		int key = keyCounter++;
 		parts.put(key, part);
 		partitioner.add(key, weight, fixed);
+		return key;
 	}
 	
-	public void setDecoration(T key, Renderable decoration, double margin) {
+	public void setDecoration(int key, Renderable decoration, double margin) {
 		Part part = parts.get(key);
 		part.decorationRenderer = decoration;
 		part.decorationMargin = margin;
@@ -59,8 +62,8 @@ public class PartitionedRowRenderer<T> implements Renderable {
 				new Point2D.Double(0, d.height / 2.0),
 				new Point2D.Double(d.width, d.height / 2.0),
 				d.height);
-		for (Map.Entry<T, Part> it : this.parts.entrySet()) {
-			T key = it.getKey();
+		for (Map.Entry<Integer, Part> it : this.parts.entrySet()) {
+			int key = it.getKey();
 			Part part = it.getValue();
 			Renderable renderer;
 			double margin;

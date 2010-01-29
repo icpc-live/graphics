@@ -153,6 +153,8 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 
 	@Override
 	public void attrsUpdated(AttrsUpdateEvent e) {
+		DebugTrace.trace("attrsUpdate %s", e);
+		
 		final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
 		final ContestEvent update = new ContestEvent();
 		//update.id = TODO?;

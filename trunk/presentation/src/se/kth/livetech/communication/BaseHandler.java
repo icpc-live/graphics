@@ -19,6 +19,7 @@ import se.kth.livetech.communication.thrift.LogEvent;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.communication.thrift.NodeStatus;
 import se.kth.livetech.communication.thrift.PropertyEvent;
+import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.util.DebugTrace;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -101,8 +102,17 @@ public class BaseHandler implements LiveService.Iface {
 
 	@Override
 	public void contestUpdate(ContestId contest, ContestEvent event) throws TException {
-		// TODO Auto-generated method stub
 		DebugTrace.trace("contestUpdate %s", event);
+		
+		AttrsUpdateEventImpl aue = new AttrsUpdateEventImpl(event.getTime(), event.getType());
+		
+		Map<String, String> attrs = event.getAttributes();
+		
+		for (String name : attrs.keySet()) {
+			aue.setProperty(name, attrs.get(name));
+		}
+		
+		this.registry.getLocalState().getContest(contest).attrsUpdated(aue);
 	}
 
 	@Override

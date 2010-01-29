@@ -217,7 +217,7 @@ public class LiveClient {
 				final LogListener log = new LogListener("kattislog.txt");
 				kattisClient.addAttrsUpdateListener(log);
 				
-				nodeRegistry.addContest(new ContestId("Live", 0), kattisClient);
+				nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);
 
 				
 				final ContestReplay cr = new ContestReplay();
@@ -232,12 +232,21 @@ public class LiveClient {
 			if (opts.isFake()) {
 				TestContest tc = new TestContest(100, 12);
 				FakeContest fc = new FakeContest(tc);
+
+				//TODO: nodeRegistry.addContest(new ContestId("contest", 0), tc);
+				tc.addAttrsUpdateListener(localState.getContest(new ContestId("contest", 0)));
 				
-				for(ContestUpdateListener cul:contestListeners){
-					fc.addContestUpdateListener(cul);
-				}
 				fc.start();
 			}
+			if (!contestListeners.isEmpty()) {
+				final ContestReplay cr = new ContestReplay();
+				localState.getContest(new ContestId("contest", 0)).addAttrsUpdateListener(cr);
+
+				for(ContestUpdateListener cul:contestListeners){
+					cr.addContestUpdateListener(cul);
+				}
+			}
+			
 			if (opts.isControl()) {
 				PropertyHierarchy hierarchy = localState.getHierarchy();
 				IProperty base = hierarchy.getProperty("live.control");

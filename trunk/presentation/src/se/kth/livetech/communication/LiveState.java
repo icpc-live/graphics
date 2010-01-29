@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import se.kth.livetech.communication.thrift.ContestDump;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
@@ -20,7 +19,7 @@ public class LiveState {
 
 	private long clockSkew;
 	private PropertyHierarchy hierarchy;
-	private Map<ContestId, ContestDump> contests;
+	private Map<ContestId, ContestState> contests;
 	private Map<String, byte[]> classes;
 	private Map<String, byte[]> resources;
 	
@@ -28,9 +27,12 @@ public class LiveState {
 		this.spiderFlag = spiderFlag;
 		clockSkew = 0;
 		hierarchy = new PropertyHierarchy();
-		contests = new TreeMap<ContestId, ContestDump>();
+		contests = new TreeMap<ContestId, ContestState>();
 		classes = new TreeMap<String, byte[]>();
 		resources = new TreeMap<String, byte[]>();
+		
+		ContestId id = new ContestId("contest", 0);
+		contests.put(id, new ContestState());
 	}
 
 	public void addListeners(NodeConnection connection) {
@@ -69,11 +71,11 @@ public class LiveState {
 		return contests.keySet();
 	}
 
-	public ContestDump getContest(ContestId id) {
+	public ContestState getContest(ContestId id) {
 		return contests.get(id);
 	}
 
-	public void setContest(ContestId id, ContestDump dump) {
+	public void setContest(ContestId id, ContestState dump) {
 		this.contests.put(id, dump);
 	}
 

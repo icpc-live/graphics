@@ -26,8 +26,10 @@ struct NodeStatus {
 struct ContestId {
 	1: string name,
 	2: i64 starttime,
+	/*
 	3: optional bool replayFlag,
 	4: optional string replayName,
+	*/
 }
 
 struct ContestEvent {

@@ -1,7 +1,6 @@
 package se.kth.livetech.communication;
 
 import java.util.Comparator;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 

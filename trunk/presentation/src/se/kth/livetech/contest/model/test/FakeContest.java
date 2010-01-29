@@ -1,7 +1,10 @@
 package se.kth.livetech.contest.model.test;
 
+//import java.util.Collections;
 import java.util.HashSet;
+//import java.util.Map;
 import java.util.Set;
+//import java.util.TreeMap;
 
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
@@ -11,26 +14,47 @@ import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.util.Frame;
 
+
 public class FakeContest extends Thread {
-	TestContest test;
+
 	final static int teams = 100;
 	final static int problems = 12;
+	final static int testcases = 10;
 	final static boolean FULL_SCREEN = false;
+	TestContest test;
+	 
+	
+	/*private static class CheckCase {
+
+		boolean solved;
+		enum Status {
+			none, success, fail
+		}	
+		Status status[] = new Status[testcases];
+		public CheckCase() {
+			for (int i=0; i<status.length;i++) {
+				status[i] = Status.none;
+			}		
+		}
+	}*/
+	
 	public FakeContest(TestContest test) {
 		super("Fake contest");
 		this.test = test;
 	}
+	
 	Set<ContestUpdateListener> listeners = new HashSet<ContestUpdateListener>();
 	public void addContestUpdateListener(ContestUpdateListener listener) {
 		listeners.add(listener);
 	}
+	
 	public void run() {
 		int time = 0;
 		Contest contest = test.getContest();
-		double teamSkill[][] = new double[teams][problems];
-		boolean solved[][] = new boolean[teams][problems];
+		double teamSkill[][] = new double[teams][problems];	
+		//CheckCase check[][] = new CheckCase[teams][problems];
 		
-		for(int i = 0; i<problems; ++i){
+		for(int i = 0; i<problems; ++i) {
 			double base = .75*Math.random();
 			for (int j = 0; j < teams; j++) {
 				teamSkill[j][i] = base + ((.5 * Math.random())-.25);
@@ -40,29 +64,37 @@ public class FakeContest extends Thread {
 		while (true) {
 			try {
 				sleep(100);
-			} catch (InterruptedException e) {
-			}
+			} catch (InterruptedException e) { }
 			++time;
 			for(int i = 0; i<problems; ++i){
-				for (int j = 0; j < teams; j++) {
-					if(!solved[j][i] && Math.random() < 0.001*teamSkill[j][i]){
+				
+				for (int j = 0; j < teams; j++) {	
+					
+					if(Math.random() < 0.001*teamSkill[j][i]) {
 						int id = test.submit(j, i, time);
-						if (Math.random() < .8) {
-							test.solve(id);
-							solved[j][i] = true;
-						}
-						else
-							test.fail(id);
+						//for (int k=0; k < 10; k++) {
+							
+							if (Math.random() < .8) {
+								test.solve(id);	
+							}
+							else
+								test.fail(id);
+						//}
+					
+							
 						Contest newContest = test.getContest();
 						Run run = newContest.getRun(id);
 						ContestUpdateEvent update = new ContestUpdateEventImpl(contest, run, newContest);
 						for (ContestUpdateListener listener : listeners)
 							listener.contestUpdated(update);
+						
+						}
 					}
 				}
-			}
+				
 		}
 	}
+		
 	public static void main(String[] args) {
 		TestContest tc = new TestContest(teams, problems);
 		FakeContest fc = new FakeContest(tc);
@@ -83,4 +115,5 @@ public class FakeContest extends Thread {
 			frame.setVisible(true);
 		}
 	}
+
 }

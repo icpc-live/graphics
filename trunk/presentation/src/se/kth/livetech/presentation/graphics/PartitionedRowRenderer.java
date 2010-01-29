@@ -18,9 +18,12 @@ public class PartitionedRowRenderer implements Renderable {
 	private static class Part {
 		Renderable renderer, decorationRenderer;
 		double margin, decorationMargin;
-		public Part(Renderable renderer, double margin) {
+		boolean cacheImage;
+		
+		public Part(Renderable renderer, double margin, boolean cacheImage) {
 			this.renderer = renderer;
 			this.margin = margin;
+			this.cacheImage = cacheImage;
 		}
 	}
 
@@ -32,13 +35,21 @@ public class PartitionedRowRenderer implements Renderable {
 		this.background.set(background);
 	}
 	
-	public int add(Renderable renderer, double weight, double margin, boolean fixed) {
-		Part part = new Part(renderer, margin);
+	public int add(Renderable renderer, double weight, double margin, boolean fixed, boolean cacheImage) {
+		Part part = new Part(renderer, margin, cacheImage);
 		int key = keyCounter++;
 		parts.put(key, part);
 		partitioner.add(key, weight, fixed);
 		return key;
 	}
+	
+	public int add(Renderable renderer, double weight, double margin, boolean fixed){
+		return add(renderer, weight, margin, fixed, true);
+	}
+	
+	public int addWithoutCache(Renderable renderer, double weight, double margin, boolean fixed){
+		return add(renderer, weight, margin, fixed, false);
+	} 
 	
 	public void setDecoration(int key, Renderable decoration, double margin) {
 		Part part = parts.get(key);
@@ -88,7 +99,15 @@ public class PartitionedRowRenderer implements Renderable {
 			int y0 = (int) (mid.getY() - height / 2);
 			int y1 = (int) (mid.getY() + height / 2);
 			Dimension dim = new Dimension(x1 - x0, y1 - y0);
-			RenderCache.getRenderCache().render(g, x0, y0, renderer, dim);
+			if(part.cacheImage) {
+				RenderCache.getRenderCache().render(g, x0, y0, renderer, dim);
+			}
+			else {
+				g.translate(x0, y0);
+				renderer.render(g, dim);
+				g.translate(-x0, -y0);
+			}
+			
 		}
 	}
 

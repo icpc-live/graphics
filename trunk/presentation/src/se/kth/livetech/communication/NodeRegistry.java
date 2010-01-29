@@ -17,7 +17,7 @@ public class NodeRegistry {
 		return localState;
 	}
 
-	private Map<NodeId, NodeConnection> connections;
+	private TreeMap<NodeId, NodeConnection> connections;
 
 	public NodeRegistry(NodeId localNode, LiveState localState) {
 		this.localNode = localNode;
@@ -89,5 +89,15 @@ public class NodeRegistry {
 			connections.remove(oldId);
 			connections.put(node.getId(), node);
 		}
+	}
+	
+	public RemoteTime getRemoteTime() {
+		return new RemoteTime() {
+			@Override
+			public long getRemoteTimeMillis() {
+				return connections.isEmpty() ? System.currentTimeMillis() : connections.firstEntry().getValue().getRemoteTimeMillis();
+			}
+			
+		};
 	}
 }

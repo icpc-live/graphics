@@ -82,7 +82,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		Graphics2D g = (Graphics2D) gr;
 
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), 0);
-		Dimension dim = new Dimension(getWidth(), 100); //TODO: change to calculated value
+		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
 
 		boolean update = false;
 		{ // Advance
@@ -105,8 +105,10 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 			Color row2 = ICPCColors.BG_COLOR_2;
 			r.setBackground(new RowFrameRenderer(row2, row1));
 		}
-
-		g.translate(0, 440); //TODO: change to calculated value
+		
+		int posy = (int) (getHeight()*440.0/576);
+		
+		g.translate(0, posy);
 		{ // Render
 			r.render(g, dim);
 		}
@@ -123,7 +125,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		paintRow(g, c, PartitionedRowRenderer.Layer.decorations, true);
 		paintRow(g, c, PartitionedRowRenderer.Layer.contents, true);
 		
-		g.translate(0, -440);//TODO: change to calculated value
+		g.translate(0, -posy);//TODO: change to calculated value
 		
 		g.setClip(clip);
 
@@ -149,7 +151,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 			return;
 
 		// TODO: remove duplicate objects/code
-		Dimension dim = new Dimension(getWidth(), 100); //TODO: change to calculated value
+		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
 		double splitRatio = 0.4;
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
 
@@ -162,73 +164,41 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		}
 		
 		{ // Flag
-			String country = team.getNationality();
-			ImageResource image = ICPCImages.getFlag(country);
-			Renderable flag = new ImageRenderer("flag " + country, image);
+			Renderable flag = ContentProvider.getTeamFlagRenderable(team);
 			r.add(flag, 1, .7, true);
 		}
 
 		{ // Logo
-			ImageResource image = ICPCImages.getTeamLogo(id);
-			Renderable logo = new ImageRenderer("logo " + id, image);
+			Renderable logo = ContentProvider.getTeamLogoRenderable(team);
 			r.add(logo, 1, .7, true);
 		}	
 
-		TeamScore ts = c.getTeamScore(id);
-		 // Team name and results
-			String name = team.getName(); // TODO: Contest parameter for team name display?
-			//String name = team.getUniversity();
-			Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
 		
-			PartitionedRowRenderer r2 = new PartitionedRowRenderer();
-			
-			TeamScore prev = recent.get(id);
-			double glowProgress = recent.recentProgress(id), glowAlpha;
-			if (glowProgress * RECENT_TIME < RECENT_MID_TIME) {
-				glowAlpha = 1 - (1 - RECENT_MID_ALPHA) * glowProgress * RECENT_TIME / RECENT_MID_TIME;
-			}
-			else if (glowProgress * RECENT_TIME < RECENT_TIME - RECENT_FADE_TIME) {
-				glowAlpha = RECENT_MID_ALPHA;
-			}
-			else {
-				glowAlpha = RECENT_MID_ALPHA * (1 - glowProgress) * RECENT_TIME / RECENT_FADE_TIME;
-			}
-			final double ALPHA_STEPS = 256;
-			glowAlpha = (int) (ALPHA_STEPS * glowAlpha) / ALPHA_STEPS;
-	
-			final double STATS_GLOW_MARGIN = 1.5;
-			final double PROBLEM_GLOW_MARGIN = 2.5;
-	
-			for (int j : c.getProblems()) {
-				ProblemScore ps = ts.getProblemScore(j);
-				ProblemScore pps = prev.getProblemScore(j);
-				String text = ContentProvider.getProblemScoreText(ps);
-				ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
-				ColoredTextBox problem = new ColoredTextBox(text, style);
-				int key = r2.add(problem, 1, .95, false);
-				if (!ps.equals(pps)) {
-					GlowRenderer glow = new GlowRenderer(style.getColor(), PROBLEM_GLOW_MARGIN, false, glowAlpha); // TODO: alpha per problem
-					r2.setDecoration(key, glow, PROBLEM_GLOW_MARGIN);
-				}
-			}
-			Renderable nameAndResults = new HorizontalSplitter(teamName, r2, 0.65);
-			r.add(nameAndResults, NAME_WEIGHT, 0.9, false);
+		 // Team name and results
+		Renderable teamName = ContentProvider.getTeamNameRenderable(team);
+		Renderable teamResults = ContentProvider.getTeamResultsRenderer(c, team, recent, true);
+		
+		Renderable nameAndResults = new HorizontalSplitter(teamName, teamResults, 0.65);
+		r.addWithoutCache(nameAndResults, NAME_WEIGHT, 0.9, false);
 		
 		
 		{ //Solved and Time
-			String statstr = "" + ts.getSolved();
+			TeamScore ts = c.getTeamScore(id);
+			TeamScore prev = recent.get(id);
+			double glowAlpha = ContentProvider.getGlowAlpha(team, recent);
 			Renderable solvedHeader = new ColoredTextBox("Solved", ContentProvider.getHeaderStyle(Alignment.center));
-			Renderable solvedDisplay = new ColoredTextBox(statstr, ContentProvider.getTeamSolvedStyle());
-			Renderable hsplit1 = new HorizontalSplitter(solvedHeader, solvedDisplay, splitRatio);
+			Renderable solvedDisplay = ContentProvider.getTeamSolvedRenderable(c, team);
 			
+			Renderable hsplit1 = new HorizontalSplitter(solvedHeader, solvedDisplay, splitRatio);
 			int key = r.add(hsplit1, 1, 1, true);
+			
 			if (ts.getSolved() != prev.getSolved()) {
-				GlowRenderer glow = new GlowRenderer(ICPCColors.YELLOW, STATS_GLOW_MARGIN, true, glowAlpha); // TODO: style
-				r.setDecoration(key, glow, STATS_GLOW_MARGIN);
+				GlowRenderer glow = new GlowRenderer(ICPCColors.YELLOW, ContentProvider.STATS_GLOW_MARGIN, true, glowAlpha); // TODO: style (glow is on header too)
+				r.setDecoration(key, glow, ContentProvider.STATS_GLOW_MARGIN);
 			}
 			
 			Renderable timeHeader = new ColoredTextBox("Score", ContentProvider.getHeaderStyle(Alignment.center));
-			Renderable timeDisplay = new ColoredTextBox("" + ts.getScore(), ContentProvider.getTeamScoreStyle());
+			Renderable timeDisplay = ContentProvider.getTeamScoreRenderable(c, team);
 			
 			Renderable hsplit2 = new HorizontalSplitter(timeHeader, timeDisplay, splitRatio);
 			r.add(hsplit2, 1, 1, true);
@@ -238,7 +208,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 			r.render(g, dim, layer);
 		}
 	}
-
+		
 	public void paintFps(Graphics2D g) {
 		{ // FPS count
 			Rectangle2D r = new Rectangle2D.Double(5, 5, 50, 20);

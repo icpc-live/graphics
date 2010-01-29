@@ -5,14 +5,34 @@ import java.awt.Color;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
+import se.kth.livetech.contest.model.TeamScore;
+import se.kth.livetech.presentation.animation.RecentChange;
 import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
+import se.kth.livetech.presentation.graphics.ImageRenderer;
+import se.kth.livetech.presentation.graphics.ImageResource;
+import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
+import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.presentation.graphics.ColoredTextBox.Style;
 
 public class ContentProvider {
 	public static String getRankText(Contest contest, Team team) {
 		// TODO "" + (TeamScore) teamScore.getRank();
 		return "" + contest.getTeamRank(team.getId());
+	}
+	
+	public static Renderable getTeamFlagRenderable(Team team) {
+		String country = team.getNationality();
+		ImageResource image = ICPCImages.getFlag(country);
+		Renderable flag = new ImageRenderer("flag " + country, image);
+		return flag;
+	}
+	
+	public static Renderable getTeamLogoRenderable(Team team) {
+		int id = team.getId();
+		ImageResource image = ICPCImages.getTeamLogo(id);
+		Renderable logo = new ImageRenderer("logo " + id, image);
+		return logo;
 	}
 	
 	public static ColoredTextBox.Style getTeamRankStyle() {
@@ -35,7 +55,7 @@ public class ContentProvider {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.HEADER_FONT, ColoredTextBox.Style.Shape.roundRect, alignment);
 	}
 
-	public static String getProblemScoreText(ProblemScore problemScore) {
+	public static String getProblemScoreText(ProblemScore problemScore, boolean showProblemLetter) {
 		int n = problemScore.getAttempts();
 		n += problemScore.getPendings();
 		String text = "" + n;
@@ -47,7 +67,10 @@ public class ContentProvider {
 		else if (problemScore.getAttempts() > 0) {
 		}
 		else {
-			text = "";
+			if(showProblemLetter)
+				text = "" + (char)((int)'A'+problemScore.getProblem());
+			else
+				text = "";
 		}
 		return text;
 	}
@@ -83,5 +106,83 @@ public class ContentProvider {
 		else {
 			return NONE;
 		}
+	}
+
+	public static Renderable getTeamNameRenderable(Team team) {
+		String name = team.getName(); // TODO: Contest parameter for team name display?
+		//String name = team.getUniversity();
+		Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
+		return teamName;
+	}
+	
+	public static final double RECENT_TIME = 5000; // ms
+	public static final double RECENT_MID_TIME = 500; // ms
+	public static final double RECENT_MID_ALPHA = .7;
+	public static final double RECENT_FADE_TIME = 500; // ms
+	public static final double STATS_GLOW_MARGIN = 1.5;
+	public static final double PROBLEM_GLOW_MARGIN = 2.5;
+	
+	public static Renderable getTeamResultsHeader(Contest c){
+		PartitionedRowRenderer r = new PartitionedRowRenderer();
+		char problemLetter = 'A';
+		for (@SuppressWarnings("unused") int j : c.getProblems()) {
+			String p = "" + problemLetter++; //c.getProblem(j).getName();
+			Renderable problem = new ColoredTextBox(p, ContentProvider.getHeaderStyle(Alignment.center));
+			r.add(problem, 1, 0.95, false);
+		}
+		return r;
+	}
+	
+	public static PartitionedRowRenderer getTeamResultsRenderer(Contest c, Team team, RecentChange<Integer, TeamScore> recent, boolean showProblemLetter) {
+		PartitionedRowRenderer r = new PartitionedRowRenderer();
+		int id = team.getId();
+		TeamScore ts = c.getTeamScore(id);
+		TeamScore prev = recent.get(id);
+		
+		double glowAlpha = ContentProvider.getGlowAlpha(team, recent);
+		
+		for (int j : c.getProblems()) {
+			ProblemScore ps = ts.getProblemScore(j);
+			ProblemScore pps = prev.getProblemScore(j);
+			String text = ContentProvider.getProblemScoreText(ps, showProblemLetter);
+			ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
+			ColoredTextBox problem = new ColoredTextBox(text, style);
+			int key = r.add(problem, 1, .95, false);
+			if (!ps.equals(pps)) {
+				GlowRenderer glow = new GlowRenderer(style.getColor(), PROBLEM_GLOW_MARGIN, false, glowAlpha); // TODO: alpha per problem
+				r.setDecoration(key, glow, PROBLEM_GLOW_MARGIN);
+			}
+		}
+		return r;
+	}
+
+	public static double getGlowAlpha(Team team, RecentChange<Integer, TeamScore> recent) {
+		double glowProgress = recent.recentProgress(team.getId()), glowAlpha;
+		
+		if (glowProgress * RECENT_TIME < RECENT_MID_TIME) {
+			glowAlpha = 1 - (1 - RECENT_MID_ALPHA) * glowProgress * RECENT_TIME / RECENT_MID_TIME;
+		}
+		else if (glowProgress * RECENT_TIME < RECENT_TIME - RECENT_FADE_TIME) {
+			glowAlpha = RECENT_MID_ALPHA;
+		}
+		else {
+			glowAlpha = RECENT_MID_ALPHA * (1 - glowProgress) * RECENT_TIME / RECENT_FADE_TIME;
+		}
+		final double ALPHA_STEPS = 256;
+		glowAlpha = (int) (ALPHA_STEPS * glowAlpha) / ALPHA_STEPS;
+		return glowAlpha;
+	}
+
+	public static Renderable getTeamSolvedRenderable(Contest c, Team team) {
+		TeamScore ts = c.getTeamScore(team.getId());
+		String statstr = "" + ts.getSolved();
+		Renderable solvedDisplay = new ColoredTextBox(statstr, ContentProvider.getTeamSolvedStyle());
+		return solvedDisplay;
+	}
+
+	public static Renderable getTeamScoreRenderable(Contest c, Team team) {
+		TeamScore ts = c.getTeamScore(team.getId());
+		Renderable timeDisplay = new ColoredTextBox("" + ts.getScore(), ContentProvider.getTeamScoreStyle());
+		return timeDisplay;
 	}
 }

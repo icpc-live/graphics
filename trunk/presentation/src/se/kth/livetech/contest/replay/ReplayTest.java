@@ -3,7 +3,7 @@ package se.kth.livetech.contest.replay;
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.model.impl.ContestImpl;
-import se.kth.livetech.presentation.layout.BoxTest2;
+import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.PropertyListener;
@@ -39,7 +39,7 @@ public class ReplayTest {
 		tc.solve(id0);
 		Contest c1 = tc.getContest();*/
 		
-		final BoxTest2 bt2 = new BoxTest2(new ContestImpl());
+		final ScoreboardPresentation bt2 = new ScoreboardPresentation(new ContestImpl());
 		new Frame("ReplayTest", bt2);
 		
 		final ContestReplayer replayer = new ContestReplayer();

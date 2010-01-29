@@ -8,11 +8,17 @@ public class InfoImpl extends AttrsImpl implements Info {
 	String title;
 	boolean started;
 	int length, scoreFactor, penalty;
+	long startTime;
 
 	InfoImpl(Map<String, String> attrs) {
 		super(attrs);
 		title = attrs.get("title");
+	
+		if (attrs.containsKey("starttime"))
+			startTime = Double.valueOf(attrs.get("starttime")).longValue();
+		
 		started = Boolean.valueOf(attrs.get("started"));
+		
 		if (attrs.containsKey("length")) // FIXME: Parse time format 05:00:00
 			length = 300;//length = Integer.valueOf(attrs.get("length"));
 		else
@@ -47,7 +53,7 @@ public class InfoImpl extends AttrsImpl implements Info {
 		return penalty;
 	}
 
-	public long getTime() {
-		return -1l;
+	public long getStartTime() {
+		return startTime;
 	}
 }

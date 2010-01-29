@@ -19,7 +19,7 @@ import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
 
-public class NodeConnection implements AttrsUpdateListener, PropertyListener {
+public class NodeConnection implements AttrsUpdateListener, PropertyListener, RemoteTime {
 
 	static enum State {
 		DISCONNECTED,
@@ -202,4 +202,9 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener {
 	public void setUpdating(IProperty updating) {
 		this.updating = updating;
 	}
+	
+	@Override
+	public long getRemoteTimeMillis() {
+		return System.currentTimeMillis() + this.status.clockSkew;
+	} 
 }

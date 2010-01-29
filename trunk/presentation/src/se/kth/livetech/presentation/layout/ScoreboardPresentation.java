@@ -37,7 +37,7 @@ import se.kth.livetech.presentation.graphics.Utility;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
-public class BoxTest2 extends JPanel implements ContestUpdateListener {
+public class ScoreboardPresentation extends JPanel implements ContestUpdateListener {
 	public static final double ANIMATION_TIME = 1500; // ms
 	public static final double ROW_TIME = 1000; // ms
 	public static final double RECENT_TIME = 5000; // ms
@@ -46,9 +46,10 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 	public static final double RECENT_FADE_TIME = 500; // ms
 	final int ROWS = 25;
 	final double NAME_WEIGHT = 5;
-
+	final double RESULTS_WEIGHT = 10;
+	
 	Contest c;
-	public BoxTest2(Contest c) {
+	public ScoreboardPresentation(Contest c) {
 		this.c = c;
 		this.setBackground(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
@@ -101,12 +102,9 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			r.add(null, 1, 0.9, true);
 			Renderable teamName = new ColoredTextBox("Team", ContentProvider.getHeaderStyle(Alignment.left));
 			r.add(teamName, NAME_WEIGHT, 1, false);
-			char problemLetter = 'A';
-			for (@SuppressWarnings("unused") int j : c.getProblems()) {
-				String p = "" + problemLetter++; //c.getProblem(j).getName();
-				Renderable problem = new ColoredTextBox(p, ContentProvider.getHeaderStyle(Alignment.center));
-				r.add(problem, 1, 0.95, false);
-			}
+			
+			Renderable resultsHeader = ContentProvider.getTeamResultsHeader(c);
+			r.add(resultsHeader, RESULTS_WEIGHT, 1, false);
 			
 			Renderable solvedHeader = new ColoredTextBox("Solved", ContentProvider.getHeaderStyle(Alignment.center));
 			r.add(solvedHeader, 2, 1, true);
@@ -208,64 +206,35 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		}
 		
 		{ // Flag
-			String country = team.getNationality();
-			ImageResource image = ICPCImages.getFlag(country);
-			Renderable flag = new ImageRenderer("flag " + country, image);
+			Renderable flag = ContentProvider.getTeamFlagRenderable(team);
 			r.add(flag, 1, .9, true);
 		}
 
 		{ // Logo
-			ImageResource image = ICPCImages.getTeamLogo(id);
-			Renderable logo = new ImageRenderer("logo " + id, image);
+			Renderable logo = ContentProvider.getTeamLogoRenderable(team);
 			r.add(logo, 1, .9, true);
 		}
 
 		{ // Team name
-			String name = team.getName(); // TODO: Contest parameter for team name display?
-			//String name = team.getUniversity();
-			Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
+			Renderable teamName = ContentProvider.getTeamNameRenderable(team);
 			r.add(teamName, NAME_WEIGHT, 1, false);
 		}
 
 
 		TeamScore ts = c.getTeamScore(id);
 		TeamScore prev = recent.get(id);
-		double glowProgress = recent.recentProgress(id), glowAlpha;
-		if (glowProgress * RECENT_TIME < RECENT_MID_TIME) {
-			glowAlpha = 1 - (1 - RECENT_MID_ALPHA) * glowProgress * RECENT_TIME / RECENT_MID_TIME;
-		}
-		else if (glowProgress * RECENT_TIME < RECENT_TIME - RECENT_FADE_TIME) {
-			glowAlpha = RECENT_MID_ALPHA;
-		}
-		else {
-			glowAlpha = RECENT_MID_ALPHA * (1 - glowProgress) * RECENT_TIME / RECENT_FADE_TIME;
-		}
-		final double ALPHA_STEPS = 256;
-		glowAlpha = (int) (ALPHA_STEPS * glowAlpha) / ALPHA_STEPS;
-
-		final double STATS_GLOW_MARGIN = 1.5;
-		final double PROBLEM_GLOW_MARGIN = 2.5;
-
-		for (int j : c.getProblems()) {
-			ProblemScore ps = ts.getProblemScore(j);
-			ProblemScore pps = prev.getProblemScore(j);
-			String text = ContentProvider.getProblemScoreText(ps);
-			ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
-			ColoredTextBox problem = new ColoredTextBox(text, style);
-			int key = r.add(problem, 1, .95, false);
-			if (!ps.equals(pps)) {
-				GlowRenderer glow = new GlowRenderer(style.getColor(), PROBLEM_GLOW_MARGIN, false, glowAlpha); // TODO: alpha per problem
-				r.setDecoration(key, glow, PROBLEM_GLOW_MARGIN);
-			}
-		}
+		
+		Renderable teamResults = ContentProvider.getTeamResultsRenderer(c, team, recent, false);
+		r.addWithoutCache(teamResults, RESULTS_WEIGHT, 1, false);
 		
 		{ // Solved and Time
+			double glowAlpha = ContentProvider.getGlowAlpha(team, recent); 
 			String statstr = "" + ts.getSolved();
 			Renderable solvedHeader = new ColoredTextBox(statstr, ContentProvider.getTeamSolvedStyle());
 			int key = r.add(solvedHeader, 2, 1, true);
 			if (ts.getSolved() != prev.getSolved()) {
-				GlowRenderer glow = new GlowRenderer(ICPCColors.YELLOW, STATS_GLOW_MARGIN, true, glowAlpha); // TODO: style
-				r.setDecoration(key, glow, STATS_GLOW_MARGIN);
+				GlowRenderer glow = new GlowRenderer(ICPCColors.YELLOW, ContentProvider.STATS_GLOW_MARGIN, true, glowAlpha); // TODO: style
+				r.setDecoration(key, glow, ContentProvider.STATS_GLOW_MARGIN);
 			}
 			
 			Renderable timeHeader = new ColoredTextBox("" + ts.getScore(), ContentProvider.getTeamScoreStyle());
@@ -295,7 +264,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 			Utility.drawString3D(g, String.format("%.1f", Frame.fps(1)), r, ICPCFonts.HEADER_FONT, Alignment.right);
 		}
 	}
-
+	
 	private static class IconRenderer implements Renderable {
 		public void render(Graphics2D g, Dimension d) {
 			g.setColor(Color.GREEN);
@@ -314,7 +283,7 @@ public class BoxTest2 extends JPanel implements ContestUpdateListener {
 		tc.solve(id2);
 		tc.submit(1, 3, 23);
 		Contest c1 = tc.getContest();
-		Frame frame = new Frame("BoxTest", new BoxTest2(c1));
+		Frame frame = new Frame("Scoreboard Presentation", new ScoreboardPresentation(c1));
 		frame.setIconImage(RenderCache.getRenderCache().getImageFor(new IconRenderer(), new Dimension(128, 128)));
 	}
 }

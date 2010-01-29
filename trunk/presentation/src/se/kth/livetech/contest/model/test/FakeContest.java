@@ -8,7 +8,7 @@ import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
-import se.kth.livetech.presentation.layout.BoxTest2;
+import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.util.Frame;
 
 public class FakeContest extends Thread {
@@ -66,7 +66,7 @@ public class FakeContest extends Thread {
 	public static void main(String[] args) {
 		TestContest tc = new TestContest(teams, problems);
 		FakeContest fc = new FakeContest(tc);
-		final BoxTest2 bt = new BoxTest2(tc.getContest());
+		final ScoreboardPresentation bt = new ScoreboardPresentation(tc.getContest());
 		fc.addContestUpdateListener(new ContestUpdateListener() {
 			@Override
 			public void contestUpdated(ContestUpdateEvent e) {

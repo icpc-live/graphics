@@ -9,7 +9,7 @@ public interface Info extends Attrs {
 
 	public boolean isStarted();
 
-	public long getTime(); // TODO: ??
+	public long getStartTime(); // TODO: ??
 
 	public int getLength();
 

@@ -1,5 +1,6 @@
 package se.kth.livetech.communication;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.thrift.transport.TTransportException;
@@ -7,20 +8,21 @@ import org.apache.thrift.transport.TTransportException;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.NodeId;
-import se.kth.livetech.contest.model.AttrsUpdateEvent;
-import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.impl.ContestImpl;
+import se.kth.livetech.contest.model.test.FakeContest;
+import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.contest.replay.ContestReplay;
 import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.contest.replay.LogListener;
 import se.kth.livetech.control.ui.ProductionFrame;
-import se.kth.livetech.presentation.layout.BoxTest2;
 import se.kth.livetech.presentation.layout.JudgeQueueTest;
+import se.kth.livetech.presentation.layout.LivePresentation;
+import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.presentation.layout.TeamPresentation;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.ui.TestTriangle;
-import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
@@ -74,6 +76,12 @@ public class LiveClient {
 
 		@Option(longName="test-judge-queue")
 		boolean isTestJudgeQueue();
+		
+		@Option(longName="live")
+		boolean isLive();
+		
+		@Option(longName="fake", description="Fake contest.")
+		boolean isFake();
 		
 		@Option(longName="control")
 		boolean isControl();
@@ -129,6 +137,62 @@ public class LiveClient {
 			}
 			LiveService.Iface handler = new BaseHandler(nodeRegistry);
 			
+			List<ContestUpdateListener> contestListeners = new ArrayList<ContestUpdateListener>();
+			
+			if (opts.isTestScoreboard()) {
+				final ContestImpl c = new ContestImpl();
+				final ScoreboardPresentation sp = new ScoreboardPresentation(c);
+				contestListeners.add(sp);
+				Frame f = new Frame("TestContest", sp, null, false);
+				if (opts.isFullscreen()) {
+					f.fullScreen(0);
+				}
+				else {
+					f.pack();
+					f.setVisible(true);
+				}
+			}
+			if (opts.isTestTeam()) {
+				final ContestImpl c = new ContestImpl();
+				final TeamPresentation tp = new TeamPresentation(c, 1);
+				contestListeners.add(tp);
+				tp.setTeamId(1); // FIXME remove
+				Frame f = new Frame("TeamPresentation", tp, null, false);
+				if (opts.isFullscreen()) {
+					f.fullScreen(0);
+				}
+				else {
+					f.pack();
+					f.setVisible(true);
+				}
+			}
+			if (opts.isTestJudgeQueue()) {
+				final JudgeQueueTest jqt = new JudgeQueueTest();
+				final ContestReplay cr = new ContestReplay();
+				cr.addContestUpdateListener(jqt);
+				Frame f = new Frame("TestJudgeQueue", jqt, null, false);
+				if (opts.isFullscreen()) {
+					f.fullScreen(0);
+				}
+				else {
+					f.pack();
+					f.setVisible(true);
+				}
+			}
+			if (opts.isLive()){
+				final ContestImpl c = new ContestImpl();
+				final LivePresentation lpr = new LivePresentation(c, localState.getHierarchy().getProperty("live.clients."+localNode.name) );
+				contestListeners.add(lpr);
+				
+				Frame f = new Frame("Live", lpr, null, false);
+				if (opts.isFullscreen()) {
+					f.fullScreen(0);
+				}
+				else {
+					f.pack();
+					f.setVisible(true);
+				}
+			}
 			if (opts.isKattis()) {
 				final KattisClient kattisClient;
 				
@@ -156,57 +220,22 @@ public class LiveClient {
 				
 				nodeRegistry.addContest(new ContestId("Live", 0), kattisClient);
 
-				if (opts.isTestScoreboard()) {
-					final ContestImpl c = new ContestImpl();
-					final BoxTest2 bt2 = new BoxTest2(c);
-					kattisClient.addAttrsUpdateListener(new AttrsUpdateListener() {
-						ContestImpl c = new ContestImpl();
-						@Override
-						public void attrsUpdated(AttrsUpdateEvent e) {
-							DebugTrace.trace("attrs %s", e); // FIXME remove
-							c = new ContestImpl(c, e.merge(c));
-							bt2.setContest(c);
-						}
-					});
-					Frame f = new Frame("TestContest", bt2, null, false);
-					if (opts.isFullscreen()) {
-						f.fullScreen(0);
-					}
-					else {
-						f.pack();
-						f.setVisible(true);
-					}
+				
+				final ContestReplay cr = new ContestReplay();
+				kattisClient.addAttrsUpdateListener(cr);
+				
+				for(ContestUpdateListener cul:contestListeners){
+					cr.addContestUpdateListener(cul);
 				}
-				if (opts.isTestTeam()) {
-					ContestImpl c = new ContestImpl();
-					final TeamPresentation tp = new TeamPresentation(c, 1);
-					tp.setTeamId(142); // FIXME remove
-					final ContestReplay cr = new ContestReplay();
-					cr.addContestUpdateListener(tp);
-					kattisClient.addAttrsUpdateListener(cr);
-					Frame f = new Frame("TeamPresentation", tp, null, false);
-					if (opts.isFullscreen()) {
-						f.fullScreen(0);
-					}
-					else {
-						f.pack();
-						f.setVisible(true);
-					}
+			}
+			if (opts.isFake()) {
+				TestContest tc = new TestContest(100, 12);
+				FakeContest fc = new FakeContest(tc);
+				
+				for(ContestUpdateListener cul:contestListeners){
+					fc.addContestUpdateListener(cul);
 				}
-				if (opts.isTestJudgeQueue()) {
-					final JudgeQueueTest jqt = new JudgeQueueTest();
-					final ContestReplay cr = new ContestReplay();
-					cr.addContestUpdateListener(jqt);
-					kattisClient.addAttrsUpdateListener(cr);
-					Frame f = new Frame("TestJudgeQueue", jqt, null, false);
-					if (opts.isFullscreen()) {
-						f.fullScreen(0);
-					}
-					else {
-						f.pack();
-						f.setVisible(true);
-					}
-				}
+				fc.start();
 			}
 			if (opts.isControl()) {
 				PropertyHierarchy hierarchy = localState.getHierarchy();

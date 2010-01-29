@@ -28,13 +28,13 @@ public class ContestReplayer extends ContestPlayer {
 	private enum State { PAUSED, LIVE, UNTIL, RANK }
 	private State state = State.LIVE;
 	private long freezeTime = 4*60*60*1000;
-	private long untilTime = 4*60*60*1000;
-	private enum Speed { SCALED_REAL_TIME, INTERVAL, SINGLE }
-	private Speed speed = Speed.INTERVAL;
-	private double scaleTime = 60;
-	private long localTime = 0;
-	private int testcaseInterval = 1000;
-	private int runInterval = 10000;
+	//private long untilTime = 4*60*60*1000;
+	//private enum Speed { SCALED_REAL_TIME, INTERVAL, SINGLE }
+	//private Speed speed = Speed.INTERVAL;
+	//private double scaleTime = 60;
+	//private long localTime = 0;
+	//private int testcaseInterval = 1000;
+	//private int runInterval = 10000;
 	
 	public ContestReplayer() {
 		contest = new ContestImpl();
@@ -48,7 +48,7 @@ public class ContestReplayer extends ContestPlayer {
 	 * 
 	 * @param runId Run to propagate
 	 */
-	private void playRun(int runId) {
+	/*private void playRun(int runId) {
 		final Queue<AttrsUpdateEvent> events = runEvents.get(runId);
 		if(events == null || events.size()==0)
 			new Error("No such run id: " + runId).printStackTrace();
@@ -65,9 +65,9 @@ public class ContestReplayer extends ContestPlayer {
 				propagate(events.poll());
 			}
 		}
-	}
+	}*/
 	
-	private class PlayerThread extends Thread {
+	/*private class PlayerThread extends Thread {
 		public void run() {
 			boolean foundRun = true;
 			while(foundRun) {
@@ -100,12 +100,12 @@ public class ContestReplayer extends ContestPlayer {
 				if(foundRun)
 					playRun(runId);
 				// Sleep time
-				switch(state) {
+				//switch(state) {
 				
-				}
+				//}
 			}
 		}
-	}
+	}*/
 	
 	/*public boolean isPaused() {
 		return paused;

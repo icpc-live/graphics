@@ -6,9 +6,20 @@ import java.util.Set;
 import se.kth.livetech.contest.model.Attrs;
 
 /** {@link Attrs} */
-public class AttrsImpl implements Attrs {
+public abstract class AttrsImpl implements Attrs {
 	protected AttrsImpl(Map<String, String> attrs) {
 		this.attrs = attrs;
+	}
+	
+	public static class Unknown extends AttrsImpl {
+		protected Unknown(Map<String, String> attrs) {
+			super(attrs);
+		}
+
+		@Override
+		public String getType() {
+			return "unknown";
+		}
 	}
 
 	@Override

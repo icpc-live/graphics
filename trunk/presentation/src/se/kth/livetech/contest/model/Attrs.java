@@ -7,6 +7,8 @@ import java.util.Set;
  * for every update.
  */
 public interface Attrs {
+	public String getType();
+
 	public Set<String> getProperties();
 
 	public String getProperty(String name);

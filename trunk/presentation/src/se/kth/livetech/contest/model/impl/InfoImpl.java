@@ -32,6 +32,10 @@ public class InfoImpl extends AttrsImpl implements Info {
 		else
 			penalty = 20;
 	}
+	
+	public String getType() {
+		return "info";
+	}
 
 	public String getTitle() {
 		return title;

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import se.kth.livetech.contest.model.Entity;
 
-public class EntityImpl extends AttrsImpl implements Entity {
+public abstract class EntityImpl extends AttrsImpl implements Entity {
 	int id;
 	String name;
 

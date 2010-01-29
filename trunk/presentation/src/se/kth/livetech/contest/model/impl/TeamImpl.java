@@ -70,6 +70,10 @@ public class TeamImpl extends EntityImpl implements Team {
 			this.nationality = FLAG_MAP.get(nationality);
 	}
 
+	public String getType() {
+		return "team";
+	}
+
 	public String getUniversity() {
 		return university;
 	}

@@ -23,6 +23,10 @@ public class JudgementImpl extends EntityImpl implements Judgement {
 				acronym = "J" + id;
 		}
 	}
+	
+	public String getType() {
+		return "judgement";
+	}
 
 	public String getAcronym() {
 		return acronym;

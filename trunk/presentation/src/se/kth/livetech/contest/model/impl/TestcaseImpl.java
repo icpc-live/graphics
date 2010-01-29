@@ -19,6 +19,10 @@ public class TestcaseImpl extends AttrsImpl implements Testcase {
 		solved = Boolean.valueOf(attrs.get("solved"));
 	}
 
+	public String getType() {
+		return "testcase";
+	}
+
 	public String getResult() {
 		return result;
 	}

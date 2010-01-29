@@ -16,6 +16,10 @@ public class ClarImpl extends SubImpl implements Clar {
 		answer = attrs.get("answer");
 	}
 
+	public String getType() {
+		return "clar";
+	}
+
 	public String getQuestion() {
 		return question;
 	}

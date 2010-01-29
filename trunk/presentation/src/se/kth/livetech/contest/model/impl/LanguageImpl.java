@@ -8,4 +8,8 @@ public class LanguageImpl extends EntityImpl implements Language {
 	public LanguageImpl(Map<String, String> attrs) {
 		super(attrs);
 	}
+
+	public String getType() {
+		return "language";
+	}
 }

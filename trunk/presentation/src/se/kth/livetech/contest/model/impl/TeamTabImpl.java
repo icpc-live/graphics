@@ -15,6 +15,10 @@ public class TeamTabImpl extends EntityImpl implements Team {
 		}
 	}
 
+	public String getType() {
+		return "teamtab"; // TODO: ??
+	}
+
 	public String getUniversity() {
 		return team.university;
 	}

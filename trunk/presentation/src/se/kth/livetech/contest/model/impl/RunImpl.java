@@ -18,6 +18,10 @@ public class RunImpl extends SubImpl implements Run {
 			penalty = Boolean.valueOf(attrs.get("penalty"));
 		}
 	}
+
+	public String getType() {
+		return "run";
+	}
 	
 	public String getLanguage() {
 		return language;

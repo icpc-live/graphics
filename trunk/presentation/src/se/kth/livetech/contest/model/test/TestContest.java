@@ -1,16 +1,21 @@
 package se.kth.livetech.contest.model.test;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.model.Attrs;
+import se.kth.livetech.contest.model.AttrsUpdateEvent;
+import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.Language;
 import se.kth.livetech.contest.model.Problem;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.Testcase;
+import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.model.impl.LanguageImpl;
 import se.kth.livetech.contest.model.impl.ProblemImpl;
@@ -22,7 +27,7 @@ public class TestContest {
 	public static Team testTeam(int id, String name, String univ, String nat) {
 		return testTeam(id, name + '(' + univ + '/' + nat + ')');
 	}
-
+	
 	private static Map<String, String> entityMap(int id, String name) {
 		Map<String, String> m = new TreeMap<String, String>();
 		m.put("id", "" + id);
@@ -99,8 +104,12 @@ public class TestContest {
 		c = testContest(teams, problems);
 	}
 
-	private void update(Attrs r) {
-		c = new ContestImpl(c, r);
+	private synchronized void update(Attrs a) {
+		c = new ContestImpl(c, a);
+		AttrsUpdateEvent e = new AttrsUpdateEventImpl(System.currentTimeMillis(), a);
+		for (AttrsUpdateListener listener : listeners) {
+			listener.attrsUpdated(e);
+		}
 	}
 
 	public int submit(int team, int problem, int time) {
@@ -123,5 +132,15 @@ public class TestContest {
 
 	public Contest getContest() {
 		return c;
+	}
+
+	private Set<AttrsUpdateListener> listeners = new CopyOnWriteArraySet<AttrsUpdateListener>();
+
+	public synchronized void addAttrsUpdateListener(AttrsUpdateListener listener) {
+		listeners.add(listener);
+	}
+
+	public synchronized void removeAttrsUpdateListener(AttrsUpdateListener listener) {
+		listeners.remove(listener);
 	}
 }

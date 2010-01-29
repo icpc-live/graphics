@@ -20,6 +20,14 @@ public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 		update = new LinkedHashMap<String, String>();
 	}
 
+	public AttrsUpdateEventImpl(long time, Attrs attrs) {
+		this.time = time;
+		this.type = attrs.getType();
+		update = new LinkedHashMap<String, String>();
+		for (String name : attrs.getProperties())
+			update.put(name, attrs.getProperty(name));
+	}
+
 	public long getTime() {
 		return time;
 	}
@@ -88,7 +96,7 @@ public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 				attrs = new ClarImpl(mergeProperties(contest.getClar(id)));
 			else {
 				new Error("Unknown type " + type).printStackTrace();
-				attrs = new AttrsImpl(update);
+				attrs = new AttrsImpl.Unknown(update);
 			}
 		}
 		return attrs;

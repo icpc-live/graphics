@@ -4,7 +4,7 @@ import java.util.Map;
 
 import se.kth.livetech.contest.model.Sub;
 
-public class SubImpl extends AttrsImpl implements Sub {
+public abstract class SubImpl extends AttrsImpl implements Sub {
 	int id, problem;
 	Status status;
 	int team, time;

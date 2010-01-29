@@ -8,4 +8,8 @@ public class ProblemImpl extends EntityImpl implements Problem {
 	public ProblemImpl(Map<String, String> attrs) {
 		super(attrs);
 	}
+
+	public String getType() {
+		return "problem";
+	}
 }

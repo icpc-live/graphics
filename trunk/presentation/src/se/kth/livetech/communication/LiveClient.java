@@ -214,7 +214,6 @@ public class LiveClient {
 					kattisClient = new KattisClient();
 				}
 				
-				kattisClient.startPulling();
 				final LogListener log = new LogListener("kattislog.txt");
 				kattisClient.addAttrsUpdateListener(log);
 				
@@ -227,6 +226,8 @@ public class LiveClient {
 				for(ContestUpdateListener cul:contestListeners){
 					cr.addContestUpdateListener(cul);
 				}
+				
+				kattisClient.startPushReading();
 			}
 			if (opts.isFake()) {
 				TestContest tc = new TestContest(100, 12);

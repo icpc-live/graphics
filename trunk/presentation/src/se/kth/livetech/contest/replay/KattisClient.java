@@ -4,10 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
@@ -15,9 +11,8 @@ import se.kth.livetech.contest.model.impl.AttrsUpdaterImpl;
 
 public class KattisClient extends AttrsUpdaterImpl {
 	private static final String DEFAULT_KATTIS_HOST = "icpc-dev.netlab.csc.kth.se";
-	private static final int    DEFAULT_KATTIS_PORT = 80;
+	private static final int    DEFAULT_KATTIS_PORT = 4713;
 	private static final String DEFAULT_KATTIS_URI = "/python/events.py?with_def=1";
-	private static final int	PUSH_KATTIS_PORT = 4713;
 	
 	private String kattisBaseUrl;
 	@SuppressWarnings("unused")
@@ -27,12 +22,12 @@ public class KattisClient extends AttrsUpdaterImpl {
 	@SuppressWarnings("unused")
 	private int kattisPort = 80;
 	
-	private static final int REFRESH_DELAY = 2000; // In milliseconds
-	private Timer timer = null;
+	/*private static final int REFRESH_DELAY = 2000; // In milliseconds
+	private Timer timer = null;*/
 	private Thread thread = null;
 	
 	public KattisClient() {
-		this(DEFAULT_KATTIS_HOST, PUSH_KATTIS_PORT, DEFAULT_KATTIS_URI);
+		this(DEFAULT_KATTIS_HOST, DEFAULT_KATTIS_PORT, DEFAULT_KATTIS_URI);
 	}
 	
 	public KattisClient(String kattisHost) {
@@ -74,7 +69,7 @@ public class KattisClient extends AttrsUpdaterImpl {
 		}
 	}
 		
-	public void startPulling() {
+	/*public void startPulling() {
 		if(timer != null) stopPulling();
 		timer = new Timer();
 		timer.schedule(new TimerTask() {
@@ -88,17 +83,17 @@ public class KattisClient extends AttrsUpdaterImpl {
 	public void stopPulling() {
 		timer.cancel();
 		timer = null;
-	}
+	}*/
 	
 	public void startPushReading() {
 		//if(thread != null) stopPushReading();
-		thread = new Thread(new Runnable() {
+		thread = new Thread() {
 			@Override
 			public void run() {
 				readFromKattis();
 				System.err.println("End of Kattis stream.");
 			}
-		});
+		};
 		thread.setDaemon(false);
 		thread.start();
 	}
@@ -110,26 +105,26 @@ public class KattisClient extends AttrsUpdaterImpl {
 	}*/
 
 	public static void main(String[] args) {
-		final KattisClient kattisClient = new KattisClient(DEFAULT_KATTIS_HOST, PUSH_KATTIS_PORT);
+		final KattisClient kattisClient = new KattisClient();
 		final LogListener log = new LogListener("kattislog.txt");
 		kattisClient.addAttrsUpdateListener(log);
 		//kattisClient.addAttrsUpdateListener(new LogListener(null));
-		/*kattisClient.addAttrsUpdateListener(new AttrsUpdateListener() {
+		kattisClient.addAttrsUpdateListener(new AttrsUpdateListener() {
 			
 			@Override
 			public void attrsUpdated(AttrsUpdateEvent e) {
 				System.out.println(e.getType());
 				
 			}
-		});*/
+		});
 		kattisClient.startPushReading();
-		try {
+		/*try {
 			Thread.sleep(2000);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
-		}
+		}*/
 		//kattisClient.stopPushReading();
-		log.finish();
+		//log.finish();
 		//kattisClient.startPulling();
 	}
 }

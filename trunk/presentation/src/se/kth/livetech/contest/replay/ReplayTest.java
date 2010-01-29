@@ -43,7 +43,7 @@ public class ReplayTest {
 		new Frame("ReplayTest", bt2);
 		
 		final ContestReplayer replayer = new ContestReplayer();
-		replayer.setPaused(false);
+		//replayer.setPaused(false);
 		replayer.addContestUpdateListener(bt2);
 		
 		// Read directly from Kattis
@@ -73,14 +73,14 @@ public class ReplayTest {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				System.out.println("propertyPause changed");
-				replayer.setPaused(changed.getBooleanValue());
+				//replayer.setPaused(changed.getBooleanValue());
 			}
 		};
 		propertyPause.addPropertyListener(l2);
 		l3 = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-				replayer.setFreezeTime((int)changed.getDoubleValue());
+				//replayer.setFreezeTime((int)changed.getDoubleValue());
 			}
 		};
 		propertyPace.addPropertyListener(l3);

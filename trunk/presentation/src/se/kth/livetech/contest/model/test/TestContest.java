@@ -9,6 +9,7 @@ import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.model.Attrs;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.contest.model.AttrsUpdater;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.Language;
 import se.kth.livetech.contest.model.Problem;
@@ -23,7 +24,7 @@ import se.kth.livetech.contest.model.impl.RunImpl;
 import se.kth.livetech.contest.model.impl.TeamImpl;
 import se.kth.livetech.contest.model.impl.TestcaseImpl;
 
-public class TestContest {
+public class TestContest implements AttrsUpdater {
 	public static Team testTeam(int id, String name, String univ, String nat) {
 		return testTeam(id, name + '(' + univ + '/' + nat + ')');
 	}

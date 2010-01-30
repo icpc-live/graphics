@@ -41,7 +41,6 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	final int N = 20;
 	final int P = 10;
 	final int T = 55;
-	final int B = 45;
 	Map<Integer, JudgeState> state = Collections.synchronizedMap(new TreeMap<Integer, JudgeState>());
 	
 	private static class JudgeState {

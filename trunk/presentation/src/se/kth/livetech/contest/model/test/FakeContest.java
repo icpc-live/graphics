@@ -1,14 +1,16 @@
 package se.kth.livetech.contest.model.test;
 
 //import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
-//import se.kth.livetech.contest.model.Run;
-//import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
+import se.kth.livetech.contest.model.Run;
+import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.util.Frame;
 
@@ -20,16 +22,20 @@ public class FakeContest extends Thread {
 	final static int testcases = 10;
 	final static boolean FULL_SCREEN = false;
 	TestContest test;
-	 
 	
 	private static class ProblemStatus {
-
+		int id;
 		int counter;
+		int team;
+		int problem;
+		
 		enum Status {
 			none, success, fail
 		}	
 		Status status[] = new Status[testcases];
-		public ProblemStatus() {
+		public ProblemStatus(int id) {
+			this.id = id;
+			this.counter = 0;
 			for (int i=0; i<status.length;i++) {
 				status[i] = Status.none;
 			}		
@@ -49,14 +55,15 @@ public class FakeContest extends Thread {
 	public void run() {
 		int time = 0;
 		Contest contest = test.getContest();
+		LinkedList<ProblemStatus> submissions = new LinkedList<ProblemStatus>(); 
 		double teamSkill[][] = new double[teams][problems];	
-		ProblemStatus check[][] = new ProblemStatus[teams][problems];
+		boolean problemSolved[][] = new boolean[teams][problems];
 		
 		for(int i = 0; i<problems; ++i) {
 			double base = .75*Math.random();
 			for (int j = 0; j < teams; j++) {
 				teamSkill[j][i] = base + ((.5 * Math.random())-.25);
-				check[j][i] = new ProblemStatus();
+				problemSolved[j][i] = false;
 			}
 		}
 		
@@ -66,32 +73,50 @@ public class FakeContest extends Thread {
 			} catch (InterruptedException e) { }
 			++time;
 			for(int i = 0; i<problems; ++i) {
-					for (int j = 0; j < teams; j++) {
-						if(Math.random() < 0.0001 * teamSkill[j][i]) {
-							int id = test.submit(j, i, time);
-							for (int k = 0; k<testcases; k++) {
-								if(Math.random() > 0.1 * teamSkill[j][i]) {
-									check[j][i].status[k] = ProblemStatus.Status.success;
-									TestContest.testCase(id, i, check[j][i].counter, true, true);
-									check[j][i].counter++;									
-								}
-								if (check[j][i].counter == testcases) {
-									test.solve(id);	
-								}
-								else
-									TestContest.testCase(id, k, check[j][i].counter, false, true);
-									test.fail(id);
-							}
-							/*Contest newContest = test.getContest();
-							Run run = newContest.getRun(id);
-							ContestUpdateEvent update = new ContestUpdateEventImpl(contest, run, newContest);
-							for (ContestUpdateListener listener : listeners)
-								listener.contestUpdated(update);*/
-						
+				for (int j = 0; j < teams; j++) {
+					if(!problemSolved[j][i] && Math.random() < 0.001 * teamSkill[j][i]) {
+						int id = test.submit(j, i, time);
+						submissions.add(new ProblemStatus(id));
+						for(int tc = 0; tc < testcases; ++tc ){
+							TestContest.testCase(id, tc, testcases, false, false);
+						}
 					}
-				
-				}		
+				}
 			}
+			ArrayList<ProblemStatus> removeLater = new ArrayList<ProblemStatus>();
+			for(ProblemStatus ps : submissions) {
+				for(int tc = 0; tc < testcases; ++tc ){
+					//if(Math.random() < 0.9)
+					//	continue; //judge not finished TODO: should be based on time
+					if(ps.status[tc] != ProblemStatus.Status.none)
+						continue; //already judged
+					
+					if(Math.random() < Math.pow(teamSkill[ps.team][ps.problem], 1.0/testcases)) {
+						TestContest.testCase(ps.id, tc, testcases, true, true);
+						ps.status[tc] = ProblemStatus.Status.success;
+						if(++ps.counter == testcases){
+							test.solve(ps.id);
+							problemSolved[ps.team][ps.problem] = true;
+						}
+					}
+					else{
+						TestContest.testCase(ps.id, tc, testcases, true, false);
+						ps.status[tc] = ProblemStatus.Status.fail;
+						test.fail(ps.id);
+					}
+					Contest newContest = test.getContest();
+					Run run = newContest.getRun(ps.id);
+					
+					ContestUpdateEvent update = new ContestUpdateEventImpl(contest, run, newContest);
+					for (ContestUpdateListener listener : listeners){
+						listener.contestUpdated(update);
+					}
+					removeLater.add(ps);
+				}
+			}
+			for(ProblemStatus ps : removeLater)
+				submissions.remove(ps);
+			
 		}
 	}
 	

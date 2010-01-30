@@ -1,7 +1,15 @@
 package se.kth.livetech.contest.replay;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.swing.JPanel;
 
+import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.ContestUpdateEvent;
+import se.kth.livetech.contest.model.ContestUpdateListener;
+import se.kth.livetech.contest.model.Team;
+import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.properties.IProperty;
@@ -32,8 +40,15 @@ public class ReplayTest {
 			this.add(new Slider(propertyPace, 0, 2000));
 		}
 	}
+	
+	Contest latestContest = null;
 
 	public static void main(String[] args) {
+		ReplayTest rt = new ReplayTest();
+		rt.go();
+	}
+	
+	public void go(){
 		/*TestContest tc = new TestContest(10, 10);
 		int id0 = tc.submit(1, 2, 11);
 		tc.solve(id0);
@@ -45,22 +60,37 @@ public class ReplayTest {
 		final ContestReplayer replayer = new ContestReplayer();
 		//replayer.setPaused(false);
 		replayer.addContestUpdateListener(bt2);
+		replayer.addContestUpdateListener(new ContestUpdateListener() {
+			public void contestUpdated(ContestUpdateEvent e) {
+				latestContest = e.getNewContest();
+			}
+		});
 		
 		// Read directly from Kattis
-		KattisClient kattis = new KattisClient();
+		KattisClient kattis = new KattisClient("192.168.12.16");
 		kattis.addAttrsUpdateListener(replayer);
 		kattis.startPushReading();
 		
 		// Read from log file
 		/*try {
-			LogSpeaker logSpeaker = new LogSpeaker("kattislog.txt");
-			logSpeaker.addAttrsUpdateListener(replayer);
-			logSpeaker.parse();
-		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
+			LogSpeaker speaker = new LogSpeaker("kattislog.txt");
+			speaker.addAttrsUpdateListener(replayer);
+			speaker.parse();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}*/
+		
+		Timer timer = new Timer();
+		timer.schedule(new TimerTask() {
+			public void run() {
+				if(latestContest != null) {
+					Team t = latestContest.getRankedTeam(1);
+					TeamScore ts = latestContest.getTeamScore(t.getId());
+					System.out.println("Leader = " + t.getName());
+					System.out.println(ts.getSolved());
+				}
+			}
+		}, 0, 2000);
 
 		PropertyHierarchy ph = new PropertyHierarchy();
 		propertyBase = ph.getProperty("base");

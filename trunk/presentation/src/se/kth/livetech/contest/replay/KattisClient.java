@@ -105,7 +105,7 @@ public class KattisClient extends AttrsUpdaterImpl {
 	}*/
 
 	public static void main(String[] args) {
-		final KattisClient kattisClient = new KattisClient();
+		final KattisClient kattisClient = new KattisClient("192.168.12.16");
 		final LogListener log = new LogListener("kattislog.txt");
 		kattisClient.addAttrsUpdateListener(log);
 		//kattisClient.addAttrsUpdateListener(new LogListener(null));

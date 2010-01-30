@@ -19,10 +19,18 @@ public class InfoImpl extends AttrsImpl implements Info {
 		
 		started = Boolean.valueOf(attrs.get("started"));
 		
-		if (attrs.containsKey("length")) // FIXME: Parse time format 05:00:00
-			length = 300;//length = Integer.valueOf(attrs.get("length"));
+		if (attrs.containsKey("length")) {
+			String lengthStr[] = attrs.get("length").split(":");
+			if(lengthStr.length==3) {
+				length = Integer.parseInt(lengthStr[0])*60*60 + Integer.parseInt(lengthStr[1])*60+Integer.parseInt(lengthStr[2]);
+			}
+			else {
+				new Error("Could not parse contest length: " + attrs.get("length")).printStackTrace();
+				length = 300*60;
+			}
+		}
 		else
-			length = 300;
+			length = 300*60;
 		if (attrs.containsKey("score-factor"))
 			scoreFactor = Integer.valueOf(attrs.get("score-factor"));
 		else

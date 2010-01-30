@@ -15,6 +15,7 @@ import se.kth.livetech.util.DebugTrace;
 
 //live.clients.x.team.team
 
+@SuppressWarnings("serial")
 public class LivePresentation extends JPanel implements ContestUpdateListener {
 	IProperty base;
 	ScoreboardPresentation scoreboard;

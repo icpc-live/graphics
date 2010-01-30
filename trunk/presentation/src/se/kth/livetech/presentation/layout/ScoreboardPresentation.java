@@ -271,7 +271,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		}
 	}
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(50, 10);
+		TestContest tc = new TestContest(50, 10, 0);
 		int id0 = tc.submit(1, 2, 11);
 		tc.solve(id0);
 		int id1 = tc.submit(2, 3, 17);

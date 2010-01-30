@@ -186,7 +186,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	
 	public static void main(String[] args) {
 		final int teams = 100, problems = 12;
-		TestContest tc = new TestContest(teams, problems);
+		TestContest tc = new TestContest(teams, problems, 0);
 		FakeContest fc = new FakeContest(tc);
 		JudgeQueueTest jqt = new JudgeQueueTest();
 		fc.addContestUpdateListener(jqt);

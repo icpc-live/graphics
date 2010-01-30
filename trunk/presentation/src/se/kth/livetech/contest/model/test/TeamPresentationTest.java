@@ -64,7 +64,7 @@ public class TeamPresentationTest extends Thread {
 		}
 	}
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(teams, problems);
+		TestContest tc = new TestContest(teams, problems, 0);
 		TeamPresentationTest fc = new TeamPresentationTest(tc);
 		final TeamPresentation bt = new TeamPresentation(tc.getContest(), 0);
 		fc.addContestUpdateListener(new ContestUpdateListener() {

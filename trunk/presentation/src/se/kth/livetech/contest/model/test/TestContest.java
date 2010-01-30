@@ -61,12 +61,12 @@ public class TestContest implements AttrsUpdater {
 		return new InfoImpl(attrs);
 	}
 	
-	public static List<Attrs> initList(int teams, int problems) {
+	public static List<Attrs> initList(int teams, int problems, long startOffsetMillis) {
 		List<Attrs> list = new LinkedList<Attrs>();
 		list.add(testLanguage(0, "c"));
 		list.add(testLanguage(0, "c++"));
 		list.add(testLanguage(0, "java"));
-		list.add(testInfo(31000));
+		list.add(testInfo(startOffsetMillis));
 
 		for (int problem = 0; problem < problems; ++problem) {
 			Problem p = testProblem(problem, "" + (char) ('A' + problem));
@@ -81,9 +81,9 @@ public class TestContest implements AttrsUpdater {
 		return list;
 	}
 
-	public static ContestImpl testContest(int teams, int problems) {
+	public static ContestImpl testContest(int teams, int problems, long startOffsetMillis) {
 		ContestImpl c = new ContestImpl();
-		for (Attrs a : initList(teams, problems))
+		for (Attrs a : initList(teams, problems, startOffsetMillis))
 			c = new ContestImpl(c, a);
 		return c;
 	}
@@ -130,9 +130,9 @@ public class TestContest implements AttrsUpdater {
 	private boolean initFlag = true;
 	private List<AttrsUpdateEvent> initList = new LinkedList<AttrsUpdateEvent>();
 
-	public TestContest(int teams, int problems) {
-		c = testContest(teams, problems);
-		for (Attrs a : initList(teams, problems))
+	public TestContest(int teams, int problems, long startOffsetMillis) {
+		c = testContest(teams, problems, startOffsetMillis);
+		for (Attrs a : initList(teams, problems, startOffsetMillis))
 			this.update(a);
 	}
 

@@ -96,7 +96,7 @@ public class FakeContest extends Thread {
 	}
 	
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(teams, problems);
+		TestContest tc = new TestContest(teams, problems, 0);
 		FakeContest fc = new FakeContest(tc);
 		final ScoreboardPresentation bt = new ScoreboardPresentation(tc.getContest());
 		fc.addContestUpdateListener(new ContestUpdateListener() {

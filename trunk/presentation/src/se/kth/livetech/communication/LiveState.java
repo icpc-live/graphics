@@ -46,6 +46,7 @@ public class LiveState {
 		DebugTrace.trace("addListeners %s -> %s", root, connection);
 		if (this.spiderFlag || this.contestSourceFlag) {
 			for (ContestId id : this.contests.keySet()) {
+				DebugTrace.trace("contest sync %s -> %s", id, connection.getId());
 				this.contests.get(id).addAttrsUpdateListener(connection);
 			}
 		}
@@ -53,6 +54,10 @@ public class LiveState {
 	public void removeListeners(NodeConnection connection) {
 		IProperty root = this.hierarchy.getProperty("live"); // TODO: root property
 		root.removePropertyListener(connection);
+		for (ContestId id : this.contests.keySet()) {
+			DebugTrace.trace("contest sync remove %s -> %s", id, connection.getId());
+			this.contests.get(id).removeAttrsUpdateListener(connection);
+		}
 		// TODO: contest listeners
 	}
 

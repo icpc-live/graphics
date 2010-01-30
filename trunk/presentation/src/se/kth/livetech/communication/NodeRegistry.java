@@ -86,6 +86,7 @@ public class NodeRegistry {
 		if (connections.containsKey(oldId)) {
 			NodeConnection node = connections.get(oldId);
 			connections.remove(oldId);
+			// TODO: listeners, removeNode(oldId);
 			connections.put(node.getId(), node);
 		}
 	}

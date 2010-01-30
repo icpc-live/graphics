@@ -56,6 +56,9 @@ public class ContentProvider {
 	}
 
 	public static String getProblemScoreText(ProblemScore problemScore, boolean showProblemLetter) {
+		if (problemScore == null) {
+			return "";
+		}
 		int n = problemScore.getAttempts();
 		n += problemScore.getPendings();
 		String text = "" + n;
@@ -94,7 +97,10 @@ public class ContentProvider {
 		NONE = psStyle(ICPCColors.TRANSPARENT);
 	}
 	public static ColoredTextBox.Style getProblemScoreStyle(ProblemScore problemScore) {
-		if (problemScore.isSolved()) {
+		if (problemScore == null) {
+			return NONE;
+		}
+		else if (problemScore.isSolved()) {
 			return SOLVED;
 		}
 		else if (problemScore.isPending()) {
@@ -148,7 +154,7 @@ public class ContentProvider {
 			ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
 			ColoredTextBox problem = new ColoredTextBox(text, style);
 			int key = r.add(problem, 1, .95, false);
-			if (!ps.equals(pps)) {
+			if (ps != null && !ps.equals(pps)) {
 				GlowRenderer glow = new GlowRenderer(style.getColor(), PROBLEM_GLOW_MARGIN, false, glowAlpha); // TODO: alpha per problem
 				r.setDecoration(key, glow, PROBLEM_GLOW_MARGIN);
 			}

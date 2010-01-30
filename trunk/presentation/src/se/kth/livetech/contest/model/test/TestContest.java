@@ -15,6 +15,7 @@ import se.kth.livetech.contest.model.AttrsUpdater;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.Language;
 import se.kth.livetech.contest.model.Problem;
+import se.kth.livetech.contest.model.Reset;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.Testcase;
@@ -22,6 +23,7 @@ import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.model.impl.LanguageImpl;
 import se.kth.livetech.contest.model.impl.ProblemImpl;
+import se.kth.livetech.contest.model.impl.ResetImpl;
 import se.kth.livetech.contest.model.impl.RunImpl;
 import se.kth.livetech.contest.model.impl.TeamImpl;
 import se.kth.livetech.contest.model.impl.TestcaseImpl;
@@ -73,6 +75,11 @@ public class TestContest implements AttrsUpdater {
 		for (Attrs a : initList(teams, problems))
 			c = new ContestImpl(c, a);
 		return c;
+	}
+	
+	public static Reset testReset() {
+		Map<String, String> m = new TreeMap<String, String>();
+		return new ResetImpl(m);
 	}
 
 	public static Run testRun(int id, int team, int problem, int time) {
@@ -126,6 +133,15 @@ public class TestContest implements AttrsUpdater {
 		}
 		for (AttrsUpdateListener listener : listeners) {
 			listener.attrsUpdated(e);
+		}
+	}
+	
+	public void reset() {
+		update(testReset());
+		for (AttrsUpdateEvent e : this.initList) {
+			for (AttrsUpdateListener listener : listeners) {
+				listener.attrsUpdated(e);
+			}
 		}
 	}
 

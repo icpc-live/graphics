@@ -8,7 +8,7 @@ public abstract class EntityImpl extends AttrsImpl implements Entity {
 	int id;
 	String name;
 
-	EntityImpl(Map<String, String> attrs) {
+	public EntityImpl(Map<String, String> attrs) {
 		super(attrs);
 		id = Integer.valueOf(attrs.get("id"));
 		name = attrs.get("name");

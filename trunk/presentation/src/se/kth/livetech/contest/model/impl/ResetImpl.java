@@ -5,7 +5,7 @@ import java.util.Map;
 import se.kth.livetech.contest.model.Reset;
 
 public class ResetImpl extends AttrsImpl implements Reset {
-	ResetImpl(Map<String, String> attrs) {
+	public ResetImpl(Map<String, String> attrs) {
 		super(attrs);
 	}
 

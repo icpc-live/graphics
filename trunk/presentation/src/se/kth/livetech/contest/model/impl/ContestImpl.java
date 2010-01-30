@@ -15,6 +15,7 @@ import se.kth.livetech.contest.model.Info;
 import se.kth.livetech.contest.model.Judgement;
 import se.kth.livetech.contest.model.Language;
 import se.kth.livetech.contest.model.Problem;
+import se.kth.livetech.contest.model.Reset;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
@@ -50,6 +51,10 @@ public class ContestImpl implements Contest {
 	}
 	
 	public ContestImpl() {
+		reset();
+	}
+
+	public void reset() {
 		info = new InfoImpl(new TreeMap<String, String>());
 		teams = new TreeMap<Integer, Team>();
 		problems = new TreeMap<Integer, Problem>();
@@ -210,7 +215,10 @@ public class ContestImpl implements Contest {
 
 	private void update(Attrs a) {
 		//System.err.println("update " + a);
-		if (a instanceof Run) {
+		if (a instanceof Reset) {
+			reset();
+		}
+		else if (a instanceof Run) {
 			Run r = (Run) a;
 			int i = r.getId(), t = r.getTeam(), p = r.getProblem();
 			runs = remap(runs, i, r);

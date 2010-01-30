@@ -63,7 +63,9 @@ public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 
 	public Attrs merge(Contest contest) {
 		Attrs attrs;
-		if (type.equals("info"))
+		if (type.equals("reset"))
+			attrs = new ResetImpl(mergeProperties(null));
+		else if (type.equals("info"))
 			attrs = new InfoImpl(mergeProperties(contest.getInfo()));
 		else if (type.equals("language")) {
 			String id = update.get("name");

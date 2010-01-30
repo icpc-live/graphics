@@ -1,5 +1,6 @@
 package se.kth.livetech.communication;
 
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,10 +188,12 @@ public class LiveClient {
 			}
 			if (opts.isLive()){
 				final ContestImpl c = new ContestImpl();
-				final LivePresentation lpr = new LivePresentation(c, localState.getHierarchy().getProperty("live.clients."+localNode.name) );
-				contestListeners.add(lpr);
-				
+				IProperty prop_base = localState.getHierarchy().getProperty("live.clients."+localNode.name);
+				final LivePresentation lpr = new LivePresentation(c, prop_base, nodeRegistry.getRemoteTime());
+				contestListeners.add(lpr);				
 				Frame f = new Frame("Live", lpr, null, false);
+				f.setPreferredSize(new Dimension(1024, 576));
+
 				if (opts.isFullscreen()) {
 					f.fullScreen(0);
 				}

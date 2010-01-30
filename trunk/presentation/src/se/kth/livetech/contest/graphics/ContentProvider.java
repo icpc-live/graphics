@@ -9,6 +9,7 @@ import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.presentation.animation.RecentChange;
 import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
+import se.kth.livetech.presentation.graphics.HorizontalSplitter;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
@@ -190,5 +191,15 @@ public class ContentProvider {
 		TeamScore ts = c.getTeamScore(team.getId());
 		Renderable timeDisplay = new ColoredTextBox("" + ts.getScore(), ContentProvider.getTeamScoreStyle());
 		return timeDisplay;
+	}
+	
+	public static ColoredTextBox.Style getCountdownStyle() {
+		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
+	}
+	
+	public static Renderable getCountdownRenderable(String row1Text, String row2Text) {
+		ColoredTextBox box1 = new ColoredTextBox(row1Text, ContentProvider.getCountdownStyle());
+		ColoredTextBox box2 = new ColoredTextBox(row2Text, ContentProvider.getCountdownStyle());
+		return new HorizontalSplitter(box1,box2,0.75);
 	}
 }

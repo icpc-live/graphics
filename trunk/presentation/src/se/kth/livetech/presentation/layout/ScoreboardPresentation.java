@@ -45,6 +45,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	final double RESULTS_WEIGHT = 10;
 	
 	Contest c;
+	
 	public ScoreboardPresentation(Contest c) {
 		this.c = c;
 		this.setBackground(Color.BLUE.darker().darker());

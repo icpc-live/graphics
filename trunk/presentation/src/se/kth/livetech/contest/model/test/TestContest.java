@@ -1,7 +1,11 @@
 package se.kth.livetech.contest.model.test;
 
+<<<<<<< local
+import java.util.HashMap;
+=======
 import java.util.LinkedList;
 import java.util.List;
+>>>>>>> other
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -13,6 +17,7 @@ import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.AttrsUpdater;
 import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.Info;
 import se.kth.livetech.contest.model.Language;
 import se.kth.livetech.contest.model.Problem;
 import se.kth.livetech.contest.model.Reset;
@@ -21,6 +26,7 @@ import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.Testcase;
 import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.contest.model.impl.ContestImpl;
+import se.kth.livetech.contest.model.impl.InfoImpl;
 import se.kth.livetech.contest.model.impl.LanguageImpl;
 import se.kth.livetech.contest.model.impl.ProblemImpl;
 import se.kth.livetech.contest.model.impl.ResetImpl;
@@ -52,11 +58,27 @@ public class TestContest implements AttrsUpdater {
 		return new LanguageImpl(entityMap(id, name));
 	}
 	
+<<<<<<< local
+	public static Info testInfo(long timeFromNowMillis) {
+		Map<String, String> attrs = new HashMap<String, String>();
+		attrs.put("starttime", "" + (System.currentTimeMillis() + timeFromNowMillis)/1000.0);
+		return new InfoImpl(attrs);
+	}
+	
+	public static ContestImpl testContest(int teams, int problems) {
+		ContestImpl c = new ContestImpl();
+		c = new ContestImpl(c, testLanguage(0, "c"));
+		c = new ContestImpl(c, testLanguage(1, "c++"));
+		c = new ContestImpl(c, testLanguage(2, "java"));
+		c = new ContestImpl(c, testInfo(31000));
+		
+=======
 	public static List<Attrs> initList(int teams, int problems) {
 		List<Attrs> list = new LinkedList<Attrs>();
 		list.add(testLanguage(0, "c"));
 		list.add(testLanguage(0, "c++"));
 		list.add(testLanguage(0, "java"));
+>>>>>>> other
 		for (int problem = 0; problem < problems; ++problem) {
 			Problem p = testProblem(problem, "" + (char) ('A' + problem));
 			list.add(p);

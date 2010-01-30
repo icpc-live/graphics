@@ -10,7 +10,7 @@ public class InfoImpl extends AttrsImpl implements Info {
 	int length, scoreFactor, penalty;
 	long startTime;
 
-	InfoImpl(Map<String, String> attrs) {
+	public InfoImpl(Map<String, String> attrs) {
 		super(attrs);
 		title = attrs.get("title");
 	

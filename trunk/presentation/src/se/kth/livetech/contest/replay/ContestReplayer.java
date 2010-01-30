@@ -181,6 +181,7 @@ public class ContestReplayer extends ContestPlayer {
 							}
 							break;
 						}
+						//$FALL-THROUGH$
 					case RANK:
 						if(speed == Speed.SINGLE)
 							foundRun = false;

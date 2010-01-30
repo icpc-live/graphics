@@ -7,8 +7,8 @@ import java.util.Set;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
-import se.kth.livetech.contest.model.Run;
-import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
+//import se.kth.livetech.contest.model.Run;
+//import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.util.Frame;
 
@@ -82,11 +82,11 @@ public class FakeContest extends Thread {
 									TestContest.testCase(id, k, check[j][i].counter, false, true);
 									test.fail(id);
 							}
-							Contest newContest = test.getContest();
+							/*Contest newContest = test.getContest();
 							Run run = newContest.getRun(id);
 							ContestUpdateEvent update = new ContestUpdateEventImpl(contest, run, newContest);
 							for (ContestUpdateListener listener : listeners)
-								listener.contestUpdated(update);
+								listener.contestUpdated(update);*/
 						
 					}
 				

@@ -1,5 +1,7 @@
 package se.kth.livetech.contest.model.test;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -47,22 +49,29 @@ public class TestContest implements AttrsUpdater {
 	public static Language testLanguage(int id, String name) {
 		return new LanguageImpl(entityMap(id, name));
 	}
-
-	public static ContestImpl testContest(int teams, int problems) {
-		ContestImpl c = new ContestImpl();
-		c = new ContestImpl(c, testLanguage(0, "c"));
-		c = new ContestImpl(c, testLanguage(1, "c++"));
-		c = new ContestImpl(c, testLanguage(2, "java"));
+	
+	public static List<Attrs> initList(int teams, int problems) {
+		List<Attrs> list = new LinkedList<Attrs>();
+		list.add(testLanguage(0, "c"));
+		list.add(testLanguage(0, "c++"));
+		list.add(testLanguage(0, "java"));
 		for (int problem = 0; problem < problems; ++problem) {
 			Problem p = testProblem(problem, "" + (char) ('A' + problem));
-			c = new ContestImpl(c, p);
+			list.add(p);
 		}
 		for (int team = 0; team < teams; ++team) {
 			String[] COUNTRY_CODES = ICPCImages.COUNTRY_CODES;
 			Team t = testTeam(team, "Team " + team + " (University " + team + "/"
 					+ COUNTRY_CODES[team % COUNTRY_CODES.length] + ")");
-			c = new ContestImpl(c, t);
+			list.add(t);
 		}
+		return list;
+	}
+
+	public static ContestImpl testContest(int teams, int problems) {
+		ContestImpl c = new ContestImpl();
+		for (Attrs a : initList(teams, problems))
+			c = new ContestImpl(c, a);
 		return c;
 	}
 
@@ -100,14 +109,21 @@ public class TestContest implements AttrsUpdater {
 
 	ContestImpl c;
 	int run = 0;
+	private boolean initFlag = true;
+	private List<AttrsUpdateEvent> initList = new LinkedList<AttrsUpdateEvent>();
 
 	public TestContest(int teams, int problems) {
 		c = testContest(teams, problems);
+		for (Attrs a : initList(teams, problems))
+			this.update(a);
 	}
 
 	private synchronized void update(Attrs a) {
 		c = new ContestImpl(c, a);
 		AttrsUpdateEvent e = new AttrsUpdateEventImpl(System.currentTimeMillis(), a);
+		if (initFlag) {
+			this.initList.add(e);
+		}
 		for (AttrsUpdateListener listener : listeners) {
 			listener.attrsUpdated(e);
 		}
@@ -138,6 +154,8 @@ public class TestContest implements AttrsUpdater {
 	private Set<AttrsUpdateListener> listeners = new CopyOnWriteArraySet<AttrsUpdateListener>();
 
 	public synchronized void addAttrsUpdateListener(AttrsUpdateListener listener) {
+		for (AttrsUpdateEvent e : this.initList)
+			listener.attrsUpdated(e);
 		listeners.add(listener);
 	}
 

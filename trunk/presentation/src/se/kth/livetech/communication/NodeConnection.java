@@ -1,5 +1,7 @@
 package se.kth.livetech.communication;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -153,22 +155,19 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 
 	@Override
 	public void attrsUpdated(AttrsUpdateEvent e) {
-		DebugTrace.trace("attrsUpdate %s", e);
-		
-		final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
-		final ContestEvent update = new ContestEvent();
-		//update.id = TODO?;
-		update.time = e.getTime();
-		update.type = e.getType();
+		DebugTrace.trace("attrsUpdate %s", e.getType());
+
+		Map<String, String> attrs = new LinkedHashMap<String, String>();
 		for (String name : e.getProperties()) {
-			update.attributes.put(name, e.getProperty(name));
+			attrs.put(name, e.getProperty(name));
 		}
+		final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
+		final ContestEvent update = new ContestEvent(e.getTime(), e.getType(), attrs);
 		sendQueue.add(new QueueItem() {
 			@Override
 			public void send(Client client) throws TException {
 				client.contestUpdate(contestId, update);
 			}
-
 		});
 	}
 

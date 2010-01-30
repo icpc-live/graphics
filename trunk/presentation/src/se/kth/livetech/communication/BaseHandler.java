@@ -102,7 +102,7 @@ public class BaseHandler implements LiveService.Iface {
 
 	@Override
 	public void contestUpdate(ContestId contest, ContestEvent event) throws TException {
-		DebugTrace.trace("contestUpdate %s", event);
+		DebugTrace.trace("contestUpdate %s", event.getType());
 		
 		AttrsUpdateEventImpl aue = new AttrsUpdateEventImpl(event.getTime(), event.getType());
 		

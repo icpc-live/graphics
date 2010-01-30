@@ -39,12 +39,14 @@ public class LiveState {
 		IProperty root = this.hierarchy.getProperty("live"); // TODO: root property
 		root.addPropertyListener(connection);
 		DebugTrace.trace("addListeners %s -> %s", root, connection);
-		// TODO: add contest listeners
+		for (ContestId id : this.contests.keySet()) {
+			this.contests.get(id).addAttrsUpdateListener(connection);
+		}
 	}
 	public void removeListeners(NodeConnection connection) {
 		IProperty root = this.hierarchy.getProperty("live"); // TODO: root property
 		root.removePropertyListener(connection);
-		// TODO: remove contest listeners
+		// TODO: contest listeners
 	}
 
 	public boolean isSpiderFlag() {

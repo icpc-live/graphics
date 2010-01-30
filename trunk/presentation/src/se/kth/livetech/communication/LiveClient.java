@@ -23,6 +23,7 @@ import se.kth.livetech.presentation.layout.TeamPresentation;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.ui.TestTriangle;
+import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
 import uk.co.flamingpenguin.jewel.cli.CliFactory;
@@ -223,10 +224,6 @@ public class LiveClient {
 				final ContestReplay cr = new ContestReplay();
 				kattisClient.addAttrsUpdateListener(cr);
 				
-				for(ContestUpdateListener cul:contestListeners){
-					cr.addContestUpdateListener(cul);
-				}
-				
 				kattisClient.startPushReading();
 			}
 			if (opts.isFake()) {
@@ -242,8 +239,9 @@ public class LiveClient {
 				final ContestReplay cr = new ContestReplay();
 				localState.getContest(new ContestId("contest", 0)).addAttrsUpdateListener(cr);
 
-				for(ContestUpdateListener cul:contestListeners){
-					cr.addContestUpdateListener(cul);
+				for(ContestUpdateListener contestListener : contestListeners) {
+					DebugTrace.trace("Contest listener: %s", contestListener);
+					cr.addContestUpdateListener(contestListener);
 				}
 			}
 			

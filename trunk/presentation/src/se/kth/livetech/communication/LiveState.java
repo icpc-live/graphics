@@ -16,6 +16,7 @@ public class LiveState {
 	 *  clock is authoritative, and it may have a different role in forwarding
 	 *  class and resource requests. */
 	private boolean spiderFlag;
+	private boolean contestSourceFlag;
 
 	private long clockSkew;
 	private PropertyHierarchy hierarchy;
@@ -34,13 +35,19 @@ public class LiveState {
 		ContestId id = new ContestId("contest", 0);
 		contests.put(id, new ContestState());
 	}
+	
+	public void setContestSourceFlag(boolean contestSourceFlag) {
+		this.contestSourceFlag = contestSourceFlag;
+	}
 
 	public void addListeners(NodeConnection connection) {
 		IProperty root = this.hierarchy.getProperty("live"); // TODO: root property
 		root.addPropertyListener(connection);
 		DebugTrace.trace("addListeners %s -> %s", root, connection);
-		for (ContestId id : this.contests.keySet()) {
-			this.contests.get(id).addAttrsUpdateListener(connection);
+		if (this.spiderFlag || this.contestSourceFlag) {
+			for (ContestId id : this.contests.keySet()) {
+				this.contests.get(id).addAttrsUpdateListener(connection);
+			}
 		}
 	}
 	public void removeListeners(NodeConnection connection) {

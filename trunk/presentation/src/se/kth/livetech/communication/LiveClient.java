@@ -108,7 +108,17 @@ public class LiveClient {
 	}
 	public static void main(String[] args) {
 		try {
-			Options opts = CliFactory.parseArguments(Options.class, args);
+			// Parse options
+			Options opts;
+			try {
+				opts = CliFactory.parseArguments(Options.class, args);
+			} catch (ArgumentValidationException e) {
+				System.err.println(e.getMessage());
+				System.exit(1);
+				return;
+			}
+
+			// Setup local node id
 			String name;
 			if (!opts.isArgs()) {
 				System.err.println("Warning: Missing client name!");
@@ -125,18 +135,13 @@ public class LiveClient {
 			if (opts.isLocalHost()) {
 				localNode.address = opts.getLocalHost();
 			}
-			LiveState localState = new LiveState(opts.isSpider());
 			System.out.println("I am " + localNode);
+
+			// Local state
+			LiveState localState = new LiveState(opts.isSpider());
+
+			// Remote node registry
 			NodeRegistry nodeRegistry = new NodeRegistry(localNode, localState);
-			if (opts.isArgs()) {
-				for (int i = 1; i < opts.getArgs().size(); ++i) {
-					String arg = opts.getArgs().get(i);
-					System.out.println(arg);
-					HostPort hostPort = new HostPort(arg);
-					nodeRegistry.connect(hostPort.host, hostPort.port);
-				}
-			}
-			LiveService.Iface handler = new BaseHandler(nodeRegistry);
 			
 			List<ContestUpdateListener> contestListeners = new ArrayList<ContestUpdateListener>();
 			
@@ -218,13 +223,12 @@ public class LiveClient {
 				final LogListener log = new LogListener("kattislog.txt");
 				kattisClient.addAttrsUpdateListener(log);
 				
-				nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);
+				// TODO: nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);
+				kattisClient.addAttrsUpdateListener(localState.getContest(new ContestId("contest", 0)));
 
-				
-				final ContestReplay cr = new ContestReplay();
-				kattisClient.addAttrsUpdateListener(cr);
-				
 				kattisClient.startPushReading();
+
+				localState.setContestSourceFlag(true);
 			}
 			if (opts.isFake()) {
 				TestContest tc = new TestContest(100, 12);
@@ -232,8 +236,9 @@ public class LiveClient {
 
 				//TODO: nodeRegistry.addContest(new ContestId("contest", 0), tc);
 				tc.addAttrsUpdateListener(localState.getContest(new ContestId("contest", 0)));
-				
 				fc.start();
+
+				localState.setContestSourceFlag(true);
 			}
 			if (!contestListeners.isEmpty()) {
 				final ContestReplay cr = new ContestReplay();
@@ -256,11 +261,20 @@ public class LiveClient {
 				TestTriangle.test(localState.getHierarchy());
 			}
 			
+			// Listen!
 			System.out.println("Listening on port " + port);
+			LiveService.Iface handler = new BaseHandler(nodeRegistry);
 			Connector.listen(handler, port, true);
-		} catch (ArgumentValidationException e) {
-			System.err.println(e.getMessage());
-			System.exit(1);
+
+			// Connect!
+			if (opts.isArgs()) {
+				for (int i = 1; i < opts.getArgs().size(); ++i) {
+					String arg = opts.getArgs().get(i);
+					System.out.println(arg);
+					HostPort hostPort = new HostPort(arg);
+					nodeRegistry.connect(hostPort.host, hostPort.port);
+				}
+			}
 		} catch (TTransportException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

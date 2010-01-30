@@ -47,14 +47,23 @@ public class Connector {
 	}
 
 	public static void listen(LiveService.Iface handler, int port, boolean multithreaded) throws TTransportException {
-		LiveService.Processor processor = new LiveService.Processor(handler);
-		TServerTransport serverTransport = new TServerSocket(port);
-		TServer server;
+		final LiveService.Processor processor = new LiveService.Processor(handler);
+		final TServerTransport serverTransport = new TServerSocket(port);
+		final TServer server;
 		if (!multithreaded)
 			server = new TSimpleServer(processor, serverTransport);
 		else
 			server = new TThreadPoolServer(processor, serverTransport);
-		server.serve();
+		if (!multithreaded)
+			server.serve();
+		else {
+			new Thread(String.format("Listen on %d", port)) {
+				@Override
+				public void run() {
+					server.serve();
+				}
+			}.start();
+		}
 	}
 
 	// TODO: configurable backoff, handled by node registry

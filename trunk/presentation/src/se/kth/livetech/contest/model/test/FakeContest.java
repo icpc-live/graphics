@@ -72,14 +72,14 @@ public class FakeContest extends Thread {
 							for (int k = 0; k<testcases; k++) {
 								if(Math.random() > 0.1 * teamSkill[j][i]) {
 									check[j][i].status[k] = ProblemStatus.Status.success;
-									test.testCase(id, i, check[j][i].counter, true, true);
+									TestContest.testCase(id, i, check[j][i].counter, true, true);
 									check[j][i].counter++;									
 								}
 								if (check[j][i].counter == testcases) {
 									test.solve(id);	
 								}
 								else
-									test.testCase(id, k, check[j][i].counter, false, true);
+									TestContest.testCase(id, k, check[j][i].counter, false, true);
 									test.fail(id);
 							}
 							Contest newContest = test.getContest();

@@ -14,12 +14,6 @@ import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
 
-
-<<<<<<< local
-=======
-//live.clients.x.team.team
-
->>>>>>> other
 @SuppressWarnings("serial")
 public class LivePresentation extends JPanel implements ContestUpdateListener {
 	IProperty base;
@@ -121,13 +115,4 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	public boolean isOptimizedDrawingEnabled() {
 		return false;
 	}
-	
-	
-//	public void paintComponent(Graphics g){
-//		Graphics2D g2d = (Graphics2D)g;
-//		if (currentView != null)
-//			currentView.repaint();
-//		clockPanel.repaint();
-//		DebugTrace.trace("Repainted LivePresentation");
-//	}
 }

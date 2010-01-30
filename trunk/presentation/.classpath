@@ -8,5 +8,8 @@
 	<classpathentry kind="lib" path="lib/jewelcli-0.6.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.5.8.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.5.8.jar"/>
+	<classpathentry kind="lib" path="/home/m4sh/Desktop/lib/ext/j3dcore.jar"/>
+	<classpathentry kind="lib" path="/home/m4sh/Desktop/lib/ext/j3dutils.jar"/>
+	<classpathentry kind="lib" path="/home/m4sh/Desktop/lib/ext/vecmath.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

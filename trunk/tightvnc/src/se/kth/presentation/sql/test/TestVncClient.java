@@ -2,8 +2,6 @@ package se.kth.presentation.sql.test;
 
 import java.applet.AppletContext;
 import java.applet.AppletStub;
-import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.ScrollPane;
@@ -78,8 +76,11 @@ public class TestVncClient extends Frame {
         
         VncViewer vv = new VncViewer();
         TestStub stub = new TestStub();
-        stub.setParameter("HOST", "localhost");
+        stub.setParameter("HOST", "192.168.2.21");
+        stub.setParameter("PORT", "5901");
+        stub.setParameter("PASSWORD", "kaka4711");
         stub.setParameter("Show Controls", "no");
+        stub.setParameter("Scaling Factor", "50%");
         vv.setStub(stub);
 
         

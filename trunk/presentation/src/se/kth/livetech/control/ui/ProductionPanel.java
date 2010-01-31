@@ -15,6 +15,7 @@ import javax.swing.SwingConstants;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.ui.CheckBox;
+import se.kth.livetech.properties.ui.PanAndZoom;
 import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
 
@@ -22,14 +23,14 @@ import se.kth.livetech.properties.ui.ToggleButton;
 public class ProductionPanel extends JPanel implements ActionListener {
 
 	String[] interviewPresets = new String[] {
-		"Nina Hjelmgren      Fredrik Niemelä|Hosts",
+		"Nina Hjelmgren      Fredrik Niemel√§|Hosts",
 		"Peter Gudmunson|President",
 		"Bill Poucher|Professor",
 		"Stein Norheim       Marcus Isaksson|Analytics Group",
 		"Stan Wileman|Judge",
 		"Ingrid Melinder|Dean",
 		"Andrey Stankevich|Coach",
-		"Anders Flodström|University Chancellor",
+		"Anders Flodstr√∂m|University Chancellor",
 		"Fredrik Heintz|Nordic Contest Director",
 		"Lin Zhao|Professor",
 		"Ben Kelley|Dean",
@@ -70,7 +71,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new ToggleButton(base.get("mode"), "blank", "Blank"));
 		c.add(new CheckBox(base.get("show_queue"), "Queue"));	
 		c.add(new CheckBox(base.get("show_clock"), "Clock"));
-		c.add(new CheckBox(base.get("show_nologo"), "No Logo"));		
+		c.add(new CheckBox(base.get("show_nologo"), "No Logo"));
 		b.add(c);
 		b.add(new JSeparator(SwingConstants.HORIZONTAL));
 
@@ -120,9 +121,11 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new Text(base.get("team.team")));
 		c.add(new ToggleButton(base.get("mode"), "vnc", "Vnc"));
 		c.add(new ToggleButton(base.get("mode"), "cam", "Cam"));
+		c.add(new ToggleButton(base.get("mode"), "countdown", "Countdown"));
 		c.add(new CheckBox(base.get("clear"), "Clear"));
 		b.add(c);
 
+		b.add(new PanAndZoom(base.get("clockrect")));
 		this.add(b);
 	}
 	public void actionPerformed(ActionEvent e) {

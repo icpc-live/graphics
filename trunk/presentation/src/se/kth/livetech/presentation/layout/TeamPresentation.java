@@ -222,7 +222,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		}
 	}
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(5, 10);
+		TestContest tc = new TestContest(5, 10, 0);
 		int id0 = tc.submit(0, 2, 11);
 		tc.solve(id0);
 		int id1 = tc.submit(0, 3, 17);

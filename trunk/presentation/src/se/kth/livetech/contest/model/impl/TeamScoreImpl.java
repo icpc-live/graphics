@@ -9,7 +9,7 @@ import se.kth.livetech.contest.model.TeamScore;
 
 public class TeamScoreImpl implements TeamScore {
 	Map<Integer, ProblemScore> problemScores;
-	int team, attemptTime, solutionTime, solved, attempts, score;
+	int team, latestAttemptTime, latestSolutionTime, latestSolutionScore, solved, attempts, score;
 	boolean pending;
 
 	public TeamScoreImpl(Contest contest, int team) {
@@ -18,28 +18,29 @@ public class TeamScoreImpl implements TeamScore {
 		for (int p : contest.getProblems()) {
 			ProblemScore ps = new ProblemScoreImpl(contest, team, p);
 			problemScores.put(p, ps);
-			attemptTime = Math.max(attemptTime, ps.getLastAttemptTime());
+			latestAttemptTime = Math.max(latestAttemptTime, ps.getLastAttemptTime());
 			pending = pending || ps.isPending();
 			if (ps.isSolved()) {
-				solutionTime = Math.max(solutionTime, ps.getSolutionTime());
+				latestSolutionTime = Math.max(latestSolutionTime, ps.getSolutionTime());
 				++solved;
 				attempts += ps.getAttempts();
 				score += ps.getScore();
 			}
 		}
+		latestSolutionScore = latestSolutionTime / contest.getInfo().getScoreFactor();
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 3331;
 		int result = 1;
-		result = prime * result + attemptTime;
+		result = prime * result + latestAttemptTime;
 		result = prime * result + attempts;
 		result = prime * result + (pending ? 1231 : 1237);
 		result = prime * result
 				+ ((problemScores == null) ? 0 : problemScores.hashCode());
 		result = prime * result + score;
-		result = prime * result + solutionTime;
+		result = prime * result + latestSolutionTime;
 		result = prime * result + solved;
 		result = prime * result + team;
 		return result;
@@ -54,7 +55,7 @@ public class TeamScoreImpl implements TeamScore {
 		if (getClass() != obj.getClass())
 			return false;
 		TeamScoreImpl other = (TeamScoreImpl) obj;
-		if (attemptTime != other.attemptTime)
+		if (latestAttemptTime != other.latestAttemptTime)
 			return false;
 		if (attempts != other.attempts)
 			return false;
@@ -67,7 +68,7 @@ public class TeamScoreImpl implements TeamScore {
 			return false;
 		if (score != other.score)
 			return false;
-		if (solutionTime != other.solutionTime)
+		if (latestSolutionTime != other.latestSolutionTime)
 			return false;
 		if (solved != other.solved)
 			return false;
@@ -101,11 +102,15 @@ public class TeamScoreImpl implements TeamScore {
 	}
 
 	public int getLatestAttemptTime() {
-		return attemptTime;
+		return latestAttemptTime;
 	}
 
 	public int getLatestSolutionTime() {
-		return solutionTime;
+		return latestSolutionTime;
+	}
+
+	public int getLatestSolutionScore() {
+		return latestSolutionScore;
 	}
 
 	public int compareTo(TeamScore that) {
@@ -115,7 +120,7 @@ public class TeamScoreImpl implements TeamScore {
 		int ds = score - that.getScore();
 		if (ds != 0)
 			return -ds;
-		int dt = solutionTime - that.getLatestSolutionTime();
+		int dt = latestSolutionScore - that.getLatestSolutionScore();
 		if (dt != 0)
 			return -dt;
 		return 0;

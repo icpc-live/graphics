@@ -17,4 +17,6 @@ public interface TeamScore extends Comparable<TeamScore> {
 	public int getLatestAttemptTime();
 
 	public int getLatestSolutionTime();
+
+	public int getLatestSolutionScore();
 }

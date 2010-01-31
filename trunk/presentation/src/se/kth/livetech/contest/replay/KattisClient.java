@@ -13,7 +13,8 @@ import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdaterImpl;
 
 public class KattisClient extends AttrsUpdaterImpl {
-	private static final String DEFAULT_KATTIS_HOST = "icpc-dev.netlab.csc.kth.se";
+	//private static final String DEFAULT_KATTIS_HOST = "icpc-dev.netlab.csc.kth.se";
+	private static final String DEFAULT_KATTIS_HOST = "192.168.12.16";
 	private static final int    DEFAULT_KATTIS_PORT = 4713;
 	private static final String DEFAULT_KATTIS_URI = "/python/events.py?with_def=1";
 	

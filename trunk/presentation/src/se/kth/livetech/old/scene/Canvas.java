@@ -84,7 +84,7 @@ public class Canvas {
 
 	public static void main(String args[]) {
 		Canvas canvas = new Canvas();
-		TestContest t = new TestContest(10, 10);
+		TestContest t = new TestContest(10, 10, 0);
 		//Contest c0 = t.getContest();
 		t.solve(t.submit(1, 1, 10));
 		t.solve(t.submit(2, 2, 20));

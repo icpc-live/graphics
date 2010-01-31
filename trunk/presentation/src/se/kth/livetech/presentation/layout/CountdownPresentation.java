@@ -19,29 +19,13 @@ import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
 public class CountdownPresentation extends JPanel implements ContestUpdateListener{
-	private long timeshift;
-	private Contest c;
-	Thread updater;
+	long timeshift;
+	Contest c;
 	
 	public CountdownPresentation(Contest c, RemoteTime time) {
 		this.c = c;
 		timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
 		this.setBackground(ICPCColors.BG_COLOR_2);
-		
-		updater = new Thread() {
-			@Override
-			public void run() {
-				while(true) {
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						return;
-					}
-					CountdownPresentation.this.repaint();
-				}
-			}
-		};
-		updater.start();
 	}
 
 	@Override
@@ -51,21 +35,18 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 		Contest c = this.c;
 
 		long startTime = c.getInfo().getStartTime()*1000; //convert to millis
-		
 		long currentTime = System.currentTimeMillis() + timeshift;
-		long diffSeconds = (currentTime - startTime)/1000;
+		long diffMilli = currentTime - startTime;
+		long diffSeconds = diffMilli/1000;
 		
 		String row1Text = "", row2Text = "";
 		if (diffSeconds < 0 && diffSeconds >= -30) {
-			row1Text = ChineseNumerals.pinyin((int)-diffSeconds);
+			row1Text = ChineseNumerals.moonspeak((int) -diffSeconds);
+			row2Text = "" + (-diffSeconds) + " (" + ChineseNumerals.pinyin((int)-diffSeconds) + ")";
 		}
-		else if (diffSeconds < 60) {
+		else if (diffSeconds >= 0 && diffSeconds < 60) {
 			row1Text = "Go!";
-			row2Text = "Contest has started";
-		}
-		else {
-			updater.interrupt();
-			return;
+			row2Text = "The contest has started";
 		}
 		
 		Rectangle rect = this.getBounds();
@@ -74,6 +55,8 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 		g2d.translate(x, y);
 		r.render(g2d, new Dimension(rect.width/2, rect.height/2));
 		g2d.translate(-x, -y);
+		
+		this.repaint(diffMilli%1000 + 5);
 	}
 
 	@Override
@@ -83,7 +66,7 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 	}
 	
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(50, 10);
+		TestContest tc = new TestContest(50, 10, 5000);
 		Contest c1 = tc.getContest();
 		Frame frame = new Frame("Countdown Presentation", new CountdownPresentation(c1, new RemoteTime.LocalTime()));
 		frame.setPreferredSize(new Dimension(1024, 576));

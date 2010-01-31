@@ -49,7 +49,7 @@ public class ContentProvider {
 	}
 
 	public static Style getTeamScoreStyle() {
-		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
+		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.right);
 	}
 	
 	public static ColoredTextBox.Style getHeaderStyle(Alignment alignment) {

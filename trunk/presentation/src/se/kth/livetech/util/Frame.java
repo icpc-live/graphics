@@ -1,5 +1,6 @@
 package se.kth.livetech.util;
 
+import java.awt.Component;
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -7,20 +8,19 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 
 //import kth.board.sketch.SketchIcon;
 
 /** Frame encloses a JPanel in a JFrame with a window listener. */
 @SuppressWarnings("serial")
 public class Frame extends JFrame {
-	public Frame(String title, JPanel panel) {
+	public Frame(String title, Component panel) {
 		this(title, panel, null);
 	}
-	public Frame(String title, JPanel panel, Runnable exitCall) {
+	public Frame(String title, Component panel, Runnable exitCall) {
 		this(title, panel, exitCall, true);
 	}
-	public Frame(String title, JPanel panel, Runnable exitCall, boolean setVisible) {
+	public Frame(String title, Component panel, Runnable exitCall, boolean setVisible) {
 		super(title);
 		this.exitCall = exitCall;
 		addWindowListener(new Window());

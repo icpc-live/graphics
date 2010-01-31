@@ -39,7 +39,6 @@ public class LiveClient {
 	// @see http://jewelcli.sourceforge.net/apidocs/uk/co/flamingpenguin/jewel/cli/Option.html
 	public interface Options {
 		@Option(shortName="s", longName="spider")
-		String getSpider();
 		boolean isSpider();
 		
 		@Option(shortName="h",

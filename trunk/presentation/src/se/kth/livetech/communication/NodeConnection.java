@@ -39,6 +39,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 	private State state;
 	private BlockingQueue<QueueItem> sendQueue;
 	private IProperty updating;
+	private boolean disconnect = false;
 
 	public State getState() {
 		return state;
@@ -68,7 +69,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 		}
 		public void run() {
 			long backoff = 0;
-			while (true) {
+			while (!disconnect) {
 				NodeConnection.this.setClient(null);
 				if (backoff > 0) {
 					try {
@@ -84,11 +85,6 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 
 				try {
 					client = Connector.connect(nodeRegistry.getLocalNode(), id.address, id.port);
-
-					NodeId newId = client.getNodeId();
-					newId.address = NodeConnection.this.id.address;
-
-					NodeConnection.this.setId(newId);
 				} catch (TException e) {
 					DebugTrace.trace("Failed connection to " + id.name + ": " + e);
 					// TODO Reporting
@@ -97,9 +93,10 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 
 				NodeConnection.this.client = client;
 				NodeConnection.this.state = NodeConnection.State.CONNECTED;
+				DebugTrace.trace("Connected to " + id.name);
 
 				// Time sync every second
-				while (true) {
+				while (!disconnect) {
 					QueueItem item;
 
 					try {
@@ -118,6 +115,14 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 					} catch (TException e) {
 						DebugTrace.trace("Failed call to " + id.name + ": " + e);
 						// TODO Reporting
+						if (NodeConnection.this.nodeRegistry.getLocalState().isSpiderFlag()) {
+							disconnect = true;
+
+							break;
+						}
+
+						NodeConnection.this.state = NodeConnection.State.RECONNECTING;
+						DebugTrace.trace("Reconnecting to " + id.name);
 						break;
 					}
 					long t1 = System.currentTimeMillis();
@@ -125,6 +130,10 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 					NodeConnection.this.timeSync.ping(t0, remoteTime, t1);
 				}
 			}
+
+			NodeConnection.this.state = NodeConnection.State.DISCONNECTED;
+			DebugTrace.trace("Disconnected from " + id.name);
+			NodeConnection.this.nodeRegistry.getLocalState().removeListeners(NodeConnection.this);
 		}
 	}
 
@@ -171,12 +180,6 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 		});
 	}
 
-	public void setId(NodeId id) {
-		NodeId oldId = this.id;
-		this.id = id;
-		nodeRegistry.remapNode(oldId);
-	}
-
 	public NodeId getId() {
 		return id;
 	}
@@ -200,10 +203,15 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 			}
 		});
 	}
+
 	public void setUpdating(IProperty updating) {
 		this.updating = updating;
 	}
-	
+
+	public void disconnect() {
+		this.disconnect = true;
+	}
+
 	@Override
 	public long getRemoteTimeMillis() {
 		return System.currentTimeMillis() + this.status.clockSkew;

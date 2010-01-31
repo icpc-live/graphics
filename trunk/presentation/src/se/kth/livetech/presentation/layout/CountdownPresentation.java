@@ -22,14 +22,17 @@ import se.kth.livetech.util.Frame;
 public class CountdownPresentation extends JPanel implements ContestUpdateListener{
 	long timeshift;
 	Contest c;
-	Row[] rows = new Row[10];
+	final static int DISPLAY_SECONDS = 99;
+	final static int ANIMATE_FROM = 200;
+	Row[] rows = new Row[DISPLAY_SECONDS+1];
 	
 	public CountdownPresentation(Contest c, RemoteTime time) {
 		this.c = c;
 		timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
 		this.setBackground(ICPCColors.BG_COLOR_2);
-		for(int i = 0; i < 10; ++i) {
-			int secs = i+1;
+		rows[0] = new Row(ContentProvider.getCountdownRenderable("?", ""));
+		for(int i = 1; i <= DISPLAY_SECONDS; ++i) {
+			int secs = i;
 			String row1Text = ChineseNumerals.moonspeak(secs);
 			String row2Text = "" + secs + " [" + ChineseNumerals.pinyin(secs) + "]";
 			rows[i] = new Row(ContentProvider.getCountdownRenderable(row1Text, row2Text));
@@ -69,8 +72,7 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 			return Math.exp(-Math.pow(0.7*age, 2));
 		}
 	}
-	
-	
+
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -79,15 +81,10 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 
 		long startTime = c.getInfo().getStartTime()*1000; //convert to millis
 		long currentTime = System.currentTimeMillis() + timeshift;
-		long diffMilli = startTime - currentTime;
+		long diffMilli = currentTime - startTime;
+	
+		double ageOffset;
 		
-//		else if (diffSeconds >= 0 && diffSeconds < 60) {
-//		row1Text = "Go!";
-//		row2Text = "The contest has started";
-//	}
-		double ageOffset;	
-
-		final int ANIMATE_FROM = 900;
 		long milliPart = (1000+diffMilli%1000)%1000;
 		if (milliPart < ANIMATE_FROM) {
 			ageOffset = Math.floor(diffMilli/1000.0); //floor
@@ -95,20 +92,45 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 			ageOffset = Math.floor(diffMilli/1000.0) + ((double)(milliPart - ANIMATE_FROM))/(1000 - ANIMATE_FROM);
 		}
 		
-		for(int i = 0; i<10; ++i) {
-			rows[i].setAge(i - ageOffset);
+		for(int i = 0; i<=DISPLAY_SECONDS; ++i) {
+			rows[i].setAge(i+ageOffset);
+		}
+		Rectangle bounds = this.getBounds();
+//		
+//		{
+//			//DEBUG
+//			int x = (int) (milliPart/1000.0*bounds.width);
+//			g2d.setColor(Color.GREEN);
+//			g2d.fillRect(x, 0, 100, bounds.height);
+//			g2d.drawString("" + diffMilli, 100, 20);
+//		}
+		
+		
+		if (diffMilli < 0) {
+			g2d.translate(bounds.getCenterX(), bounds.getCenterY());
+			for(Row row : rows){
+				int x = (int) (row.getAge()*bounds.width/3);
+				g2d.translate(x, 0);	
+				row.paintComponent(g2d);
+				g2d.translate(-x, 0);
+			}
+			g2d.translate(-bounds.getCenterX(), -bounds.getCenterY());
+		} 
+		else {
+			String row1Text = "Go!";
+			String row2Text = "The contest has started";
+			
+			Renderable r = ContentProvider.getCountdownRenderable(row1Text, row2Text);
+			
+			Dimension dim = new Dimension(bounds.width/2, bounds.width/3);
+			int x = (int) (bounds.getCenterX() - dim.width/2);
+			int y = (int) (bounds.getCenterY() - dim.height/2);
+			g2d.translate(x, y);
+			g2d.setColor(Color.WHITE);
+			r.render(g2d, dim);
+			g2d.translate(-x, -y);
 		}
 		
-		Rectangle rect = this.getBounds();
-		g2d.translate(rect.getCenterX(), rect.getCenterY());
-		
-		for(Row row : rows){
-			int x = (int) (row.getAge()*rect.width/3);
-			g2d.translate(x, 0);	
-			row.paintComponent(g2d);
-			g2d.translate(-x, 0);
-		}
-		g2d.translate(-rect.getCenterX(), -rect.getCenterY());
 		this.repaint(20);
 	}
 
@@ -119,7 +141,7 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 	}
 	
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(50, 10, 12000);
+		TestContest tc = new TestContest(50, 10, 15000);
 		Contest c1 = tc.getContest();
 		Frame frame = new Frame("Countdown Presentation", new CountdownPresentation(c1, new RemoteTime.LocalTime()));
 		frame.setPreferredSize(new Dimension(1024, 768));

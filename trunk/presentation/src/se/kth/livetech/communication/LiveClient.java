@@ -121,6 +121,8 @@ public class LiveClient {
 				System.exit(1);
 				return;
 			}
+			
+			boolean spiderFlag = opts.isSpider() || !opts.isArgs();
 
 			// Setup local node id
 			String name;
@@ -142,7 +144,7 @@ public class LiveClient {
 			System.out.println("I am " + localNode);
 
 			// Local state
-			LiveState localState = new LiveState(opts.isSpider());
+			LiveState localState = new LiveState(spiderFlag);
 
 			// Remote node registry
 			NodeRegistry nodeRegistry = new NodeRegistry(localNode, localState);

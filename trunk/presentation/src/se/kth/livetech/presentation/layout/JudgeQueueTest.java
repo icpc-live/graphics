@@ -7,9 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.swing.JPanel;
 
@@ -24,6 +22,7 @@ import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Testcase;
 import se.kth.livetech.contest.model.test.FakeContest;
 import se.kth.livetech.contest.model.test.TestContest;
+import se.kth.livetech.contest.replay.ContestReplay;
 import se.kth.livetech.presentation.animation.AnimationStack;
 import se.kth.livetech.presentation.animation.Interpolated;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
@@ -39,52 +38,47 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	public static final boolean FULL_SCREEN = false;
 	public static final double ANIMATION_TIME = 1000; // ms
 	final int N = 20;
-	final int P = 10;
+	final int P = 2;
 	final int T = 55;
+
 	Map<Integer, JudgeState> state = Collections.synchronizedMap(new TreeMap<Integer, JudgeState>());
-	
+
 	private static class JudgeState {
+		TestcaseStatusRenderer.Status compiling, running, validating;
+		TestcaseStatusRenderer.Status[] cases;
 		int state = 1;
-	}
-	
-	public JudgeQueueTest() {
-		this.setBackground(Color.BLUE.darker());
-		this.setPreferredSize(new Dimension(512, 576));
-		new TestJudge().start();
-	}
-	AnimationStack<Integer, Integer> stack = new AnimationStack<Integer, Integer>();
-	private class TestJudge extends Thread {
-		public void run() {
-			// TODO More realistic judge simulation...
-			while (true) {
-				try {
-					sleep((int) (Math.random() * T));
-				} catch (InterruptedException e) { }
-				Set<Integer> keys;
-				synchronized (state) {
-					keys = new TreeSet<Integer>(state.keySet());
+		public JudgeState() {
+			compiling = TestcaseStatusRenderer.Status.active;
+			running = TestcaseStatusRenderer.Status.none;
+			validating = TestcaseStatusRenderer.Status.none;
+		}
+
+		public void update(Testcase testcase) {
+			compiling = TestcaseStatusRenderer.Status.passed;
+			running = TestcaseStatusRenderer.Status.active;
+		}
+
+		public void update(Run run) {
+			if(run.isJudged()) {
+				running = TestcaseStatusRenderer.Status.passed;
+				if(run.isSolved()) {
+					validating = TestcaseStatusRenderer.Status.passed;
 				}
-				for (int i : keys) {
-					//stack.setPosition(i, row);
-					int p = (int) (Math.random() * P * N * 100);
-					if (state.get(i).state < 0 && p == 0) {
-						state.remove(i);
-						break;
-					}
-					if (state.get(i).state < P + 5) {
-						if (p < 10 && state.get(i).state != 0)
-							state.get(i).state = -state.get(i).state;
-						else if (p <= state.get(i).state * 100)
-							++state.get(i).state;
-					}
-					else{
-						state.remove(i);
-					}
+				else {
+					validating = TestcaseStatusRenderer.Status.failed;
 				}
-				repaint();
 			}
 		}
 	}
+
+	public JudgeQueueTest() {
+		this.setBackground(Color.BLUE.darker());
+		this.setPreferredSize(new Dimension(512, 576));
+
+
+	}
+
+	AnimationStack<Integer, Integer> stack = new AnimationStack<Integer, Integer>();
 	boolean firstPaint = true;
 	long lastTime;
 	public void paintComponent(Graphics gr) {
@@ -105,7 +99,6 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 		}
 
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
-
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
 		int rowNumber = 0;
@@ -145,18 +138,14 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			}
 
 			// Testcases
-			for (int j = 0; j < P; ++j) {
-				TestcaseStatusRenderer.Status status;
-				if (j < Math.abs(state.get(i).state))
-					status = TestcaseStatusRenderer.Status.passed;
-				else if (j == state.get(i).state)
-					status = TestcaseStatusRenderer.Status.active;
-				else if (j == -state.get(i).state)
-					status = TestcaseStatusRenderer.Status.failed;
-				else
-					status = TestcaseStatusRenderer.Status.none;
-				Renderable testcase = new TestcaseStatusRenderer(status);
+			{ // States
+				JudgeState js = state.get(i);
+				Renderable testcase = new TestcaseStatusRenderer(js.compiling);
 				r.add(testcase, 1, .95, true);
+				Renderable testcaseValidating = new TestcaseStatusRenderer(js.validating);
+				r.add(testcaseValidating, 1, .95, true);
+				Renderable testcaseRunning = new TestcaseStatusRenderer(js.running);
+				r.add(testcaseRunning, 1, .95, true);
 			}
 
 			{ // Render
@@ -174,7 +163,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			}
 			++rowNumber;
 		}
-		
+
 		{ // Update?
 			update |= this.stack.advance(0d);
 			if (update) {
@@ -182,13 +171,16 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		final int teams = 100, problems = 12;
 		TestContest tc = new TestContest(teams, problems);
 		FakeContest fc = new FakeContest(tc);
 		JudgeQueueTest jqt = new JudgeQueueTest();
-		fc.addContestUpdateListener(jqt);
+		//fc.addContestUpdateListener(jqt);
+		ContestReplay cr = new ContestReplay();
+		tc.addAttrsUpdateListener(cr);
+		cr.addContestUpdateListener(jqt);
 		Frame frame = new Frame("JudgeQueueTest", jqt, null, false);
 		fc.start();
 		if (FULL_SCREEN) {
@@ -199,7 +191,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			frame.setVisible(true);
 		}
 	}
-	
+
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
 		if (e.getUpdate() instanceof Run) {
@@ -209,6 +201,10 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				// TODO: smooth insertion during previous animation...
 				//stack.setPosition(run.getId(), state.size() + 1);
 			}
+			JudgeState state = this.state.get(run.getId());
+			if (state != null) {
+				state.update(run);
+			}
 			repaint();
 		}
 		else if (e.getUpdate() instanceof Testcase) {
@@ -217,7 +213,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			JudgeState state = this.state.get(testcase.getRunId());
 			if (state != null) {
 				// TODO: look at testcase.isJudged/Solved
-				state.state = testcase.getI();
+				state.update(testcase);
 			}
 			repaint();
 		}

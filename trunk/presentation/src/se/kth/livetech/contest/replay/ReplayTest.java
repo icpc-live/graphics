@@ -1,27 +1,15 @@
 package se.kth.livetech.contest.replay;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.swing.JPanel;
-
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
-import se.kth.livetech.contest.model.Team;
-import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
-import se.kth.livetech.properties.IProperty;
-import se.kth.livetech.properties.PropertyHierarchy;
-import se.kth.livetech.properties.PropertyListener;
-import se.kth.livetech.properties.ui.CheckBox;
-import se.kth.livetech.properties.ui.Slider;
 import se.kth.livetech.util.Frame;
 
 public class ReplayTest {
 	
-	private static PropertyListener l,l2,l3;
+	/*private static PropertyListener l,l2,l3;
 	private static IProperty propertyBase;
 	private static IProperty propertyPause;
 	private static IProperty propertyPace;
@@ -39,7 +27,7 @@ public class ReplayTest {
 			this.add(new CheckBox(propertyPause, "Pause"));
 			this.add(new Slider(propertyPace, 0, 2000));
 		}
-	}
+	}*/
 	
 	Contest latestContest = null;
 
@@ -80,19 +68,27 @@ public class ReplayTest {
 			e.printStackTrace();
 		}*/
 		
-		Timer timer = new Timer();
+		/*Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			public void run() {
 				if(latestContest != null) {
 					Team t = latestContest.getRankedTeam(1);
 					TeamScore ts = latestContest.getTeamScore(t.getId());
-					System.out.println("Leader = " + t.getName());
-					System.out.println(ts.getSolved());
+					System.out.println("Leader = " + t.getName() + " " + t.getId());
+					System.out.println("Solved: " + ts.getSolved());
+					for(int p : latestContest.getProblems()) {
+						System.out.println(p + " " + ts.getProblemScore(p).isSolved()+ "@"+ts.getProblemScore(p).getSolutionTime() + ", ");
+						int n = latestContest.getRuns(t.getId(), p);
+						for(int i=0;i<n;++i) {
+							Run r = latestContest.getRun(t.getId(), p, i);
+							System.out.println(r);
+						}
+					}
 				}
 			}
-		}, 0, 2000);
+		}, 0, 2000);*/
 
-		PropertyHierarchy ph = new PropertyHierarchy();
+		/*PropertyHierarchy ph = new PropertyHierarchy();
 		propertyBase = ph.getProperty("base");
 		propertyPause = propertyBase.get("pause");
 		propertyPace = propertyBase.get("pace");
@@ -113,6 +109,6 @@ public class ReplayTest {
 				//replayer.setFreezeTime((int)changed.getDoubleValue());
 			}
 		};
-		propertyPace.addPropertyListener(l3);
+		propertyPace.addPropertyListener(l3);*/
 	}
 }

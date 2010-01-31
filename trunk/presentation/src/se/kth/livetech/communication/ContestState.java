@@ -2,7 +2,6 @@ package se.kth.livetech.communication;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
@@ -13,18 +12,17 @@ public class ContestState implements AttrsUpdateListener {
 
 	public ContestState() {
 		events = new LinkedList<AttrsUpdateEvent>();
-		listeners = new CopyOnWriteArrayList<AttrsUpdateListener>();
+		listeners = new LinkedList<AttrsUpdateListener>();
 	}
 
 	public synchronized void addAttrsUpdateListener(AttrsUpdateListener listener) {
-		listeners.add(listener);
-		
 		for (AttrsUpdateEvent event : events) {
 			listener.attrsUpdated(event);
 		}
+		listeners.add(listener);
 	}
 
-	public void removeAttrsUpdateListener(AttrsUpdateListener listener) {
+	public synchronized void removeAttrsUpdateListener(AttrsUpdateListener listener) {
 		listeners.remove(listener);
 	}
 

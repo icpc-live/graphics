@@ -112,7 +112,10 @@ public class BaseHandler implements LiveService.Iface {
 			aue.setProperty(name, attrs.get(name));
 		}
 		
+		NodeConnection conn = this.registry.getNodeConnection(this.attachedNode.get());
+		conn.setUpdatingAttrs(aue);
 		this.registry.getLocalState().getContest(contest).attrsUpdated(aue);
+		conn.setUpdatingAttrs(null);
 	}
 
 	@Override
@@ -178,7 +181,7 @@ public class BaseHandler implements LiveService.Iface {
 		DebugTrace.trace("propertyUpdate %s -> %s", event.key, event.value);
 		IProperty p = registry.getLocalState().getHierarchy().getProperty(event.key);
 		NodeConnection conn = this.registry.getNodeConnection(this.attachedNode.get());
-		conn.setUpdating(p);
+		conn.setUpdatingProperty(p);
 		if (event.isSetValue())
 			p.setValue(event.value);
 		else
@@ -187,7 +190,7 @@ public class BaseHandler implements LiveService.Iface {
 			p.setLink(event.link);
 		else
 			p.clearLink();
-		conn.setUpdating(null);
+		conn.setUpdatingProperty(null);
 	}
 
 	@Override

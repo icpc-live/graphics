@@ -3,6 +3,7 @@ package se.kth.livetech.contest.model.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,7 +34,8 @@ public class ContestImpl implements Contest {
 	Map<Integer, TeamScore> scores;
 	Map<Integer, Map<Integer,Testcase>> testcases;
 	List<Integer> ranking;
-	private TeamComp teamComp;
+	private TeamCompScore teamCompScore;
+	private TeamCompAlpha teamCompAlpha;
 	Map<Integer, Integer> teamRows;
 
 	private class RunComp implements Comparator<Integer> {
@@ -44,12 +46,21 @@ public class ContestImpl implements Contest {
 		}
 	}
 
-	private class TeamComp implements Comparator<Integer> {
+	private class TeamCompScore implements Comparator<Integer> {
 		public int compare(Integer a, Integer b) {
 			return -getTeamScore(a).compareTo(getTeamScore(b));
 		}
 	}
-	
+
+	private class TeamCompAlpha implements Comparator<Integer> {
+		public int compare(Integer a, Integer b) {
+			int ds = -getTeamScore(a).compareTo(getTeamScore(b));
+			if (ds != 0)
+				return ds;
+			return getTeam(a).getName().compareTo(getTeam(b).getName());
+		}
+	}
+
 	public ContestImpl() {
 		reset();
 	}
@@ -65,7 +76,8 @@ public class ContestImpl implements Contest {
 		runtable = new TreeMap<Integer, Map<Integer, List<Integer>>>();
 		scores = new TreeMap<Integer, TeamScore>();
 		ranking = new ArrayList<Integer>();
-		teamComp = new TeamComp();
+		teamCompScore = new TeamCompScore();
+		teamCompAlpha = new TeamCompAlpha();
 		teamRows = new TreeMap<Integer, Integer>();
 		testcases = new TreeMap<Integer, Map<Integer,Testcase>>();
 	}
@@ -81,7 +93,8 @@ public class ContestImpl implements Contest {
 		runtable = old.runtable;
 		scores = old.scores;
 		ranking = old.ranking;
-		teamComp = new TeamComp();
+		teamCompScore = new TeamCompScore();
+		teamCompAlpha = new TeamCompAlpha();
 		teamRows = old.teamRows;
 		testcases = old.testcases;
 		update(a);
@@ -173,7 +186,7 @@ public class ContestImpl implements Contest {
 
 	public int getTeamRank(int team) {
 		for (int i = 0; i < ranking.size(); ++i)
-			if (teamComp.compare(team, ranking.get(i)) <= 0)
+			if (teamCompScore.compare(team, ranking.get(i)) <= 0)
 				return i + 1;
 		return ranking.size() + 1;
 		/*
@@ -228,7 +241,7 @@ public class ContestImpl implements Contest {
 			runtable = remap(runtable, t, m);
 			// Update scores and ranking
 			scores = remap(scores, t, new TeamScoreImpl(this, t));
-			ranking = relist(ranking, t, teamComp);
+			ranking = relist(ranking, t, teamCompAlpha);
 			teamRows = rerow(ranking);
 		} else if(a instanceof Testcase) {
 			Testcase t = (Testcase) a;
@@ -240,6 +253,14 @@ public class ContestImpl implements Contest {
 				runTestcases = remap(runTestcases, t.getI(), t);
 			}
 			testcases = remap(testcases, t.getRunId(), runTestcases);
+			Run r = getRun(t.getRunId());
+			if(r.isJudged()) { // Mark run as unjudged.
+				Map<String, String> attrs = new LinkedHashMap<String, String>();
+				for (String name : r.getProperties())
+					attrs.put(name, r.getProperty(name));
+				attrs.put("judged", "False");
+				update(new RunImpl(attrs));
+			}
 		} else if (a instanceof Clar) {
 			Clar c = (Clar) a;
 			clars = remap(clars, c.getId(), c);
@@ -253,7 +274,7 @@ public class ContestImpl implements Contest {
 			Team t = (Team) a;
 			teams = remap(teams, t.getId(), t);
 			// Update ranking to include new team
-			ranking = relist(ranking, t.getId(), teamComp);
+			ranking = relist(ranking, t.getId(), teamCompAlpha);
 			teamRows = rerow(ranking);
 		} else if (a instanceof Judgement) {
 			Judgement j = (Judgement) a;

@@ -61,7 +61,7 @@ public class LiveState {
 		// TODO: contest listeners
 	}
 
-	public boolean isSpiderFlag() {
+	public boolean isSpider() {
 		return spiderFlag;
 	}
 

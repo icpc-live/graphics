@@ -17,6 +17,7 @@ import se.kth.livetech.communication.thrift.PropertyEvent;
 import se.kth.livetech.communication.thrift.LiveService.Client;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
@@ -38,7 +39,9 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 	private LiveService.Client client;
 	private State state;
 	private BlockingQueue<QueueItem> sendQueue;
-	private IProperty updating;
+	private IProperty updatingProperty;
+	private AttrsUpdateEventImpl updatingAttrs;
+	private boolean disconnect = false;
 
 	public State getState() {
 		return state;
@@ -68,7 +71,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 		}
 		public void run() {
 			long backoff = 0;
-			while (true) {
+			while (!disconnect) {
 				NodeConnection.this.setClient(null);
 				if (backoff > 0) {
 					try {
@@ -84,11 +87,6 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 
 				try {
 					client = Connector.connect(nodeRegistry.getLocalNode(), id.address, id.port);
-
-					NodeId newId = client.getNodeId();
-					newId.address = NodeConnection.this.id.address;
-
-					NodeConnection.this.setId(newId);
 				} catch (TException e) {
 					DebugTrace.trace("Failed connection to " + id.name + ": " + e);
 					// TODO Reporting
@@ -97,9 +95,10 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 
 				NodeConnection.this.client = client;
 				NodeConnection.this.state = NodeConnection.State.CONNECTED;
+				DebugTrace.trace("Connected to " + id.name);
 
 				// Time sync every second
-				while (true) {
+				while (!disconnect) {
 					QueueItem item;
 
 					try {
@@ -118,6 +117,14 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 					} catch (TException e) {
 						DebugTrace.trace("Failed call to " + id.name + ": " + e);
 						// TODO Reporting
+						if (NodeConnection.this.nodeRegistry.getLocalState().isSpider()) {
+							disconnect = true;
+
+							break;
+						}
+
+						NodeConnection.this.state = NodeConnection.State.RECONNECTING;
+						DebugTrace.trace("Reconnecting to " + id.name);
 						break;
 					}
 					long t1 = System.currentTimeMillis();
@@ -125,6 +132,10 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 					NodeConnection.this.timeSync.ping(t0, remoteTime, t1);
 				}
 			}
+
+			NodeConnection.this.state = NodeConnection.State.DISCONNECTED;
+			DebugTrace.trace("Disconnected from " + id.name);
+			NodeConnection.this.nodeRegistry.getLocalState().removeListeners(NodeConnection.this);
 		}
 	}
 
@@ -163,18 +174,15 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 		}
 		final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
 		final ContestEvent update = new ContestEvent(e.getTime(), e.getType(), attrs);
-		sendQueue.add(new QueueItem() {
-			@Override
-			public void send(Client client) throws TException {
-				client.contestUpdate(contestId, update);
-			}
-		});
-	}
 
-	public void setId(NodeId id) {
-		NodeId oldId = this.id;
-		this.id = id;
-		nodeRegistry.remapNode(oldId);
+		if (e != this.updatingAttrs) {
+			sendQueue.add(new QueueItem() {
+				@Override
+				public void send(Client client) throws TException {
+					client.contestUpdate(contestId, update);
+				}
+			});
+		}
 	}
 
 	public NodeId getId() {
@@ -184,7 +192,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 	@Override
 	public void propertyChanged(IProperty changed) {
 		DebugTrace.trace("propertyChanged %s -> %s", changed.getName(), changed.getValue());
-		if (changed == updating) {
+		if (changed == updatingProperty) {
 			DebugTrace.trace("  ...updating");
 			return;
 		}
@@ -200,12 +208,21 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 			}
 		});
 	}
-	public void setUpdating(IProperty updating) {
-		this.updating = updating;
+
+	public void setUpdatingProperty(IProperty updating) {
+		this.updatingProperty = updating;
 	}
-	
+
+	public void setUpdatingAttrs(AttrsUpdateEventImpl aue) {
+		this.updatingAttrs = aue;
+	}
+
+	public void disconnect() {
+		this.disconnect = true;
+	}
+
 	@Override
 	public long getRemoteTimeMillis() {
 		return System.currentTimeMillis() + this.status.clockSkew;
-	} 
+	}
 }

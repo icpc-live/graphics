@@ -1,0 +1,1 @@
+wget --directory-prefix images/logos/ http://dl.dropbox.com/u/664195/WF2010-logos.zip

@@ -23,7 +23,7 @@ public class NodeRegistry {
 		this.localState = localState;
 		connections = new TreeMap<NodeId, NodeConnection>(new NodeIdComparator());
 	}
-	
+
 	public void connect(String address, int port) {
 		NodeId n = new NodeId(null, null, address, null, port);
 		addNode(n);
@@ -52,13 +52,17 @@ public class NodeRegistry {
 	}
 
 	public void addNode(NodeId nid) {
-		if (!this.connections.containsKey(nid)) {
-			NodeConnection connection = new NodeConnection(this, nid);
-			this.connections.put(nid, connection);
-			this.localState.addListeners(connection);
+		if (connections.containsKey(nid)) {
+			NodeConnection connection = connections.get(nid);
+			connection.disconnect();
+			connections.remove(nid);
 		}
+
+		NodeConnection connection = new NodeConnection(this, nid);
+		this.connections.put(nid, connection);
+		this.localState.addListeners(connection);
 	}
-	
+
 	public void removeNode(NodeId nid) {
 		NodeConnection connection = connections.get(nid);
 		if (connection != null) {
@@ -67,7 +71,7 @@ public class NodeRegistry {
 		}
 		connections.remove(nid);
 	}
-	
+
 	public NodeConnection getNodeConnection(NodeId nid) {
 		return this.connections.get(nid);
 	}
@@ -82,22 +86,13 @@ public class NodeRegistry {
 		return connections.keySet();
 	}
 
-	public void remapNode(NodeId oldId) {
-		if (connections.containsKey(oldId)) {
-			NodeConnection node = connections.get(oldId);
-			connections.remove(oldId);
-			// TODO: listeners, removeNode(oldId);
-			connections.put(node.getId(), node);
-		}
-	}
-	
 	public RemoteTime getRemoteTime() {
 		return new RemoteTime() {
 			@Override
 			public long getRemoteTimeMillis() {
 				return connections.isEmpty() ? System.currentTimeMillis() : connections.firstEntry().getValue().getRemoteTimeMillis();
 			}
-			
+
 		};
 	}
 }

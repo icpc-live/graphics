@@ -46,7 +46,6 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	private static class JudgeState {
 		TestcaseStatusRenderer.Status compiling, running, validating;
 		TestcaseStatusRenderer.Status[] cases;
-		int state = 1;
 		public JudgeState() {
 			compiling = TestcaseStatusRenderer.Status.active;
 			running = TestcaseStatusRenderer.Status.none;
@@ -56,6 +55,24 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 		public void update(Testcase testcase) {
 			compiling = TestcaseStatusRenderer.Status.passed;
 			running = TestcaseStatusRenderer.Status.active;
+			int n = testcase.getN();
+			if (cases == null) {
+				cases = new TestcaseStatusRenderer.Status[n];
+				for (int i = 0; i < n; ++i)
+					cases[i] = TestcaseStatusRenderer.Status.none;
+			}
+			int i = testcase.getI();
+			if (testcase.isJudged()) {
+				if (testcase.isSolved()) {
+					cases[i] = TestcaseStatusRenderer.Status.passed;
+				}
+				else {
+					cases[i] = TestcaseStatusRenderer.Status.failed;
+				}
+			}
+			else {
+				cases[i] = TestcaseStatusRenderer.Status.active;
+			}
 		}
 
 		public void update(Run run) {
@@ -74,8 +91,6 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	public JudgeQueueTest() {
 		this.setBackground(Color.BLUE.darker());
 		this.setPreferredSize(new Dimension(512, 576));
-
-
 	}
 
 	AnimationStack<Integer, Integer> stack = new AnimationStack<Integer, Integer>();

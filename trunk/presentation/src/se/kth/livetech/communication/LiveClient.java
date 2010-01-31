@@ -1,6 +1,7 @@
 package se.kth.livetech.communication;
 
 import java.awt.Dimension;
+import java.awt.event.HierarchyBoundsAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import se.kth.livetech.presentation.layout.JudgeQueueTest;
 import se.kth.livetech.presentation.layout.LivePresentation;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.presentation.layout.TeamPresentation;
+import se.kth.livetech.presentation.layout.VNCView;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.ui.TestTriangle;
@@ -93,6 +95,9 @@ public class LiveClient {
 		
 		@Option(helpRequest=true)
 		boolean getHelp();
+		
+		@Option(longName="vnc")
+		boolean isVnc();
 
 		@Unparsed
 		List<String> getArgs();
@@ -261,6 +266,11 @@ public class LiveClient {
 			
 			if (opts.isTestTriangle()) {
 				TestTriangle.test(localState.getHierarchy());
+			}
+			
+			if (opts.isVnc()) {
+				PropertyHierarchy hierarchy = localState.getHierarchy();
+				Frame foo = new Frame("foo", new VNCView(hierarchy.getProperty("live.clients.localhost.vnc")));
 			}
 			
 			// Listen!

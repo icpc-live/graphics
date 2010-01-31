@@ -26,11 +26,10 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	
 	public LivePresentation(Contest c, IProperty base, RemoteTime time) {
 		this.setLayout(null);
-		
 		propertyListeners = new ArrayList<PropertyListener>();
 		scoreboard = new ScoreboardPresentation(c);
 		teamPresentation = new TeamPresentation(c, base.get("team.team").getIntValue());
-		clockPanel = new ClockView(c, time);
+		clockPanel = new ClockView(base.get("clockrect"), c, time);
 		this.add(clockPanel); //always there
 		
 		currentView = null; //TODO: blank

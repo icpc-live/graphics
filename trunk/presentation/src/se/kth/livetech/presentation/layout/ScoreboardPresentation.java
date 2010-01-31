@@ -54,6 +54,12 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	
 	public synchronized void setContest(Contest nc) {
 		c = nc;
+		for (int i = 1; i <= c.getTeams().size(); ++i) {
+			Team team = c.getRankedTeam(i);
+			int id = team.getId();
+			stack.setPosition(id, i);
+			recent.set(id, c.getTeamScore(id));
+		}
 		repaint();
 	}
 	
@@ -143,12 +149,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			}
 		}
 
-		for (int i = 1; i <= c.getTeams().size(); ++i) {
-			Team team = c.getRankedTeam(i);
-			int id = team.getId();
-			stack.setPosition(id, i);
-			recent.set(id, c.getTeamScore(id));
-		}
+		
 
 		Shape clip = g.getClip();
 		g.setClip(rect);

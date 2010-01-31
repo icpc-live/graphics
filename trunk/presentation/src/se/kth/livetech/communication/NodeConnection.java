@@ -17,6 +17,7 @@ import se.kth.livetech.communication.thrift.PropertyEvent;
 import se.kth.livetech.communication.thrift.LiveService.Client;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
+import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
@@ -38,7 +39,8 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 	private LiveService.Client client;
 	private State state;
 	private BlockingQueue<QueueItem> sendQueue;
-	private IProperty updating;
+	private IProperty updatingProperty;
+	private AttrsUpdateEventImpl updatingAttrs;
 	private boolean disconnect = false;
 
 	public State getState() {
@@ -172,12 +174,15 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 		}
 		final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
 		final ContestEvent update = new ContestEvent(e.getTime(), e.getType(), attrs);
-		sendQueue.add(new QueueItem() {
-			@Override
-			public void send(Client client) throws TException {
-				client.contestUpdate(contestId, update);
-			}
-		});
+
+		if (e != this.updatingAttrs) {
+			sendQueue.add(new QueueItem() {
+				@Override
+				public void send(Client client) throws TException {
+					client.contestUpdate(contestId, update);
+				}
+			});
+		}
 	}
 
 	public NodeId getId() {
@@ -187,7 +192,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 	@Override
 	public void propertyChanged(IProperty changed) {
 		DebugTrace.trace("propertyChanged %s -> %s", changed.getName(), changed.getValue());
-		if (changed == updating) {
+		if (changed == updatingProperty) {
 			DebugTrace.trace("  ...updating");
 			return;
 		}
@@ -204,8 +209,12 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 		});
 	}
 
-	public void setUpdating(IProperty updating) {
-		this.updating = updating;
+	public void setUpdatingProperty(IProperty updating) {
+		this.updatingProperty = updating;
+	}
+
+	public void setUpdatingAttrs(AttrsUpdateEventImpl aue) {
+		this.updatingAttrs = aue;
 	}
 
 	public void disconnect() {
@@ -215,5 +224,5 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 	@Override
 	public long getRemoteTimeMillis() {
 		return System.currentTimeMillis() + this.status.clockSkew;
-	} 
+	}
 }

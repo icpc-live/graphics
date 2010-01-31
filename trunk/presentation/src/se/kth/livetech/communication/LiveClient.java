@@ -131,6 +131,8 @@ public class LiveClient {
 				System.exit(1);
 				return;
 			}
+			
+			boolean spiderFlag = opts.isSpider() || !opts.isArgs();
 
 			// Setup local node id
 			String name;
@@ -152,7 +154,7 @@ public class LiveClient {
 			System.out.println("I am " + localNode);
 
 			// Local state
-			LiveState localState = new LiveState(opts.isSpider());
+			LiveState localState = new LiveState(spiderFlag);
 
 			// Remote node registry
 			NodeRegistry nodeRegistry = new NodeRegistry(localNode, localState);
@@ -188,8 +190,7 @@ public class LiveClient {
 			}
 			if (opts.isTestJudgeQueue()) {
 				final JudgeQueueTest jqt = new JudgeQueueTest();
-				final ContestReplayer cr = new ContestReplayer();
-				cr.addContestUpdateListener(jqt);
+				contestListeners.add(jqt);
 				Frame f = new Frame("TestJudgeQueue", jqt, null, false);
 				if (opts.isFullscreen()) {
 					f.fullScreen(0);

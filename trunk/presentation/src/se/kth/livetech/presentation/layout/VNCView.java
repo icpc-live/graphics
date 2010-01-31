@@ -5,16 +5,11 @@ import java.awt.ScrollPane;
 
 import javax.swing.JPanel;
 
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyListener;
+
 import com.tightvnc.VncViewer;
 import com.tightvnc.VncViewerFactory;
-
-import se.kth.livetech.properties.IProperty;
-import se.kth.livetech.properties.PropertyHierarchy;
-import se.kth.livetech.properties.PropertyListener;
-import se.kth.livetech.properties.ui.PanAndZoom;
-import se.kth.livetech.properties.ui.Text;
-import se.kth.livetech.properties.ui.PanAndZoom.TestPanel;
-import se.kth.livetech.util.Frame;
 
 /**
  * @author auno

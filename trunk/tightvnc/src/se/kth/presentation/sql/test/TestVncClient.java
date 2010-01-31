@@ -2,8 +2,6 @@ package se.kth.presentation.sql.test;
 
 import java.applet.AppletContext;
 import java.applet.AppletStub;
-import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.ScrollPane;

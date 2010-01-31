@@ -1,7 +1,6 @@
 package se.kth.livetech.communication;
 
 import java.awt.Dimension;
-import java.awt.event.HierarchyBoundsAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -270,7 +269,7 @@ public class LiveClient {
 			
 			if (opts.isVnc()) {
 				PropertyHierarchy hierarchy = localState.getHierarchy();
-				Frame foo = new Frame("foo", new VNCView(hierarchy.getProperty("live.clients.localhost.vnc")));
+				/*Frame foo = */new Frame("foo", new VNCView(hierarchy.getProperty("live.clients.localhost.vnc")));
 			}
 			
 			// Listen!

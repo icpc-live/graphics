@@ -19,7 +19,8 @@ public class VncViewerFactory extends JPanel {
 	private static final long serialVersionUID = -6642672988688111672L;
 
 	private static class VncViewerStub implements AppletStub {
-	    public VncViewerStub(Map<String, String> parameters) {
+	    @SuppressWarnings("unused")
+		public VncViewerStub(Map<String, String> parameters) {
 	        super();
 	        this.parameters = new HashMap<String, String>();
 	        this.parameters.putAll(parameters);

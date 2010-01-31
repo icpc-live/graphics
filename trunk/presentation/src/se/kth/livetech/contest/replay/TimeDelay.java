@@ -6,7 +6,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 
-/** Time delayed ContestUpdateEvent playback. */
+/**
+ * Time delayed ContestUpdateEvent playback.
+ * 
+ * @deprecated Use {@link ContestReplayer} instead. 
+ */
 public class TimeDelay implements ContestUpdateListener {
 	private List<ContestUpdateListener> listeners;
 

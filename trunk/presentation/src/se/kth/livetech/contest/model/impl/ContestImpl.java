@@ -56,7 +56,7 @@ public class ContestImpl implements Contest {
 			int ds = -getTeamScore(a).compareTo(getTeamScore(b));
 			if (ds != 0)
 				return ds;
-			return getTeam(a).getUniversity().compareTo(getTeam(b).getUniversity());
+			return getTeam(a).getName().compareTo(getTeam(b).getName());
 		}
 	}
 

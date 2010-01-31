@@ -1,6 +1,8 @@
 package se.kth.livetech.communication;
 
 import java.awt.Dimension;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,7 @@ import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.contest.replay.ContestReplay;
 import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.contest.replay.LogListener;
+import se.kth.livetech.contest.replay.LogSpeaker;
 import se.kth.livetech.control.ui.ProductionFrame;
 import se.kth.livetech.presentation.layout.JudgeQueueTest;
 import se.kth.livetech.presentation.layout.LivePresentation;
@@ -66,6 +69,10 @@ public class LiveClient {
 		@Option(longName="kattis-uri")
 		String getKattisUri();
 		boolean isKattisUri();
+		
+		@Option(longName="file")
+		String getFileName();
+		boolean isFileName();
 		
 		@Option(longName="test-triangle")
 		boolean isTestTriangle();
@@ -202,6 +209,19 @@ public class LiveClient {
 					f.setVisible(true);
 				}
 			}
+
+			// Add contest update listeners above!
+			if (!contestListeners.isEmpty()) {
+				final ContestReplay cr = new ContestReplay();
+				localState.getContest(new ContestId("contest", 0)).addAttrsUpdateListener(cr);
+
+				for(ContestUpdateListener contestListener : contestListeners) {
+					DebugTrace.trace("Contest listener: %s", contestListener);
+					cr.addContestUpdateListener(contestListener);
+				}
+			}
+			// Add contest update providers below!
+			
 			if (opts.isKattis()) {
 				final KattisClient kattisClient;
 				
@@ -233,6 +253,21 @@ public class LiveClient {
 
 				localState.setContestSourceFlag(true);
 			}
+			if (opts.isFileName()) {
+				try {
+					final LogSpeaker logSpeaker = new LogSpeaker(opts.getFileName());
+					// TODO: nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);
+					logSpeaker.addAttrsUpdateListener(localState.getContest(new ContestId("contest", 0)));
+					try {
+						logSpeaker.parse();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+					System.exit(1);
+				}
+			}
 			if (opts.isFake()) {
 				TestContest tc = new TestContest(100, 12);
 				FakeContest fc = new FakeContest(tc);
@@ -242,15 +277,6 @@ public class LiveClient {
 				fc.start();
 
 				localState.setContestSourceFlag(true);
-			}
-			if (!contestListeners.isEmpty()) {
-				final ContestReplay cr = new ContestReplay();
-				localState.getContest(new ContestId("contest", 0)).addAttrsUpdateListener(cr);
-
-				for(ContestUpdateListener contestListener : contestListeners) {
-					DebugTrace.trace("Contest listener: %s", contestListener);
-					cr.addContestUpdateListener(contestListener);
-				}
 			}
 			
 			if (opts.isControl()) {

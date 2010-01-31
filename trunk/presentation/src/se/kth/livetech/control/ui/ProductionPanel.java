@@ -23,14 +23,14 @@ import se.kth.livetech.properties.ui.ToggleButton;
 public class ProductionPanel extends JPanel implements ActionListener {
 
 	String[] interviewPresets = new String[] {
-		"Nina Hjelmgren      Fredrik Niemel�|Hosts",
+		"Nina Hjelmgren      Fredrik Niemelä|Hosts",
 		"Peter Gudmunson|President",
 		"Bill Poucher|Professor",
 		"Stein Norheim       Marcus Isaksson|Analytics Group",
 		"Stan Wileman|Judge",
 		"Ingrid Melinder|Dean",
 		"Andrey Stankevich|Coach",
-		"Anders Flodstr�m|University Chancellor",
+		"Anders Flodström|University Chancellor",
 		"Fredrik Heintz|Nordic Contest Director",
 		"Lin Zhao|Professor",
 		"Ben Kelley|Dean",
@@ -121,6 +121,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new Text(base.get("team.team")));
 		c.add(new ToggleButton(base.get("mode"), "vnc", "Vnc"));
 		c.add(new ToggleButton(base.get("mode"), "cam", "Cam"));
+		c.add(new ToggleButton(base.get("mode"), "countdown", "Countdown"));
 		c.add(new CheckBox(base.get("clear"), "Clear"));
 		b.add(c);
 

@@ -44,7 +44,7 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 			row1Text = ChineseNumerals.moonspeak((int) -diffSeconds);
 			row2Text = "" + (-diffSeconds) + " (" + ChineseNumerals.pinyin((int)-diffSeconds) + ")";
 		}
-		else if (diffSeconds > 0 && diffSeconds < 60) {
+		else if (diffSeconds >= 0 && diffSeconds < 60) {
 			row1Text = "Go!";
 			row2Text = "The contest has started";
 		}
@@ -66,7 +66,7 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 	}
 	
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(50, 10, 30000);
+		TestContest tc = new TestContest(50, 10, 5000);
 		Contest c1 = tc.getContest();
 		Frame frame = new Frame("Countdown Presentation", new CountdownPresentation(c1, new RemoteTime.LocalTime()));
 		frame.setPreferredSize(new Dimension(1024, 576));

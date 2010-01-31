@@ -19,8 +19,11 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	IProperty base;
 	ScoreboardPresentation scoreboard;
 	TeamPresentation teamPresentation;
+	CountdownPresentation countdown;
+	
 	ClockView clockPanel;
 	Component currentView;
+	
 	
 	List<PropertyListener> propertyListeners;
 	
@@ -30,9 +33,13 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		scoreboard = new ScoreboardPresentation(c);
 		teamPresentation = new TeamPresentation(c, base.get("team.team").getIntValue());
 		clockPanel = new ClockView(base.get("clockrect"), c, time);
+		countdown = new CountdownPresentation(c, time);
 		this.add(clockPanel); //always there
 		
-		currentView = null; //TODO: blank
+		currentView = countdown;
+		this.add(currentView);
+		this.validate();
+		
 		this.base = base;
 		//TODO: margin modes
 		
@@ -70,6 +77,9 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				else if(mode.equals("cam")) {
 					
 				}
+				else if(mode.equals("countdown")) {
+					currentView = countdown;
+				}
 				if (currentView != null)
 					LivePresentation.this.add(currentView);
 				LivePresentation.this.validate();
@@ -100,6 +110,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		teamPresentation.contestUpdated(e);
 		scoreboard.contestUpdated(e);
 		clockPanel.contestUpdated(e);
+		countdown.contestUpdated(e);
 	}
 
 	@Override
@@ -107,6 +118,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		teamPresentation.setBounds(LivePresentation.this.getBounds());
 		scoreboard.setBounds(LivePresentation.this.getBounds());
 		clockPanel.setBounds(LivePresentation.this.getBounds());
+		countdown.setBounds(LivePresentation.this.getBounds());
 		this.repaint();
 	}
 

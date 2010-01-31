@@ -234,13 +234,12 @@ public class LiveClient {
 				localState.setContestSourceFlag(true);
 			}
 			if (opts.isFake()) {
-				TestContest tc = new TestContest(100, 12, 0);
+				TestContest tc = new TestContest(100, 12, 15000);
 				FakeContest fc = new FakeContest(tc);
-
 				//TODO: nodeRegistry.addContest(new ContestId("contest", 0), tc);
 				tc.addAttrsUpdateListener(localState.getContest(new ContestId("contest", 0)));
 				fc.start();
-
+				
 				localState.setContestSourceFlag(true);
 			}
 			if (!contestListeners.isEmpty()) {

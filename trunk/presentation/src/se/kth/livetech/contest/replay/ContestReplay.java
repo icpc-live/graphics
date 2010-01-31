@@ -5,7 +5,11 @@ import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
 
-/** ContestReplay updates a contest with AttrUpdates in order. */
+/**
+ * ContestReplay updates a contest with AttrUpdates in order.
+ * 
+ * @deprecated Use {@link ContestReplayer} instead.
+ */
 public class ContestReplay extends ContestPlayer {
 	ContestImpl contest;
 

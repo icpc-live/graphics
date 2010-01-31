@@ -117,7 +117,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 					} catch (TException e) {
 						DebugTrace.trace("Failed call to " + id.name + ": " + e);
 						// TODO Reporting
-						if (NodeConnection.this.nodeRegistry.getLocalState().isSpiderFlag()) {
+						if (NodeConnection.this.nodeRegistry.getLocalState().isSpider()) {
 							disconnect = true;
 
 							break;

@@ -235,4 +235,12 @@ public class PropertyHierarchy {
 			return null;
 		}
 	}
+
+	public void print() {
+		synchronized (this.properties) {
+			for (IProperty property : this.properties.values()) {
+				System.out.println(String.format("%s\t%s\t%s", property.getName(), property.getOwnValue(), property.getLink()));
+			}
+		}
+	}
 }

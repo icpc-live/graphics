@@ -71,6 +71,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 		}
 		public void run() {
 			long backoff = 0;
+			DebugTrace.trace("Connecting to %s %s:%d", id.name, id.host, id.port);
 			while (!disconnect) {
 				NodeConnection.this.setClient(null);
 				if (backoff > 0) {

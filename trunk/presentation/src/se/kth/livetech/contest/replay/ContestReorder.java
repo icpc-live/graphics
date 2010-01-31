@@ -14,6 +14,8 @@ import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
  * ContestReplay updates a contest with AttrUpdates out of order. Run events are
  * propagated for the last team first. <code>reorder()</code> must be called to
  * send events on to the listeners.
+ * 
+ * @deprecated Use {@link ContestReplayer} instead.
  */
 public class ContestReorder extends ContestPlayer {
 	ContestImpl contest;

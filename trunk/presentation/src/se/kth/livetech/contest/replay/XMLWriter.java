@@ -4,7 +4,9 @@ import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 import java.util.Stack;
 
@@ -22,8 +24,10 @@ public class XMLWriter {
 
 	public XMLWriter(String name) {
 		try {
-			out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(name)));
+			out = new PrintWriter(new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(name)), "UTF8"));
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		openElements = new Stack<String>();

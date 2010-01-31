@@ -116,7 +116,12 @@ public class FakeContest extends Thread {
 			}
 			for(ProblemStatus ps : removeLater)
 				submissions.remove(ps);
-			
+			int doneCount = 0;
+			for (int j = 0; j < teams; ++j)
+				if (test.getContest().getTeamScore(j).getSolved() == problems)
+					++doneCount;
+			if (doneCount > 3)
+				test.reset();
 		}
 	}
 	

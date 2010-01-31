@@ -20,6 +20,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	ScoreboardPresentation scoreboard;
 	TeamPresentation teamPresentation;
 	CountdownPresentation countdown;
+	VNCView vnc;
 	
 	ClockView clockPanel;
 	Component currentView;
@@ -34,6 +35,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		teamPresentation = new TeamPresentation(c, base.get("team.team").getIntValue());
 		clockPanel = new ClockView(base.get("clockrect"), c, time);
 		countdown = new CountdownPresentation(c, time);
+		vnc = new VNCView(base.get("vnc"));
+		
 		this.add(clockPanel); //always there
 		
 		currentView = countdown;
@@ -60,7 +63,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 					LivePresentation.this.remove(currentView);
 				
 				String mode = changed.getValue();
-				if(mode.equals("vnc")) { 
+				if(mode.equals("vnc")) {
+					currentView = vnc;
 				}
 				else if(mode.equals("score")) {
 					currentView = scoreboard;
@@ -101,7 +105,6 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		base.get("team.team").addPropertyListener(teamChange);
 		base.get("mode").addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(showClockChange);
-		
 		this.validate();
 	}
 	
@@ -119,6 +122,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		scoreboard.setBounds(LivePresentation.this.getBounds());
 		clockPanel.setBounds(LivePresentation.this.getBounds());
 		countdown.setBounds(LivePresentation.this.getBounds());
+		vnc.setBounds(LivePresentation.this.getBounds());
 		this.repaint();
 	}
 

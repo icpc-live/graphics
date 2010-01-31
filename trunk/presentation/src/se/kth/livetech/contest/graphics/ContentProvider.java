@@ -194,7 +194,7 @@ public class ContentProvider {
 	}
 	
 	public static ColoredTextBox.Style getCountdownStyle() {
-		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
+		return new ColoredTextBox.BaseStyle(null, null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
 	}
 	
 	public static Renderable getCountdownRenderable(String row1Text, String row2Text) {

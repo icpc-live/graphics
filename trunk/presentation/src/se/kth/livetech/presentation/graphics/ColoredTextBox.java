@@ -10,6 +10,7 @@ import java.awt.geom.Rectangle2D;
 public class ColoredTextBox implements Renderable {
 	public interface Style {
 		public Color getColor();
+		public Color getTextColor();
 		public Font getFont();
 		public enum Shape {
 			roundRect, ellipse
@@ -22,15 +23,27 @@ public class ColoredTextBox implements Renderable {
 		Font font;
 		Shape shape;
 		Alignment alignment;
+		Color textColor;
+		
 		public BaseStyle(Color color, Font font, Shape shape, Alignment alignment) {
+			this(color, Color.WHITE, font, shape, alignment);
+		}
+		
+		public BaseStyle(Color color, Color textColor, Font font, Shape shape, Alignment alignment) {
 			this.color = color;
+			this.textColor = textColor;
 			this.font = font;
 			this.shape = shape;
 			this.alignment = alignment;
 		}
+
 		@Override
 		public Color getColor() {
 			return color;
+		}
+		@Override
+		public Color getTextColor() {
+			return textColor;
 		}
 		@Override
 		public Font getFont() {
@@ -107,8 +120,9 @@ public class ColoredTextBox implements Renderable {
 				break;
 			}
 		}
-
-		g.setColor(Color.WHITE);
+		if (this.style.getTextColor() != null)
+			g.setColor(this.style.getTextColor());
+		
 		Font font = style.getFont();
 		double magicScale = d.height / 24d; // TODO constant
 		Font nfont = font.deriveFont(AffineTransform.getScaleInstance(magicScale, magicScale));

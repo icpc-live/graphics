@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.layout;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -21,13 +22,55 @@ import se.kth.livetech.util.Frame;
 public class CountdownPresentation extends JPanel implements ContestUpdateListener{
 	long timeshift;
 	Contest c;
+	Row[] rows = new Row[10];
 	
 	public CountdownPresentation(Contest c, RemoteTime time) {
 		this.c = c;
 		timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
 		this.setBackground(ICPCColors.BG_COLOR_2);
+		for(int i = 0; i < 10; ++i) {
+			int secs = i+1;
+			String row1Text = ChineseNumerals.moonspeak(secs);
+			String row2Text = "" + secs + " [" + ChineseNumerals.pinyin(secs) + "]";
+			rows[i] = new Row(ContentProvider.getCountdownRenderable(row1Text, row2Text));
+		}
 	}
 
+	class Row extends JPanel {
+		Renderable content;
+		double age;
+		Dimension maxSize = new Dimension(400, 300);
+		
+		public void setAge(double age) {
+			this.age = age;
+		}
+		public double getAge() {
+			return this.age;
+		}
+		public Row(Renderable content) {
+			this.content = content;
+		}
+		
+		public void paintComponent(Graphics g) {
+			Graphics2D g2d = (Graphics2D) g;
+			double ratio = getRatio();
+			g2d.setColor(new Color(1,1,1,(float)ratio));
+			Dimension dim = new Dimension((int) (maxSize.width*ratio), (int) (maxSize.height*ratio));
+			int x = -dim.width/2;
+			int y = -dim.height/2;
+			
+			g2d.translate(x, y);
+			content.render(g2d, dim);
+			//g2d.drawRect(0, 0, dim.width, dim.height);
+			g2d.translate(-x, -y);
+		} 
+		
+		public double getRatio() {
+			return Math.exp(-Math.pow(0.7*age, 2));
+		}
+	}
+	
+	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
@@ -36,27 +79,37 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 
 		long startTime = c.getInfo().getStartTime()*1000; //convert to millis
 		long currentTime = System.currentTimeMillis() + timeshift;
-		long diffMilli = currentTime - startTime;
-		long diffSeconds = diffMilli/1000;
+		long diffMilli = startTime - currentTime;
 		
-		String row1Text = "", row2Text = "";
-		if (diffSeconds < 0 && diffSeconds >= -30) {
-			row1Text = ChineseNumerals.moonspeak((int) -diffSeconds);
-			row2Text = "" + (-diffSeconds) + " (" + ChineseNumerals.pinyin((int)-diffSeconds) + ")";
+//		else if (diffSeconds >= 0 && diffSeconds < 60) {
+//		row1Text = "Go!";
+//		row2Text = "The contest has started";
+//	}
+		double ageOffset;	
+
+		final int ANIMATE_FROM = 900;
+		long milliPart = (1000+diffMilli%1000)%1000;
+		if (milliPart < ANIMATE_FROM) {
+			ageOffset = Math.floor(diffMilli/1000.0); //floor
+		} else {
+			ageOffset = Math.floor(diffMilli/1000.0) + ((double)(milliPart - ANIMATE_FROM))/(1000 - ANIMATE_FROM);
 		}
-		else if (diffSeconds >= 0 && diffSeconds < 60) {
-			row1Text = "Go!";
-			row2Text = "The contest has started";
+		
+		for(int i = 0; i<10; ++i) {
+			rows[i].setAge(i - ageOffset);
 		}
 		
 		Rectangle rect = this.getBounds();
-		Renderable r = ContentProvider.getCountdownRenderable(row1Text, row2Text);
-		int x = rect.width/4, y = rect.height/4;
-		g2d.translate(x, y);
-		r.render(g2d, new Dimension(rect.width/2, rect.height/2));
-		g2d.translate(-x, -y);
+		g2d.translate(rect.getCenterX(), rect.getCenterY());
 		
-		this.repaint(diffMilli%1000 + 5);
+		for(Row row : rows){
+			int x = (int) (row.getAge()*rect.width/3);
+			g2d.translate(x, 0);	
+			row.paintComponent(g2d);
+			g2d.translate(-x, 0);
+		}
+		g2d.translate(-rect.getCenterX(), -rect.getCenterY());
+		this.repaint(20);
 	}
 
 	@Override
@@ -66,10 +119,10 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 	}
 	
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(50, 10, 5000);
+		TestContest tc = new TestContest(50, 10, 12000);
 		Contest c1 = tc.getContest();
 		Frame frame = new Frame("Countdown Presentation", new CountdownPresentation(c1, new RemoteTime.LocalTime()));
-		frame.setPreferredSize(new Dimension(1024, 576));
+		frame.setPreferredSize(new Dimension(1024, 768));
 		frame.pack();
 	}
 }

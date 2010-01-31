@@ -250,7 +250,7 @@ public class LiveClient {
 					kattisClient = new KattisClient();
 				}
 				
-				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 				final LogListener log = new LogListener("kattislog_"+dateFormat.format(new Date())+".txt");
 				kattisClient.addAttrsUpdateListener(log);
 				

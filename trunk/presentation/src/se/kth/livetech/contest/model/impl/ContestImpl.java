@@ -3,6 +3,7 @@ package se.kth.livetech.contest.model.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -240,6 +241,14 @@ public class ContestImpl implements Contest {
 				runTestcases = remap(runTestcases, t.getI(), t);
 			}
 			testcases = remap(testcases, t.getRunId(), runTestcases);
+			Run r = getRun(t.getRunId());
+			if(r.isJudged()) { // Mark run as unjudged.
+				Map<String, String> attrs = new LinkedHashMap<String, String>();
+				for (String name : r.getProperties())
+					attrs.put(name, r.getProperty(name));
+				attrs.put("judged", "False");
+				update(new RunImpl(attrs));
+			}
 		} else if (a instanceof Clar) {
 			Clar c = (Clar) a;
 			clars = remap(clars, c.getId(), c);

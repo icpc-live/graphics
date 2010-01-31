@@ -178,8 +178,7 @@ public class LiveClient {
 			}
 			if (opts.isTestJudgeQueue()) {
 				final JudgeQueueTest jqt = new JudgeQueueTest();
-				final ContestReplay cr = new ContestReplay();
-				cr.addContestUpdateListener(jqt);
+				contestListeners.add(jqt);
 				Frame f = new Frame("TestJudgeQueue", jqt, null, false);
 				if (opts.isFullscreen()) {
 					f.fullScreen(0);

@@ -30,7 +30,6 @@ import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.Renderable;
-import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
@@ -61,7 +60,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				for (int i = 0; i < n; ++i)
 					cases[i] = TestcaseStatusRenderer.Status.none;
 			}
-			int i = testcase.getI();
+			int i = testcase.getI() - 1;
 			if (testcase.isJudged()) {
 				if (testcase.isSolved()) {
 					cases[i] = TestcaseStatusRenderer.Status.passed;
@@ -76,7 +75,8 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 		}
 
 		public void update(Run run) {
-			if(run.isJudged()) {
+			if (run.isJudged()) {
+				compiling = TestcaseStatusRenderer.Status.passed;
 				running = TestcaseStatusRenderer.Status.passed;
 				if(run.isSolved()) {
 					validating = TestcaseStatusRenderer.Status.passed;
@@ -157,10 +157,10 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				JudgeState js = state.get(i);
 				Renderable testcase = new TestcaseStatusRenderer(js.compiling);
 				r.add(testcase, 1, .95, true);
-				Renderable testcaseValidating = new TestcaseStatusRenderer(js.validating);
-				r.add(testcaseValidating, 1, .95, true);
 				Renderable testcaseRunning = new TestcaseStatusRenderer(js.running);
 				r.add(testcaseRunning, 1, .95, true);
+				Renderable testcaseValidating = new TestcaseStatusRenderer(js.validating);
+				r.add(testcaseValidating, 1, .95, true);
 			}
 
 			{ // Render
@@ -224,7 +224,6 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 		}
 		else if (e.getUpdate() instanceof Testcase) {
 			Testcase testcase = (Testcase) e.getUpdate();
-			DebugTrace.trace("JudgeQueue Testcase %s", testcase);
 			JudgeState state = this.state.get(testcase.getRunId());
 			if (state != null) {
 				// TODO: look at testcase.isJudged/Solved

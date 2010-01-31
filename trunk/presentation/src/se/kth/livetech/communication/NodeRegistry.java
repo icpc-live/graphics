@@ -7,6 +7,7 @@ import java.util.TreeMap;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.contest.model.AttrsUpdater;
+import se.kth.livetech.util.DebugTrace;
 
 public class NodeRegistry {
 	private NodeId localNode;
@@ -52,10 +53,15 @@ public class NodeRegistry {
 	}
 
 	public void addNode(NodeId nid) {
+		DebugTrace.trace("Add node %s %s:%d %s", nid.name, nid.host, nid.port, nid);
 		if (connections.containsKey(nid)) {
+			new Error("Double connection").printStackTrace();
 			NodeConnection connection = connections.get(nid);
 			connection.disconnect();
 			connections.remove(nid);
+		}
+		else {
+			new Error("First connection").printStackTrace();
 		}
 
 		NodeConnection connection = new NodeConnection(this, nid);
@@ -64,6 +70,7 @@ public class NodeRegistry {
 	}
 
 	public void removeNode(NodeId nid) {
+		DebugTrace.trace("Remove node %s %s:%d %s", nid.name, nid.host, nid.port, nid);
 		NodeConnection connection = connections.get(nid);
 		if (connection != null) {
 			// TODO: connection.stop();

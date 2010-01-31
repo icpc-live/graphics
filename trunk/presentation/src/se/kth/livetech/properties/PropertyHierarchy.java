@@ -236,8 +236,6 @@ public class PropertyHierarchy {
 		}
 	}
 
-
-
 	public void print() {
 		synchronized (this.properties) {
 			for (IProperty property : this.properties.values()) {

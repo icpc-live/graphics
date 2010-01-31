@@ -16,6 +16,8 @@ import java.awt.Color;
  * KTH blue: 30, 63, 149
  */
 public class ICPCColors {
+	
+	
 	public static final Color BLUE = new Color(92,138,221);
 	public static final Color YELLOW = new Color(255,223,54);
 	public static final Color RED = new Color(196,58,36);
@@ -25,7 +27,7 @@ public class ICPCColors {
 	//public static final Color SOLVED_PRELIM_COLOR = new Color(0x2D, 0xFF, 0x00); //new Color(0, 150, 50);
 	//public static final Color FAILED_PRELIM_COLOR = new Color(0x9F, 0x00, 0x13); //new Color(150, 0, 50);
 
-	public static final Color SOLVED_COLOR = new Color(0x2D*7/9, 0xFF*7/9, 0x00);//new Color(0x1D*5/4, 0x8B*5/4, 0x00); //new Color(0, 180, 0);
+	public static final Color SOLVED_COLOR = new Color(0x2D*7/9, 0xFF*7/9, 0x00); //new Color(0, 180, 0);
 	public static final Color FAILED_COLOR = new Color(0x9F, 0x00, 0x13); //new Color(190, 0, 0);
 
 	public static final Color GOLD2 = new Color(205,127,50,96);

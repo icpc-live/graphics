@@ -61,19 +61,22 @@ public class ProductionFrame extends JFrame implements PropertyListener{
 		JButton setupLinksButton2 = new JButton("Setup Peter");
 		JButton fullscreenOnButton = new JButton("Enable fullscreen");
 		JButton fullscreenOffButton = new JButton("Leave fullscreen");
+		JButton printProperties = new JButton("Print properties");
+		
 		
 		propertiesButton.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent ae) { propertyFrame.setVisible(true); } } );
 		setupLinksButton1.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent ae) { setupLinks(true);} } );
 		setupLinksButton2.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent ae) { setupLinks(false);} } );
 		fullscreenOnButton.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent ae) { fullScreen(true);} } );
 		fullscreenOffButton.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent ae) { fullScreen(false);} } );
-
+		printProperties.addActionListener(new ActionListener() { public void actionPerformed(ActionEvent ae) { hierarchy.print();} } );
 		
 		a.add(propertiesButton);
 		a.add(setupLinksButton1);
 		a.add(setupLinksButton2);
 		a.add(fullscreenOnButton);
 		a.add(fullscreenOffButton);
+		a.add(printProperties);
 		QuickControlPanel qcp = new QuickControlPanel(base, clients);
 		qcp.setAlignmentX(0);
 		a.add(qcp);
@@ -83,7 +86,7 @@ public class ProductionFrame extends JFrame implements PropertyListener{
 		pack();
 		setVisible(true);
 	}
-	
+
 	public void setupLinks(boolean linea){		
 		setupMaster(hierarchy.getProperty("live.clients.team"));
 		setupMaster(hierarchy.getProperty("live.clients.scoreboard"));

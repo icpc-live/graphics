@@ -1,24 +1,15 @@
 package se.kth.livetech.contest.replay;
 
-import java.io.IOException;
-
-import javax.swing.JPanel;
-
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
-import se.kth.livetech.properties.IProperty;
-import se.kth.livetech.properties.PropertyHierarchy;
-import se.kth.livetech.properties.PropertyListener;
-import se.kth.livetech.properties.ui.CheckBox;
-import se.kth.livetech.properties.ui.Slider;
 import se.kth.livetech.util.Frame;
 
 public class ReplayTest {
 	
-	private static PropertyListener l,l2,l3;
+	/*private static PropertyListener l,l2,l3;
 	private static IProperty propertyBase;
 	private static IProperty propertyPause;
 	private static IProperty propertyPace;
@@ -36,7 +27,7 @@ public class ReplayTest {
 			this.add(new CheckBox(propertyPause, "Pause"));
 			this.add(new Slider(propertyPace, 0, 2000));
 		}
-	}
+	}*/
 	
 	Contest latestContest = null;
 
@@ -64,18 +55,18 @@ public class ReplayTest {
 		});
 		
 		// Read directly from Kattis
-		/*KattisClient kattis = new KattisClient("192.168.12.16");
+		KattisClient kattis = new KattisClient("192.168.12.16");
 		kattis.addAttrsUpdateListener(replayer);
-		kattis.startPushReading();*/
+		kattis.startPushReading();
 		
 		// Read from log file
-		try {
+		/*try {
 			LogSpeaker speaker = new LogSpeaker("kattislog.txt");
 			speaker.addAttrsUpdateListener(replayer);
 			speaker.parse();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		
 		/*Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
@@ -97,7 +88,7 @@ public class ReplayTest {
 			}
 		}, 0, 2000);*/
 
-		PropertyHierarchy ph = new PropertyHierarchy();
+		/*PropertyHierarchy ph = new PropertyHierarchy();
 		propertyBase = ph.getProperty("base");
 		propertyPause = propertyBase.get("pause");
 		propertyPace = propertyBase.get("pace");
@@ -118,6 +109,6 @@ public class ReplayTest {
 				//replayer.setFreezeTime((int)changed.getDoubleValue());
 			}
 		};
-		propertyPace.addPropertyListener(l3);
+		propertyPace.addPropertyListener(l3);*/
 	}
 }

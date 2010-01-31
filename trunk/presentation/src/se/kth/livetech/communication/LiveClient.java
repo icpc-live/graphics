@@ -18,7 +18,7 @@ import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.model.test.FakeContest;
 import se.kth.livetech.contest.model.test.TestContest;
-import se.kth.livetech.contest.replay.ContestReplay;
+import se.kth.livetech.contest.replay.ContestReplayer;
 import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.contest.replay.LogListener;
 import se.kth.livetech.contest.replay.LogSpeaker;
@@ -185,7 +185,7 @@ public class LiveClient {
 			}
 			if (opts.isTestJudgeQueue()) {
 				final JudgeQueueTest jqt = new JudgeQueueTest();
-				final ContestReplay cr = new ContestReplay();
+				final ContestReplayer cr = new ContestReplayer();
 				cr.addContestUpdateListener(jqt);
 				Frame f = new Frame("TestJudgeQueue", jqt, null, false);
 				if (opts.isFullscreen()) {
@@ -215,7 +215,7 @@ public class LiveClient {
 
 			// Add contest update listeners above!
 			if (!contestListeners.isEmpty()) {
-				final ContestReplay cr = new ContestReplay();
+				final ContestReplayer cr = new ContestReplayer();
 				localState.getContest(new ContestId("contest", 0)).addAttrsUpdateListener(cr);
 
 				for(ContestUpdateListener contestListener : contestListeners) {

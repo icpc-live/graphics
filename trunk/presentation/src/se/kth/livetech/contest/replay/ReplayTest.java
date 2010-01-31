@@ -1,15 +1,12 @@
 package se.kth.livetech.contest.replay;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.io.IOException;
 
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
-import se.kth.livetech.contest.model.Team;
-import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.properties.IProperty;
@@ -67,30 +64,38 @@ public class ReplayTest {
 		});
 		
 		// Read directly from Kattis
-		KattisClient kattis = new KattisClient("192.168.12.16");
+		/*KattisClient kattis = new KattisClient("192.168.12.16");
 		kattis.addAttrsUpdateListener(replayer);
-		kattis.startPushReading();
+		kattis.startPushReading();*/
 		
 		// Read from log file
-		/*try {
+		try {
 			LogSpeaker speaker = new LogSpeaker("kattislog.txt");
 			speaker.addAttrsUpdateListener(replayer);
 			speaker.parse();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}*/
+		}
 		
-		Timer timer = new Timer();
+		/*Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			public void run() {
 				if(latestContest != null) {
 					Team t = latestContest.getRankedTeam(1);
 					TeamScore ts = latestContest.getTeamScore(t.getId());
-					System.out.println("Leader = " + t.getName());
-					System.out.println(ts.getSolved());
+					System.out.println("Leader = " + t.getName() + " " + t.getId());
+					System.out.println("Solved: " + ts.getSolved());
+					for(int p : latestContest.getProblems()) {
+						System.out.println(p + " " + ts.getProblemScore(p).isSolved()+ "@"+ts.getProblemScore(p).getSolutionTime() + ", ");
+						int n = latestContest.getRuns(t.getId(), p);
+						for(int i=0;i<n;++i) {
+							Run r = latestContest.getRun(t.getId(), p, i);
+							System.out.println(r);
+						}
+					}
 				}
 			}
-		}, 0, 2000);
+		}, 0, 2000);*/
 
 		PropertyHierarchy ph = new PropertyHierarchy();
 		propertyBase = ph.getProperty("base");

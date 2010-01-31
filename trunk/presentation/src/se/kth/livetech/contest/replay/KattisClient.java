@@ -4,6 +4,9 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
@@ -22,8 +25,6 @@ public class KattisClient extends AttrsUpdaterImpl {
 	@SuppressWarnings("unused")
 	private int kattisPort = 80;
 	
-	/*private static final int REFRESH_DELAY = 2000; // In milliseconds
-	private Timer timer = null;*/
 	private Thread thread = null;
 	
 	public KattisClient() {
@@ -68,25 +69,8 @@ public class KattisClient extends AttrsUpdaterImpl {
 			e.printStackTrace();
 		}
 	}
-		
-	/*public void startPulling() {
-		if(timer != null) stopPulling();
-		timer = new Timer();
-		timer.schedule(new TimerTask() {
-			public void run() {
-				readFromKattis();
-				System.err.println("Reading from kattis, time = " + new SimpleDateFormat("HH:mm:ss.S").format(new Date()));
-			}
-		}, REFRESH_DELAY, REFRESH_DELAY);
-	}
-	
-	public void stopPulling() {
-		timer.cancel();
-		timer = null;
-	}*/
 	
 	public void startPushReading() {
-		//if(thread != null) stopPushReading();
 		thread = new Thread() {
 			@Override
 			public void run() {
@@ -97,34 +81,17 @@ public class KattisClient extends AttrsUpdaterImpl {
 		thread.setDaemon(false);
 		thread.start();
 	}
-	
-	/*public void stopPushReading() {
-		System.err.println("stopPushReading");
-		thread.interrupt();
-		thread = null;
-	}*/
 
 	public static void main(String[] args) {
 		final KattisClient kattisClient = new KattisClient("192.168.12.16");
-		final LogListener log = new LogListener("kattislog.txt");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+		final LogListener log = new LogListener("kattislog_"+dateFormat.format(new Date())+".txt");
 		kattisClient.addAttrsUpdateListener(log);
-		//kattisClient.addAttrsUpdateListener(new LogListener(null));
 		kattisClient.addAttrsUpdateListener(new AttrsUpdateListener() {
-			
-			@Override
 			public void attrsUpdated(AttrsUpdateEvent e) {
 				System.out.println(e.getType());
-				
 			}
 		});
 		kattisClient.startPushReading();
-		/*try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}*/
-		//kattisClient.stopPushReading();
-		//log.finish();
-		//kattisClient.startPulling();
 	}
 }

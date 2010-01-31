@@ -3,7 +3,10 @@ package se.kth.livetech.communication;
 import java.awt.Dimension;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.thrift.transport.TTransportException;
@@ -243,7 +246,8 @@ public class LiveClient {
 					kattisClient = new KattisClient();
 				}
 				
-				final LogListener log = new LogListener("kattislog.txt");
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
+				final LogListener log = new LogListener("kattislog_"+dateFormat.format(new Date())+".txt");
 				kattisClient.addAttrsUpdateListener(log);
 				
 				// TODO: nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);

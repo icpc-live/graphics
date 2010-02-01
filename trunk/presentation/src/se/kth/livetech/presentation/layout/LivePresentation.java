@@ -17,19 +17,19 @@ import se.kth.livetech.util.DebugTrace;
 @SuppressWarnings("serial")
 public class LivePresentation extends JPanel implements ContestUpdateListener {
 	IProperty base;
-	ScoreboardPresentation scoreboard;
-	TeamPresentation teamPresentation;
-	CountdownPresentation countdown;
-	VNCView vnc;
-	
-	ClockView clockPanel;
+	List<ContestUpdateListener> sublisteners = new ArrayList<ContestUpdateListener>();
 	Component currentView;
-	
-	
 	List<PropertyListener> propertyListeners;
 	
 	public LivePresentation(Contest c, IProperty base, RemoteTime time) {
-		this.setLayout(null);
+		this.setLayout(null); //absolute positioning of subcomponents
+		
+		final ScoreboardPresentation scoreboard;
+		final TeamPresentation teamPresentation;
+		final CountdownPresentation countdown;
+		final VNCView vnc;
+		final ClockView clockPanel;
+	
 		propertyListeners = new ArrayList<PropertyListener>();
 		scoreboard = new ScoreboardPresentation(c);
 		teamPresentation = new TeamPresentation(c, base.get("team.team").getIntValue());
@@ -37,8 +37,12 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		countdown = new CountdownPresentation(c, time);
 		vnc = new VNCView(base.get("vnc"));
 		
-		this.add(clockPanel); //always there
+		sublisteners.add(scoreboard);
+		sublisteners.add(teamPresentation);
+		sublisteners.add(countdown);
+		sublisteners.add(clockPanel);
 		
+		this.add(clockPanel); //always there on top
 		currentView = countdown;
 		this.add(currentView);
 		this.validate();
@@ -110,19 +114,16 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
-		teamPresentation.contestUpdated(e);
-		scoreboard.contestUpdated(e);
-		clockPanel.contestUpdated(e);
-		countdown.contestUpdated(e);
+		for (ContestUpdateListener l : sublisteners) {
+			l.contestUpdated(e);
+		}
 	}
 
 	@Override
 	public void invalidate() {
-		teamPresentation.setBounds(LivePresentation.this.getBounds());
-		scoreboard.setBounds(LivePresentation.this.getBounds());
-		clockPanel.setBounds(LivePresentation.this.getBounds());
-		countdown.setBounds(LivePresentation.this.getBounds());
-		vnc.setBounds(LivePresentation.this.getBounds());
+		for (Component c : this.getComponents()) {
+			c.setBounds(LivePresentation.this.getBounds());
+		}
 		this.repaint();
 	}
 

@@ -1,11 +1,14 @@
 package se.kth.livetech.presentation.layout;
 
-import java.awt.ScrollPane;
+import java.awt.Color;
+import java.awt.Rectangle;
 
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
+import se.kth.livetech.util.DebugTrace;
 
 import com.tightvnc.VncViewer;
 import com.tightvnc.VncViewerFactory;
@@ -13,22 +16,24 @@ import com.tightvnc.VncViewerFactory;
 /**
  * @author auno
  */
+@SuppressWarnings("serial")
 public class VNCView extends JPanel {
 	private String host = "";
 	private String password = "";
 	double zoom = 1;
 	private int port = -1;
-	
-	IProperty vncProperties = null;
-	
+		
 	private VncViewer vv = null;
-	private ScrollPane sp = null;
-	PropertyListener hostChange, portChange, zoomChange;
+	private JScrollPane sp = null;
+	PropertyListener hostChange, portChange, zoomChange, panXChange;
 	
-	public VNCView(IProperty vncProperties) {
-		sp = new ScrollPane(ScrollPane.SCROLLBARS_NEVER);
+	
+	public VNCView(IProperty innerPZ) {
+		this.setLayout(null);
+		this.setBackground(Color.GREEN);
+		sp = new JScrollPane();
+		sp.setBackground(Color.PINK);
 		this.add(sp);
-		this.vncProperties = vncProperties;
 		hostChange = new PropertyListener() {	
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -56,10 +61,23 @@ public class VNCView extends JPanel {
 				connect();
 			}
 		};
-		
-		vncProperties.get("host").addPropertyListener(hostChange);
-		vncProperties.get("port").addPropertyListener(portChange);
-		vncProperties.get("pz.zoom").addPropertyListener(zoomChange);
+		panXChange = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				double panx = changed.getDoubleValue();
+//				Rectangle currentBounds = sp.getBounds();
+//				Rectangle outerBounds = VNCView.this.getBounds();
+//				currentBounds.x = (int) (outerBounds.getCenterX() + panx * outerBounds.width);
+//				DebugTrace.trace(currentBounds.x);
+//				sp.setBounds(currentBounds);
+//				sp.validate();
+			}
+		};
+		innerPZ.get("host").addPropertyListener(hostChange);
+		innerPZ.get("port").addPropertyListener(portChange);
+		innerPZ.get("pz.zoom").addPropertyListener(zoomChange);
+		innerPZ.get("pz.panx").addPropertyListener(panXChange);
+		//innerPZ.get("pz.pany").addPropertyListener(panYChange);
 	}
 	
 	private void connect() {

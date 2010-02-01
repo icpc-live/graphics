@@ -17,6 +17,7 @@ import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.presentation.graphics.ColoredTextBox.Style;
 
 public class ContentProvider {
+	public static final boolean PROBLEM_SCORES = false;
 	public static String getRankText(Contest contest, Team team) {
 		// TODO "" + (TeamScore) teamScore.getRank();
 		return "" + contest.getTeamRank(team.getId());
@@ -64,7 +65,9 @@ public class ContentProvider {
 		n += problemScore.getPendings();
 		String text = "" + n;
 		if (problemScore.isSolved()) {
-			text += " / " + (problemScore.getScore() - problemScore.getPenalty());
+			if (PROBLEM_SCORES) {
+				text += " / " + (problemScore.getScore() - problemScore.getPenalty());
+			}
 		}
 		else if (problemScore.isPending()) {
 		}

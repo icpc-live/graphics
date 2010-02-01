@@ -17,6 +17,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.contest.model.impl.AttrsUpdaterImpl;
+import se.kth.livetech.util.DebugTrace;
 
 /** Reads a log file, report it to {@link AttrsUpdateListener}s. */
 public class LogSpeaker extends AttrsUpdaterImpl {
@@ -33,7 +34,7 @@ public class LogSpeaker extends AttrsUpdaterImpl {
 	public void parse() throws IOException {
 		try {
 			SAXParser sp = SAXParserFactory.newInstance().newSAXParser();
-			sp.parse(stream, new DefaultHandler() {
+			DefaultHandler handler = new DefaultHandler() {
 
 				private int level = 0;
 				private String name = null;
@@ -108,11 +109,17 @@ public class LogSpeaker extends AttrsUpdaterImpl {
 					}
 				}
 
-			});
+			};
+			
+			sp.parse(stream, handler);
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
-			e.printStackTrace();
+			final String M = "XML document structures must start and end within the same entity.";
+			if (e.getMessage().equals(M))
+				DebugTrace.trace("Missing contest end tag.");
+			else
+				e.printStackTrace();
 		}
 	}
 }

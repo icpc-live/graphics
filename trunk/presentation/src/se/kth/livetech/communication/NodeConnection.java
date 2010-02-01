@@ -30,7 +30,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 		PENDING,
 		RECONNECTING
 	}
-
+	
 	private NodeRegistry nodeRegistry;
 	private NodeId id;
 	private NodeStatus status;
@@ -69,9 +69,12 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 		public Connection() {
 			super("Node connection to " + id.name);
 		}
+		final int MIN_BACKOFF = 500;
+		final float F_BACKOFF = 2f;
+		final int MAX_BACKOFF = 10000;
 		public void run() {
 			long backoff = 0;
-			DebugTrace.trace("Connecting to %s %s:%d", id.name, id.host, id.port);
+			DebugTrace.trace("Connecting to %s %s:%d", id.name, id.address, id.port);
 			while (!disconnect) {
 				NodeConnection.this.setClient(null);
 				if (backoff > 0) {
@@ -82,12 +85,13 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 						continue;
 					}
 				}
-				backoff = 1000; // TODO exponential backoff
+				backoff = Math.min(Math.max(MIN_BACKOFF, (int) (backoff * F_BACKOFF)), MAX_BACKOFF);
 
 				LiveService.Client client;
 
 				try {
 					client = Connector.connect(nodeRegistry.getLocalNode(), id.address, id.port);
+					backoff = MIN_BACKOFF;
 				} catch (TException e) {
 					DebugTrace.trace("Failed connection to " + id.name + ": " + e);
 					// TODO Reporting
@@ -117,6 +121,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 						remoteTime = client.time();
 					} catch (TException e) {
 						DebugTrace.trace("Failed call to " + id.name + ": " + e);
+						e.printStackTrace();
 						// TODO Reporting
 						if (NodeConnection.this.nodeRegistry.getLocalState().isSpider()) {
 							disconnect = true;

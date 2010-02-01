@@ -202,11 +202,11 @@ public class LiveClient {
 					f.setVisible(true);
 				}
 			}
-			if (opts.isLive()){
+			if (opts.isLive()) {
 				final ContestImpl c = new ContestImpl();
-				IProperty prop_base = localState.getHierarchy().getProperty("live.clients."+localNode.name);
+				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
 				final LivePresentation lpr = new LivePresentation(c, prop_base, nodeRegistry.getRemoteTime());
-				contestListeners.add(lpr);				
+				contestListeners.add(lpr);
 				Frame f = new Frame("Live", lpr, null, false);
 				f.setPreferredSize(new Dimension(1024, 576));
 
@@ -277,6 +277,7 @@ public class LiveClient {
 					e.printStackTrace();
 					System.exit(1);
 				}
+				localState.setContestSourceFlag(true);
 			}
 			if (opts.isFake()) {
 				TestContest tc = new TestContest(100, 12, 15000);

@@ -91,7 +91,7 @@ public class FakeContest extends Thread {
 					if(ps.status[tc] != ProblemStatus.Status.none)
 						continue; //already judged
 					
-					if(Math.random() < Math.pow(teamSkill[ps.team][ps.problem], 0.1/testcases)) {
+					if(Math.random() < Math.pow(teamSkill[ps.team][ps.problem], 0.44/testcases)) {
 						TestContest.testCase(ps.id, tc, testcases, true, true);
 						ps.status[tc] = ProblemStatus.Status.success;
 						if(++ps.counter == testcases){

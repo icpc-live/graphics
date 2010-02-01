@@ -133,6 +133,8 @@ public class LiveClient {
 			}
 			
 			boolean spiderFlag = opts.isSpider() || !opts.isArgs();
+			
+			Frame fullscreenFrame = null;
 
 			// Setup local node id
 			String name;
@@ -167,7 +169,7 @@ public class LiveClient {
 				contestListeners.add(sp);
 				Frame f = new Frame("TestContest", sp, null, false);
 				if (opts.isFullscreen()) {
-					f.fullScreen(0);
+					fullscreenFrame = f;
 				}
 				else {
 					f.pack();
@@ -181,7 +183,7 @@ public class LiveClient {
 				tp.setTeamId(1); // FIXME remove
 				Frame f = new Frame("TeamPresentation", tp, null, false);
 				if (opts.isFullscreen()) {
-					f.fullScreen(0);
+					fullscreenFrame = f;
 				}
 				else {
 					f.pack();
@@ -193,23 +195,23 @@ public class LiveClient {
 				contestListeners.add(jqt);
 				Frame f = new Frame("TestJudgeQueue", jqt, null, false);
 				if (opts.isFullscreen()) {
-					f.fullScreen(0);
+					fullscreenFrame = f;
 				}
 				else {
 					f.pack();
 					f.setVisible(true);
 				}
 			}
-			if (opts.isLive()){
+			if (opts.isLive()) {
 				final ContestImpl c = new ContestImpl();
-				IProperty prop_base = localState.getHierarchy().getProperty("live.clients."+localNode.name);
+				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
 				final LivePresentation lpr = new LivePresentation(c, prop_base, nodeRegistry.getRemoteTime());
-				contestListeners.add(lpr);				
+				contestListeners.add(lpr);
 				Frame f = new Frame("Live", lpr, null, false);
 				f.setPreferredSize(new Dimension(1024, 576));
 
 				if (opts.isFullscreen()) {
-					f.fullScreen(0);
+					fullscreenFrame = f;
 				}
 				else {
 					f.pack();
@@ -275,6 +277,7 @@ public class LiveClient {
 					e.printStackTrace();
 					System.exit(1);
 				}
+				localState.setContestSourceFlag(true);
 			}
 			if (opts.isFake()) {
 				TestContest tc = new TestContest(100, 12, 15000);
@@ -315,6 +318,10 @@ public class LiveClient {
 					HostPort hostPort = new HostPort(arg);
 					nodeRegistry.connect(hostPort.host, hostPort.port);
 				}
+			}
+			
+			if (fullscreenFrame != null) {
+				fullscreenFrame.fullScreen(0);
 			}
 		} catch (TTransportException e) {
 			// TODO Auto-generated catch block

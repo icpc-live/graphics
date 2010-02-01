@@ -17,6 +17,7 @@ import org.apache.thrift.transport.TTransportException;
 
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.NodeId;
+import se.kth.livetech.util.DebugTrace;
 
 
 /** Establish two-way connections between nodes. */
@@ -38,6 +39,7 @@ public class Connector {
 	}
 	
 	public static LiveService.Client connect(NodeId localNode, String host, int port) throws TTransportException, TException {
+		DebugTrace.trace("CONNECT");
 		TTransport transport = new TSocket(host, port);
 		TProtocol protocol = new TBinaryProtocol(transport);
 		LiveService.Client client = new LiveService.Client(protocol);

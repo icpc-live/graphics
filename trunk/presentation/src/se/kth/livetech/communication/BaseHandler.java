@@ -90,8 +90,10 @@ public class BaseHandler implements LiveService.Iface {
 
 	@Override
 	public void attach(NodeId node) throws TException {
+		DebugTrace.trace("Attached node %s %s:%d", node.name, node.address, node.port);
 		this.attachedNode.set(node);
-		this.registry.addNode(node);
+		if (this.registry.getLocalState().isSpider())
+			this.registry.addNode(node);
 	}
 
 	@Override
@@ -113,9 +115,11 @@ public class BaseHandler implements LiveService.Iface {
 		}
 		
 		NodeConnection conn = this.registry.getNodeConnection(this.attachedNode.get());
-		conn.setUpdatingAttrs(aue);
+		if (conn != null)
+			conn.setUpdatingAttrs(aue);
 		this.registry.getLocalState().getContest(contest).attrsUpdated(aue);
-		conn.setUpdatingAttrs(null);
+		if (conn != null)
+			conn.setUpdatingAttrs(null);
 	}
 
 	@Override
@@ -181,7 +185,8 @@ public class BaseHandler implements LiveService.Iface {
 		DebugTrace.trace("propertyUpdate %s -> %s", event.key, event.value);
 		IProperty p = registry.getLocalState().getHierarchy().getProperty(event.key);
 		NodeConnection conn = this.registry.getNodeConnection(this.attachedNode.get());
-		conn.setUpdatingProperty(p);
+		if (conn != null)
+			conn.setUpdatingProperty(p);
 		if (event.isSetValue())
 			p.setValue(event.value);
 		else
@@ -190,7 +195,8 @@ public class BaseHandler implements LiveService.Iface {
 			p.setLink(event.link);
 		else
 			p.clearLink();
-		conn.setUpdatingProperty(null);
+		if (conn != null)
+			conn.setUpdatingProperty(null);
 	}
 
 	@Override

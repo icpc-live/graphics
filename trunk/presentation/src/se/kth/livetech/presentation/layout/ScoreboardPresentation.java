@@ -42,7 +42,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	public static final double RECENT_FADE_TIME = 500; // ms
 	final int ROWS = 25;
 	final double NAME_WEIGHT = 5;
-	final double RESULTS_WEIGHT = 10;
+	final double RESULTS_WEIGHT = 5;
 	
 
 	Contest c;

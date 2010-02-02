@@ -68,7 +68,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 					currentView = teamPresentation;
 				}
 				else if(mode.equals("cam")) {
-					
+					//currentView = cam;
 				}
 				else if(mode.equals("countdown")) {
 					currentView = countdown;
@@ -95,13 +95,23 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
+//		PropertyListener noFps = new PropertyListener() {
+//			@Override
+//			public void propertyChanged(IProperty changed) {
+//				boolean visible = changed.getBooleanValue();
+//				scoreboard.setShowFps(visible);
+//			}
+//		};
+		
 		propertyListeners.add(modeChange);
 		propertyListeners.add(showClockChange);
 		propertyListeners.add(pageChange);
+		//propertyListeners.add(noFps);
 		
 		base.get("mode").addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(showClockChange);
 		base.get("score.page").addPropertyListener(pageChange);
+		
 		this.validate();
 	}
 	

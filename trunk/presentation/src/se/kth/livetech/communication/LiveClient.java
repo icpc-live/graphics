@@ -27,6 +27,7 @@ import se.kth.livetech.presentation.layout.JudgeQueueTest;
 import se.kth.livetech.presentation.layout.LivePresentation;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.presentation.layout.TeamPresentation;
+import se.kth.livetech.presentation.layout.VLCView;
 import se.kth.livetech.presentation.layout.VNCView;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
@@ -76,7 +77,7 @@ public class LiveClient {
 		@Option(longName="file")
 		String getFileName();
 		boolean isFileName();
-		
+
 		@Option(longName="test-triangle")
 		boolean isTestTriangle();
 		
@@ -106,6 +107,9 @@ public class LiveClient {
 		
 		@Option(longName="vnc")
 		boolean isVnc();
+
+		@Option(longName="vlc")
+		boolean isVlc();
 
 		@Unparsed
 		List<String> getArgs();
@@ -305,7 +309,12 @@ public class LiveClient {
 				PropertyHierarchy hierarchy = localState.getHierarchy();
 				/*Frame foo = */new Frame("foo", new VNCView(hierarchy.getProperty("live.clients.localhost.vnc")));
 			}
-			
+
+			if (opts.isVlc()) {
+				PropertyHierarchy hierarchy = localState.getHierarchy();
+				/*Frame foo = */new Frame("bar", new VLCView(hierarchy.getProperty("live.clients.localhost.vlc")));
+			}
+		
 			// Listen!
 			System.out.println("Listening on port " + port);
 			LiveService.Iface handler = new BaseHandler(nodeRegistry);

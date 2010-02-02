@@ -95,22 +95,23 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
-//		PropertyListener noFps = new PropertyListener() {
-//			@Override
-//			public void propertyChanged(IProperty changed) {
-//				boolean visible = changed.getBooleanValue();
-//				scoreboard.setShowFps(visible);
-//			}
-//		};
+		PropertyListener noFps = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				boolean visible = !changed.getBooleanValue();
+				scoreboard.setShowFps(visible);
+			}
+		};
 		
 		propertyListeners.add(modeChange);
 		propertyListeners.add(showClockChange);
 		propertyListeners.add(pageChange);
-		//propertyListeners.add(noFps);
+		propertyListeners.add(noFps);
 		
 		base.get("mode").addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(showClockChange);
 		base.get("score.page").addPropertyListener(pageChange);
+		base.get("nofps").addPropertyListener(noFps);
 		
 		this.validate();
 	}

@@ -49,7 +49,7 @@ public class LiveClient {
 		boolean isSpider();
 		
 		@Option(shortName="h",
-				longName="host")
+				longName="address")
 		String getLocalHost();
 		boolean isLocalHost();
 
@@ -57,6 +57,9 @@ public class LiveClient {
 				longName="port")
 		int getPort();
 		boolean isPort();
+		
+		@Option(longName="ip")
+		boolean isIp();
 
 		@Option(shortName="k",
 				longName="kattis")
@@ -156,6 +159,9 @@ public class LiveClient {
 			NodeId localNode = Connector.getLocalNode(name, port);
 			if (opts.isLocalHost()) {
 				localNode.address = opts.getLocalHost();
+			}
+			if (opts.isIp()) {
+				localNode.address = localNode.ip;
 			}
 			System.out.println("I am " + localNode);
 

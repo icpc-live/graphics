@@ -18,7 +18,7 @@ import java.awt.Color;
 public class ICPCColors {
 	
 	
-	public static final Color SCOREBOARD_BG = new Color(70,70,150, 255);
+	public static final Color SCOREBOARD_BG = new Color(70,70,150);
 	
 	public static final Color BLUE = new Color(92,138,221);
 	public static final Color YELLOW = new Color(255,223,54);

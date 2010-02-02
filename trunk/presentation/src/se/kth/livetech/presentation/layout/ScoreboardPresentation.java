@@ -120,7 +120,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			r.add(timeHeader, 2, 1, true);
 
 			{ // Render 
-				Rect.setRow(rect, 0, ROWS, row);
+				Rect.setRow(rect, 0, ROWS + 1, row);
 				Rect.setDim(row, dim);
 				int x = (int) row.getX();
 				int y = (int) row.getY();
@@ -129,6 +129,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				g.translate(-x, -y);
 			}
 		}
+		Rect.setRow(rect, 1, ROWS + 1, ROWS + 1, rect);
 
 		int n = Math.min(c.getTeams().size(), ROWS - 1);
 		for (int i = 1; i <= n; ++i) {
@@ -144,7 +145,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			}
 
 			{ // Render
-				Rect.setRow(rect, i, ROWS, row);
+				Rect.setRow(rect, i - 1, ROWS, row);
 				Rect.setDim(row, dim);
 				int x = (int) row.getX();
 				int y = (int) row.getY();

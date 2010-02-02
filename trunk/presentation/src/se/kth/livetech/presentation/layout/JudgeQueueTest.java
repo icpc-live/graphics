@@ -7,7 +7,9 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.swing.JPanel;
 
@@ -36,6 +38,7 @@ import se.kth.livetech.util.Frame;
 public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	public static final boolean FULL_SCREEN = false;
 	public static final double ANIMATION_TIME = 1000; // ms
+	public static final double KEEP_TIME = 10000; // ms
 	final int N = 20;
 	final int P = 2;
 	final int T = 55;
@@ -45,6 +48,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	private static class JudgeState {
 		TestcaseStatusRenderer.Status compiling, running, validating;
 		TestcaseStatusRenderer.Status[] cases;
+		long lastUpdateTime;
 		public JudgeState() {
 			compiling = TestcaseStatusRenderer.Status.active;
 			running = TestcaseStatusRenderer.Status.none;
@@ -72,6 +76,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			else {
 				cases[i] = TestcaseStatusRenderer.Status.active;
 			}
+			lastUpdateTime = System.currentTimeMillis();
 		}
 
 		public void update(Run run) {
@@ -85,6 +90,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 					validating = TestcaseStatusRenderer.Status.failed;
 				}
 			}
+			lastUpdateTime = System.currentTimeMillis();
 		}
 	}
 
@@ -100,9 +106,10 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 		super.paintComponent(gr);
 		Graphics2D g = (Graphics2D) gr;
 
+		long now = System.currentTimeMillis();
+
 		boolean update = false;
 		{ // Advance
-			long now = System.currentTimeMillis();
 			if (firstPaint) {
 				this.lastTime = now;
 				firstPaint = false;
@@ -118,6 +125,15 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 		Dimension dim = new Dimension();
 		int rowNumber = 0;
 		Map<Integer, JudgeState> state;
+		synchronized (this.state) {
+			state = new TreeMap<Integer, JudgeState>(this.state);
+		}
+		for (int i : state.keySet()) {
+			if(now - state.get(i).lastUpdateTime > KEEP_TIME)
+				synchronized (this.state) {
+					this.state.remove(i);
+				}
+		}
 		synchronized (this.state) {
 			state = new TreeMap<Integer, JudgeState>(this.state);
 		}
@@ -214,7 +230,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			if (!state.containsKey(run.getId())) {
 				state.put(run.getId(), new JudgeState());
 				// TODO: smooth insertion during previous animation...
-				//stack.setPosition(run.getId(), state.size() + 1);
+				stack.setPosition(run.getId(), state.size() + 1);
 			}
 			JudgeState state = this.state.get(run.getId());
 			if (state != null) {

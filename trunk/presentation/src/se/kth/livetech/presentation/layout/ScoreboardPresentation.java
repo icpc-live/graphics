@@ -254,7 +254,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			rowPos -= startRow;
 			//double maxStartRow = c.getTeams().size() - ROWS / 2.0;
 			//rowPos -= Math.IEEEremainder(startRow - maxStartRow / 2, maxStartRow) + maxStartRow / 2;
-			Rect.setRow(rect, rowPos, ROWS, row);
+			Rect.setRow(rect, rowPos, ROWS+1, row); //TODO HERE
 			Rect.setDim(row, dim);
 			int x = (int) row.getX();
 			int y = (int) row.getY();

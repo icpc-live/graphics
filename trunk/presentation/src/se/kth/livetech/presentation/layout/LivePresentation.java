@@ -95,6 +95,12 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
+		PropertyListener logoToggle = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+			}
+		};
+		
 //		PropertyListener noFps = new PropertyListener() {
 //			@Override
 //			public void propertyChanged(IProperty changed) {

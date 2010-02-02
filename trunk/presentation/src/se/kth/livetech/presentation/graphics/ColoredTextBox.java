@@ -127,7 +127,7 @@ public class ColoredTextBox implements Renderable {
 		double magicScale = d.height / 24d; // TODO constant
 		Font nfont = font.deriveFont(AffineTransform.getScaleInstance(magicScale, magicScale));
 		double textMargin = .1;
-		Rectangle2D rect = new Rectangle2D.Double(d.width * textMargin / 2, 0, d.width * (1 - textMargin), d.height);
+		Rectangle2D rect = new Rectangle2D.Double(d.width * textMargin / 2, -d.height*0.1, d.width * (1 - textMargin), d.height); //TODO: constant for raising text
 		Utility.drawString3D(g, text, rect, nfont, style.getAlignment());
 	}
 	public int hashCode() {

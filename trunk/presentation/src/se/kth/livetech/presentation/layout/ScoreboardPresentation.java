@@ -66,7 +66,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	}
 
 	public void setPage(int page) {
-		startRow = page-1*ROWS;
+		startRow = Math.max(page - 1, 0)*ROWS;
 	}
 	
 	@Override

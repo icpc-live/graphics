@@ -22,7 +22,7 @@ import se.kth.livetech.util.Frame;
 public class CountdownPresentation extends JPanel implements ContestUpdateListener{
 	long timeshift;
 	Contest c;
-	final static int DISPLAY_SECONDS = 99;
+	final static int DISPLAY_SECONDS = 30;
 	final static int ANIMATE_FROM = 200;
 	Row[] rows = new Row[DISPLAY_SECONDS+1];
 	
@@ -30,7 +30,7 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 		this.c = c;
 		timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
 		this.setBackground(ICPCColors.BG_COLOR_2);
-		rows[0] = new Row(ContentProvider.getCountdownRenderable("?", ""));
+		rows[0] = new Row(ContentProvider.getCountdownRenderable("", ""));
 		for(int i = 1; i <= DISPLAY_SECONDS; ++i) {
 			int secs = i;
 			String row1Text = ChineseNumerals.moonspeak(secs);
@@ -141,7 +141,7 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 	}
 	
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(50, 10, 99000);
+		TestContest tc = new TestContest(50, 10, 35000);
 		Contest c1 = tc.getContest();
 		Frame frame = new Frame("Countdown Presentation", new CountdownPresentation(c1, new RemoteTime.LocalTime()));
 		frame.setPreferredSize(new Dimension(1024, 768));

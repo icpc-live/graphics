@@ -1,13 +1,12 @@
 package se.kth.livetech.presentation.layout;
 
-import java.awt.Color;
-import java.awt.Rectangle;
 import java.awt.ScrollPane;
 
 import javax.swing.JPanel;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
+import se.kth.livetech.util.DebugTrace;
 
 import com.tightvnc.VncViewer;
 import com.tightvnc.VncViewerFactory;
@@ -60,7 +59,10 @@ public class VNCView extends JPanel {
 		panXChange = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-//				double panx = changed.getDoubleValue();
+				DebugTrace.trace("previous scroll: " + sp.getScrollPosition().x);
+				double panx = changed.getDoubleValue();
+				DebugTrace.trace("new scroll: " + panx);
+				sp.setScrollPosition((int) panx, sp.getScrollPosition().y);
 //				Rectangle currentBounds = sp.getBounds();
 //				Rectangle outerBounds = VNCView.this.getBounds();
 //				currentBounds.x = (int) (outerBounds.getCenterX() + panx * outerBounds.width);

@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -30,6 +32,8 @@ import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.presentation.graphics.Utility;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
 
@@ -43,13 +47,49 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	public static final double RECENT_FADE_TIME = 500; // ms
 	final double NAME_WEIGHT = 5;
 	int id;
+	Team team;
+	
+	boolean displayResults = true;
+	String extraInfo;
+	
+	public String getExtraInfo() {
+		return extraInfo;
+	}
 
+	public void setExtraInfo(String extraInfo) {
+		this.extraInfo = extraInfo;
+	}
+
+	List<PropertyListener> listeners = new ArrayList<PropertyListener>();
+	
 	Contest c;
-	public TeamPresentation(Contest c, int teamId) {
+	public TeamPresentation(Contest c, IProperty props) {
 		this.c = c;
 		//this.setBackground(Color.BLUE.darker().darker());
 		this.setBackground(ICPCColors.SCOREBOARD_BG);
 		this.setPreferredSize(new Dimension(1024, 576));
+		PropertyListener showResultsChanger = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				displayResults = changed.getBooleanValue();
+				repaint();
+			}
+		};
+		
+		PropertyListener teamChange = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				DebugTrace.trace("Changed %s -> %s", changed, changed.getValue());
+				int teamId = changed.getIntValue();
+				Contest c = TeamPresentation.this.c;
+				setTeam(c.getTeam(teamId));
+			}
+		};
+		
+		listeners.add(showResultsChanger);
+		listeners.add(teamChange);
+		props.get("team.team").addPropertyListener(teamChange);
+		props.get("team.show_results").addPropertyListener(showResultsChanger);
 	}
 	
 	public synchronized void setContest(Contest nc) {
@@ -57,8 +97,10 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		repaint();
 	}
 	
-	public synchronized void setTeamId(int nid){
-		id = nid;
+	public synchronized void setTeam(Team team){
+		DebugTrace.trace("Setting team to " + team.getName());
+		this.team = team;
+		this.id = team.getId();
 		repaint();
 	}
 	
@@ -138,7 +180,6 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	}
 
 	public void paintRow(Graphics2D g, Contest c, PartitionedRowRenderer.Layer layer, boolean up) {
-		Team team = c.getTeam(id);
 		if (team == null) {
 			DebugTrace.trace("TeamPresentation null team %d!", id);
 			return;
@@ -151,8 +192,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
 		double splitRatio = 0.4;
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
-
-		{ // Rank
+		if (displayResults)	{ // Rank
 			String rank = ContentProvider.getRankText(c, team);
 			Renderable rankHeader = new ColoredTextBox("Rank", ContentProvider.getHeaderStyle(Alignment.right));
 			Renderable rankDisplay = new ColoredTextBox(rank, ContentProvider.getTeamRankStyle());
@@ -172,14 +212,18 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 
 		
 		 // Team name and results
-		Renderable teamName = ContentProvider.getTeamNameRenderable(team);
-		Renderable teamResults = ContentProvider.getTeamResultsRenderer(c, team, recent, true);
+		Renderable mainInfo = ContentProvider.getTeamNameRenderable(team);
+		Renderable extra;
+		if (displayResults) {
+			extra = ContentProvider.getTeamResultsRenderer(c, team, recent, true);
+		}
+		else {
+			extra = new ColoredTextBox(this.getExtraInfo(), ContentProvider.getInterviewExtraInfoStyle());
+		}
+		Renderable nameAndExtra = new HorizontalSplitter(mainInfo, extra, 0.65);
+		r.addWithoutCache(nameAndExtra, NAME_WEIGHT, 0.9, false);
 		
-		Renderable nameAndResults = new HorizontalSplitter(teamName, teamResults, 0.65);
-		r.addWithoutCache(nameAndResults, NAME_WEIGHT, 0.9, false);
-		
-		
-		{ //Solved and Time
+		if (this.displayResults) { //Solved and Time
 			TeamScore ts = c.getTeamScore(id);
 			TeamScore prev = recent.get(id);
 			double glowAlpha = ContentProvider.getGlowAlpha(team, recent);
@@ -198,6 +242,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 			Renderable timeDisplay = ContentProvider.getTeamScoreRenderable(c, team);
 			
 			Renderable hsplit2 = new HorizontalSplitter(timeHeader, timeDisplay, splitRatio);
+			
 			r.add(hsplit2, 1, 1, true);
 		}
 
@@ -232,7 +277,8 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		tc.solve(id2);
 		tc.submit(1, 3, 23);
 		Contest c1 = tc.getContest();
-		Frame frame = new Frame("Team Presentation (static)", new TeamPresentation(c1, 0));
-		frame.setIconImage(RenderCache.getRenderCache().getImageFor(new IconRenderer(), new Dimension(128, 128)));
+//		BROKEN:
+//		Frame frame = new Frame("Team Presentation (static)", new TeamPresentation(c1, 0));
+//		frame.setIconImage(RenderCache.getRenderCache().getImageFor(new IconRenderer(), new Dimension(128, 128)));
 	}
 }

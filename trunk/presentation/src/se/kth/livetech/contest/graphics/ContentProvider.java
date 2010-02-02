@@ -217,4 +217,8 @@ public class ContentProvider {
 		ColoredTextBox box2 = new ColoredTextBox(row2Text, ContentProvider.getCountdownStyle());
 		return new HorizontalSplitter(box1,box2,0.75);
 	}
+
+	public static Style getInterviewExtraInfoStyle() {
+		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.left);
+	}
 }

@@ -24,19 +24,13 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	public LivePresentation(Contest c, IProperty base, RemoteTime time) {
 		this.setLayout(null); //absolute positioning of subcomponents
 		
-		final ScoreboardPresentation scoreboard;
-		final TeamPresentation teamPresentation;
-		final CountdownPresentation countdown;
-		final VNCView vnc;
-		final ClockView clockPanel;
+		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c);
+		final TeamPresentation teamPresentation = new TeamPresentation(c, base);
+		final CountdownPresentation countdown = new CountdownPresentation(c, time);
+		final VNCView vnc = new VNCView(base.get("vnc"));
+		final ClockView clockPanel = new ClockView(base.get("clockrect"), c, time);
+		final InterviewPresentation interview = new InterviewPresentation(base);
 	
-		propertyListeners = new ArrayList<PropertyListener>();
-		scoreboard = new ScoreboardPresentation(c);
-		teamPresentation = new TeamPresentation(c, base.get("team.team").getIntValue());
-		clockPanel = new ClockView(base.get("clockrect"), c, time);
-		countdown = new CountdownPresentation(c, time);
-		vnc = new VNCView(base.get("vnc"));
-		
 		sublisteners.add(scoreboard);
 		sublisteners.add(teamPresentation);
 		sublisteners.add(countdown);
@@ -48,17 +42,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		this.validate();
 		
 		this.base = base;
-		//TODO: margin modes
 		
-		PropertyListener teamChange = new PropertyListener() {
-			@Override
-			public void propertyChanged(IProperty changed) {
-				DebugTrace.trace("Changed %s -> %s", changed, changed.getValue());
-				int teamId = changed.getIntValue();
-				teamPresentation.setTeamId(teamId);
-			}
-		};
-		
+		propertyListeners = new ArrayList<PropertyListener>();
 		PropertyListener modeChange = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -77,7 +62,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 					currentView = null;
 				}
 				else if(mode.equals("interview")) {
-					
+					currentView = interview;
 				}
 				else if(mode.equals("team")) {
 					currentView = teamPresentation;
@@ -110,12 +95,10 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
-		propertyListeners.add(teamChange);
 		propertyListeners.add(modeChange);
 		propertyListeners.add(showClockChange);
 		propertyListeners.add(pageChange);
 		
-		base.get("team.team").addPropertyListener(teamChange);
 		base.get("mode").addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(showClockChange);
 		base.get("score.page").addPropertyListener(pageChange);

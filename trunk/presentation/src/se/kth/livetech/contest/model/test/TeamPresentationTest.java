@@ -64,23 +64,24 @@ public class TeamPresentationTest extends Thread {
 		}
 	}
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(teams, problems, 0);
-		TeamPresentationTest fc = new TeamPresentationTest(tc);
-		final TeamPresentation bt = new TeamPresentation(tc.getContest(), 0);
-		fc.addContestUpdateListener(new ContestUpdateListener() {
-			@Override
-			public void contestUpdated(ContestUpdateEvent e) {
-				bt.setContest(e.getNewContest());
-			}
-		});
-		Frame frame = new Frame("Team Presentation", bt, null, false);
-		fc.start();
-		if (FULL_SCREEN) {
-			frame.fullScreen(0);
-		}
-		else {
-			frame.pack();
-			frame.setVisible(true);
-		}
+//		BROKEN:
+//		TestContest tc = new TestContest(teams, problems, 0);
+//		TeamPresentationTest fc = new TeamPresentationTest(tc);
+//		final TeamPresentation bt = new TeamPresentation(tc.getContest(), 0);
+//		fc.addContestUpdateListener(new ContestUpdateListener() {
+//			@Override
+//			public void contestUpdated(ContestUpdateEvent e) {
+//				bt.setContest(e.getNewContest());
+//			}
+//		});
+//		Frame frame = new Frame("Team Presentation", bt, null, false);
+//		fc.start();
+//		if (FULL_SCREEN) {
+//			frame.fullScreen(0);
+//		}
+//		else {
+//			frame.pack();
+//			frame.setVisible(true);
+//		}
 	}
 }

@@ -177,18 +177,19 @@ public class LiveClient {
 				}
 			}
 			if (opts.isTestTeam()) {
-				final ContestImpl c = new ContestImpl();
-				final TeamPresentation tp = new TeamPresentation(c, 1);
-				contestListeners.add(tp);
-				tp.setTeamId(1); // FIXME remove
-				Frame f = new Frame("TeamPresentation", tp, null, false);
-				if (opts.isFullscreen()) {
-					fullscreenFrame = f;
-				}
-				else {
-					f.pack();
-					f.setVisible(true);
-				}
+//				BROKEN:
+//				final ContestImpl c = new ContestImpl();
+//				final TeamPresentation tp = new TeamPresentation(c, base);
+//				contestListeners.add(tp);
+//				tp.setTeamId(1); // FIXME remove
+//				Frame f = new Frame("TeamPresentation", tp, null, false);
+//				if (opts.isFullscreen()) {
+//					fullscreenFrame = f;
+//				}
+//				else {
+//					f.pack();
+//					f.setVisible(true);
+//				}
 			}
 			if (opts.isTestJudgeQueue()) {
 				final JudgeQueueTest jqt = new JudgeQueueTest();

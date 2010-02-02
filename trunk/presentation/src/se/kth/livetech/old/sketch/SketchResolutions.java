@@ -15,8 +15,7 @@ import se.kth.livetech.util.Frame;
 @SuppressWarnings("serial")
 public class SketchResolutions extends JPanel {
 	public SketchResolutions() {
-		setBackground(ICPCColors.SCOREBOARD_BG);
-		//setBackground(Color.BLUE.darker());
+		setBackground(Color.BLUE.darker());
 		setPreferredSize(new Dimension(800, 740));
 	}
 	private void greener(Graphics2D g) {
@@ -28,8 +27,7 @@ public class SketchResolutions extends JPanel {
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
 		Graphics2D g = (Graphics2D) gr;
-		g.setColor(ICPCColors.SCOREBOARD_BG);
-		//g.setColor(Color.BLUE.brighter());
+		g.setColor(Color.BLUE.brighter());
 
 		AffineTransform tr = g.getTransform();
 		g.translate(10, 10);

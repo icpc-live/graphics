@@ -100,7 +100,6 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			this.lastTime = now;
 			update |= this.stack.advance(dt / ANIMATION_TIME);
 			update |= this.recent.advance(dt / RECENT_TIME);
-			startRow += dt / ROW_TIME;
 		}
 
 		{ // Header
@@ -249,6 +248,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			Interpolated.Double interpolator = new Interpolated.Double(i);
 			stack.interpolate(id, interpolator);
 			double rowPos = interpolator.getValue();
+			rowPos -= startRow;
 			//double maxStartRow = c.getTeams().size() - ROWS / 2.0;
 			//rowPos -= Math.IEEEremainder(startRow - maxStartRow / 2, maxStartRow) + maxStartRow / 2;
 			Rect.setRow(rect, rowPos, ROWS, row);

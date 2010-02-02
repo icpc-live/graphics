@@ -47,7 +47,8 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	Contest c;
 	public TeamPresentation(Contest c, int teamId) {
 		this.c = c;
-		this.setBackground(Color.BLUE.darker().darker());
+		//this.setBackground(Color.BLUE.darker().darker());
+		this.setBackground(ICPCColors.SCOREBOARD_BG);
 		this.setPreferredSize(new Dimension(1024, 576));
 	}
 	

@@ -47,7 +47,6 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 
 	Contest c;
 	
-	final static Color background = ICPCColors.SCOREBOARD_BG; 
 	
 	public ScoreboardPresentation(Contest c) {
 		this.c = c;

@@ -22,33 +22,33 @@ public class ContentProvider {
 		// TODO "" + (TeamScore) teamScore.getRank();
 		return "" + contest.getTeamRank(team.getId());
 	}
-	
+
 	public static Renderable getTeamFlagRenderable(Team team) {
 		String country = team.getNationality();
 		ImageResource image = ICPCImages.getFlag(country);
 		Renderable flag = new ImageRenderer("flag " + country, image);
 		return flag;
 	}
-	
+
 	public static Renderable getTeamLogoRenderable(Team team) {
 		int id = team.getId();
 		ImageResource image = ICPCImages.getTeamLogo(id);
 		Renderable logo = new ImageRenderer("logo " + id, image);
 		return logo;
 	}
-	
+
 	public static Renderable getIcpcLogoRenderable() {
 		ImageResource image = ICPCImages.getImage(ICPCImages.LOGO_ICON);
 		Renderable logo = new ImageRenderer("icpclogo", image);
 		return logo;
 	}
-	
+
 	public static Renderable getKthLogoRenderable() {
 		ImageResource image = ICPCImages.getImage(ICPCImages.KTH_ICON);
 		Renderable logo = new ImageRenderer("kthlogo", image);
 		return logo;
 	}
-	
+
 	public static ColoredTextBox.Style getTeamRankStyle() {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_RANK_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.right);
 	}
@@ -64,7 +64,7 @@ public class ContentProvider {
 	public static Style getTeamScoreStyle() {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.right);
 	}
-	
+
 	public static ColoredTextBox.Style getHeaderStyle(Alignment alignment) {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.HEADER_FONT, ColoredTextBox.Style.Shape.roundRect, alignment);
 	}
@@ -136,14 +136,14 @@ public class ContentProvider {
 		Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
 		return teamName;
 	}
-	
+
 	public static final double RECENT_TIME = 5000; // ms
 	public static final double RECENT_MID_TIME = 500; // ms
 	public static final double RECENT_MID_ALPHA = .7;
 	public static final double RECENT_FADE_TIME = 500; // ms
 	public static final double STATS_GLOW_MARGIN = 1.5;
 	public static final double PROBLEM_GLOW_MARGIN = 2.5;
-	
+
 	public static Renderable getTeamResultsHeader(Contest c){
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
 		char problemLetter = 'A';
@@ -154,15 +154,15 @@ public class ContentProvider {
 		}
 		return r;
 	}
-	
+
 	public static PartitionedRowRenderer getTeamResultsRenderer(Contest c, Team team, RecentChange<Integer, TeamScore> recent, boolean showProblemLetter) {
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
 		int id = team.getId();
 		TeamScore ts = c.getTeamScore(id);
 		TeamScore prev = recent.get(id);
-		
+
 		double glowAlpha = ContentProvider.getGlowAlpha(team, recent);
-		
+
 		for (int j : c.getProblems()) {
 			ProblemScore ps = ts.getProblemScore(j);
 			ProblemScore pps = prev.getProblemScore(j);
@@ -180,7 +180,7 @@ public class ContentProvider {
 
 	public static double getGlowAlpha(Team team, RecentChange<Integer, TeamScore> recent) {
 		double glowProgress = recent.recentProgress(team.getId()), glowAlpha;
-		
+
 		if (glowProgress * RECENT_TIME < RECENT_MID_TIME) {
 			glowAlpha = 1 - (1 - RECENT_MID_ALPHA) * glowProgress * RECENT_TIME / RECENT_MID_TIME;
 		}
@@ -207,14 +207,24 @@ public class ContentProvider {
 		Renderable timeDisplay = new ColoredTextBox("" + ts.getScore(), ContentProvider.getTeamScoreStyle());
 		return timeDisplay;
 	}
-	
+
 	public static ColoredTextBox.Style getCountdownStyle() {
 		return new ColoredTextBox.BaseStyle(null, null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
 	}
-	
+
+	public static ColoredTextBox.Style getWinnerStyle() {
+		return new ColoredTextBox.BaseStyle(null, null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
+	}
+
 	public static Renderable getCountdownRenderable(String row1Text, String row2Text) {
 		ColoredTextBox box1 = new ColoredTextBox(row1Text, ContentProvider.getCountdownStyle());
 		ColoredTextBox box2 = new ColoredTextBox(row2Text, ContentProvider.getCountdownStyle());
+		return new HorizontalSplitter(box1,box2,0.75);
+	}
+
+	public static Renderable getWinnerRenderable(String row1Text, String row2Text) {
+		ColoredTextBox box1 = new ColoredTextBox(row1Text, ContentProvider.getWinnerStyle());
+		ColoredTextBox box2 = new ColoredTextBox(row2Text, ContentProvider.getWinnerStyle());
 		return new HorizontalSplitter(box1,box2,0.75);
 	}
 

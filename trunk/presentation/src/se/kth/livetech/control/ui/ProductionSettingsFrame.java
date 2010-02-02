@@ -7,6 +7,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
 import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.ui.CheckBox;
 import se.kth.livetech.properties.ui.Combo;
 import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
@@ -30,6 +31,7 @@ public class ProductionSettingsFrame extends JFrame{
 		addField("cam.port", "Cam Port", "58000");
 		addCombo("control", "Control commands", new String[] {"exitfullscreen","fullscreen0","fullscreen1"});
 		addCombo("format", "Video format", new String[] {"SD","HD","projector"});
+		addCheckbox("nofps", "no fps");
 		
 		this.add(b);
 		this.pack();
@@ -53,4 +55,13 @@ public class ProductionSettingsFrame extends JFrame{
 		c.add(new Combo(base.get(prop), options));
 		b.add(c);
 	}
+	private void addCheckbox(String prop, String name){
+		Box c = new Box(BoxLayout.X_AXIS);
+		c.add(new Label(name + ":"));
+		c.add(new CheckBox(base.get(prop), name));
+		b.add(c);
+	}
+
+	
+	
 }

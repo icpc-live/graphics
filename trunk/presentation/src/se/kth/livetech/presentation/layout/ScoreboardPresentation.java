@@ -69,6 +69,8 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		startRow = Math.max(page - 1, 0)*ROWS;
 	}
 	
+	
+	
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
 		setContest(e.getNewContest());
@@ -131,7 +133,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		}
 		Rect.setRow(rect, 1, ROWS + 1, ROWS + 1, rect);
 
-		int n = Math.min(c.getTeams().size(), ROWS - 1);
+		int n = Math.min(c.getTeams().size(), ROWS);
 		for (int i = 1; i <= n; ++i) {
 			PartitionedRowRenderer r = new PartitionedRowRenderer();
 

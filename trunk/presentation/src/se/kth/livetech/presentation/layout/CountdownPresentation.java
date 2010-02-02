@@ -29,7 +29,8 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 	public CountdownPresentation(Contest c, RemoteTime time) {
 		this.c = c;
 		timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
-		this.setBackground(ICPCColors.BG_COLOR_2);
+		//this.setBackground(ICPCColors.BG_COLOR_2);
+		this.setBackground(ICPCColors.SCOREBOARD_BG);
 		rows[0] = new Row(ContentProvider.getCountdownRenderable("?", ""));
 		for(int i = 1; i <= DISPLAY_SECONDS; ++i) {
 			int secs = i;

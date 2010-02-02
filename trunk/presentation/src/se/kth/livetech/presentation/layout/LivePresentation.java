@@ -28,6 +28,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		final TeamPresentation teamPresentation;
 		final CountdownPresentation countdown;
 		final VNCView vnc;
+		//final VLCView cam;
 		final ClockView clockPanel;
 	
 		propertyListeners = new ArrayList<PropertyListener>();
@@ -83,7 +84,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 					currentView = teamPresentation;
 				}
 				else if(mode.equals("cam")) {
-					
+					//currentView = cam;
 				}
 				else if(mode.equals("countdown")) {
 					currentView = countdown;
@@ -110,15 +111,25 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
+//		PropertyListener noFps = new PropertyListener() {
+//			@Override
+//			public void propertyChanged(IProperty changed) {
+//				boolean visible = changed.getBooleanValue();
+//				scoreboard.setShowFps(visible);
+//			}
+//		};
+		
 		propertyListeners.add(teamChange);
 		propertyListeners.add(modeChange);
 		propertyListeners.add(showClockChange);
 		propertyListeners.add(pageChange);
+		//propertyListeners.add(noFps);
 		
 		base.get("team.team").addPropertyListener(teamChange);
 		base.get("mode").addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(showClockChange);
 		base.get("score.page").addPropertyListener(pageChange);
+		
 		this.validate();
 	}
 	

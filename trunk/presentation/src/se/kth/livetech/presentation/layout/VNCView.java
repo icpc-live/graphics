@@ -2,13 +2,12 @@ package se.kth.livetech.presentation.layout;
 
 import java.awt.Color;
 import java.awt.Rectangle;
+import java.awt.ScrollPane;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
-import se.kth.livetech.util.DebugTrace;
 
 import com.tightvnc.VncViewer;
 import com.tightvnc.VncViewerFactory;
@@ -24,15 +23,12 @@ public class VNCView extends JPanel {
 	private int port = -1;
 		
 	private VncViewer vv = null;
-	private JScrollPane sp = null;
+	private ScrollPane sp = null;
 	PropertyListener hostChange, portChange, zoomChange, panXChange;
 	
 	
 	public VNCView(IProperty innerPZ) {
-		this.setLayout(null);
-		this.setBackground(Color.GREEN);
-		sp = new JScrollPane();
-		sp.setBackground(Color.PINK);
+		sp = new ScrollPane(ScrollPane.SCROLLBARS_NEVER);
 		this.add(sp);
 		hostChange = new PropertyListener() {	
 			@Override
@@ -51,20 +47,20 @@ public class VNCView extends JPanel {
 		zoomChange = new PropertyListener() {	
 			@Override
 			public void propertyChanged(IProperty changed) {
-				zoom = changed.getDoubleValue();
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				zoom = changed.getDoubleValue();
 				connect();
 			}
 		};
 		panXChange = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-				double panx = changed.getDoubleValue();
+//				double panx = changed.getDoubleValue();
 //				Rectangle currentBounds = sp.getBounds();
 //				Rectangle outerBounds = VNCView.this.getBounds();
 //				currentBounds.x = (int) (outerBounds.getCenterX() + panx * outerBounds.width);
@@ -109,6 +105,11 @@ public class VNCView extends JPanel {
 	
 	@Override
 	public void invalidate() {
+//		Rectangle currentBounds = sp.getBounds();
+		//save position
+//		currentBounds.width = this.getBounds().width;
+//		currentBounds.height = this.getBounds().height;
+//		sp.setBounds(currentBounds);
 		sp.setBounds(this.getBounds());
 		sp.validate();
 	}

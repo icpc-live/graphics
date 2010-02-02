@@ -141,7 +141,7 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 	}
 	
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(50, 10, 15000);
+		TestContest tc = new TestContest(50, 10, 99000);
 		Contest c1 = tc.getContest();
 		Frame frame = new Frame("Countdown Presentation", new CountdownPresentation(c1, new RemoteTime.LocalTime()));
 		frame.setPreferredSize(new Dimension(1024, 768));

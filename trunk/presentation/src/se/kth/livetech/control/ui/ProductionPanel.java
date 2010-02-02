@@ -111,6 +111,8 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new ToggleButton(base.get("mode"), "team", "Team"));
 		c.add(new CheckBox(base.get("team.show_members"), "Members"));
 		c.add(new CheckBox(base.get("team.show_extra"), "Extra"));
+		c.add(new CheckBox(base.get("team.show_results"), "Results"));
+		c.add(new ToggleButton(base.get("mode"), "countdown", "Countdown"));
 		b.add(c);
 		
 		b.add(new JSeparator(SwingConstants.HORIZONTAL));
@@ -121,7 +123,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new Text(base.get("team.team")));
 		c.add(new ToggleButton(base.get("mode"), "vnc", "Vnc"));
 		c.add(new ToggleButton(base.get("mode"), "cam", "Cam"));
-		c.add(new ToggleButton(base.get("mode"), "countdown", "Countdown"));
+		
 		c.add(new CheckBox(base.get("clear"), "Clear"));
 		b.add(c);
 

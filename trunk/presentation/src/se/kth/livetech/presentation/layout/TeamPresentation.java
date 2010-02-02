@@ -115,6 +115,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	boolean firstPaint = true;
 	long lastTime;
 	double startRow = 0;
+	private boolean displayMembers;
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
 		Contest c = this.c;
@@ -246,6 +247,14 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 			r.add(hsplit2, 1, 1, true);
 		}
 
+		if (this.displayMembers) {
+			PartitionedRowRenderer pr = new PartitionedRowRenderer();
+			
+			for (int i = 0; i < 3; ++i) {
+				
+			}
+		}
+		
 		{ // Render
 			r.render(g, dim, layer);
 		}

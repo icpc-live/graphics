@@ -78,7 +78,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				}
 				else if(mode.equals("interview")) {
 					
-				}	
+				}
 				else if(mode.equals("team")) {
 					currentView = teamPresentation;
 				}
@@ -102,13 +102,23 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
+		PropertyListener pageChange = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				int page = changed.getIntValue();
+				scoreboard.setPage(page);
+			}
+		};
+		
 		propertyListeners.add(teamChange);
 		propertyListeners.add(modeChange);
 		propertyListeners.add(showClockChange);
+		propertyListeners.add(pageChange);
 		
 		base.get("team.team").addPropertyListener(teamChange);
 		base.get("mode").addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(showClockChange);
+		base.get("set_page").addPropertyListener(pageChange);
 		this.validate();
 	}
 	

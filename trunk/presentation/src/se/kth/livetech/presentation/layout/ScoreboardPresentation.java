@@ -44,14 +44,16 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	final double NAME_WEIGHT = 5;
 	final double RESULTS_WEIGHT = 10;
 	
+
 	Contest c;
+	
 	
 	public ScoreboardPresentation(Contest c) {
 		this.c = c;
-		this.setBackground(Color.BLUE.darker().darker());
+		this.setBackground(ICPCColors.SCOREBOARD_BG);				//(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
 	}
-	
+
 	public synchronized void setContest(Contest nc) {
 		c = nc;
 		for (int i = 1; i <= c.getTeams().size(); ++i) {
@@ -61,6 +63,10 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			recent.set(id, c.getTeamScore(id));
 		}
 		repaint();
+	}
+
+	public void setPage(int page) {
+		startRow = page-1*ROWS;
 	}
 	
 	@Override
@@ -105,10 +111,10 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			r.add(null, 1, 0.9, true);
 			Renderable teamName = new ColoredTextBox("Team", ContentProvider.getHeaderStyle(Alignment.left));
 			r.add(teamName, NAME_WEIGHT, 1, false);
-			
+
 			Renderable resultsHeader = ContentProvider.getTeamResultsHeader(c);
 			r.add(resultsHeader, RESULTS_WEIGHT, 1, false);
-			
+
 			Renderable solvedHeader = new ColoredTextBox("Solved", ContentProvider.getHeaderStyle(Alignment.center));
 			r.add(solvedHeader, 2, 1, true);
 			Renderable timeHeader = new ColoredTextBox("Time", ContentProvider.getHeaderStyle(Alignment.center));
@@ -149,7 +155,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			}
 		}
 
-		
+
 
 		Shape clip = g.getClip();
 		g.setClip(rect);
@@ -169,7 +175,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		for (int i = c.getTeams().size(); i >= 1; --i) {
 			paintRow(g, c, i, PartitionedRowRenderer.Layer.contents, true);
 		}
-		
+
 		g.setClip(clip);
 
 		paintFps(g);
@@ -186,7 +192,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	public void paintRow(Graphics2D g, Contest c, int i, PartitionedRowRenderer.Layer layer, boolean up) {
 		Team team = c.getRankedTeam(i);
 		int id = team.getId();
-		
+
 		if (stack.isUp(id) != up)
 			return;
 
@@ -202,7 +208,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			Renderable rankHeader = new ColoredTextBox(rank, ContentProvider.getTeamRankStyle());
 			r.add(rankHeader, 2, 1, true);
 		}
-		
+
 		{ // Flag
 			Renderable flag = ContentProvider.getTeamFlagRenderable(team);
 			r.add(flag, 1, .9, true);
@@ -221,10 +227,10 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 
 		TeamScore ts = c.getTeamScore(id);
 		TeamScore prev = recent.get(id);
-		
+
 		Renderable teamResults = ContentProvider.getTeamResultsRenderer(c, team, recent, false);
 		r.addWithoutCache(teamResults, RESULTS_WEIGHT, 1, false);
-		
+
 		{ // Solved and Time
 			double glowAlpha = ContentProvider.getGlowAlpha(team, recent); 
 			String statstr = "" + ts.getSolved();
@@ -234,7 +240,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				GlowRenderer glow = new GlowRenderer(ICPCColors.YELLOW, ContentProvider.STATS_GLOW_MARGIN, true, glowAlpha); // TODO: style
 				r.setDecoration(key, glow, ContentProvider.STATS_GLOW_MARGIN);
 			}
-			
+
 			Renderable timeHeader = new ColoredTextBox("" + ts.getScore(), ContentProvider.getTeamScoreStyle());
 			r.add(timeHeader, 2, 1, true);
 		}
@@ -262,7 +268,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			Utility.drawString3D(g, String.format("%.1f", Frame.fps(1)), r, ICPCFonts.HEADER_FONT, Alignment.right);
 		}
 	}
-	
+
 	private static class IconRenderer implements Renderable {
 		public void render(Graphics2D g, Dimension d) {
 			g.setColor(Color.GREEN);

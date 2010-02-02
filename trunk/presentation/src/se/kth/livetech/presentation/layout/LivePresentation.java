@@ -118,7 +118,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		base.get("team.team").addPropertyListener(teamChange);
 		base.get("mode").addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(showClockChange);
-		base.get("set_page").addPropertyListener(pageChange);
+		base.get("score.page").addPropertyListener(pageChange);
 		this.validate();
 	}
 	

@@ -28,6 +28,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		final TeamPresentation teamPresentation = new TeamPresentation(c, base);
 		final CountdownPresentation countdown = new CountdownPresentation(c, time);
 		final VNCView vnc = new VNCView(base.get("vnc"));
+		final VLCView cam = new VLCView(base.get("cam"));
 		final ClockView clockPanel = new ClockView(base.get("clockrect"), c, time);
 		final InterviewPresentation interview = new InterviewPresentation(base);
 	
@@ -68,7 +69,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 					currentView = teamPresentation;
 				}
 				else if(mode.equals("cam")) {
-					//currentView = cam;
+					currentView = cam;
 				}
 				else if(mode.equals("countdown")) {
 					currentView = countdown;

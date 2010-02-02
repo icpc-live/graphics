@@ -37,6 +37,18 @@ public class ContentProvider {
 		return logo;
 	}
 	
+	public static Renderable getIcpcLogoRenderable() {
+		ImageResource image = ICPCImages.getImage(ICPCImages.LOGO_ICON);
+		Renderable logo = new ImageRenderer("icpclogo", image);
+		return logo;
+	}
+	
+	public static Renderable getKthLogoRenderable() {
+		ImageResource image = ICPCImages.getImage(ICPCImages.KTH_ICON);
+		Renderable logo = new ImageRenderer("kthlogo", image);
+		return logo;
+	}
+	
 	public static ColoredTextBox.Style getTeamRankStyle() {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_RANK_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.right);
 	}

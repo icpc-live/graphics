@@ -63,6 +63,7 @@ public class TestContest implements AttrsUpdater {
 	
 	public static List<Attrs> initList(int teams, int problems, long startOffsetMillis) {
 		List<Attrs> list = new LinkedList<Attrs>();
+		list.add(testReset());
 		list.add(testLanguage(0, "c"));
 		list.add(testLanguage(0, "c++"));
 		list.add(testLanguage(0, "java"));

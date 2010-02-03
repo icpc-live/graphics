@@ -37,9 +37,9 @@ public class CountdownPresentation extends JPanel {
 				displaySeconds = secondsFromNow;
 				
 				rows = new Row[displaySeconds+1];
-				rows[0] = new Row(ContentProvider.getCountdownRenderable("", ""));
+				//rows[0] = new Row(ContentProvider.getCountdownRenderable("", ""));
 
-				for(int i = 1; i <= displaySeconds; ++i) {
+				for(int i = 0; i <= displaySeconds; ++i) {
 					int secs = i;
 					String row1Text = ChineseNumerals.moonspeak(secs);
 					String row2Text = "" + secs + " [" + ChineseNumerals.pinyin(secs) + "]";

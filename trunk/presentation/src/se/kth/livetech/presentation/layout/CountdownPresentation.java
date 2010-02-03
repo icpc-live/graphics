@@ -21,28 +21,31 @@ public class CountdownPresentation extends JPanel {
 	long timeshift;
 	long targetServerTime;
 	
-	final static int DISPLAY_SECONDS = 30;
-	final static int ANIMATE_FROM = 600;
+	int displaySeconds = 30;
+	final static int ANIMATE_FROM = 800;
 	Row[] rows;
 	PropertyListener countdownListener;
 	
 	public CountdownPresentation(RemoteTime time, IProperty props) {
 		timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
 		this.setBackground(ICPCColors.SCOREBOARD_BG);
-		rows = new Row[DISPLAY_SECONDS+1];
-		rows[0] = new Row(ContentProvider.getCountdownRenderable("", ""));
-
-		for(int i = 1; i <= DISPLAY_SECONDS; ++i) {
-			int secs = i;
-			String row1Text = ChineseNumerals.moonspeak(secs);
-			String row2Text = "" + secs + " [" + ChineseNumerals.pinyin(secs) + "]";
-			rows[i] = new Row(ContentProvider.getCountdownRenderable(row1Text, row2Text));
-		}
-		
+				
 		countdownListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				int secondsFromNow = changed.getIntValue();
+				displaySeconds = secondsFromNow;
+				
+				rows = new Row[displaySeconds+1];
+				rows[0] = new Row(ContentProvider.getCountdownRenderable("", ""));
+
+				for(int i = 1; i <= displaySeconds; ++i) {
+					int secs = i;
+					String row1Text = ChineseNumerals.moonspeak(secs);
+					String row2Text = "" + secs + " [" + ChineseNumerals.pinyin(secs) + "]";
+					rows[i] = new Row(ContentProvider.getCountdownRenderable(row1Text, row2Text));
+				}
+								
 				targetServerTime = System.currentTimeMillis() + timeshift + secondsFromNow*1000;
 				DebugTrace.trace("Resetting countdown\n");
 				repaint();
@@ -103,7 +106,7 @@ public class CountdownPresentation extends JPanel {
 			ageOffset = Math.floor(diffMilli/1000.0) + ((double)(milliPart - ANIMATE_FROM))/(1000 - ANIMATE_FROM);
 		}
 		
-		for(int i = 0; i<=DISPLAY_SECONDS; ++i) {
+		for(int i = 0; i<=displaySeconds; ++i) {
 			rows[i].setAge(i+ageOffset);
 		}
 		Rectangle bounds = this.getBounds();

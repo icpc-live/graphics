@@ -170,7 +170,7 @@ public class ContentProvider {
 			ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
 			ColoredTextBox problem = new ColoredTextBox(text, style);
 			int key = r.add(problem, 1, .95, false);
-			if (ps != null && !ps.equals(pps)) {
+			if (style != NONE && ps != null && !ps.equals(pps)) {
 				GlowRenderer glow = new GlowRenderer(style.getColor(), PROBLEM_GLOW_MARGIN, false, glowAlpha); // TODO: alpha per problem
 				r.setDecoration(key, glow, PROBLEM_GLOW_MARGIN);
 			}

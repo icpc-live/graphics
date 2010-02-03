@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 
 import javax.swing.JPanel;
 
@@ -71,17 +72,8 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		startRow = Math.max(page - 1, 0)*ROWS;
 	}
 	
-	public void highlightRow(Graphics gr, int row) {
-		Graphics2D g = (Graphics2D) gr;
-		Dimension d = null; //fix
-		PartitionedRowRenderer r = new PartitionedRowRenderer();
+	public void highlightRow(int row) {
 		highlightedRow = row;
-		if(row > 0) { 	
-			r.render(g, d);
-		}
-		else {
-			
-		}
 	}
 	
 	public void setRowColor(int row, Color color) {
@@ -175,6 +167,12 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				g.translate(x, y);
 				r.render(g, dim);
 				g.translate(-x, -y);
+				if(highlightedRow > 0) {
+					double f = 7;
+					RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
+					g.setColor(ICPCColors.YELLOW);
+					g.draw(round);
+				}
 			}
 		}
 

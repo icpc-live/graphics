@@ -43,6 +43,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	final int ROWS = 25;
 	final double NAME_WEIGHT = 5;
 	final double RESULTS_WEIGHT = 5;
+	private boolean showFps;
 	
 
 	Contest c;
@@ -265,7 +266,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	}
 
 	public void paintFps(Graphics2D g) {
-		{ // FPS count
+		if (this.showFps) {
 			Rectangle2D r = new Rectangle2D.Double(5, 5, 50, 20);
 			g.setColor(Color.BLUE);
 			Utility.drawString3D(g, String.format("%.1f", Frame.fps(1)), r, ICPCFonts.HEADER_FONT, Alignment.right);
@@ -292,5 +293,9 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		Contest c1 = tc.getContest();
 		Frame frame = new Frame("Scoreboard Presentation", new ScoreboardPresentation(c1));
 		frame.setIconImage(RenderCache.getRenderCache().getImageFor(new IconRenderer(), new Dimension(128, 128)));
+	}
+
+	public void setShowFps(boolean visible) {
+		this.showFps = visible;
 	}
 }

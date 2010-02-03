@@ -49,7 +49,7 @@ public class PartitionedRowRenderer implements Renderable {
 	
 	public int addWithoutCache(Renderable renderer, double weight, double margin, boolean fixed){
 		return add(renderer, weight, margin, fixed, false);
-	} 
+	}
 	
 	public void setDecoration(int key, Renderable decoration, double margin) {
 		Part part = parts.get(key);

@@ -1,8 +1,10 @@
 package se.kth.livetech.presentation.layout;
 
 import java.awt.Component;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -13,6 +15,7 @@ import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
+import se.kth.livetech.util.TeamReader;
 
 @SuppressWarnings("serial")
 public class LivePresentation extends JPanel implements ContestUpdateListener {
@@ -25,7 +28,15 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		this.setLayout(null); //absolute positioning of subcomponents
 		
 		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c);
-		final TeamPresentation teamPresentation = new TeamPresentation(c, base);
+		TeamReader teamReader;
+		
+		try {
+			teamReader = new TeamReader("images/teams2010.txt");
+		} catch (IOException e) {
+			teamReader = null;
+		}
+	
+		final TeamPresentation teamPresentation = new TeamPresentation(c, base, teamReader);
 
 		final CountdownPresentation countdown = new CountdownPresentation(time, base);
 		final VNCPresentation vnc = new VNCPresentation(base);

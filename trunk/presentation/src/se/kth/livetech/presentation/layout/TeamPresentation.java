@@ -29,13 +29,13 @@ import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.HorizontalSplitter;
 import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
-import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.presentation.graphics.Utility;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
+import se.kth.livetech.util.TeamReader;
 
 @SuppressWarnings("serial")
 public class TeamPresentation extends JPanel implements ContestUpdateListener {
@@ -46,6 +46,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	public static final double RECENT_MID_ALPHA = .7;
 	public static final double RECENT_FADE_TIME = 500; // ms
 	final double NAME_WEIGHT = 5;
+	TeamReader teamReader;
 	int id;
 	Team team;
 	
@@ -63,8 +64,9 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	List<PropertyListener> listeners = new ArrayList<PropertyListener>();
 	
 	Contest c;
-	public TeamPresentation(Contest c, IProperty props) {
+	public TeamPresentation(Contest c, IProperty props, TeamReader teamReader) {
 		this.c = c;
+		this.teamReader = teamReader;
 		//this.setBackground(Color.BLUE.darker().darker());
 		this.setBackground(ICPCColors.SCOREBOARD_BG);
 		this.setPreferredSize(new Dimension(1024, 576));
@@ -115,7 +117,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	boolean firstPaint = true;
 	long lastTime;
 	double startRow = 0;
-	private boolean displayMembers;
+	private boolean displayMembers = true;
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
 		Contest c = this.c;
@@ -168,6 +170,18 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		g.translate(0, -posy);//TODO: change to calculated value
 		
 		g.setClip(clip);
+		
+		//g.translate(0.2*getWidth(), )
+		if (this.displayMembers && teamReader != null) {
+			String[] memberStrings = teamReader.getTeamMembers(id);
+			PartitionedRowRenderer pr = new PartitionedRowRenderer(); 
+			for (String mem : memberStrings) {
+				Renderable member = new ColoredTextBox(mem, ContentProvider.getTeamNameStyle()); //TODO: change style
+				pr.add(member, 1, 0.9, false);
+			}
+			int nameHeight = (int) (0.1*getHeight());
+			pr.render(g, new Dimension((int)(getWidth()*0.6), nameHeight));
+		}
 
 		paintFps(g);
 
@@ -245,14 +259,6 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 			Renderable hsplit2 = new HorizontalSplitter(timeHeader, timeDisplay, splitRatio);
 			
 			r.add(hsplit2, 1, 1, true);
-		}
-
-		if (this.displayMembers) {
-			PartitionedRowRenderer pr = new PartitionedRowRenderer();
-			
-			for (int i = 0; i < 3; ++i) {
-				
-			}
 		}
 		
 		{ // Render

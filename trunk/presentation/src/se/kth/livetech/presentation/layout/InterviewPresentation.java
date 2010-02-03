@@ -8,6 +8,7 @@ import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
+import se.kth.livetech.util.TeamReader;
 
 @SuppressWarnings("serial")
 public class InterviewPresentation extends TeamPresentation {
@@ -15,7 +16,7 @@ public class InterviewPresentation extends TeamPresentation {
 	String names = "";
 	
 	public InterviewPresentation(IProperty props) {
-		super(new ContestImpl(), props);
+		super(new ContestImpl(), props, null);
 		
 		PropertyListener nameChange = new PropertyListener() {
 			@Override

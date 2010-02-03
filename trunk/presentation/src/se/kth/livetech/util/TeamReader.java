@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import se.kth.livetech.contest.model.Contest;
@@ -64,7 +65,7 @@ public class TeamReader {
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
 		teams = new TreeMap<Integer, TeamEntry>();
 
-		while (true) {
+		for (int i = 0; true; ++i) {
 			String line = br.readLine();
 
 			if (line == null) {
@@ -73,14 +74,14 @@ public class TeamReader {
 
 			String[] elems = line.split("\t");
 			teams.put(
-					Integer.parseInt(elems[0]),
+					i,
 					new TeamEntry(
-							Integer.parseInt(elems[0]),
-							elems[1],
+							i,
+							elems[0],
 							new String[] {
+								elems[1],
 								elems[2],
-								elems[3],
-								elems[4]
+								elems[3]
 								      }
 							)
 					);
@@ -117,5 +118,9 @@ public class TeamReader {
 		}
 
 		return consistent;
+	}
+	
+	public Set<Integer> getIds(){
+		return teams.keySet();
 	}
 }

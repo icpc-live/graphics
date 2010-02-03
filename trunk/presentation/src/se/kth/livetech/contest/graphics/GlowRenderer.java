@@ -22,7 +22,7 @@ public class GlowRenderer implements Renderable {
 		this.alpha = alpha;
 	}
 	public void render(Graphics2D g, Dimension d) {
-		final int N = 30;
+		final int N = 20;
 		double mid = this.ellipse ? .5 : 1;
 		for (int i = 0; i < N; ++i) {
 			g.setColor(Utility.alpha(base, (int) (alpha * 47 * i / N)));
@@ -31,8 +31,9 @@ public class GlowRenderer implements Renderable {
 			Shape shape;
 			if (this.ellipse)
 				shape = new Ellipse2D.Double(dx, dy, d.width - 2 * dx, d.height - 2 * dy);
-			else
+			else 
 				shape = new RoundRectangle2D.Double(dx, dy, d.width - 2 * dx, d.height - 2 * dy, d.width / 4d, d.height / 4d);
+			
 			g.fill(shape);
 		}
 	}

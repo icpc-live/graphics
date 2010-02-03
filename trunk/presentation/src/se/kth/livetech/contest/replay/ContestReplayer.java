@@ -69,17 +69,25 @@ public class ContestReplayer extends ContestPlayer {
 	private Thread thread = null;
 
 	public ContestReplayer() {
+		reset();
+		thread = new PlayerThread();
+		thread.start();
+	}
+	
+	public void reset() {
 		contest = new ContestImpl();
 		runEvents = new LinkedHashMap<Integer, LinkedList<AttrsUpdateEvent>>(); // Careful: External synchronization!
 		runTimes = new TreeMap<Integer, Long>(); // Careful: External synchronization!
-		thread = new PlayerThread();
-		thread.start();
 	}
 
 	// TODO: Setter/getter for settings
 
 	public void attrsUpdated(AttrsUpdateEvent e) {
-		if(e.getType().equals("run")) {
+		if (e.getType().equals("reset")) {
+			reset();
+			propagate(e);
+		}
+		else if (e.getType().equals("run")) {
 			int runId = Integer.parseInt(e.getProperty("id"));
 			long time = Double.valueOf(e.getProperty("time")).intValue();
 			synchronized (this) {

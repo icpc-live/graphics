@@ -10,6 +10,7 @@ import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Run;
+import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.util.Frame;
@@ -117,9 +118,11 @@ public class FakeContest extends Thread {
 			for(ProblemStatus ps : removeLater)
 				submissions.remove(ps);
 			int doneCount = 0;
-			for (int j = 0; j < teams; ++j)
-				if (test.getContest().getTeamScore(j).getSolved() == problems)
+			for (int j = 0; j < teams; ++j) {
+				TeamScore ts = test.getContest().getTeamScore(j);
+				if (ts != null && ts.getSolved() == problems)
 					++doneCount;
+			}
 			if (doneCount > 3)
 				test.reset();
 		}

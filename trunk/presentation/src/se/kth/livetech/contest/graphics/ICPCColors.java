@@ -36,9 +36,9 @@ public class ICPCColors {
 	public static final Color SILVER2 = new Color(230,232,250,96);
 	public static final Color BRONZE2 = new Color(166,125,61,96);
 
-	public static final Color GOLD = new Color(205,127,50);
-	public static final Color SILVER = new Color(230,232,250);
-	public static final Color BRONZE = new Color(166,125,61);
+	public static final Color GOLD = new Color(200,180,50);
+	public static final Color SILVER = new Color(225,230,250);
+	public static final Color BRONZE = new Color(160,90,40);
 	
 	public static final Color BG_COLOR_1 = new Color(60, 60, 120, 240);				//(90,90,191,255);
 	public static final Color BG_COLOR_2 = new Color(40, 40, 90, 210);				//(30,30,191,255);

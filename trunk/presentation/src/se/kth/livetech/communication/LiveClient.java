@@ -136,7 +136,7 @@ public class LiveClient {
 				return;
 			}
 			
-			boolean spiderFlag = opts.isSpider() || !opts.isArgs();
+			boolean spiderFlag = opts.isSpider() || !opts.isArgs() || opts.getArgs().size() == 1;
 			
 			Frame fullscreenFrame = null;
 

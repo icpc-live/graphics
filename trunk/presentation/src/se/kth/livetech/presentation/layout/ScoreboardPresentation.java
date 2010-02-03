@@ -184,7 +184,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 					g.fill(round);
 				}
 				if(highlightedProblem > 0) {
-					// TODO hilight problems
+					
 				}
 				
 				

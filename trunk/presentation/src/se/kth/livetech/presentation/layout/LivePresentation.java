@@ -27,7 +27,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c);
 		final TeamPresentation teamPresentation = new TeamPresentation(c, base);
 		final CountdownPresentation countdown = new CountdownPresentation(time, base);
-		final VNCView vnc = new VNCView(base.get("vnc"));
+		final VNCPresentation vnc = new VNCPresentation(base.get("vnc"));
 		final VLCView cam = new VLCView(base.get("cam"));
 		final ClockView clockPanel = new ClockView(base.get("clockrect"), c, time);
 		final InterviewPresentation interview = new InterviewPresentation(base);

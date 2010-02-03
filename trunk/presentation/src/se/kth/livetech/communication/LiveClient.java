@@ -28,7 +28,7 @@ import se.kth.livetech.presentation.layout.LivePresentation;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.presentation.layout.TeamPresentation;
 import se.kth.livetech.presentation.layout.VLCView;
-import se.kth.livetech.presentation.layout.VNCView;
+import se.kth.livetech.presentation.layout.VNCPresentation;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.ui.TestTriangle;
@@ -313,7 +313,7 @@ public class LiveClient {
 			
 			if (opts.isVnc()) {
 				PropertyHierarchy hierarchy = localState.getHierarchy();
-				/*Frame foo = */new Frame("foo", new VNCView(hierarchy.getProperty("live.clients.localhost.vnc")));
+				/*Frame foo = */new Frame("foo", new VNCPresentation(hierarchy.getProperty("live.clients.localhost.vnc")));
 			}
 
 			if (opts.isVlc()) {

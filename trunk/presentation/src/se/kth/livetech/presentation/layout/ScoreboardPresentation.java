@@ -44,6 +44,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	final double NAME_WEIGHT = 5;
 	final double RESULTS_WEIGHT = 5;
 	private boolean showFps = true;
+	public int highlightedRow;
 	
 
 	Contest c;
@@ -70,9 +71,17 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		startRow = Math.max(page - 1, 0)*ROWS;
 	}
 	
-	public void highlightRow(int row) {
-		// TODO Highlight a row. Only one highlighted row at a time.
-		
+	public void highlightRow(Graphics gr, int row) {
+		Graphics2D g = (Graphics2D) gr;
+		Dimension d = null; //fix
+		PartitionedRowRenderer r = new PartitionedRowRenderer();
+		highlightedRow = row;
+		if(row > 0) { 	
+			r.render(g, d);
+		}
+		else {
+			
+		}
 	}
 	
 	public void setRowColor(int row, Color color) {
@@ -283,12 +292,6 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			Utility.drawString3D(g, String.format("%.1f", Frame.fps(1)), r, ICPCFonts.HEADER_FONT, Alignment.right);
 		}
 	}
-
-	public void hilightRow() {
-		
-	}
-	
-	
 	
 	
 	

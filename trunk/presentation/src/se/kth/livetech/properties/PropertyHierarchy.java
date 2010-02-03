@@ -243,4 +243,12 @@ public class PropertyHierarchy {
 			}
 		}
 	}
+
+	public void pushProperties(PropertyListener pl) {
+		synchronized (this.properties) {
+			for (IProperty property : this.properties.values()) {
+				pl.propertyChanged(property);
+			}
+		}
+	}
 }

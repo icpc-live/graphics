@@ -15,7 +15,7 @@ import com.tightvnc.VncViewerFactory;
  * @author auno
  */
 @SuppressWarnings("serial")
-public class VNCView extends JPanel {
+public class VNCPresentation extends JPanel {
 	private String host = "";
 	private String password = "";
 	double zoom = 1;
@@ -26,7 +26,7 @@ public class VNCView extends JPanel {
 	PropertyListener hostChange, portChange, zoomChange, panXChange;
 	
 	
-	public VNCView(IProperty innerPZ) {
+	public VNCPresentation(IProperty innerPZ) {
 		sp = new ScrollPane(ScrollPane.SCROLLBARS_NEVER);
 		this.add(sp);
 		hostChange = new PropertyListener() {	
@@ -52,7 +52,10 @@ public class VNCView extends JPanel {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				zoom = changed.getDoubleValue();
+				if (changed.getValue().isEmpty())
+					zoom = 1.0;
+				else
+					zoom = changed.getDoubleValue();
 				connect();
 			}
 		};
@@ -74,7 +77,7 @@ public class VNCView extends JPanel {
 		innerPZ.get("host").addPropertyListener(hostChange);
 		innerPZ.get("port").addPropertyListener(portChange);
 		innerPZ.get("pz.zoom").addPropertyListener(zoomChange);
-		innerPZ.get("pz.panx").addPropertyListener(panXChange);
+		//innerPZ.get("pz.panx").addPropertyListener(panXChange);
 		//innerPZ.get("pz.pany").addPropertyListener(panYChange);
 	}
 	

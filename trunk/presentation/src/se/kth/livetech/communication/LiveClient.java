@@ -23,7 +23,6 @@ import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.contest.replay.LogListener;
 import se.kth.livetech.contest.replay.LogSpeaker;
 import se.kth.livetech.control.ContestReplayControl;
-import se.kth.livetech.control.ui.ContestReplayPanel;
 import se.kth.livetech.control.ui.ProductionFrame;
 import se.kth.livetech.presentation.layout.JudgeQueueTest;
 import se.kth.livetech.presentation.layout.LivePresentation;
@@ -239,8 +238,7 @@ public class LiveClient {
 				localState.getContest(new ContestId("contest", 0)).addAttrsUpdateListener(cr);
 
 				// ContestReplayControl
-				PropertyHierarchy hierarchy = localState.getHierarchy();
-				IProperty replayBase = hierarchy.getProperty("live.replay");
+				IProperty replayBase = localState.getHierarchy().getProperty("live.clients." + localNode.name + ".replay");
 				final ContestReplayControl crc = new ContestReplayControl(cr, replayBase, sp);
 				cr.addContestUpdateListener(crc);
 
@@ -314,9 +312,6 @@ public class LiveClient {
 				IProperty base = hierarchy.getProperty("live.control");
 				IProperty clients = hierarchy.getProperty("live.clients");
 				new ProductionFrame(hierarchy, base, clients);
-				IProperty replayBase = hierarchy.getProperty("live.replay");
-				ContestReplayPanel crp = new ContestReplayPanel(replayBase);
-				new Frame("ContestReplayControl", crp);
 			}
 			
 			if (opts.isTestTriangle()) {

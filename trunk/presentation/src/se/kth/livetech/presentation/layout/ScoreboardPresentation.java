@@ -70,22 +70,18 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		startRow = Math.max(page - 1, 0)*ROWS;
 	}
 	
-	public void highlightRank(int row) {
-		// TODO Highlight a row. Does not move when the rank of the team changes.
+	public void highlightRow(int row) {
+		// TODO Highlight a row. Only one highlighted row at a time.
+		
 	}
 	
-	public void showBronzeMedal(int team) {
-		// TODO
+	public void setRowColor(int row, Color color) {
+		// TODO Set the background color of a row. i.e. Gold, Silver and Bronze
 	}
 	
-	public void showSilverMedal(int team) {
-		// TODO
+	public void highlightProblem(int problem) {
+		// TODO Highlight a problem on the row that is highlighted. Cleared when the row changes.
 	}
-	
-	public void showGoldMedal(int team) {
-		// TODO
-	}
-	
 	
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {

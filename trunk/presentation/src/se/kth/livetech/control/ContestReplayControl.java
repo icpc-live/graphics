@@ -3,6 +3,7 @@ package se.kth.livetech.control;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
@@ -82,14 +83,21 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 					}
 					Run run = contest.getRun(runId);
 					Team team = contest.getRankedTeam(resolveRank);
-					if(run.getTeam() == team.getId()) {
+					if(run != null && run.getTeam() == team.getId()) {
 						// Current row has more runs.
 						timer.schedule(new InnerTask(), resolveProblemDelay);
 						replayer.processHighestRank();
+						if(contest.getRankedTeam(resolveRank).getId()!=team.getId())
+							++resolveRank;
 					} else {
 						timer.schedule(new InnerTask(), resolveTeamDelay);
-						if(sp!=null)
-							sp.highlightRank(--resolveRank);
+						if(sp!=null) {
+							sp.highlightRow(--resolveRank);
+							team = contest.getRankedTeam(resolveRank);
+							if(run!=null && run.getTeam() == team.getId()) {
+								sp.highlightProblem(run.getProblem());
+							}
+						}
 					}
 				}
 			}
@@ -99,7 +107,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			}
 		} else {
 			System.err.println("Property changed to unknown state: "+state);
-			replayer.setState(ContestReplayer.State.PAUSED);
+			//replayer.setState(ContestReplayer.State.PAUSED);
 		}
 		
 		int stepUntil = propertyBase.get("presentationStep").getIntValue();
@@ -109,6 +117,22 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		}
 	}
 	
+	private void showBronzeMedal(int row) {
+		if(sp!=null)
+			sp.setRowColor(row, ICPCColors.BRONZE);
+	}
+	
+	private void showSilverMedal(int row) {
+		if(sp!=null)
+			sp.setRowColor(row, ICPCColors.SILVER);
+	}
+	
+	private void showGoldMedal(int row) {
+		if(sp!=null)
+			sp.setRowColor(row, ICPCColors.GOLD);
+	}
+	
+	
 	// TODO Team delay if team changes rank.
 	// TODO Replay entire problem
 	
@@ -117,7 +141,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			Contest contest = replayer.getContest();
 			resolveRank = contest.getTeams().size();
 			if(sp!=null)
-				sp.highlightRank(resolveRank);
+				sp.highlightRow(resolveRank);
 		}
 	}
 
@@ -134,28 +158,36 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			// Current row has more runs.
 			System.out.println("Next run on row "+resolveRank + ", run id "+run.getId());
 			replayer.processHighestRank();
+			runId = replayer.getHighestRankedRun();
+			// TODO 
 		} else if(resolveRank>medals || showingPresentation) {
 			showingPresentation = false;
 			// Highlight next row
 			--resolveRank;
 			System.out.println("Highlighting row " + resolveRank);
-			if(sp!=null)
-				sp.highlightRank(resolveRank);
+			if(sp!=null) {
+				sp.highlightRow(resolveRank);
+				// Highlight next problem
+				team = contest.getRankedTeam(resolveRank);
+				if(run!=null && run.getTeam() == team.getId()) {
+					sp.highlightProblem(run.getProblem());
+				}
+			}
 		} else if(resolveRank>silverMedals+goldMedals) {
 			showingPresentation = true;
 			System.out.println("Bronze medal to team " + team.getId() + " on row " + resolveRank);
-			if(sp!=null)
-				sp.showBronzeMedal(team.getId());
+			// TODO Show winner presentation
+			showBronzeMedal(resolveRank);
 		} else if(resolveRank>goldMedals) {
 			showingPresentation = true;
 			System.out.println("Silver medal to team " + team.getId() + " on row " + resolveRank);
-			if(sp!=null)
-				sp.showSilverMedal(team.getId());
+			// TODO Show winner presentation
+			showSilverMedal(resolveRank);
 		} else {
 			showingPresentation = true;
 			System.out.println("Gold medal to team " + team.getId() + " on row " + resolveRank);
-			if(sp!=null)
-				sp.showGoldMedal(team.getId());
+			// TODO Show winner presentation
+			showGoldMedal(resolveRank);
 		}	
 	}
 

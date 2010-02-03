@@ -24,7 +24,7 @@ import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.Testcase;
 import se.kth.livetech.contest.model.test.FakeContest;
 import se.kth.livetech.contest.model.test.TestContest;
-import se.kth.livetech.contest.replay.ContestReplay;
+import se.kth.livetech.contest.replay.ContestReplayer;
 import se.kth.livetech.presentation.animation.AnimationStack;
 import se.kth.livetech.presentation.animation.Interpolated;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
@@ -220,7 +220,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 		FakeContest fc = new FakeContest(tc);
 		JudgeQueueTest jqt = new JudgeQueueTest();
 		//fc.addContestUpdateListener(jqt);
-		ContestReplay cr = new ContestReplay();
+		ContestReplayer cr = new ContestReplayer();
 		tc.addAttrsUpdateListener(cr);
 		cr.addContestUpdateListener(jqt);
 		Frame frame = new Frame("JudgeQueueTest", jqt, null, false);

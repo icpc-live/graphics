@@ -70,6 +70,21 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		startRow = Math.max(page - 1, 0)*ROWS;
 	}
 	
+	public void highlightRank(int row) {
+		// TODO Highlight a row. Does not move when the rank of the team changes.
+	}
+	
+	public void showBronzeMedal(int team) {
+		// TODO
+	}
+	
+	public void showSilverMedal(int team) {
+		// TODO
+	}
+	
+	public void showGoldMedal(int team) {
+		// TODO
+	}
 	
 	
 	@Override

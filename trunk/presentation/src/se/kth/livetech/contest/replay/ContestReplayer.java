@@ -9,10 +9,11 @@ import java.util.TreeMap;
 
 import se.kth.livetech.contest.model.Attrs;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
+import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
 
-// TODO time<freezeTime (strict inequality)
+// TODO Move all logic to ContetReplayControl, and control it by properties.
 
 public class ContestReplayer extends ContestPlayer {
 
@@ -31,25 +32,28 @@ public class ContestReplayer extends ContestPlayer {
 	 * *SINGLE* = Next run is processed, and the state will be changed to PAUSED afterwards.
 	 * RANK* = Next run is selected by highest rank instead of lowest time. 
 	 */
-	private enum State {
+	public enum State {
 		PAUSED, LIVE, UNTIL_SCALED_REAL_TIME, UNTIL_INTERVAL, SINGLE_TIME, RANK_INTERVAL, RANK_SINGLE;
 
-		public boolean isFirst() {
+		private boolean isFirst() {
 			return this == LIVE || this == UNTIL_INTERVAL || this == UNTIL_SCALED_REAL_TIME || this == SINGLE_TIME;
 		}
-		public boolean isRank() {
+		private boolean isRank() {
 			return this == RANK_INTERVAL || this == RANK_SINGLE;
 		}
-		public boolean isSingle() {
+		private boolean isSingle() {
 			return this == SINGLE_TIME || this == RANK_SINGLE;
 		}
-		public boolean hasIntervalDelay() {
+		private boolean hasIntervalDelay() {
 			return this == UNTIL_INTERVAL || this == RANK_INTERVAL;
 		}
-		public boolean hasTestcaseDelay() {
+		private boolean hasTestcaseDelay() {
 			return isSingle() || hasIntervalDelay() || this == UNTIL_SCALED_REAL_TIME;
 		}
-		public long limitTime(long freezeTime, long untilTime, long scaledTime) {
+		private boolean showPendingAfterFreeze() {
+			return this != PAUSED && !isSingle(); 
+		}
+		private long limitTime(long freezeTime, long untilTime, long scaledTime) {
 			if(this == LIVE) return freezeTime;
 			if(this == UNTIL_INTERVAL) return untilTime;
 			if(this == UNTIL_SCALED_REAL_TIME) return Math.min(untilTime, scaledTime);
@@ -67,6 +71,9 @@ public class ContestReplayer extends ContestPlayer {
 	private int runInterval = 1000; // For *_INTERVAL modes
 
 	private Thread thread = null;
+	private long lastTime = 0; // Time stamp of last processed run.
+	private long lastSystemTime = System.currentTimeMillis(); // System time when last run was processed.
+	private long startTime = 0;
 
 	public ContestReplayer() {
 		reset();
@@ -79,8 +86,63 @@ public class ContestReplayer extends ContestPlayer {
 		runEvents = new LinkedHashMap<Integer, LinkedList<AttrsUpdateEvent>>(); // Careful: External synchronization!
 		runTimes = new TreeMap<Integer, Long>(); // Careful: External synchronization!
 	}
+	
+	public Contest getContest() {
+		return contest;
+	}
 
-	// TODO: Setter/getter for settings
+	public State getState() {
+		return state;
+	}
+
+	public void setState(State state) {
+		this.state = state;
+	}
+
+	public long getFreezeTime() {
+		return freezeTime;
+	}
+
+	public void setFreezeTime(long freezeTime) {
+		this.freezeTime = freezeTime;
+	}
+
+	public boolean showRunsAfterFreezeAsPending() {
+		return showRunsAfterFreezeAsPending;
+	}
+
+	public void showRunsAfterFreezeAsPending(boolean showRunsAfterFreezeAsPending) {
+		this.showRunsAfterFreezeAsPending = showRunsAfterFreezeAsPending;
+	}
+
+	public long getUntilTime() {
+		return untilTime;
+	}
+
+	public void setUntilTime(long untilTime) {
+		this.untilTime = untilTime;
+	}
+
+	public double getScaleTime() {
+		return scaleTime;
+	}
+
+	public void setScaleTime(double scaleTime) {
+		this.scaleTime = scaleTime;
+	}
+
+	public int getTestcaseInterval() {
+		return testcaseInterval;
+	}
+
+	public int getRunInterval() {
+		return runInterval;
+	}
+
+	public void setIntervals(int runInterval, int testcaseInterval) {
+		this.runInterval = runInterval;
+		this.testcaseInterval = testcaseInterval;
+	}
 
 	public void attrsUpdated(AttrsUpdateEvent e) {
 		if (e.getType().equals("reset")) {
@@ -99,7 +161,7 @@ public class ContestReplayer extends ContestPlayer {
 				} else {
 					runTimes.put(runId, time);
 				}
-				if(state == State.LIVE && (time<freezeTime || (showRunsAfterFreezeAsPending && !Boolean.parseBoolean(e.getProperty("judged")))))
+				if((state == State.LIVE && time<freezeTime) || (showRunsAfterFreezeAsPending && state.showPendingAfterFreeze() && !Boolean.parseBoolean(e.getProperty("judged"))))
 					propagate(e); // Propagate directly
 				else {
 					if(!runEvents.containsKey(runId))
@@ -129,70 +191,91 @@ public class ContestReplayer extends ContestPlayer {
 			propagate(e);
 	}
 
+	public synchronized boolean processEarliestRun() {
+		// Find earliest, unprocessed run
+		int runId = -1;
+		long time = Long.MAX_VALUE;
+		for(Map.Entry<Integer, LinkedList<AttrsUpdateEvent>> entry : runEvents.entrySet()) {
+			if(!entry.getValue().isEmpty() && runTimes.get(entry.getKey())<time) {
+				time = runTimes.get(entry.getKey());
+				runId = entry.getKey();
+			}
+		}
+		if(time<state.limitTime(freezeTime, untilTime, lastTime + (long)((startTime-lastSystemTime)*scaleTime/1000)) && runId>=0) {
+			playRun(runId);
+			lastSystemTime = startTime;
+			lastTime = time;
+			return true;
+		}
+		return false;
+	}
+
+	public synchronized boolean processPendingState() {
+		for(Map.Entry<Integer, LinkedList<AttrsUpdateEvent>> entry : runEvents.entrySet()) {
+			ListIterator<AttrsUpdateEvent> iter = entry.getValue().listIterator();
+			while(iter.hasNext()) {
+				AttrsUpdateEvent event = iter.next();
+				if(event.getType().equals("run") && !Boolean.parseBoolean(event.getProperty("judged"))) {
+					propagate(event);
+					iter.remove();
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
+	public synchronized int getHighestRankedRun() {
+		int rank = -1;
+		int runId = -1;
+		int problemId = -1;
+		for(Map.Entry<Integer, LinkedList<AttrsUpdateEvent>> entry : runEvents.entrySet()) {
+			// Get team id
+			for (AttrsUpdateEvent event : entry.getValue()) {
+				String teamIdStr = event.getProperty("team");
+				if(teamIdStr != null) {
+					int pId = -1;
+					try {
+						pId = Integer.parseInt(event.getProperty("problem"));
+					} catch (NumberFormatException e) {}
+					int teamId = Integer.parseInt(teamIdStr);
+					if(contest.getTeamRow(teamId)>rank || (contest.getTeamRow(teamId)==rank && pId<problemId)) {
+						rank = contest.getTeamRow(teamId);
+						runId = entry.getKey();
+						problemId = pId;
+					}
+					break;
+				}
+			}
+		}
+		return runId;
+	}
+
+	public synchronized boolean processHighestRank() {
+		int runId = getHighestRankedRun();
+		if(runId>=0) {
+			playRun(runId);
+			return true;
+		}
+		return false;
+	}
+
 	private class PlayerThread extends Thread {
 		public void run() {
-			long lastTime = 0; // Time stamp of last processed run.
-			long lastSystemTime = System.currentTimeMillis(); // System time when last run was processed.
 			while(!interrupted()) {
 				boolean processedRun = true;
 				while(processedRun && !interrupted() && state!=ContestReplayer.State.PAUSED) {
-					long startTime = System.currentTimeMillis();
-					long time = Long.MAX_VALUE;
+					startTime = System.currentTimeMillis();
 					processedRun = false;
-					int runId = -1;
-					// Find run id
-					synchronized (ContestReplayer.this) {
-						if(state.isFirst()) {
-							// Find earliest, unprocessed run
-							for(Map.Entry<Integer, LinkedList<AttrsUpdateEvent>> entry : runEvents.entrySet()) {
-								if(!entry.getValue().isEmpty() && runTimes.get(entry.getKey())<time) {
-									time = runTimes.get(entry.getKey());
-									runId = entry.getKey();
-								}
-							}
-							if(time<state.limitTime(freezeTime, untilTime, lastTime + (long)((startTime-lastSystemTime)*scaleTime/1000)) && runId>=0) {
-								System.out.println("Run at " + time + " " + freezeTime);
-								playRun(runId);
+					if(state.isFirst()) {
+						if(processEarliestRun())
+							processedRun = true;
+						else if(showRunsAfterFreezeAsPending)
+							if(processPendingState())
 								processedRun = true;
-								lastSystemTime = startTime;
-								lastTime = time;
-							}
-							else if(showRunsAfterFreezeAsPending) { // Pending runs
-								findPendingRuns:
-									for(Map.Entry<Integer, LinkedList<AttrsUpdateEvent>> entry : runEvents.entrySet()) {
-										ListIterator<AttrsUpdateEvent> iter = entry.getValue().listIterator();
-										while(iter.hasNext()) {
-											AttrsUpdateEvent event = iter.next();
-											if(event.getType().equals("run") && event.getProperty("judged").equals("False")) {
-												propagate(event);
-												processedRun = true;
-												iter.remove();
-												break findPendingRuns;
-											}
-										}
-									}
-							}
-						} else if(state.isRank()) {
-							int rank = -1;
-							for(Map.Entry<Integer, LinkedList<AttrsUpdateEvent>> entry : runEvents.entrySet()) {
-								// Get team id
-								for (AttrsUpdateEvent event : entry.getValue()) {
-									String teamIdStr = event.getProperty("team");
-									if(teamIdStr != null) {
-										int teamId = Integer.parseInt(teamIdStr);
-										if(contest.getTeamRow(teamId)>rank) {
-											rank = contest.getTeamRow(teamId);
-											runId = entry.getKey();
-										}
-										break;
-									}
-								}
-							}
-							if(runId>=0) {
-								playRun(runId);
-								processedRun = true;
-							}
-						}
+					} else if(state.isRank()) {
+						if(processHighestRank())
+							processedRun = true;
 					}
 					if(processedRun && state.hasIntervalDelay()) { // Sleep time
 						long sleepTime = runInterval - (System.currentTimeMillis()-startTime);

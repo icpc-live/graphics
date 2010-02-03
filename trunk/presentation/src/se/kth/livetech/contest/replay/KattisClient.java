@@ -11,6 +11,7 @@ import java.util.Date;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdaterImpl;
+import se.kth.livetech.util.DebugTrace;
 
 public class KattisClient extends AttrsUpdaterImpl {
 	//private static final String DEFAULT_KATTIS_HOST = "icpc-dev.netlab.csc.kth.se";
@@ -62,7 +63,9 @@ public class KattisClient extends AttrsUpdaterImpl {
 					send(e);
 				}
 			});
+			DebugTrace.trace("Kattis - start parsing xml");
 			logSpeaker.parse();
+			DebugTrace.trace("Kattis - finished parsing xml");
 			in.close();
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

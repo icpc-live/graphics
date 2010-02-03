@@ -6,6 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.AttrsUpdater;
+import se.kth.livetech.util.DebugTrace;
 
 public class AttrsUpdaterImpl implements AttrsUpdater {
 	
@@ -17,11 +18,13 @@ public class AttrsUpdaterImpl implements AttrsUpdater {
 
 	@Override
 	public void addAttrsUpdateListener(AttrsUpdateListener listener) {
+		DebugTrace.trace("Add attrs listener %s", listener);
 		listeners.add(listener);
 	}
 
 	@Override
 	public void removeAttrsUpdateListener(AttrsUpdateListener listener) {
+		DebugTrace.trace("Remove attrs listener %s", listener);
 		listeners.remove(listener);
 	}
 

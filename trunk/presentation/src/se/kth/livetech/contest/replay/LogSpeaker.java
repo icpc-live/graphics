@@ -45,8 +45,9 @@ public class LogSpeaker extends AttrsUpdaterImpl {
 				public void characters(char[] ch, int start, int length)
 						throws SAXException {
 					String value = new String(ch, start, length);
-					if (this.value == null)
+					if (this.value == null) {
 						this.value = value;
+					}
 					else {
 						this.value += value;
 					}

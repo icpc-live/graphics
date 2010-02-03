@@ -172,7 +172,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 
 	@Override
 	public void attrsUpdated(AttrsUpdateEvent e) {
-		DebugTrace.trace("attrsUpdate %s", e.getType());
+		DebugTrace.trace("attrsUpdate %s %s %s", e.getType(), id.name, id.address);
 
 		Map<String, String> attrs = new LinkedHashMap<String, String>();
 		for (String name : e.getProperties()) {

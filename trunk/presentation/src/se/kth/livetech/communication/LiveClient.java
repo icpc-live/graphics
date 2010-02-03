@@ -26,7 +26,6 @@ import se.kth.livetech.control.ui.ProductionFrame;
 import se.kth.livetech.presentation.layout.JudgeQueueTest;
 import se.kth.livetech.presentation.layout.LivePresentation;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
-import se.kth.livetech.presentation.layout.TeamPresentation;
 import se.kth.livetech.presentation.layout.VLCView;
 import se.kth.livetech.presentation.layout.VNCView;
 import se.kth.livetech.properties.IProperty;

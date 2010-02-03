@@ -102,6 +102,8 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 				NodeConnection.this.state = NodeConnection.State.CONNECTED;
 				DebugTrace.trace("Connected to " + id.name);
 
+				NodeConnection.this.nodeRegistry.getLocalState().getHierarchy().pushProperties(NodeConnection.this);
+
 				// Time sync every second
 				while (!disconnect) {
 					QueueItem item;
@@ -172,7 +174,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 
 	@Override
 	public void attrsUpdated(AttrsUpdateEvent e) {
-		DebugTrace.trace("attrsUpdate %s", e.getType());
+		DebugTrace.trace("attrsUpdate %s %s %s", e.getType(), id.name, id.address);
 
 		Map<String, String> attrs = new LinkedHashMap<String, String>();
 		for (String name : e.getProperties()) {

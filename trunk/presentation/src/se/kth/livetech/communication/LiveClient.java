@@ -22,11 +22,11 @@ import se.kth.livetech.contest.replay.ContestReplayer;
 import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.contest.replay.LogListener;
 import se.kth.livetech.contest.replay.LogSpeaker;
+import se.kth.livetech.control.ContestReplayControl;
 import se.kth.livetech.control.ui.ProductionFrame;
 import se.kth.livetech.presentation.layout.JudgeQueueTest;
 import se.kth.livetech.presentation.layout.LivePresentation;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
-import se.kth.livetech.presentation.layout.TeamPresentation;
 import se.kth.livetech.presentation.layout.VLCView;
 import se.kth.livetech.presentation.layout.VNCPresentation;
 import se.kth.livetech.properties.IProperty;
@@ -173,9 +173,11 @@ public class LiveClient {
 			
 			List<ContestUpdateListener> contestListeners = new ArrayList<ContestUpdateListener>();
 			
+			ScoreboardPresentation sp = null;
+			
 			if (opts.isTestScoreboard()) {
 				final ContestImpl c = new ContestImpl();
-				final ScoreboardPresentation sp = new ScoreboardPresentation(c);
+				sp = new ScoreboardPresentation(c);
 				contestListeners.add(sp);
 				Frame f = new Frame("TestContest", sp, null, false);
 				if (opts.isFullscreen()) {
@@ -234,6 +236,11 @@ public class LiveClient {
 			if (!contestListeners.isEmpty()) {
 				final ContestReplayer cr = new ContestReplayer();
 				localState.getContest(new ContestId("contest", 0)).addAttrsUpdateListener(cr);
+
+				// ContestReplayControl
+				IProperty replayBase = localState.getHierarchy().getProperty("live.clients." + localNode.name + ".replay");
+				final ContestReplayControl crc = new ContestReplayControl(cr, replayBase, sp);
+				cr.addContestUpdateListener(crc);
 
 				for(ContestUpdateListener contestListener : contestListeners) {
 					DebugTrace.trace("Contest listener: %s", contestListener);

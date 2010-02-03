@@ -26,8 +26,10 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		
 		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c);
 		final TeamPresentation teamPresentation = new TeamPresentation(c, base);
+
 		final CountdownPresentation countdown = new CountdownPresentation(time, base);
 		final VNCPresentation vnc = new VNCPresentation(base.get("vnc"));
+
 		final VLCView cam = new VLCView(base.get("cam"));
 		final ClockView clockPanel = new ClockView(base.get("clockrect"), c, time);
 		final InterviewPresentation interview = new InterviewPresentation(base);
@@ -37,7 +39,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		sublisteners.add(clockPanel);
 		
 		this.add(clockPanel); //always there on top
-		currentView = scoreboard;
+		currentView = countdown;
 		this.add(currentView);
 		this.validate();
 		
@@ -105,7 +107,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				boolean visible = !changed.getBooleanValue();
-				scoreboard.setShowFps(visible);
+				//scoreboard.setShowFps(visible);			
 			}
 		};
 		

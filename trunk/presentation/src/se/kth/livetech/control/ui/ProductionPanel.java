@@ -133,6 +133,9 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		b.add(c);
 		
 		b.add(new PanAndZoom(base.get("clockrect")));
+		
+		b.add(new JSeparator(SwingConstants.HORIZONTAL));
+		b.add(new ContestReplayPanel(base.get("replay")));
 		this.add(b);
 	}
 	public void actionPerformed(ActionEvent e) {

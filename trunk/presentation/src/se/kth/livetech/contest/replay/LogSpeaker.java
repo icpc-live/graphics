@@ -35,6 +35,13 @@ public class LogSpeaker extends AttrsUpdaterImpl {
 		try {
 			SAXParser sp = SAXParserFactory.newInstance().newSAXParser();
 			DefaultHandler handler = new DefaultHandler() {
+				
+				@Override
+				public void startDocument() throws SAXException {
+					super.startDocument();
+					AttrsUpdateEventImpl attrs = new AttrsUpdateEventImpl(0, "reset");
+					send(attrs);
+				}
 
 				private int level = 0;
 				private String name = null;
@@ -45,8 +52,9 @@ public class LogSpeaker extends AttrsUpdaterImpl {
 				public void characters(char[] ch, int start, int length)
 						throws SAXException {
 					String value = new String(ch, start, length);
-					if (this.value == null)
+					if (this.value == null) {
 						this.value = value;
+					}
 					else {
 						this.value += value;
 					}

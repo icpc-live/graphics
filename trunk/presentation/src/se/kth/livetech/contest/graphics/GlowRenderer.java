@@ -26,8 +26,10 @@ public class GlowRenderer implements Renderable {
 		double mid = this.ellipse ? .5 : 1;
 		for (int i = 0; i < N; ++i) {
 			g.setColor(Utility.alpha(base, (int) (alpha * 47 * i / N)));
+			
 			int dx = (int) (d.width * (this.margin - mid) / 2 * i / N / this.margin);
 			int dy = (int) (d.height * (this.margin - mid) / 2 * i / N / this.margin);
+			
 			Shape shape;
 			if (this.ellipse)
 				shape = new Ellipse2D.Double(dx, dy, d.width - 2 * dx, d.height - 2 * dy);

@@ -284,6 +284,14 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		}
 	}
 
+	public void hilightRow() {
+		
+	}
+	
+	
+	
+	
+	
 	private static class IconRenderer implements Renderable {
 		public void render(Graphics2D g, Dimension d) {
 			g.setColor(Color.GREEN);

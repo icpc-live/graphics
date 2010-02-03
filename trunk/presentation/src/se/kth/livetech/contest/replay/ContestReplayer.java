@@ -1,5 +1,6 @@
 package se.kth.livetech.contest.replay;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -258,6 +259,29 @@ public class ContestReplayer extends ContestPlayer {
 			return true;
 		}
 		return false;
+	}
+	
+	public synchronized void processProblem(int team, int problem) {
+		ArrayList<Integer> ids = new ArrayList<Integer>();
+		for(Map.Entry<Integer, LinkedList<AttrsUpdateEvent>> entry : runEvents.entrySet()) {
+			// Get team id
+			int pId = -1;
+			int teamId = -1;
+			for (AttrsUpdateEvent event : entry.getValue()) {
+				String teamIdStr = event.getProperty("team");
+				if(teamIdStr != null) {
+					try {
+						pId = Integer.parseInt(event.getProperty("problem"));
+						teamId = Integer.parseInt(teamIdStr);
+						if(pId == problem && team == teamId)
+							ids.add(entry.getKey());
+						break;
+					} catch (NumberFormatException e) {}
+				}
+			}
+		}
+		for(Integer id : ids)
+			playRun(id);
 	}
 
 	private class PlayerThread extends Thread {

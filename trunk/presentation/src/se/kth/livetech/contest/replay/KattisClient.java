@@ -15,7 +15,7 @@ import se.kth.livetech.util.DebugTrace;
 
 public class KattisClient extends AttrsUpdaterImpl {
 	//private static final String DEFAULT_KATTIS_HOST = "icpc-dev.netlab.csc.kth.se";
-	private static final String DEFAULT_KATTIS_HOST = "192.168.12.16";
+	private static final String DEFAULT_KATTIS_HOST = "192.168.2.200";
 	private static final int    DEFAULT_KATTIS_PORT = 4713;
 	private static final String DEFAULT_KATTIS_URI = "/python/events.py?with_def=1";
 	
@@ -87,7 +87,7 @@ public class KattisClient extends AttrsUpdaterImpl {
 	}
 
 	public static void main(String[] args) {
-		final KattisClient kattisClient = new KattisClient("192.168.12.16");
+		final KattisClient kattisClient = new KattisClient("192.168.2.200");
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 		final LogListener log = new LogListener("kattislog_"+dateFormat.format(new Date())+".txt");
 		kattisClient.addAttrsUpdateListener(log);

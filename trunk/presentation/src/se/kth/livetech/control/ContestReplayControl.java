@@ -18,46 +18,48 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	
 	private ContestReplayer replayer;
 	private ScoreboardPresentation sp;
-	private IProperty propertyBase, propertyState;
+	private IProperty propertyBase;
 	private int bronzeMedals, silverMedals, goldMedals, medals;
-	private int resolveRank = -1;
+	private int resolveRow = -1;
 	private int stepCounter = 0;
 	private boolean showingPresentation = false;
 	private boolean hasFinishedReplayer = false;
-	private boolean isStateResolver = false;
+	private String state = "";
+	private int replayDelay = 0;
+	private int resolveProblemDelay = 0;
+	private int resolveTeamDelay = 0;
 	private Timer timer;
 	
 	public ContestReplayControl(ContestReplayer replayer, IProperty propertyBase, ScoreboardPresentation sp) {
 		this.replayer = replayer;
 		this.sp = sp;
 		this.propertyBase = propertyBase;
-		this.propertyState = propertyBase.get("state");
 		propertyBase.addPropertyListener(this);
 	}
 	
 	@Override
 	public void propertyChanged(IProperty changed) {		
-		String state = propertyState.getValue();
+		state = propertyBase.get("state").getValue();
 		bronzeMedals = propertyBase.get("bronzeMedals").getIntValue();
 		silverMedals = propertyBase.get("silverMedals").getIntValue();
 		goldMedals = propertyBase.get("goldMedals").getIntValue();
 		medals = bronzeMedals + silverMedals + goldMedals;
-		final int resolveProblemDelay = propertyBase.get("resolveProblemDelay").getIntValue();
-		final int resolveTeamDelay = propertyBase.get("resolveTeamDelay").getIntValue();
+		replayDelay = propertyBase.get("replayDelay").getIntValue();
+		resolveProblemDelay = propertyBase.get("resolveProblemDelay").getIntValue();
+		resolveTeamDelay = propertyBase.get("resolveTeamDelay").getIntValue();
 
-		isStateResolver = false;
 		if(state.equals("pause"))
 			replayer.setState(ContestReplayer.State.PAUSED);
 		else if(state.equals("live"))
 			replayer.setState(ContestReplayer.State.LIVE);
 		else if(state.equals("replay")) {
-			replayer.setIntervals(propertyBase.get("replayDelay").getIntValue(), 0);
+			replayer.setIntervals(replayDelay, 0);
 			replayer.setState(ContestReplayer.State.UNTIL_INTERVAL);
 		}
 		else if(state.equals("resolver")) {
-			// Assuming no new runs will be added.
-			// Make sure it has processed all old runs.
-			isStateResolver = true;
+			// Assuming no new runs will be added from now and onwards.
+			
+			// Init resolver and ensure all earlier runs has been processed.
 			if(!hasFinishedReplayer) {
 				replayer.setState(ContestReplayer.State.UNTIL_INTERVAL);
 				while(replayer.processPendingState());
@@ -66,54 +68,32 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			}
 			replayer.setState(ContestReplayer.State.PAUSED);
 			initResolveRank();
-			class InnerTask extends TimerTask {
-				public void run() {
-					if(resolveRank<=medals || !isStateResolver) {
-						timer.cancel();
-						timer = null;
-						return;
-					}
-					System.out.println("ResolveRank " + resolveRank);
-					Contest contest = replayer.getContest();
-					int runId = replayer.getHighestRankedRun();
-					if(runId<0) {
-						timer.cancel();
-						timer = null;
-						return;
-					}
-					Run run = contest.getRun(runId);
-					Team team = contest.getRankedTeam(resolveRank);
-					if(run != null && run.getTeam() == team.getId()) {
-						// Current row has more runs.
-						timer.schedule(new InnerTask(), resolveProblemDelay);
-						replayer.processHighestRank();
-						if(contest.getRankedTeam(resolveRank).getId()!=team.getId())
-							++resolveRank;
-					} else {
-						timer.schedule(new InnerTask(), resolveTeamDelay);
-						if(sp!=null) {
-							sp.highlightRow(--resolveRank);
-							team = contest.getRankedTeam(resolveRank);
-							if(run!=null && run.getTeam() == team.getId()) {
-								sp.highlightProblem(run.getProblem());
-							}
-						}
-					}
-				}
-			}
+			// Ensure task is running.
 			if(timer == null) {
 				timer = new Timer();
-				timer.schedule(new InnerTask(), 0);
+				timer.schedule(new ResolverTask(), 0);
 			}
-		} else {
-			System.err.println("Property changed to unknown state: "+state);
-			//replayer.setState(ContestReplayer.State.PAUSED);
 		}
 		
 		int stepUntil = propertyBase.get("presentationStep").getIntValue();
 		while(stepCounter < stepUntil) {
 			initResolveRank();
-			step(0);
+			step(true);
+		}
+	}
+	
+	private void highlightNext() {
+		System.out.println("Highlighting row " + resolveRow);
+		if(sp!=null) {
+			sp.highlightRow(resolveRow);
+			int runId = replayer.getHighestRankedRun();
+			if(runId>=0 && resolveRow>0) {
+				Run run = replayer.getContest().getRun(runId);
+				Team team = replayer.getContest().getRankedTeam(resolveRow);
+				if(run!=null && team!=null && team.getId()==run.getTeam()) {
+					sp.highlightProblem(run.getProblem());
+				}
+			}
 		}
 	}
 	
@@ -131,63 +111,93 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		if(sp!=null)
 			sp.setRowColor(row, ICPCColors.GOLD);
 	}
-	
-	
-	// TODO Team delay if team changes rank.
-	// TODO Replay entire problem
-	
+
 	private void initResolveRank() {
-		if(resolveRank==-1) {
+		if(resolveRow==-1) {
 			Contest contest = replayer.getContest();
-			resolveRank = contest.getTeams().size();
-			if(sp!=null)
-				sp.highlightRow(resolveRank);
+			resolveRow = contest.getTeams().size();
+			highlightNext();
+		}
+	}
+	
+	private class ResolverTask extends TimerTask {
+		public void run() {
+			if(resolveRow<=medals || !state.equals("resolver")) {
+				timer.cancel();
+				timer = null;
+				return;
+			}
+			System.out.println("ResolveRank " + resolveRow);
+			int runId = replayer.getHighestRankedRun();
+			if(runId<0) {
+				timer.cancel();
+				timer = null;
+				return;
+			}
+			int stepValue = step(false);
+			switch(stepValue) {
+			case -1: // No processed run.
+				return;
+			case 0: // Team changed row.
+			case 2: // Highlight moved to next row.
+			case 3: // Bronze medal. Should not happen.
+			case 4: // Silver medal. Should not happen.
+			case 5: // Gold medal. Should not happen.
+				//System.out.println("resolveTeamDelay "+resolveTeamDelay);
+				timer.schedule(new ResolverTask(), resolveTeamDelay);
+				break;
+			case 1: // Processed run for this row.
+				//System.out.println("resolveProblemDelay "+resolveProblemDelay);
+				timer.schedule(new ResolverTask(), resolveProblemDelay);
+				break;
+			default:
+				System.out.println("Unknown return code: "+stepValue);
+			}
 		}
 	}
 
-	private void step(int rankLimit) {
+	private int step(boolean updateStepCounter) {
 		Contest contest = replayer.getContest();
-		++stepCounter;
-		if(resolveRank<=0) return;
+		if(updateStepCounter)
+			++stepCounter;
+		if(resolveRow<=0) return -1;
 		int runId = replayer.getHighestRankedRun();
 		Run run = null;
 		if(runId>=0) run = contest.getRun(runId);
-		Team team = contest.getRankedTeam(resolveRank);
+		Team team = contest.getRankedTeam(resolveRow);
 		if(run !=null && run.getTeam() == team.getId()) {
 			showingPresentation = false;
 			// Current row has more runs.
-			System.out.println("Next run on row "+resolveRank + ", run id "+run.getId());
-			replayer.processHighestRank();
-			runId = replayer.getHighestRankedRun();
-			// TODO 
-		} else if(resolveRank>medals || showingPresentation) {
+			System.out.println("Next run on row "+resolveRow + ", run id "+run.getId());
+			replayer.processProblem(run.getTeam(), run.getProblem());
+			highlightNext();
+			Team team2 = contest.getRankedTeam(resolveRow);
+			if(team.getId()==team2.getId()) return 1;
+			return 0;
+		} else if(resolveRow>medals || showingPresentation) {
 			showingPresentation = false;
 			// Highlight next row
-			--resolveRank;
-			System.out.println("Highlighting row " + resolveRank);
-			if(sp!=null) {
-				sp.highlightRow(resolveRank);
-				// Highlight next problem
-				team = contest.getRankedTeam(resolveRank);
-				if(run!=null && run.getTeam() == team.getId()) {
-					sp.highlightProblem(run.getProblem());
-				}
-			}
-		} else if(resolveRank>silverMedals+goldMedals) {
+			--resolveRow;
+			highlightNext();
+			return 2;
+		} else if(resolveRow>silverMedals+goldMedals) {
 			showingPresentation = true;
-			System.out.println("Bronze medal to team " + team.getId() + " on row " + resolveRank);
+			System.out.println("Bronze medal to team " + team.getId() + " on row " + resolveRow);
 			// TODO Show winner presentation
-			showBronzeMedal(resolveRank);
-		} else if(resolveRank>goldMedals) {
+			showBronzeMedal(resolveRow);
+			return 3;
+		} else if(resolveRow>goldMedals) {
 			showingPresentation = true;
-			System.out.println("Silver medal to team " + team.getId() + " on row " + resolveRank);
+			System.out.println("Silver medal to team " + team.getId() + " on row " + resolveRow);
 			// TODO Show winner presentation
-			showSilverMedal(resolveRank);
+			showSilverMedal(resolveRow);
+			return 4;
 		} else {
 			showingPresentation = true;
-			System.out.println("Gold medal to team " + team.getId() + " on row " + resolveRank);
+			System.out.println("Gold medal to team " + team.getId() + " on row " + resolveRow);
 			// TODO Show winner presentation
-			showGoldMedal(resolveRank);
+			showGoldMedal(resolveRow);
+			return 5;
 		}	
 	}
 
@@ -195,29 +205,5 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	public void contestUpdated(ContestUpdateEvent e) {
 		// TODO Auto-generated method stub
 		//System.out.println(e);
-	}
-	
-/* TODO
- * Why does fakecontest crash?
- * 	Only after a while
- * 	Reset after that three teams have solved all problems.
- * Step runs or problems?
- *	If runs, should they still be ordered by problem or by time?
- * What if we want to start manually before last 13 teams?
- *  New resolver here!
- */
-		
-/*
-	State - Description
-	0 - played until 4:00:00
-	
-	Update state counter when:
-	(1) Pending run/problem -> Judged.
-	(2) Highlighting next team.
-	(3) Presentation.
-	
-	Description:
-	Do 'things' until the number of 'things' we have done is equal to the property value.
-
- */
+	}		
 }

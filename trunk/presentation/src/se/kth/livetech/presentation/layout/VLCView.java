@@ -8,8 +8,9 @@ import se.kth.livetech.properties.PropertyListener;
 /**
  * @author togi
  */
-public class VLCView extends JPanel{
-	private String host = "192.168.12.16";
+@SuppressWarnings("serial")
+public class VLCView extends JPanel {
+	private String host = "192.168.2.200";
 	private int basePort = 58000;
 	private int teamPort = 105;
 	private boolean isActive = false;

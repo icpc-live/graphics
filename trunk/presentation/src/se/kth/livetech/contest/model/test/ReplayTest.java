@@ -57,7 +57,7 @@ public class ReplayTest {
 		});
 		
 		// Read directly from Kattis
-		KattisClient kattis = new KattisClient("192.168.12.16");
+		KattisClient kattis = new KattisClient();
 		kattis.addAttrsUpdateListener(replayer);
 		kattis.startPushReading();
 		

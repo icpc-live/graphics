@@ -28,9 +28,9 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		final TeamPresentation teamPresentation = new TeamPresentation(c, base);
 
 		final CountdownPresentation countdown = new CountdownPresentation(time, base);
-		final VNCPresentation vnc = new VNCPresentation(base.get("vnc"));
+		final VNCPresentation vnc = new VNCPresentation(base);
 
-		final VLCView cam = new VLCView(base.get("cam"));
+		final VLCView cam = new VLCView(base);
 		final ClockView clockPanel = new ClockView(base.get("clockrect"), c, time);
 		final InterviewPresentation interview = new InterviewPresentation(base);
 	
@@ -50,8 +50,11 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				DebugTrace.trace("Changed %s -> %s", changed, changed.getValue());
+				
+				cam.deactivate();
 				if (currentView != null)
 					LivePresentation.this.remove(currentView);
+				
 				
 				String mode = changed.getValue();
 				if(mode.equals("vnc")) {
@@ -70,7 +73,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 					currentView = teamPresentation;
 				}
 				else if(mode.equals("cam")) {
-					currentView = cam;
+					cam.activate();
 				}
 				else if(mode.equals("countdown")) {
 					currentView = countdown;

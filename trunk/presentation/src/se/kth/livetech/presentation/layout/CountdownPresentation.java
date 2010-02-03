@@ -23,17 +23,19 @@ public class CountdownPresentation extends JPanel {
 	
 	int displaySeconds = 30;
 	final static int ANIMATE_FROM = 800;
+	final static int START_MESSAGE_LENGTH = 300; 
 	Row[] rows;
 	PropertyListener countdownListener;
 	
 	public CountdownPresentation(RemoteTime time, IProperty props) {
 		timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
+		targetServerTime = START_MESSAGE_LENGTH*1000;
 		this.setBackground(ICPCColors.SCOREBOARD_BG);
 				
 		countdownListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-				int secondsFromNow = changed.getIntValue();
+				int secondsFromNow = changed.getValue().isEmpty()?START_MESSAGE_LENGTH:changed.getIntValue();
 				displaySeconds = secondsFromNow;
 				
 				rows = new Row[displaySeconds+1];
@@ -130,7 +132,7 @@ public class CountdownPresentation extends JPanel {
 			}
 			g2d.translate(-bounds.getCenterX(), -bounds.getCenterY());
 		} 
-		else {
+		else if (diffMilli < START_MESSAGE_LENGTH){ //display for five minutes 
 			String row1Text = "Go!";
 			String row2Text = "The contest has started";
 			

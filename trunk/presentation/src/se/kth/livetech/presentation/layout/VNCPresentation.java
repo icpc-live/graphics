@@ -19,16 +19,28 @@ public class VNCPresentation extends JPanel {
 	private String host = "";
 	private String password = "";
 	double zoom = 1;
-	private int port = -1;
+	int portBase = 59000;
+	int teamPort = 105;
 		
 	private VncViewer vv = null;
 	private ScrollPane sp = null;
-	PropertyListener hostChange, portChange, zoomChange, panXChange;
+	PropertyListener hostChange, portChange, zoomChange, panXChange, teamChanger;
 	
 	
-	public VNCPresentation(IProperty innerPZ) {
+	public VNCPresentation(IProperty base) {
+		IProperty vncProps = base.get("vnc");
+		
 		sp = new ScrollPane(ScrollPane.SCROLLBARS_NEVER);
 		this.add(sp);
+		
+		//team change shortcut
+		base.get("team.team").addPropertyListener(teamChanger = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				teamPort = changed.getIntValue();
+			}
+		});
+		
 		hostChange = new PropertyListener() {	
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -39,7 +51,7 @@ public class VNCPresentation extends JPanel {
 		portChange = new PropertyListener() {	
 			@Override
 			public void propertyChanged(IProperty changed) {
-				port = changed.getIntValue();
+				portBase = changed.getIntValue();
 				connect();
 			}
 		};
@@ -53,32 +65,16 @@ public class VNCPresentation extends JPanel {
 					e.printStackTrace();
 				}
 				if (changed.getValue().isEmpty())
-					zoom = 1.0;
+					changed.setDoubleValue(zoom = 1.0); //default
 				else
 					zoom = changed.getDoubleValue();
 				connect();
 			}
 		};
-		panXChange = new PropertyListener() {
-			@Override
-			public void propertyChanged(IProperty changed) {
-				DebugTrace.trace("previous scroll: " + sp.getScrollPosition().x);
-				double panx = changed.getDoubleValue();
-				DebugTrace.trace("new scroll: " + panx);
-				sp.setScrollPosition((int) panx, sp.getScrollPosition().y);
-//				Rectangle currentBounds = sp.getBounds();
-//				Rectangle outerBounds = VNCView.this.getBounds();
-//				currentBounds.x = (int) (outerBounds.getCenterX() + panx * outerBounds.width);
-//				DebugTrace.trace(currentBounds.x);
-//				sp.setBounds(currentBounds);
-//				sp.validate();
-			}
-		};
-		innerPZ.get("host").addPropertyListener(hostChange);
-		innerPZ.get("port").addPropertyListener(portChange);
-		innerPZ.get("pz.zoom").addPropertyListener(zoomChange);
-		//innerPZ.get("pz.panx").addPropertyListener(panXChange);
-		//innerPZ.get("pz.pany").addPropertyListener(panYChange);
+
+		vncProps.get("host").addPropertyListener(hostChange);
+		vncProps.get("port").addPropertyListener(portChange);
+		vncProps.get("pz.zoom").addPropertyListener(zoomChange);
 	}
 	
 	private void connect() {
@@ -92,10 +88,10 @@ public class VNCPresentation extends JPanel {
 			vv = null;
 		}
 	
-		if (!host.equals("") && port > 0) {
+		if (!host.equals("") && portBase + teamPort > 0) {
 			vv = VncViewerFactory.createVncViewer(
 					host, 
-					port, 
+					portBase + teamPort, 
 					(password == null) ? null : password,
 					zoom,
 					false);

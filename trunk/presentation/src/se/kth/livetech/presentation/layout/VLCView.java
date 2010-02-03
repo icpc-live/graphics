@@ -8,57 +8,65 @@ import se.kth.livetech.properties.PropertyListener;
 /**
  * @author togi
  */
-public class VLCView extends JPanel {
-	private int basePort = 58000;
-
+public class VLCView extends JPanel{
 	private String host = "192.168.12.16";
-	private int team = 105;
-	
+	private int basePort = 58000;
+	private int teamPort = 105;
+	private boolean isActive = false;
 	private Process vlcInstance;
 	
 	IProperty vlcProperties = null;
-	PropertyListener teamListener;
+	PropertyListener portListener;
 	PropertyListener hostListener;
+	PropertyListener teamListener;
 	
-	public VLCView(IProperty vlcProperties) {
+	public VLCView(IProperty props) {
 
-		this.vlcProperties = vlcProperties;
+		this.vlcProperties = props;
 
-		vlcProperties.get("host").setValue(host);
-		vlcProperties.get("host").addPropertyListener(hostListener = new PropertyListener() {	
+		props.get("cam.host").setValue(host);
+		props.get("cam.host").addPropertyListener(hostListener = new PropertyListener() {	
 			@Override
 			public void propertyChanged(IProperty changed) {
 				host = changed.getValue();
-				connect();
+				if (isActive)
+					start();
 			}
 		});
 
-		vlcProperties.get("team").setIntValue(team);
-		vlcProperties.get("team").addPropertyListener(teamListener = new PropertyListener() {	
+		props.get("cam.team").setIntValue(basePort);
+		props.get("cam.team").addPropertyListener(portListener = new PropertyListener() {	
 			@Override
 			public void propertyChanged(IProperty changed) {
-				team = changed.getIntValue();
-				connect();
+				basePort = changed.getIntValue();
+				if (isActive)
+					start();
+			}
+		});
+		
+		props.get("team.team").addPropertyListener(teamListener = new PropertyListener() {
+			
+			@Override
+			public void propertyChanged(IProperty changed) {
+				teamPort = changed.getIntValue();
+				if (isActive)
+					start();
 			}
 		});
 
 	}
 	
-	private void connect() {
-		if (team <= 0) {
-			System.err.println("invalid team: " + team);
+	void start() {
+		if (basePort + teamPort <= 0) {
+			System.err.println("invalid port: " + basePort + teamPort);
 			return;
 		}
 		
-		System.err.println("killing vlc instance");
-		if (vlcInstance != null) {
-			vlcInstance.destroy();
-			vlcInstance = null;
-		}
+		stop();
 
-		System.err.println("connecting webcam to team " + team + " " + String.format("http://%s:%d/", host, basePort+team));
+		System.err.println("connecting webcam to team " + teamPort + " " + String.format("http://%s:%d/", host, basePort+teamPort));
 		
-		ProcessBuilder pb = new ProcessBuilder("vlc", "-vvv", "-f", String.format("http://%s:%d/", host, basePort+team));
+		ProcessBuilder pb = new ProcessBuilder("vlc", "-vvv", "-f", String.format("http://%s:%d/", host, basePort+teamPort));
 		try {
 			vlcInstance = pb.start();
 			vlcInstance.getErrorStream().close();
@@ -66,5 +74,23 @@ public class VLCView extends JPanel {
 			vlcInstance.getOutputStream().close();
 		} catch (Exception e) { e.printStackTrace(); }
 		this.validate();
+	}
+	
+	void stop() {
+		System.err.println("killing vlc instance");
+		if (vlcInstance != null) {
+			vlcInstance.destroy();
+			vlcInstance = null;
+		}
+	}
+	
+	void activate() {
+		start();
+		isActive = true;
+	}
+	
+	void deactivate() {
+		stop();
+		isActive = false;
 	}
 }

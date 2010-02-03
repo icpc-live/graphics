@@ -7,9 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.swing.JPanel;
 
@@ -18,9 +16,11 @@ import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.graphics.TestcaseStatusRenderer;
+import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Run;
+import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.Testcase;
 import se.kth.livetech.contest.model.test.FakeContest;
 import se.kth.livetech.contest.model.test.TestContest;
@@ -38,17 +38,21 @@ import se.kth.livetech.util.Frame;
 public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	public static final boolean FULL_SCREEN = false;
 	public static final double ANIMATION_TIME = 1000; // ms
-	public static final double KEEP_TIME = 10000; // ms
+	public static final double JUDGED_KEEP_TIME = 10000; // ms
+	public static final double PENDING_KEEP_TIME = 60000; // ms
 	final int N = 20;
 	final int P = 2;
 	final int T = 55;
 
 	Map<Integer, JudgeState> state = Collections.synchronizedMap(new TreeMap<Integer, JudgeState>());
+	Contest c;
 
 	private static class JudgeState {
+		Run run;
 		TestcaseStatusRenderer.Status compiling, running, validating;
 		TestcaseStatusRenderer.Status[] cases;
 		long lastUpdateTime;
+		boolean judged;
 		public JudgeState() {
 			compiling = TestcaseStatusRenderer.Status.active;
 			running = TestcaseStatusRenderer.Status.none;
@@ -80,6 +84,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 		}
 
 		public void update(Run run) {
+			this.run = run;
 			if (run.isJudged()) {
 				compiling = TestcaseStatusRenderer.Status.passed;
 				running = TestcaseStatusRenderer.Status.passed;
@@ -89,6 +94,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				else {
 					validating = TestcaseStatusRenderer.Status.failed;
 				}
+				this.judged = true;
 			}
 			lastUpdateTime = System.currentTimeMillis();
 		}
@@ -130,10 +136,11 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			state = new TreeMap<Integer, JudgeState>(this.state);
 		}
 		for (int i : state.keySet()) {
-			if(now - state.get(i).lastUpdateTime > KEEP_TIME)
+			if (now - state.get(i).lastUpdateTime > (state.get(i).judged ? JUDGED_KEEP_TIME : PENDING_KEEP_TIME)) {
 				synchronized (this.state) {
 					this.state.remove(i);
 				}
+			}
 		}
 		synchronized (this.state) {
 			state = new TreeMap<Integer, JudgeState>(this.state);
@@ -150,28 +157,31 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 					r.setBackground(new RowFrameRenderer(row2, row1));
 			}
 
+			JudgeState js = state.get(i);
+			Team team = c.getTeam(js.run.getTeam());
+
 			{ // Flag
 				String country = ICPCImages.COUNTRY_CODES[i % ICPCImages.COUNTRY_CODES.length];
-				ImageResource image = ICPCImages.getFlag(country);
+				ImageResource image = ICPCImages.getFlag(team.getNationality());
 				Renderable flag = new ImageRenderer("flag " + country, image);
 				r.add(flag, 1, .9, true);
 			}
 
 			{ // Logo
-				ImageResource image = ICPCImages.getTeamLogo(i);
+				ImageResource image = ICPCImages.getTeamLogo(team.getId());
 				Renderable logo = new ImageRenderer("logo " + i, image);
 				r.add(logo, 1, .9, true);
 			}
 
 			{ // Team name
 				// TODO: team name should be in a TeamSubmissionState...
-				Renderable teamName = new ColoredTextBox("University " + i, ContentProvider.getTeamNameStyle());
+				//Renderable teamName = new ColoredTextBox("University " + i, ContentProvider.getTeamNameStyle());
+				Renderable teamName = new ColoredTextBox(team.getName(), ContentProvider.getTeamNameStyle());
 				r.add(teamName, 1, 1, false);
 			}
 
 			// Testcases
 			{ // States
-				JudgeState js = state.get(i);
 				Renderable testcase = new TestcaseStatusRenderer(js.compiling);
 				r.add(testcase, 1, .95, true);
 				Renderable testcaseRunning = new TestcaseStatusRenderer(js.running);
@@ -226,6 +236,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
+		this.c = e.getNewContest();
 		if (e.getUpdate() instanceof Run) {
 			Run run = (Run) e.getUpdate();
 			if (!state.containsKey(run.getId())) {

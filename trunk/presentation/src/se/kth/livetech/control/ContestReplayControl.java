@@ -171,7 +171,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			System.out.println("Next run on row "+resolveRow + ", run id "+run.getId());
 			replayer.processProblem(run.getTeam(), run.getProblem());
 			highlightNext();
-			Team team2 = contest.getRankedTeam(resolveRow);
+			Team team2 = replayer.getContest().getRankedTeam(resolveRow);
 			if(team.getId()==team2.getId()) return 1;
 			return 0;
 		} else if(resolveRow>medals || showingPresentation) {

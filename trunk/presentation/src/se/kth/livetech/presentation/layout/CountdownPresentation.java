@@ -11,33 +11,48 @@ import javax.swing.JPanel;
 import se.kth.livetech.communication.RemoteTime;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
-import se.kth.livetech.contest.model.Contest;
-import se.kth.livetech.contest.model.ContestUpdateEvent;
-import se.kth.livetech.contest.model.ContestUpdateListener;
-import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.presentation.graphics.Renderable;
-import se.kth.livetech.util.Frame;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyListener;
+import se.kth.livetech.util.DebugTrace;
 
 @SuppressWarnings("serial")
-public class CountdownPresentation extends JPanel implements ContestUpdateListener{
+public class CountdownPresentation extends JPanel {
 	long timeshift;
-	Contest c;
-	final static int DISPLAY_SECONDS = 30;
-	final static int ANIMATE_FROM = 200;
-	Row[] rows = new Row[DISPLAY_SECONDS+1];
+	long targetServerTime;
 	
-	public CountdownPresentation(Contest c, RemoteTime time) {
-		this.c = c;
+	int displaySeconds = 30;
+	final static int ANIMATE_FROM = 800;
+	Row[] rows;
+	PropertyListener countdownListener;
+	
+	public CountdownPresentation(RemoteTime time, IProperty props) {
 		timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
 		this.setBackground(ICPCColors.SCOREBOARD_BG);
-		rows[0] = new Row(ContentProvider.getCountdownRenderable("", ""));
+				
+		countdownListener = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				int secondsFromNow = changed.getIntValue();
+				displaySeconds = secondsFromNow;
+				
+				rows = new Row[displaySeconds+1];
+				//rows[0] = new Row(ContentProvider.getCountdownRenderable("", ""));
 
-		for(int i = 1; i <= DISPLAY_SECONDS; ++i) {
-			int secs = i;
-			String row1Text = ChineseNumerals.moonspeak(secs);
-			String row2Text = "" + secs + " [" + ChineseNumerals.pinyin(secs) + "]";
-			rows[i] = new Row(ContentProvider.getCountdownRenderable(row1Text, row2Text));
-		}
+				for(int i = 0; i <= displaySeconds; ++i) {
+					int secs = i;
+					String row1Text = ChineseNumerals.moonspeak(secs);
+					String row2Text = "" + secs + " [" + ChineseNumerals.pinyin(secs) + "]";
+					rows[i] = new Row(ContentProvider.getCountdownRenderable(row1Text, row2Text));
+				}
+								
+				targetServerTime = System.currentTimeMillis() + timeshift + secondsFromNow*1000;
+				DebugTrace.trace("Resetting countdown\n");
+				repaint();
+			}
+		};
+		
+		props.get("countdown_from").addPropertyListener(countdownListener);
 	}
 
 	class Row extends JPanel {
@@ -78,11 +93,9 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D)g;
-		Contest c = this.c;
 
-		long startTime = c.getInfo().getStartTime()*1000; //convert to millis
 		long currentTime = System.currentTimeMillis() + timeshift;
-		long diffMilli = currentTime - startTime;
+		long diffMilli = currentTime - targetServerTime;
 	
 		double ageOffset;
 		
@@ -93,7 +106,7 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 			ageOffset = Math.floor(diffMilli/1000.0) + ((double)(milliPart - ANIMATE_FROM))/(1000 - ANIMATE_FROM);
 		}
 		
-		for(int i = 0; i<=DISPLAY_SECONDS; ++i) {
+		for(int i = 0; i<=displaySeconds; ++i) {
 			rows[i].setAge(i+ageOffset);
 		}
 		Rectangle bounds = this.getBounds();
@@ -134,18 +147,13 @@ public class CountdownPresentation extends JPanel implements ContestUpdateListen
 		
 		this.repaint(20);
 	}
-
-	@Override
-	public void contestUpdated(ContestUpdateEvent e) {
-		this.c = e.getNewContest();
-		this.repaint();
-	}
 	
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(50, 10, 35000);
-		Contest c1 = tc.getContest();
-		Frame frame = new Frame("Countdown Presentation", new CountdownPresentation(c1, new RemoteTime.LocalTime()));
-		frame.setPreferredSize(new Dimension(1024, 768));
-		frame.pack();
+		//BROKEN
+//		TestContest tc = new TestContest(50, 10, 35000);
+//		Contest c1 = tc.getContest();
+//		Frame frame = new Frame("Countdown Presentation", new CountdownPresentation(c1, new RemoteTime.LocalTime()));
+//		frame.setPreferredSize(new Dimension(1024, 768));
+//		frame.pack();
 	}
 }

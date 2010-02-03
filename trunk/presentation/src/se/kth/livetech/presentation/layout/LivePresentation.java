@@ -26,7 +26,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		
 		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c);
 		final TeamPresentation teamPresentation = new TeamPresentation(c, base);
-		final CountdownPresentation countdown = new CountdownPresentation(c, time);
+		final CountdownPresentation countdown = new CountdownPresentation(time, base);
 		final VNCView vnc = new VNCView(base.get("vnc"));
 		final VLCView cam = new VLCView(base.get("cam"));
 		final ClockView clockPanel = new ClockView(base.get("clockrect"), c, time);
@@ -34,11 +34,10 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	
 		sublisteners.add(scoreboard);
 		sublisteners.add(teamPresentation);
-		sublisteners.add(countdown);
 		sublisteners.add(clockPanel);
 		
 		this.add(clockPanel); //always there on top
-		currentView = countdown;
+		currentView = scoreboard;
 		this.add(currentView);
 		this.validate();
 		

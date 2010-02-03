@@ -2,8 +2,6 @@ package se.kth.livetech.presentation.layout;
 
 import javax.swing.JPanel;
 
-import org.jvnet.winp.WinProcess;
-
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 

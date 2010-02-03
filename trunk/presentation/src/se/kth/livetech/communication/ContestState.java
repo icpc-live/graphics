@@ -34,7 +34,10 @@ public class ContestState implements AttrsUpdateListener {
 
 	@Override
 	public synchronized void attrsUpdated(AttrsUpdateEvent e) {
-		events.add(e);
+		if (e.getType().equals("reset"))
+			events.clear();
+		else
+			events.add(e);
 		this.send(e);
 	}
 }

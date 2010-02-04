@@ -84,9 +84,9 @@ public class VNCPresentation extends JPanel {
 		vncProps.get("pz.zoom").addPropertyListener(zoomChange);
 	}
 	
-	private void connect() {
-		//if (!this.isDisplayable())
-		//	return;
+	public void connect() {
+		if (!this.isDisplayable())
+			return;
 		System.err.println("connect");
 		sp.removeAll();
 		

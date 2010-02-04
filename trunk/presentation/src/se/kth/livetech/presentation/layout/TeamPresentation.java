@@ -50,7 +50,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	int id;
 	Team team;
 	
-	boolean displayResults = true;
+	boolean displayResults = false;
 	String extraInfo;
 	
 	public String getExtraInfo() {
@@ -82,17 +82,25 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		PropertyListener teamChange = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-				DebugTrace.trace("Changed %s -> %s", changed, changed.getValue());
 				int teamId = changed.getIntValue();
 				Contest c = TeamPresentation.this.c;
 				setTeam(c.getTeam(teamId));
 			}
 		};
 		
+		PropertyListener memberToggle = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				displayMembers = changed.getBooleanValue();
+			}
+		};
+		
 		listeners.add(showResultsChanger);
 		listeners.add(teamChange);
+		listeners.add(memberToggle);
 		props.get("team.team").addPropertyListener(teamChange);
 		props.get("team.show_results").addPropertyListener(showResultsChanger);
+		props.get("team.show_members").addPropertyListener(memberToggle);
 	}
 	
 	public synchronized void setContest(Contest nc) {
@@ -101,7 +109,6 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	}
 	
 	public synchronized void setTeam(Team team){
-		DebugTrace.trace("Setting team to " + team.getName());
 		this.team = team;
 		this.id = team.getId();
 		repaint();

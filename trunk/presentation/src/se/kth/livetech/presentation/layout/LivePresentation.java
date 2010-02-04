@@ -117,6 +117,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				}
 				if (currentView != null)
 					LivePresentation.this.add(currentView);
+				
+				vnc.connect();
 				validate();
 				repaint();
 			}

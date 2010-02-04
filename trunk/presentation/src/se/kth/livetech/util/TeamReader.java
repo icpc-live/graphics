@@ -90,6 +90,7 @@ public class TeamReader {
 	}
 
 	public String[] getTeamMembers(int id) {
+		DebugTrace.trace("Trying to fetch member data for team " + id);
 		return teams.get(id).getMembers();
 	}
 

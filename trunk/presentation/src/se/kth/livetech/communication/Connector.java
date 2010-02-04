@@ -32,6 +32,7 @@ public class Connector {
 			localNode.ip = InetAddress.getLocalHost().getHostAddress();
 			localNode.address = InetAddress.getLocalHost().getCanonicalHostName();
 			localNode.host = InetAddress.getLocalHost().getHostName();
+			if (localNode.name == null) localNode.name = localNode.host;
 		} catch (UnknownHostException e) {
 		}
 		localNode.port = port;

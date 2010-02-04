@@ -8,8 +8,6 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
-import se.kth.livetech.contest.graphics.ICPCColors;
-
 
 @SuppressWarnings("serial")
 public class SketchViews extends JPanel {

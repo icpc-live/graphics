@@ -231,4 +231,8 @@ public class ContentProvider {
 	public static Style getInterviewExtraInfoStyle() {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.left);
 	}
+
+	public static Style getTeamMemberStyle() {
+		return new ColoredTextBox.BaseStyle(ICPCColors.BG_COLOR_1, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.left);
+	}
 }

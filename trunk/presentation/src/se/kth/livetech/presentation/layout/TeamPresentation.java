@@ -169,20 +169,24 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		
 		g.translate(0, -posy);//TODO: change to calculated value
 		
-		g.setClip(clip);
+		g.setClip(this.getBounds());
 		
-		//g.translate(0.2*getWidth(), )
+		double memberPosy = 0.7*getHeight();
+		g.translate(0.2*getWidth(), memberPosy);
 		if (this.displayMembers && teamReader != null) {
 			String[] memberStrings = teamReader.getTeamMembers(id);
-			PartitionedRowRenderer pr = new PartitionedRowRenderer(); 
+			PartitionedRowRenderer pr = new PartitionedRowRenderer();
+			
 			for (String mem : memberStrings) {
-				Renderable member = new ColoredTextBox(mem, ContentProvider.getTeamNameStyle()); //TODO: change style
+				Renderable member = new ColoredTextBox(mem, ContentProvider.getTeamMemberStyle()); //TODO: change style
 				pr.add(member, 1, 0.9, false);
 			}
-			int nameHeight = (int) (0.1*getHeight());
+			
+			int nameHeight = (int) (0.06*getHeight());
 			pr.render(g, new Dimension((int)(getWidth()*0.6), nameHeight));
 		}
-
+		g.translate(-0.2*getWidth(), memberPosy);
+		
 		paintFps(g);
 
 		{ // Update?

@@ -63,9 +63,10 @@ public class TeamReader {
 
 	public TeamReader(InputStream in) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		//BufferedReader br = new BufferedReader(new FileReader(in));
 		teams = new TreeMap<Integer, TeamEntry>();
 
-		for (int i = 0; true; ++i) {
+		for (int i = 1; true; ++i) {
 			String line = br.readLine();
 
 			if (line == null) {

@@ -1,10 +1,11 @@
 package se.kth.livetech.presentation.layout;
 
 import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JPanel;
 
@@ -12,6 +13,7 @@ import se.kth.livetech.communication.RemoteTime;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
+import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
@@ -136,6 +138,11 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		base.get("nofps").addPropertyListener(noFps);
 		
 		this.validate();
+	}
+	
+	@Override
+	public void paintComponent(Graphics g) {
+		RenderCache.setQuality((Graphics2D)g);
 	}
 	
 	@Override

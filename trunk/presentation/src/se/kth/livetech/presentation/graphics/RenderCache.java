@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
@@ -94,6 +95,10 @@ public class RenderCache {
 				RenderingHints.VALUE_RENDER_QUALITY);
 		hints.put(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+	}
+	
+	public static void setQuality(Graphics2D g) {
+		g.setRenderingHints(hints);
 	}
 	
 	/**

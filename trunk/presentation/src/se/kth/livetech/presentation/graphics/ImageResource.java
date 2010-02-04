@@ -15,15 +15,18 @@ import se.kth.livetech.util.DebugTrace;
 public class ImageResource {
 	private static String IMAGE_ROOT = "images/";
 	private static String SCALE_ROOT = "scaled/";
+	private static final boolean RED_CROSS = false;
 
 	private static BufferedImage NO_IMAGE;
 	
 	static {
 		NO_IMAGE = new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = (Graphics2D) NO_IMAGE.getGraphics();
-		g.setColor(Color.RED);
-		g.drawLine(1, 1, 3, 3);
-		g.drawLine(1, 3, 3, 1);
+		if (RED_CROSS) {
+			Graphics2D g = (Graphics2D) NO_IMAGE.getGraphics();
+			g.setColor(Color.RED);
+			g.drawLine(1, 1, 3, 3);
+			g.drawLine(1, 3, 3, 1);
+		}
 	}
 
 	String path;

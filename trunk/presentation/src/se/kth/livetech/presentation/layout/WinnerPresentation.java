@@ -16,6 +16,7 @@ import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.test.TestContest;
+import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
@@ -43,6 +44,7 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener,
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D)g;
+		RenderCache.setQuality(g2d);
 
 		Rectangle bounds = this.getBounds();
 

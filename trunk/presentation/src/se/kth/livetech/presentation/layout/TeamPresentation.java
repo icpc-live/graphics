@@ -295,8 +295,8 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		int id2 = tc.submit(0, 4, 21);
 		tc.solve(id2);
 		tc.submit(1, 3, 23);
-		Contest c1 = tc.getContest();
 //		BROKEN:
+//		Contest c1 = tc.getContest();
 //		Frame frame = new Frame("Team Presentation (static)", new TeamPresentation(c1, 0));
 //		frame.setIconImage(RenderCache.getRenderCache().getImageFor(new IconRenderer(), new Dimension(128, 128)));
 	}

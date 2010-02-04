@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
-import se.kth.livetech.util.DebugTrace;
 
 import com.tightvnc.VncViewer;
 import com.tightvnc.VncViewerFactory;

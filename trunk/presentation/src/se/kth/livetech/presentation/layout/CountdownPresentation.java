@@ -35,7 +35,9 @@ public class CountdownPresentation extends JPanel {
 		countdownListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-				int secondsFromNow = changed.getValue().isEmpty()?START_MESSAGE_LENGTH:changed.getIntValue();
+				int secondsFromNow = changed.getValue().isEmpty()?-START_MESSAGE_LENGTH:changed.getIntValue();
+				if( secondsFromNow > 99 )
+					secondsFromNow = 99;
 				displaySeconds = secondsFromNow;
 				
 				rows = new Row[displaySeconds+1];

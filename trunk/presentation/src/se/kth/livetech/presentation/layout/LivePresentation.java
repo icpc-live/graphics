@@ -54,7 +54,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		sublisteners.add(winnerPresentation);
 		
 		this.add(clockPanel); //always there on top
-		currentView = countdown;
+		currentView = scoreboard;
 		this.add(currentView);
 		this.validate();
 		

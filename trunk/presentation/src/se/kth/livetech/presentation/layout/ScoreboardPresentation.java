@@ -71,19 +71,23 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 
 	public void setPage(int page) {
 		startRow = Math.max(page - 1, 0)*ROWS;
+		repaint();
 	}
 	
 	public void highlightRow(int row) {
 		highlightedRow = row;
+		repaint();
 	}
 	
 	public void setRowColor(int row, Color color) {
 		coloredRow = row;
 		rowColor = color;
+		repaint();
 	}
 	
 	public void highlightProblem(int problem) {
 		highlightedProblem = problem;
+		repaint();
 	}
 	
 	@Override

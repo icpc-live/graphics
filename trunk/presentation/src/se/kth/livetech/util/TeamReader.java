@@ -75,14 +75,14 @@ public class TeamReader {
 
 			String[] elems = line.split("\t");
 			teams.put(
-					i,
+					Integer.valueOf(elems[0]),
 					new TeamEntry(
-							i,
-							elems[0],
+							Integer.valueOf(elems[0]),
+							elems[1],
 							new String[] {
-								elems[1],
 								elems[2],
-								elems[3]
+								elems[3],
+								elems[4]
 								      }
 							)
 					);
@@ -90,6 +90,7 @@ public class TeamReader {
 	}
 
 	public String[] getTeamMembers(int id) {
+		DebugTrace.trace("Trying to fetch member data for team " + id);
 		return teams.get(id).getMembers();
 	}
 
@@ -101,6 +102,10 @@ public class TeamReader {
 				TeamEntry team1 = teams.get(id);
 				Team team2 = c.getTeam(id);
 
+				if (team1.getId() != team2.getId()) {
+					consistent = false;
+					DebugTrace.trace("Team id of team %d not consistent (%d != %d).", id, team1.getId(), team2.getId());
+				}
 				if (team1.getTeamName() != team2.getName()) {
 					consistent = false;
 					DebugTrace.trace("Team name of team %d not consistent (\"%s\" != \"%s\").", id, team1.getTeamName(), team2.getName());

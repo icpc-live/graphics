@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
-import se.kth.livetech.util.DebugTrace;
 
 import com.tightvnc.VncViewer;
 import com.tightvnc.VncViewerFactory;
@@ -16,7 +15,7 @@ import com.tightvnc.VncViewerFactory;
  */
 @SuppressWarnings("serial")
 public class VNCPresentation extends JPanel {
-	private String host = "";
+	private String host = "192.168.2.200";
 	private String password = "";
 	double zoom = 1;
 	int portBase = 59000;
@@ -37,13 +36,19 @@ public class VNCPresentation extends JPanel {
 		base.get("team.team").addPropertyListener(teamChanger = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
+				if(changed.getValue().isEmpty())
+					changed.setIntValue(105); //default
 				teamPort = changed.getIntValue();
+				connect();
 			}
 		});
 		
 		hostChange = new PropertyListener() {	
 			@Override
 			public void propertyChanged(IProperty changed) {
+				if(changed.getValue().isEmpty())
+					changed.setValue("192.168.2.200"); //default
+
 				host = changed.getValue();
 				connect();
 			}
@@ -51,6 +56,8 @@ public class VNCPresentation extends JPanel {
 		portChange = new PropertyListener() {	
 			@Override
 			public void propertyChanged(IProperty changed) {
+				if(changed.getValue().isEmpty())
+					changed.setIntValue(59000); //default
 				portBase = changed.getIntValue();
 				connect();
 			}
@@ -77,7 +84,9 @@ public class VNCPresentation extends JPanel {
 		vncProps.get("pz.zoom").addPropertyListener(zoomChange);
 	}
 	
-	private void connect() {
+	public void connect() {
+		if (!this.isDisplayable())
+			return;
 		System.err.println("connect");
 		sp.removeAll();
 		

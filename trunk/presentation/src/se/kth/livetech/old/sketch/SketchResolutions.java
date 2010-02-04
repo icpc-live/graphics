@@ -9,7 +9,6 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
-import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")

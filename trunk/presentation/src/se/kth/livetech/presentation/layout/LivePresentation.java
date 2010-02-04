@@ -7,9 +7,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import se.kth.livetech.communication.RemoteTime;
+import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
@@ -25,12 +27,23 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	List<ContestUpdateListener> sublisteners = new ArrayList<ContestUpdateListener>();
 	Component currentView;
 	List<PropertyListener> propertyListeners;
+	IProperty modeProp, clearProp;
 	
-	public LivePresentation(Contest c, IProperty base, RemoteTime time) {
+	public static class Blank extends JPanel {
+		public Blank() {
+			this.setBackground(ICPCColors.COLOR_KEYING);
+		}
+	}
+	private Blank blankView = new Blank();
+	
+	public LivePresentation(Contest c, IProperty base, RemoteTime time, JFrame mainFrame) {
 		this.setLayout(null); //absolute positioning of subcomponents
 		
 		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c, base);
 		TeamReader teamReader;
+
+		modeProp = base.get("mode");
+		clearProp = base.get("clear");
 		
 		try {
 			teamReader = new TeamReader("images/teams2010.txt");
@@ -43,7 +56,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		final CountdownPresentation countdown = new CountdownPresentation(time, base);
 		final VNCPresentation vnc = new VNCPresentation(base);
 
-		final VLCView cam = new VLCView(base);
+		final VLCView cam = new VLCView(base, mainFrame);
 		final ClockView clockPanel = new ClockView(base.get("clockrect"), c, time);
 		final InterviewPresentation interview = new InterviewPresentation(base);
 		final WinnerPresentation winnerPresentation = new WinnerPresentation(base);
@@ -71,15 +84,19 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 					LivePresentation.this.remove(currentView);
 				
 				
-				String mode = changed.getValue();
-				if(mode.equals("vnc")) {
+				String mode = modeProp.getValue();
+				boolean clear = clearProp.getBooleanValue();
+				if (clear) {
+					currentView = blankView;
+				}
+				else if (mode.equals("vnc")) {
 					currentView = vnc;
 				}
 				else if(mode.equals("score")) {
 					currentView = scoreboard;
 				}
 				else if(mode.equals("blank")) {
-					currentView = null;
+					currentView = blankView;
 				}
 				else if(mode.equals("interview")) {
 					currentView = interview;
@@ -96,9 +113,15 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				else if(mode.equals("award")) {
 					currentView = winnerPresentation;
 				}
+				else {
+					currentView = blankView;
+				}
 				if (currentView != null)
 					LivePresentation.this.add(currentView);
-				LivePresentation.this.validate();
+				
+				vnc.connect();
+				validate();
+				repaint();
 			}
 		};
 		
@@ -110,11 +133,11 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
-		PropertyListener logoToggle = new PropertyListener() {
+		/*TODO: unused: PropertyListener logoToggle = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
 			}
-		};
+		};*/
 		
 		PropertyListener noFps = new PropertyListener() {
 			@Override
@@ -128,7 +151,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		propertyListeners.add(showClockChange);
 		propertyListeners.add(noFps);
 		
-		base.get("mode").addPropertyListener(modeChange);
+		modeProp.addPropertyListener(modeChange);
+		clearProp.addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(showClockChange);
 		base.get("nofps").addPropertyListener(noFps);
 		

@@ -11,6 +11,7 @@ import javax.swing.JPanel;
 import se.kth.livetech.communication.RemoteTime;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
+import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
@@ -31,7 +32,7 @@ public class CountdownPresentation extends JPanel {
 		timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
 		targetServerTime = START_MESSAGE_LENGTH*1000;
 		this.setBackground(ICPCColors.SCOREBOARD_BG);
-				
+
 		countdownListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -76,6 +77,7 @@ public class CountdownPresentation extends JPanel {
 		
 		public void paintComponent(Graphics g) {
 			Graphics2D g2d = (Graphics2D) g;
+			RenderCache.setQuality(g2d);
 			double ratio = getRatio();
 			g2d.setColor(new Color(1,1,1,(float)ratio));
 			Dimension dim = new Dimension((int) (maxSize.width*ratio), (int) (maxSize.height*ratio));

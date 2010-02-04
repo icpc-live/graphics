@@ -10,6 +10,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JPanel;
 
@@ -52,8 +53,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	private boolean showFps = true;
 	public int highlightedRow;
 	public int highlightedProblem;
-	public int coloredRow;
-	public Color rowColor;
+	private Map<Integer, Color> rowColorations;
 
 	Contest c;
 	
@@ -75,41 +75,37 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		scoreBase.get("highlightedRow").addPropertyListener(new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-				int row = changed.getIntValue();
-				highlightRow(row);
+				highlightedRow = changed.getIntValue();
+				repaint();
 			}
 		});
 		
 		scoreBase.get("highlightedProblem").addPropertyListener(new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-				int problem = changed.getIntValue();
-				highlightProblem(problem);
+				highlightedProblem = changed.getIntValue();
+				repaint();
 			}
 		});
 		
-		final Map<Integer, String> rowColorMap = new HashMap<Integer, String>();
 		final Map<String, Color> colorMap = new HashMap<String, Color>();
 		colorMap.put("bronze", ICPCColors.BRONZE);
 		colorMap.put("silver", ICPCColors.SILVER);
 		colorMap.put("gold", ICPCColors.GOLD);
+		
 		IProperty colorProperties = scoreBase.get("color");
 		colorProperties.addPropertyListener(new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				for(IProperty prop : changed.getSubProperties()) {
-					String name = prop.getName();
-					String value = prop.getValue();
-					String oldValue = rowColorMap.get(name);
-					
-					if((value!=null && !value.equals(oldValue)) || (value==null && oldValue!=null)) {
-						rowColorMap.put(Integer.parseInt(name), value);
-						setRowColor(Integer.parseInt(name), colorMap.get(value));
-					} 
+					Integer row = Integer.parseInt(prop.getName());
+					Color color = colorMap.get(prop.getValue());
+					rowColorations.put(row, color);
 				}
-				
+				repaint();
 			}
 		});
+		this.rowColorations = new TreeMap<Integer, Color>();
 	}
 
 	public synchronized void setContest(Contest nc) {
@@ -125,22 +121,6 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 
 	public void setPage(int page) {
 		startRow = Math.max(page - 1, 0)*ROWS;
-		repaint();
-	}
-	
-	public void highlightRow(int row) {
-		highlightedRow = row;
-		repaint();
-	}
-	
-	public void setRowColor(int row, Color color) {
-		coloredRow = row;
-		rowColor = color;
-		repaint();
-	}
-	
-	public void highlightProblem(int problem) {
-		highlightedProblem = problem;
 		repaint();
 	}
 	
@@ -231,20 +211,6 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				g.translate(-x, -y);	
 				
 				
-				
-				if(coloredRow > 0) {
-					double f = 7;
-					RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
-					g.setColor(rowColor);
-					g.fill(round);
-				}
-//				if(highlightedProblem > 0) {
-//					double f = 3;
-//					RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
-//					g.setColor(Color.GREEN.brighter());
-//					g.draw(round);
-//				}
-				
 			}	
 		}
 		
@@ -319,7 +285,8 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		TeamScore ts = c.getTeamScore(id);
 		TeamScore prev = recent.get(id);
 
-		Renderable teamResults = ContentProvider.getTeamResultsRenderer(c, team, recent, false);
+		int highlight = i == highlightedRow ? highlightedProblem : -1;
+		PartitionedRowRenderer teamResults = ContentProvider.getTeamResultsRenderer(c, team, recent, false, highlight);
 		r.addWithoutCache(teamResults, RESULTS_WEIGHT, 1, false);
 
 		{ // Solved and Time
@@ -352,8 +319,15 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			r.render(g, dim, layer);
 			g.translate(-x, -y);
 			
+			if (rowColorations.containsKey(i)) {
+				double f = 7;
+				RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
+				g.setColor(rowColorations.get(i));
+				g.fill(round);
+			}
+			
 			// highlight row render
-			if(highlightedRow > 0) {
+			if(highlightedRow == i) {
 				double f = 7;
 				RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
 				g.setColor(ICPCColors.YELLOW);

@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +49,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	int id;
 	Team team;
 	
-	boolean displayResults = true;
+	boolean displayResults = false;
 	String extraInfo;
 	
 	public String getExtraInfo() {
@@ -68,7 +67,8 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		this.c = c;
 		this.teamReader = teamReader;
 		//this.setBackground(Color.BLUE.darker().darker());
-		this.setBackground(ICPCColors.SCOREBOARD_BG);
+		//this.setBackground(ICPCColors.SCOREBOARD_BG);
+		this.setBackground(ICPCColors.COLOR_KEYING);
 		this.setPreferredSize(new Dimension(1024, 576));
 		PropertyListener showResultsChanger = new PropertyListener() {
 			@Override
@@ -81,17 +81,25 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		PropertyListener teamChange = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-				DebugTrace.trace("Changed %s -> %s", changed, changed.getValue());
 				int teamId = changed.getIntValue();
 				Contest c = TeamPresentation.this.c;
 				setTeam(c.getTeam(teamId));
 			}
 		};
 		
+		PropertyListener memberToggle = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				displayMembers = changed.getBooleanValue();
+			}
+		};
+		
 		listeners.add(showResultsChanger);
 		listeners.add(teamChange);
+		listeners.add(memberToggle);
 		props.get("team.team").addPropertyListener(teamChange);
 		props.get("team.show_results").addPropertyListener(showResultsChanger);
+		props.get("team.show_members").addPropertyListener(memberToggle);
 	}
 	
 	public synchronized void setContest(Contest nc) {
@@ -100,7 +108,6 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	}
 	
 	public synchronized void setTeam(Team team){
-		DebugTrace.trace("Setting team to " + team.getName());
 		this.team = team;
 		this.id = team.getId();
 		repaint();
@@ -159,7 +166,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		if (c.getTeamScore(id) != null)
 			recent.set(id, c.getTeamScore(id));
 
-		Shape clip = g.getClip();
+		/*TODO: unused: Shape clip = */g.getClip();
 		g.setClip(rect);
 
 		paintRow(g, c, PartitionedRowRenderer.Layer.decorations, false);
@@ -234,7 +241,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		Renderable mainInfo = ContentProvider.getTeamNameRenderable(team);
 		Renderable extra;
 		if (displayResults) {
-			extra = ContentProvider.getTeamResultsRenderer(c, team, recent, true);
+			extra = ContentProvider.getTeamResultsRenderer(c, team, recent, true, -1);
 		}
 		else {
 			extra = new ColoredTextBox(this.getExtraInfo(), ContentProvider.getInterviewExtraInfoStyle());
@@ -278,7 +285,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		}
 	}
 
-	private static class IconRenderer implements Renderable {
+	public static class IconRenderer implements Renderable {
 		public void render(Graphics2D g, Dimension d) {
 			g.setColor(Color.GREEN);
 			g.setStroke(new BasicStroke((d.width + d.height) / 10));
@@ -295,8 +302,8 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		int id2 = tc.submit(0, 4, 21);
 		tc.solve(id2);
 		tc.submit(1, 3, 23);
-		Contest c1 = tc.getContest();
 //		BROKEN:
+//		Contest c1 = tc.getContest();
 //		Frame frame = new Frame("Team Presentation (static)", new TeamPresentation(c1, 0));
 //		frame.setIconImage(RenderCache.getRenderCache().getImageFor(new IconRenderer(), new Dimension(128, 128)));
 	}

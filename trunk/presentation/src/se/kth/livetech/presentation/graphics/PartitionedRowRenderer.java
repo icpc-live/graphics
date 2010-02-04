@@ -3,9 +3,11 @@ package se.kth.livetech.presentation.graphics;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
+import java.awt.geom.RoundRectangle2D;
 import java.util.HashMap;
 import java.util.Map;
 
+import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.presentation.layout.Partitioner;
 import se.kth.livetech.util.Optional;
 
@@ -113,6 +115,22 @@ public class PartitionedRowRenderer implements Renderable {
 				g.translate(-x0, -y0);
 			}
 			
+			if(part.highlight) {
+				//System.err.printf("highligtedRow = %d%n", highlightedRow);
+				double m = .95;
+				Point2D midp = partitioner.getPosition(key);
+				double widthp = partitioner.getSize(key) - (1 - m) * partitioner.getH();
+				double heightp = m * partitioner.getH();
+				int x2 = (int) (midp.getX() - widthp / 2);
+				//int x3 = (int) (midp.getX() + widthp / 2);
+				int y2 = (int) (midp.getY() - heightp / 2);
+				//int y3 = (int) (midp.getY() + heightp / 2);
+				double f = 3;
+				RoundRectangle2D round = new RoundRectangle2D.Double(x2, y2, widthp, heightp, heightp / f, heightp / f);
+				g.setColor(ICPCColors.YELLOW);
+				g.draw(round);
+				
+			}
 		}
 	}
 

@@ -1,13 +1,18 @@
 package se.kth.livetech.util;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
+
+import se.kth.livetech.presentation.graphics.ImageResource;
 
 //import kth.board.sketch.SketchIcon;
 
@@ -48,6 +53,9 @@ public class Frame extends JFrame {
 		DisplayMode dm = gd.getDisplayMode();
 		try {
 			gd.setFullScreenWindow(this);
+			Toolkit t = Toolkit.getDefaultToolkit();
+			Cursor c = t.createCustomCursor(ImageResource.NO_IMAGE, new Point(0,0), "no cursor");
+			this.setCursor(c);
 			Thread.sleep(24 * 3600 * 1000l); // TODO
 		} catch (InterruptedException e) {
 		}

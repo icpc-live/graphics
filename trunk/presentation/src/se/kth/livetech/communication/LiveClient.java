@@ -221,7 +221,7 @@ public class LiveClient {
 			if (opts.isLive()) {
 				final ContestImpl c = new ContestImpl();
 				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
-				final LivePresentation lpr = new LivePresentation(c, prop_base, nodeRegistry.getRemoteTime());
+				final LivePresentation lpr = new LivePresentation(c, prop_base, nodeRegistry.getRemoteTime(), fullscreenFrame);
 				contestListeners.add(lpr);
 				Frame f = new Frame("Live", lpr, null, false);
 				f.setPreferredSize(new Dimension(1024, 576));
@@ -328,7 +328,8 @@ public class LiveClient {
 
 			if (opts.isVlc()) {
 				PropertyHierarchy hierarchy = localState.getHierarchy();
-				/*Frame foo = */new Frame("bar", new VLCView(hierarchy.getProperty("live.clients.localhost.vlc")));
+				VLCView view = new VLCView(hierarchy.getProperty("live.clients.localhost.vlc"), fullscreenFrame);
+				/*Frame foo = */new Frame("bar", view);
 			}
 		
 			// Listen!

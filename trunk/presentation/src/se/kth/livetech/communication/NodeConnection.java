@@ -102,8 +102,6 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 				NodeConnection.this.state = NodeConnection.State.CONNECTED;
 				DebugTrace.trace("Connected to " + id.name);
 
-				NodeConnection.this.nodeRegistry.getLocalState().getHierarchy().pushProperties(NodeConnection.this);
-
 				// Time sync every second
 				while (!disconnect) {
 					QueueItem item;

@@ -63,6 +63,8 @@ public class NodeRegistry {
 
 		NodeConnection connection = new NodeConnection(this, nid);
 		this.connections.put(nid, connection);
+
+		this.localState.getHierarchy().pushProperties(this.getNodeConnection(nid));
 		this.localState.addListeners(connection);
 	}
 

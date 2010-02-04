@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -160,7 +159,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		if (c.getTeamScore(id) != null)
 			recent.set(id, c.getTeamScore(id));
 
-		Shape clip = g.getClip();
+		/*TODO: unused: Shape clip = */g.getClip();
 		g.setClip(rect);
 
 		paintRow(g, c, PartitionedRowRenderer.Layer.decorations, false);
@@ -279,7 +278,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		}
 	}
 
-	private static class IconRenderer implements Renderable {
+	public static class IconRenderer implements Renderable {
 		public void render(Graphics2D g, Dimension d) {
 			g.setColor(Color.GREEN);
 			g.setStroke(new BasicStroke((d.width + d.height) / 10));

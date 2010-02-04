@@ -23,14 +23,15 @@ import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
 public class ClockView extends JPanel implements ContestUpdateListener{
-	long timeshift;
 	Contest c;
 	IProperty rectProp;
+	RemoteTime time;
 	
 	public ClockView(IProperty rectProp, Contest c, RemoteTime time) {
+		this.time = time;
 		this.c = c;
 		this.rectProp = rectProp;
-		timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
+		//timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
 		this.setBackground(ICPCColors.TRANSPARENT);
 		this.setOpaque(false);
 	}
@@ -41,7 +42,7 @@ public class ClockView extends JPanel implements ContestUpdateListener{
 		Contest c = this.c;
 
 		long startTime = c.getInfo().getStartTime()*1000; //convert to millis
-		long currentTime = System.currentTimeMillis() + timeshift;
+		long currentTime = time.getRemoteTimeMillis(); // System.currentTimeMillis() + timeshift;
 		long diffMilli = currentTime - startTime;
 		long diffSeconds = diffMilli/1000;
 		

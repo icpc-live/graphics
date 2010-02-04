@@ -75,14 +75,14 @@ public class TeamReader {
 
 			String[] elems = line.split("\t");
 			teams.put(
-					i,
+					Integer.valueOf(elems[0]),
 					new TeamEntry(
-							i,
-							elems[0],
+							Integer.valueOf(elems[0]),
+							elems[1],
 							new String[] {
-								elems[1],
 								elems[2],
-								elems[3]
+								elems[3],
+								elems[4]
 								      }
 							)
 					);

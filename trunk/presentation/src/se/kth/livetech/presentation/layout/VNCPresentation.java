@@ -37,6 +37,7 @@ public class VNCPresentation extends JPanel {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				teamPort = changed.getIntValue();
+				connect();
 			}
 		});
 		

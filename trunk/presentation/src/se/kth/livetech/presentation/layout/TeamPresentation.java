@@ -234,7 +234,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		Renderable mainInfo = ContentProvider.getTeamNameRenderable(team);
 		Renderable extra;
 		if (displayResults) {
-			extra = ContentProvider.getTeamResultsRenderer(c, team, recent, true);
+			extra = ContentProvider.getTeamResultsRenderer(c, team, recent, true, -1);
 		}
 		else {
 			extra = new ColoredTextBox(this.getExtraInfo(), ContentProvider.getInterviewExtraInfoStyle());

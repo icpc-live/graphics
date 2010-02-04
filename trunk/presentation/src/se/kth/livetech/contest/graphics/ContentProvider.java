@@ -155,7 +155,7 @@ public class ContentProvider {
 		return r;
 	}
 
-	public static PartitionedRowRenderer getTeamResultsRenderer(Contest c, Team team, RecentChange<Integer, TeamScore> recent, boolean showProblemLetter) {
+	public static PartitionedRowRenderer getTeamResultsRenderer(Contest c, Team team, RecentChange<Integer, TeamScore> recent, boolean showProblemLetter, int highlight) {
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
 		int id = team.getId();
 		TeamScore ts = c.getTeamScore(id);
@@ -173,6 +173,9 @@ public class ContentProvider {
 			if (style != NONE && ps != null && !ps.equals(pps)) {
 				GlowRenderer glow = new GlowRenderer(style.getColor(), PROBLEM_GLOW_MARGIN, false, glowAlpha); // TODO: alpha per problem
 				r.setDecoration(key, glow, PROBLEM_GLOW_MARGIN);
+			}
+			if(highlight == j) {
+				r.setHighlight(key, true);
 			}
 		}
 		return r;

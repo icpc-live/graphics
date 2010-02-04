@@ -96,6 +96,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	
 	private void highlightNext() {
 		System.out.println("Highlighting row " + resolveRow);
+		System.err.println(sp);
 		if(sp!=null) {
 			sp.highlightRow(resolveRow);
 			int runId = replayer.getHighestRankedRun();

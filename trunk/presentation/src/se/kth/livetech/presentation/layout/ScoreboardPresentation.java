@@ -76,10 +76,12 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	
 	public void highlightRow(int row) {
 		highlightedRow = row;
+		System.err.println("highlighRow()");
 		repaint();
 	}
 	
 	public void setRowColor(int row, Color color) {
+		System.err.println("setRowColor");
 		coloredRow = row;
 		rowColor = color;
 		repaint();
@@ -177,20 +179,6 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				g.translate(-x, -y);	
 				
 				
-				
-				if(coloredRow > 0) {
-					double f = 7;
-					RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
-					g.setColor(rowColor);
-					g.fill(round);
-				}
-//				if(highlightedProblem > 0) {
-//					double f = 3;
-//					RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
-//					g.setColor(Color.GREEN.brighter());
-//					g.draw(round);
-//				}
-				
 			}	
 		}
 		
@@ -265,7 +253,8 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		TeamScore ts = c.getTeamScore(id);
 		TeamScore prev = recent.get(id);
 
-		Renderable teamResults = ContentProvider.getTeamResultsRenderer(c, team, recent, false);
+		int highlight = i == highlightedRow ? highlightedProblem : -1;
+		PartitionedRowRenderer teamResults = ContentProvider.getTeamResultsRenderer(c, team, recent, false, highlight);
 		r.addWithoutCache(teamResults, RESULTS_WEIGHT, 1, false);
 
 		{ // Solved and Time
@@ -298,8 +287,17 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			r.render(g, dim, layer);
 			g.translate(-x, -y);
 			
+			if(coloredRow == i) {
+				System.err.printf("coloredRow = %d%n", coloredRow);
+				double f = 7;
+				RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
+				g.setColor(rowColor);
+				g.fill(round);
+			}
+			
 			// highlight row render
-			if(highlightedRow > 0) {
+			if(highlightedRow == i) {
+				System.err.printf("highligtedRow = %d%n", highlightedRow);
 				double f = 7;
 				RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
 				g.setColor(ICPCColors.YELLOW);

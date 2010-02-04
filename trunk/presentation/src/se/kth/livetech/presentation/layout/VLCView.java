@@ -3,7 +3,6 @@ package se.kth.livetech.presentation.layout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import se.kth.livetech.communication.LiveClient;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 

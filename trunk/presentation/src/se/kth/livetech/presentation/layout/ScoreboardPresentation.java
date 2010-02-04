@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.Map;
+import java.util.TreeMap;
 
 import javax.swing.JPanel;
 
@@ -47,8 +49,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	private boolean showFps = true;
 	public int highlightedRow;
 	public int highlightedProblem;
-	public int coloredRow;
-	public Color rowColor;
+	private Map<Integer, Color> rowColorations;
 
 	Contest c;
 	
@@ -56,6 +57,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		this.c = c;
 		this.setBackground(ICPCColors.SCOREBOARD_BG);				//(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
+		this.rowColorations = new TreeMap<Integer, Color>();
 	}
 
 	public synchronized void setContest(Contest nc) {
@@ -82,8 +84,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	
 	public void setRowColor(int row, Color color) {
 		System.err.println("setRowColor");
-		coloredRow = row;
-		rowColor = color;
+		rowColorations.put(row, color);
 		repaint();
 	}
 	
@@ -287,17 +288,15 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			r.render(g, dim, layer);
 			g.translate(-x, -y);
 			
-			if(coloredRow == i) {
-				System.err.printf("coloredRow = %d%n", coloredRow);
+			if (rowColorations.containsKey(i)) {
 				double f = 7;
 				RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
-				g.setColor(rowColor);
+				g.setColor(rowColorations.get(i));
 				g.fill(round);
 			}
 			
 			// highlight row render
 			if(highlightedRow == i) {
-				System.err.printf("highligtedRow = %d%n", highlightedRow);
 				double f = 7;
 				RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
 				g.setColor(ICPCColors.YELLOW);

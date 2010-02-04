@@ -88,7 +88,6 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	}
 	
 	private void highlightNext() {
-		System.out.println("Highlighting row " + resolveRow);
 		propertyScore.set("highlightRow", String.valueOf(resolveRow));
 		int problemId = -1;
 		int runId = replayer.getHighestRankedRun();
@@ -140,7 +139,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 				timer = null;
 				return;
 			}
-			System.out.println("ResolveRank " + resolveRow);
+			// System.out.println("ResolveRank " + resolveRow);
 			int stepValue = step(false);
 			switch(stepValue) {
 			case -1: // No processed run.
@@ -152,11 +151,9 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			case 3: // Bronze medal. Should not happen.
 			case 4: // Silver medal. Should not happen.
 			case 5: // Gold medal. Should not happen.
-				//System.out.println("resolveTeamDelay "+resolveTeamDelay);
 				timer.schedule(new ResolverTask(), resolveTeamDelay);
 				break;
 			case 1: // Processed run for this row.
-				//System.out.println("resolveProblemDelay "+resolveProblemDelay);
 				timer.schedule(new ResolverTask(), resolveProblemDelay);
 				break;
 			default:
@@ -177,7 +174,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		if(run !=null && run.getTeam() == team.getId()) {
 			showingPresentation = false;
 			// Current row has more runs.
-			System.out.println("Next run on row "+resolveRow + ", run id "+run.getId());
+			// System.out.println("Next run on row "+resolveRow + ", run id "+run.getId());
 			replayer.processProblem(run.getTeam(), run.getProblem());
 			highlightNext();
 			Team team2 = replayer.getContest().getRankedTeam(resolveRow);

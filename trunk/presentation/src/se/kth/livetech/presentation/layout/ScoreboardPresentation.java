@@ -8,7 +8,9 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -53,6 +55,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	private boolean showFps = true;
 	public int highlightedRow;
 	public int highlightedProblem;
+	private List<PropertyListener> propertyListeners;
 	private Map<Integer, Color> rowColorations;
 
 	Contest c;
@@ -62,49 +65,61 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		this.setBackground(ICPCColors.SCOREBOARD_BG);				//(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
 		
-		IProperty scoreBase = base.get("score");
+		propertyListeners = new ArrayList<PropertyListener>();
+		final IProperty scoreBase = base.get("score");
 		
-		scoreBase.get("page").addPropertyListener(new PropertyListener() {
+		final PropertyListener pageListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				int page = changed.getIntValue();
 				setPage(page);
 			}
-		});
+		};
+		propertyListeners.add(pageListener);
+		scoreBase.get("page").addPropertyListener(pageListener);
 		
-		scoreBase.get("highlightedRow").addPropertyListener(new PropertyListener() {
+		final PropertyListener rowListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				highlightedRow = changed.getIntValue();
 				repaint();
 			}
-		});
+		};
+		propertyListeners.add(rowListener);
+		scoreBase.get("highlightRow").addPropertyListener(rowListener);
 		
-		scoreBase.get("highlightedProblem").addPropertyListener(new PropertyListener() {
+		final PropertyListener problemListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				highlightedProblem = changed.getIntValue();
 				repaint();
 			}
-		});
+		};
+		propertyListeners.add(problemListener);
+		scoreBase.get("highlightProblem").addPropertyListener(problemListener);
 		
 		final Map<String, Color> colorMap = new HashMap<String, Color>();
 		colorMap.put("bronze", ICPCColors.BRONZE);
 		colorMap.put("silver", ICPCColors.SILVER);
 		colorMap.put("gold", ICPCColors.GOLD);
 		
-		IProperty colorProperties = scoreBase.get("color");
-		colorProperties.addPropertyListener(new PropertyListener() {
+		final IProperty colorProperties = scoreBase.get("color");
+		final PropertyListener colorListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-				for(IProperty prop : changed.getSubProperties()) {
-					Integer row = Integer.parseInt(prop.getName());
+				for(IProperty prop : colorProperties.getSubProperties()) {
+					String name = prop.getName();
+					name = name.substring(name.lastIndexOf('.')+1);
+					Integer row = Integer.parseInt(name);
 					Color color = colorMap.get(prop.getValue());
 					rowColorations.put(row, color);
 				}
 				repaint();
 			}
-		});
+		};
+		propertyListeners.add(colorListener);
+		colorProperties.addPropertyListener(colorListener);
+		
 		this.rowColorations = new TreeMap<Integer, Color>();
 	}
 

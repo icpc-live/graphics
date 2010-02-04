@@ -17,7 +17,7 @@ public class ImageResource {
 	private static String SCALE_ROOT = "scaled/";
 	private static final boolean RED_CROSS = false;
 
-	private static BufferedImage NO_IMAGE;
+	public static BufferedImage NO_IMAGE;
 	
 	static {
 		NO_IMAGE = new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB);

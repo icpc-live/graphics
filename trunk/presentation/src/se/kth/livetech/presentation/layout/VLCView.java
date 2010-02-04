@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.layout;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import se.kth.livetech.properties.IProperty;
@@ -15,13 +16,14 @@ public class VLCView extends JPanel {
 	private int teamPort = 105;
 	private boolean isActive = false;
 	private Process vlcInstance;
+	private JFrame mainFrame;
 	
 	IProperty vlcProperties = null;
 	PropertyListener portListener;
 	PropertyListener hostListener;
 	PropertyListener teamListener;
 	
-	public VLCView(IProperty props) {
+	public VLCView(IProperty props, JFrame mainFrame) {
 
 		this.vlcProperties = props;
 
@@ -83,6 +85,11 @@ public class VLCView extends JPanel {
 			vlcInstance.destroy();
 			vlcInstance = null;
 		}
+		
+		if (mainFrame != null) {
+			mainFrame.setExtendedState(mainFrame.getExtendedState() | JFrame.ICONIFIED);
+			mainFrame.setExtendedState(mainFrame.getExtendedState() & (~JFrame.ICONIFIED));
+		}
 	}
 	
 	void activate() {
@@ -93,5 +100,5 @@ public class VLCView extends JPanel {
 	void deactivate() {
 		stop();
 		isActive = false;
-	}
+	}	
 }

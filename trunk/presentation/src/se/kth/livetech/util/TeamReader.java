@@ -102,6 +102,10 @@ public class TeamReader {
 				TeamEntry team1 = teams.get(id);
 				Team team2 = c.getTeam(id);
 
+				if (team1.getId() != team2.getId()) {
+					consistent = false;
+					DebugTrace.trace("Team id of team %d not consistent (%d != %d).", id, team1.getId(), team2.getId());
+				}
 				if (team1.getTeamName() != team2.getName()) {
 					consistent = false;
 					DebugTrace.trace("Team name of team %d not consistent (\"%s\" != \"%s\").", id, team1.getTeamName(), team2.getName());

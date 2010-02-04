@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import se.kth.livetech.communication.RemoteTime;
@@ -35,7 +36,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	}
 	private Blank blankView = new Blank();
 	
-	public LivePresentation(Contest c, IProperty base, RemoteTime time) {
+	public LivePresentation(Contest c, IProperty base, RemoteTime time, JFrame mainFrame) {
 		this.setLayout(null); //absolute positioning of subcomponents
 		
 		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c);
@@ -55,7 +56,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		final CountdownPresentation countdown = new CountdownPresentation(time, base);
 		final VNCPresentation vnc = new VNCPresentation(base);
 
-		final VLCView cam = new VLCView(base);
+		final VLCView cam = new VLCView(base, mainFrame);
 		final ClockView clockPanel = new ClockView(base.get("clockrect"), c, time);
 		final InterviewPresentation interview = new InterviewPresentation(base);
 		final WinnerPresentation winnerPresentation = new WinnerPresentation(base);
@@ -140,11 +141,11 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
-		PropertyListener logoToggle = new PropertyListener() {
+		/*TODO: unused: PropertyListener logoToggle = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
 			}
-		};
+		};*/
 		
 		PropertyListener noFps = new PropertyListener() {
 			@Override

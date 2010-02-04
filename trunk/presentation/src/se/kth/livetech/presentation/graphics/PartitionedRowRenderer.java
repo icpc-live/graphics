@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.graphics;
 
+import java.awt.BasicStroke;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
@@ -122,11 +123,11 @@ public class PartitionedRowRenderer implements Renderable {
 				double widthp = partitioner.getSize(key) - (1 - m) * partitioner.getH();
 				double heightp = m * partitioner.getH();
 				int x2 = (int) (midp.getX() - widthp / 2);
-				//int x3 = (int) (midp.getX() + widthp / 2);
-				int y2 = (int) (midp.getY() - heightp / 2);
-				//int y3 = (int) (midp.getY() + heightp / 2);
+				int y2 = (int) (midp.getY() - heightp / 2) + 1;
+
 				double f = 3;
 				RoundRectangle2D round = new RoundRectangle2D.Double(x2, y2, widthp, heightp, heightp / f, heightp / f);
+				g.setStroke(new BasicStroke(2.5f));
 				g.setColor(ICPCColors.YELLOW);
 				g.draw(round);
 				

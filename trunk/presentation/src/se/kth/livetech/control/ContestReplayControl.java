@@ -48,6 +48,17 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		replayDelay = propertyReplay.get("replayDelay").getIntValue();
 		resolveProblemDelay = propertyReplay.get("resolveProblemDelay").getIntValue();
 		resolveTeamDelay = propertyReplay.get("resolveTeamDelay").getIntValue();
+		
+		int freezeTime = propertyReplay.get("freezeTime").getIntValue();
+		if(freezeTime>0) {
+			replayer.setFreezeTime(freezeTime);
+			System.out.println("Set freeze time : "+freezeTime);
+		}
+		int untilTime = propertyReplay.get("untilTime").getIntValue();
+		if(untilTime>0) {
+			replayer.setUntilTime(untilTime);
+			System.out.println("Set until time: "+untilTime);
+		}
 
 		if(state.equals("pause"))
 			replayer.setState(ContestReplayer.State.PAUSED);

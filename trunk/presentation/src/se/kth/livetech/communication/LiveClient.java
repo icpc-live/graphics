@@ -238,8 +238,8 @@ public class LiveClient {
 				localState.getContest(new ContestId("contest", 0)).addAttrsUpdateListener(cr);
 
 				// ContestReplayControl
-				IProperty replayBase = localState.getHierarchy().getProperty("live.clients." + localNode.name + ".replay");
-				final ContestReplayControl crc = new ContestReplayControl(cr, replayBase, sp);
+				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
+				final ContestReplayControl crc = new ContestReplayControl(cr, prop_base, sp);
 				cr.addContestUpdateListener(crc);
 
 				for(ContestUpdateListener contestListener : contestListeners) {

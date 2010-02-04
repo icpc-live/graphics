@@ -9,7 +9,6 @@ import java.util.Set;
 
 import javax.swing.JPanel;
 
-import se.kth.livetech.communication.RemoteTime;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.model.Contest;
@@ -18,17 +17,25 @@ import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.presentation.graphics.Renderable;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
-public class WinnerPresentation extends JPanel implements ContestUpdateListener{
+public class WinnerPresentation extends JPanel implements ContestUpdateListener, PropertyListener{
+	private IProperty awardsBase;
+	private Contest c;
 	private Team team;
 	private String award;
 
 	public WinnerPresentation(Team team, String award) {
 		this.team = team;
 		this.award = award;
+	}
 
+	public WinnerPresentation(IProperty base) {
+		awardsBase = base.get("awards");
+		awardsBase.addPropertyListener(this);
 		this.setBackground(ICPCColors.BG_COLOR_2);
 	}
 
@@ -56,19 +63,28 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener{
 
 	@Override
 	public Dimension getPreferredSize() {
-		// TODO Auto-generated method stub
 		return new Dimension(1024, 300);
 	}
 
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
-		//this.c = e.getNewContest();
+		this.c = e.getNewContest();
+	}
+	
+	@Override
+	public void propertyChanged(IProperty changed) {
+		int teamId = awardsBase.get("team").getIntValue();
+		award = awardsBase.get("award").getValue();
+		if(c!=null && teamId>0)
+			team = c.getTeam(teamId);
 		this.repaint();
 	}
 
+
 	public static void main(String[] args) {
-		TestContest tc = new TestContest(50, 10, 99000);
-		Contest c1 = tc.getContest();
+		final TestContest tc = new TestContest(50, 10, 99000);
+		@SuppressWarnings("unused")
+		final Contest c1 = tc.getContest();
 		Frame frame = new Frame("Countdown Presentation", new WinnerPresentation(new Team() {
 
 			@Override

@@ -29,7 +29,6 @@ import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.HorizontalSplitter;
 import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
-import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.presentation.graphics.Utility;
 import se.kth.livetech.properties.IProperty;

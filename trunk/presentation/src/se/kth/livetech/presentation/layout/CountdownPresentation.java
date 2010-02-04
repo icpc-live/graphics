@@ -109,7 +109,8 @@ public class CountdownPresentation extends JPanel {
 		}
 		
 		for(int i = 0; i<=displaySeconds; ++i) {
-			rows[i].setAge(i+ageOffset);
+			if (rows[i] != null)
+				rows[i].setAge(i+ageOffset);
 		}
 		Rectangle bounds = this.getBounds();
 //		
@@ -132,7 +133,7 @@ public class CountdownPresentation extends JPanel {
 			}
 			g2d.translate(-bounds.getCenterX(), -bounds.getCenterY());
 		} 
-		else if (diffMilli < START_MESSAGE_LENGTH){ //display for five minutes 
+		else if (diffMilli < START_MESSAGE_LENGTH * 1000 ){ //display for five minutes 
 			String row1Text = "Go!";
 			String row2Text = "The contest has started";
 			
@@ -146,7 +147,7 @@ public class CountdownPresentation extends JPanel {
 			r.render(g2d, dim);
 			g2d.translate(-x, -y);
 		}
-		
+
 		this.repaint(20);
 	}
 	

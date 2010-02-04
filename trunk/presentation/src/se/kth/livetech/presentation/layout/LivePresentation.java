@@ -110,7 +110,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				boolean visible = !changed.getBooleanValue();
-				//scoreboard.setShowFps(visible);			
+				scoreboard.setShowFps(visible);			
 			}
 		};
 		

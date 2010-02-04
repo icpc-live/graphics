@@ -50,9 +50,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	public int coloredRow;
 	public Color rowColor;
 
-	
 	Contest c;
-	
 	
 	public ScoreboardPresentation(Contest c) {
 		this.c = c;
@@ -138,7 +136,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			Renderable timeHeader = new ColoredTextBox("Time", ContentProvider.getHeaderStyle(Alignment.center));
 			r.add(timeHeader, 2, 1, true);
 
-			{ // Render 
+			{ // Render
 				Rect.setRow(rect, 0, ROWS + 1, row);
 				Rect.setDim(row, dim);
 				int x = (int) row.getX();
@@ -146,6 +144,8 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				g.translate(x, y);
 				r.render(g, dim);
 				g.translate(-x, -y);
+				
+	
 			}
 		}
 		Rect.setRow(rect, 1, ROWS + 1, ROWS + 1, rect);
@@ -170,29 +170,26 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				int y = (int) row.getY();
 				g.translate(x, y);
 				r.render(g, dim);
-				g.translate(-x, -y);
-				if(highlightedRow > 0) {
-					double f = 7;
-					RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
-					g.setColor(ICPCColors.YELLOW);
-					g.draw(round);
-				}
+				g.translate(-x, -y);	
+				
+				
+				
 				if(coloredRow > 0) {
 					double f = 7;
 					RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
 					g.setColor(rowColor);
 					g.fill(round);
 				}
-				if(highlightedProblem > 0) {
-					
-				}
+//				if(highlightedProblem > 0) {
+//					double f = 3;
+//					RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
+//					g.setColor(Color.GREEN.brighter());
+//					g.draw(round);
+//				}
 				
-				
-			}
+			}	
 		}
-
-
-
+		
 		Shape clip = g.getClip();
 		g.setClip(rect);
 
@@ -281,6 +278,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			r.add(timeHeader, 2, 1, true);
 		}
 
+		
 		{ // Render
 			Interpolated.Double interpolator = new Interpolated.Double(i);
 			stack.interpolate(id, interpolator);
@@ -295,6 +293,16 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			g.translate(x, y);
 			r.render(g, dim, layer);
 			g.translate(-x, -y);
+			
+			// highlight row render
+			if(highlightedRow > 0) {
+				double f = 7;
+				RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
+				g.setColor(ICPCColors.YELLOW);
+				g.draw(round);
+			}
+			
+			
 		}
 	}
 
@@ -306,8 +314,6 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		}
 	}
 	
-	
-	
 	private static class IconRenderer implements Renderable {
 		public void render(Graphics2D g, Dimension d) {
 			g.setColor(Color.GREEN);
@@ -316,6 +322,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			g.drawLine(d.width, 0, 0, d.height);
 		}
 	}
+	
 	public static void main(String[] args) {
 		TestContest tc = new TestContest(50, 10, 0);
 		int id0 = tc.submit(1, 2, 11);

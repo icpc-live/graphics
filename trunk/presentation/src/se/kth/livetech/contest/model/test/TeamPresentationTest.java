@@ -8,8 +8,6 @@ import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
-import se.kth.livetech.presentation.layout.TeamPresentation;
-import se.kth.livetech.util.Frame;
 
 public class TeamPresentationTest extends Thread {
 	TestContest test;

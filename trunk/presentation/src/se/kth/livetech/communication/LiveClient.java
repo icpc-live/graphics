@@ -48,6 +48,13 @@ public class LiveClient {
 		@Option(shortName="s", longName="spider")
 		boolean isSpider();
 		
+		@Option(longName="name")
+		String getName();
+		boolean isName();
+		
+		@Option(longName="autoname")
+		boolean isAutoName();
+		
 		@Option(shortName="h",
 				longName="address")
 		String getLocalHost();
@@ -105,6 +112,10 @@ public class LiveClient {
 		@Option(longName="fullscreen")
 		boolean isFullscreen();
 		
+		@Option(longName="screen")
+		int getScreen();
+		boolean isScreen();
+		
 		@Option(helpRequest=true)
 		boolean getHelp();
 		
@@ -139,19 +150,12 @@ public class LiveClient {
 				return;
 			}
 			
-			boolean spiderFlag = opts.isSpider() || !opts.isArgs() || opts.getArgs().size() == 1;
+			boolean spiderFlag = opts.isSpider() || !opts.isArgs();
 			
 			Frame fullscreenFrame = null;
 
 			// Setup local node id
-			String name;
-			if (!opts.isArgs()) {
-				System.err.println("Warning: Missing client name!");
-				name = "noname";
-			}
-			else {
-				name = opts.getArgs().get(0);
-			}
+			String name = opts.isName() ? opts.getName() : opts.isAutoName() ? null : "noname";
 			int port = DEFAULT_PORT;
 			if (opts.isPort()) {
 				port = opts.getPort();
@@ -238,8 +242,8 @@ public class LiveClient {
 				localState.getContest(new ContestId("contest", 0)).addAttrsUpdateListener(cr);
 
 				// ContestReplayControl
-				IProperty replayBase = localState.getHierarchy().getProperty("live.clients." + localNode.name + ".replay");
-				final ContestReplayControl crc = new ContestReplayControl(cr, replayBase, sp);
+				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
+				final ContestReplayControl crc = new ContestReplayControl(cr, prop_base, sp);
 				cr.addContestUpdateListener(crc);
 
 				for(ContestUpdateListener contestListener : contestListeners) {
@@ -335,8 +339,7 @@ public class LiveClient {
 
 			// Connect!
 			if (opts.isArgs()) {
-				for (int i = 1; i < opts.getArgs().size(); ++i) {
-					String arg = opts.getArgs().get(i);
+				for (String arg : opts.getArgs()) {
 					System.out.println(arg);
 					HostPort hostPort = new HostPort(arg);
 					nodeRegistry.connect(hostPort.host, hostPort.port);
@@ -344,7 +347,8 @@ public class LiveClient {
 			}
 			
 			if (fullscreenFrame != null) {
-				fullscreenFrame.fullScreen(0);
+				int screen = opts.isScreen() ? opts.getScreen() : 0;
+				fullscreenFrame.fullScreen(screen);
 			}
 		} catch (TTransportException e) {
 			// TODO Auto-generated catch block

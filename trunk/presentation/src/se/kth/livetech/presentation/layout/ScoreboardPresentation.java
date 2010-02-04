@@ -46,8 +46,11 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	final double RESULTS_WEIGHT = 5;
 	private boolean showFps = true;
 	public int highlightedRow;
-	
+	public int highlightedProblem;
+	public int coloredRow;
+	public Color rowColor;
 
+	
 	Contest c;
 	
 	
@@ -77,11 +80,12 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	}
 	
 	public void setRowColor(int row, Color color) {
-		// TODO Set the background color of a row. i.e. Gold, Silver and Bronze
+		coloredRow = row;
+		rowColor = color;
 	}
 	
 	public void highlightProblem(int problem) {
-		// TODO Highlight a problem on the row that is highlighted. Cleared when the row changes.
+		highlightedProblem = problem;
 	}
 	
 	@Override
@@ -173,6 +177,17 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 					g.setColor(ICPCColors.YELLOW);
 					g.draw(round);
 				}
+				if(coloredRow > 0) {
+					double f = 7;
+					RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
+					g.setColor(rowColor);
+					g.fill(round);
+				}
+				if(highlightedProblem > 0) {
+					
+				}
+				
+				
 			}
 		}
 

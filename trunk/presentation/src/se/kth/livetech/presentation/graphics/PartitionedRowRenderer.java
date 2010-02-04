@@ -18,7 +18,7 @@ public class PartitionedRowRenderer implements Renderable {
 	private static class Part {
 		Renderable renderer, decorationRenderer;
 		double margin, decorationMargin;
-		boolean cacheImage;
+		boolean cacheImage, highlight;
 		
 		public Part(Renderable renderer, double margin, boolean cacheImage) {
 			this.renderer = renderer;
@@ -49,6 +49,11 @@ public class PartitionedRowRenderer implements Renderable {
 	
 	public int addWithoutCache(Renderable renderer, double weight, double margin, boolean fixed){
 		return add(renderer, weight, margin, fixed, false);
+	}
+	
+	public void setHighlight(int key, boolean highlight) {
+		Part part = parts.get(key);
+		part.highlight = highlight;
 	}
 	
 	public void setDecoration(int key, Renderable decoration, double margin) {

@@ -18,7 +18,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	
 	private ContestReplayer replayer;
 	private ScoreboardPresentation sp;
-	private IProperty propertyBase;
+	private IProperty propertyReplay, propertyBase;
 	private int bronzeMedals, silverMedals, goldMedals, medals;
 	private int resolveRow = -1;
 	private int stepCounter = 0;
@@ -33,20 +33,21 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	public ContestReplayControl(ContestReplayer replayer, IProperty propertyBase, ScoreboardPresentation sp) {
 		this.replayer = replayer;
 		this.sp = sp;
+		this.propertyReplay = propertyBase.get("replay");
 		this.propertyBase = propertyBase;
 		propertyBase.addPropertyListener(this);
 	}
 	
 	@Override
 	public void propertyChanged(IProperty changed) {		
-		state = propertyBase.get("state").getValue();
-		bronzeMedals = propertyBase.get("bronzeMedals").getIntValue();
-		silverMedals = propertyBase.get("silverMedals").getIntValue();
-		goldMedals = propertyBase.get("goldMedals").getIntValue();
+		state = propertyReplay.get("state").getValue();
+		bronzeMedals = propertyReplay.get("bronzeMedals").getIntValue();
+		silverMedals = propertyReplay.get("silverMedals").getIntValue();
+		goldMedals = propertyReplay.get("goldMedals").getIntValue();
 		medals = bronzeMedals + silverMedals + goldMedals;
-		replayDelay = propertyBase.get("replayDelay").getIntValue();
-		resolveProblemDelay = propertyBase.get("resolveProblemDelay").getIntValue();
-		resolveTeamDelay = propertyBase.get("resolveTeamDelay").getIntValue();
+		replayDelay = propertyReplay.get("replayDelay").getIntValue();
+		resolveProblemDelay = propertyReplay.get("resolveProblemDelay").getIntValue();
+		resolveTeamDelay = propertyReplay.get("resolveTeamDelay").getIntValue();
 
 		if(state.equals("pause"))
 			replayer.setState(ContestReplayer.State.PAUSED);
@@ -75,7 +76,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			}
 		}
 		
-		int stepUntil = propertyBase.get("presentationStep").getIntValue();
+		int stepUntil = propertyReplay.get("presentationStep").getIntValue();
 		while(stepCounter < stepUntil) {
 			initResolveRank();
 			step(true);
@@ -95,6 +96,17 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 				}
 			}
 		}
+	}
+	
+	private void showWinnerPresentation(int teamId, String award) {
+		IProperty awardProperty = propertyBase.get("awards");
+		awardProperty.get("team").setIntValue(teamId);
+		awardProperty.set("award", award);
+		propertyBase.set("mode", "award");
+	}
+	
+	private void showScoreboard() {
+		propertyBase.set("mode", "score");
 	}
 	
 	private void showBronzeMedal(int row) {
@@ -171,10 +183,12 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			System.out.println("Next run on row "+resolveRow + ", run id "+run.getId());
 			replayer.processProblem(run.getTeam(), run.getProblem());
 			highlightNext();
-			Team team2 = contest.getRankedTeam(resolveRow);
+			Team team2 = replayer.getContest().getRankedTeam(resolveRow);
 			if(team.getId()==team2.getId()) return 1;
 			return 0;
 		} else if(resolveRow>medals || showingPresentation) {
+			if(showingPresentation)
+				showScoreboard();
 			showingPresentation = false;
 			// Highlight next row
 			--resolveRow;
@@ -183,19 +197,19 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		} else if(resolveRow>silverMedals+goldMedals) {
 			showingPresentation = true;
 			System.out.println("Bronze medal to team " + team.getId() + " on row " + resolveRow);
-			// TODO Show winner presentation
+			showWinnerPresentation(team.getId(), "Bronze");
 			showBronzeMedal(resolveRow);
 			return 3;
 		} else if(resolveRow>goldMedals) {
 			showingPresentation = true;
 			System.out.println("Silver medal to team " + team.getId() + " on row " + resolveRow);
-			// TODO Show winner presentation
+			showWinnerPresentation(team.getId(), "Silver");
 			showSilverMedal(resolveRow);
 			return 4;
 		} else {
 			showingPresentation = true;
 			System.out.println("Gold medal to team " + team.getId() + " on row " + resolveRow);
-			// TODO Show winner presentation
+			showWinnerPresentation(team.getId(), "Gold");
 			showGoldMedal(resolveRow);
 			return 5;
 		}	

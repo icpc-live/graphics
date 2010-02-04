@@ -32,6 +32,7 @@ public class Text extends JTextField implements ActionListener, PropertyListener
 		//DebugTrace.trace("text property " + property.getValue());
 		String value = this.property.getValue();
 		this.setText(value == null ? "" : value);
+		this.setBackground(this.defaultBackground);
 	}
 	@Override
 	public void keyPressed(KeyEvent e) {}

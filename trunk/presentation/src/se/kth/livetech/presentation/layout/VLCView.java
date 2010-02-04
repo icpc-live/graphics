@@ -66,6 +66,7 @@ public class VLCView extends JPanel {
 		}
 		
 		stop();
+		try { Thread.sleep(500); } catch (Exception e) {}
 
 		System.err.println("connecting webcam to team " + teamPort + " " + String.format("http://%s:%d/", host, basePort+teamPort));
 		

@@ -14,7 +14,7 @@ import se.kth.livetech.properties.PropertyListener;
 @SuppressWarnings("serial")
 public class Text extends JTextField implements ActionListener, PropertyListener, KeyListener {
 	private IProperty property;
-	private String name;
+	//private String name;
 	private Color defaultBackground;
 	public Text(IProperty property) {
 	    //this.setFocusTraversalKeysEnabled(false);
@@ -41,7 +41,8 @@ public class Text extends JTextField implements ActionListener, PropertyListener
 		switch (e.getKeyChar()) {
 			case KeyEvent.VK_ESCAPE:
 				this.setText(this.property.getValue());
-			case KeyEvent.VK_ENTER:
+			//$FALL-THROUGH$
+		case KeyEvent.VK_ENTER:
 				this.setBackground(this.defaultBackground);
 				break;
 			default:

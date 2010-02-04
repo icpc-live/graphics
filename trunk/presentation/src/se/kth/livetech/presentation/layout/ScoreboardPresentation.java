@@ -45,7 +45,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	public static final double RECENT_FADE_TIME = 500; // ms
 	static final int SCROLL_KEY = -1; // FIXME: hack, remove!
 	static final int SCROLL_EXTRA = 3; // FIXME: hack, remove!
-	final int ROWS = 25;
+	final int ROWS = 21;
 	final double NAME_WEIGHT = 5;
 	final double RESULTS_WEIGHT = 5;
 	private boolean showFps = true;
@@ -75,12 +75,14 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 
 	public void setPage(int page) {
 		startRow = Math.max(page - 1, 0)*ROWS;
+		advance();
 		stack.setPosition(SCROLL_KEY, (int) startRow);
 		repaint();
 	}
 	
 	public void highlightRow(int row) {
 		startRow = Math.max(row - ROWS + SCROLL_EXTRA, 0);
+		advance();
 		stack.setPosition(SCROLL_KEY, (int) startRow);
 		highlightedRow = row;
 		System.err.println("highlighRow()");
@@ -109,15 +111,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	boolean firstPaint = true;
 	long lastTime;
 	double startRow = 0;
-	public void paintComponent(Graphics gr) {
-		super.paintComponent(gr);
-		Contest c = this.c;
-		Graphics2D g = (Graphics2D) gr;
-
-		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
-		Rectangle2D row = new Rectangle2D.Double();
-		Dimension dim = new Dimension();
-
+	private boolean advance() {
 		boolean update = false;
 		{ // Advance
 			long now = System.currentTimeMillis();
@@ -130,6 +124,18 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			update |= this.stack.advance(dt / ANIMATION_TIME);
 			update |= this.recent.advance(dt / RECENT_TIME);
 		}
+		return update;
+	}
+	public void paintComponent(Graphics gr) {
+		super.paintComponent(gr);
+		Contest c = this.c;
+		Graphics2D g = (Graphics2D) gr;
+
+		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
+		Rectangle2D row = new Rectangle2D.Double();
+		Dimension dim = new Dimension();
+
+		boolean update = advance();
 
 		{ // Header
 			PartitionedRowRenderer r = new PartitionedRowRenderer();

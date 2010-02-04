@@ -113,10 +113,10 @@ public class ColoredTextBox implements Renderable {
 			switch (style.getShape()) {
 			default:
 			case roundRect:
-				ShadedRectangle.drawShadedRoundRect(g, base, 0, 0, w - 1, h - 1, h/3f);
+				ShadedRectangle.drawShadedRoundRect(g, base, 0, 1, w - 1, h - 1, h/3f);
 				break;
 			case ellipse:
-				ShadedRectangle.drawShadedEllipse(g, base, 0, 0, w - 1, h - 1);
+				ShadedRectangle.drawShadedEllipse(g, base, 0, 1, w - 1, h - 1);
 				break;
 			}
 		}

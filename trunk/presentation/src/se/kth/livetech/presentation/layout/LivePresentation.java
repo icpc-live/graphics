@@ -29,7 +29,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	public LivePresentation(Contest c, IProperty base, RemoteTime time) {
 		this.setLayout(null); //absolute positioning of subcomponents
 		
-		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c);
+		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c, base);
 		TeamReader teamReader;
 		
 		try {
@@ -110,14 +110,6 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
-		PropertyListener pageChange = new PropertyListener() {
-			@Override
-			public void propertyChanged(IProperty changed) {
-				int page = changed.getIntValue();
-				scoreboard.setPage(page);
-			}
-		};
-		
 		PropertyListener logoToggle = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -134,12 +126,10 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		
 		propertyListeners.add(modeChange);
 		propertyListeners.add(showClockChange);
-		propertyListeners.add(pageChange);
 		propertyListeners.add(noFps);
 		
 		base.get("mode").addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(showClockChange);
-		base.get("score.page").addPropertyListener(pageChange);
 		base.get("nofps").addPropertyListener(noFps);
 		
 		this.validate();

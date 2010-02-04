@@ -3,22 +3,19 @@ package se.kth.livetech.control;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.replay.ContestReplayer;
-import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 
 public class ContestReplayControl implements PropertyListener, ContestUpdateListener {
 	
 	private ContestReplayer replayer;
-	private ScoreboardPresentation sp;
-	private IProperty propertyReplay, propertyBase;
+	private IProperty propertyReplay, propertyBase, propertyScore;
 	private int bronzeMedals, silverMedals, goldMedals, medals;
 	private int resolveRow = -1;
 	private int stepCounter = 0;
@@ -30,10 +27,10 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	private int resolveTeamDelay = 0;
 	private Timer timer;
 	
-	public ContestReplayControl(ContestReplayer replayer, IProperty propertyBase, ScoreboardPresentation sp) {
+	public ContestReplayControl(ContestReplayer replayer, IProperty propertyBase) {
 		this.replayer = replayer;
-		this.sp = sp;
 		this.propertyReplay = propertyBase.get("replay");
+		this.propertyScore = propertyBase.get("score");
 		this.propertyBase = propertyBase;
 		propertyBase.addPropertyListener(this);
 	}
@@ -50,15 +47,11 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		resolveTeamDelay = propertyReplay.get("resolveTeamDelay").getIntValue();
 		
 		int freezeTime = propertyReplay.get("freezeTime").getIntValue();
-		if(freezeTime>0) {
+		if(freezeTime>0)
 			replayer.setFreezeTime(freezeTime);
-			System.out.println("Set freeze time : "+freezeTime);
-		}
 		int untilTime = propertyReplay.get("untilTime").getIntValue();
-		if(untilTime>0) {
+		if(untilTime>0)
 			replayer.setUntilTime(untilTime);
-			System.out.println("Set until time: "+untilTime);
-		}
 
 		if(state.equals("pause"))
 			replayer.setState(ContestReplayer.State.PAUSED);
@@ -96,17 +89,17 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	
 	private void highlightNext() {
 		System.out.println("Highlighting row " + resolveRow);
-		if(sp!=null) {
-			sp.highlightRow(resolveRow);
-			int runId = replayer.getHighestRankedRun();
-			if(runId>=0 && resolveRow>0) {
-				Run run = replayer.getContest().getRun(runId);
-				Team team = replayer.getContest().getRankedTeam(resolveRow);
-				if(run!=null && team!=null && team.getId()==run.getTeam()) {
-					sp.highlightProblem(run.getProblem());
-				}
+		propertyScore.set("highlightRow", String.valueOf(resolveRow));
+		int problemId = -1;
+		int runId = replayer.getHighestRankedRun();
+		if(runId>=0 && resolveRow>0) {
+			Run run = replayer.getContest().getRun(runId);
+			Team team = replayer.getContest().getRankedTeam(resolveRow);
+			if(run!=null && team!=null && team.getId()==run.getTeam()) {
+				problemId = run.getProblem();
 			}
 		}
+		propertyScore.set("highlightProblem", String.valueOf(problemId));
 	}
 	
 	private void showWinnerPresentation(int teamId, String award) {
@@ -121,18 +114,15 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	}
 	
 	private void showBronzeMedal(int row) {
-		if(sp!=null)
-			sp.setRowColor(row, ICPCColors.BRONZE);
+		propertyScore.get("color").set(String.valueOf(row), "bronze");
 	}
 	
 	private void showSilverMedal(int row) {
-		if(sp!=null)
-			sp.setRowColor(row, ICPCColors.SILVER);
+		propertyScore.get("color").set(String.valueOf(row), "silver");
 	}
 	
 	private void showGoldMedal(int row) {
-		if(sp!=null)
-			sp.setRowColor(row, ICPCColors.GOLD);
+		propertyScore.get("color").set(String.valueOf(row), "gold");
 	}
 
 	private void initResolveRank() {
@@ -151,15 +141,11 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 				return;
 			}
 			System.out.println("ResolveRank " + resolveRow);
-			int runId = replayer.getHighestRankedRun();
-			if(runId<0) {
-				timer.cancel();
-				timer = null;
-				return;
-			}
 			int stepValue = step(false);
 			switch(stepValue) {
 			case -1: // No processed run.
+				timer.cancel();
+				timer = null;
 				return;
 			case 0: // Team changed row.
 			case 2: // Highlight moved to next row.

@@ -8,6 +8,8 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JPanel;
 
@@ -31,6 +33,9 @@ import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.presentation.graphics.Utility;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyHierarchy;
+import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
@@ -52,10 +57,59 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 
 	Contest c;
 	
-	public ScoreboardPresentation(Contest c) {
+	public ScoreboardPresentation(Contest c, IProperty base) {
 		this.c = c;
 		this.setBackground(ICPCColors.SCOREBOARD_BG);				//(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
+		
+		IProperty scoreBase = base.get("score");
+		
+		scoreBase.get("page").addPropertyListener(new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				int page = changed.getIntValue();
+				setPage(page);
+			}
+		});
+		
+		scoreBase.get("highlightedRow").addPropertyListener(new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				int row = changed.getIntValue();
+				highlightRow(row);
+			}
+		});
+		
+		scoreBase.get("highlightedProblem").addPropertyListener(new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				int problem = changed.getIntValue();
+				highlightProblem(problem);
+			}
+		});
+		
+		final Map<Integer, String> rowColorMap = new HashMap<Integer, String>();
+		final Map<String, Color> colorMap = new HashMap<String, Color>();
+		colorMap.put("bronze", ICPCColors.BRONZE);
+		colorMap.put("silver", ICPCColors.SILVER);
+		colorMap.put("gold", ICPCColors.GOLD);
+		IProperty colorProperties = scoreBase.get("color");
+		colorProperties.addPropertyListener(new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				for(IProperty prop : changed.getSubProperties()) {
+					String name = prop.getName();
+					String value = prop.getValue();
+					String oldValue = rowColorMap.get(name);
+					
+					if((value!=null && !value.equals(oldValue)) || (value==null && oldValue!=null)) {
+						rowColorMap.put(Integer.parseInt(name), value);
+						setRowColor(Integer.parseInt(name), colorMap.get(value));
+					} 
+				}
+				
+			}
+		});
 	}
 
 	public synchronized void setContest(Contest nc) {
@@ -337,7 +391,9 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		tc.solve(id2);
 		tc.submit(1, 3, 23);
 		Contest c1 = tc.getContest();
-		Frame frame = new Frame("Scoreboard Presentation", new ScoreboardPresentation(c1));
+		PropertyHierarchy hierarchy = new PropertyHierarchy();
+		IProperty base = hierarchy.getProperty("live.clients.noname");
+		Frame frame = new Frame("Scoreboard Presentation", new ScoreboardPresentation(c1, base));
 		frame.setIconImage(RenderCache.getRenderCache().getImageFor(new IconRenderer(), new Dimension(128, 128)));
 	}
 

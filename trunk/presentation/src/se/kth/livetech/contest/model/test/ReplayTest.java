@@ -7,6 +7,8 @@ import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.replay.ContestReplayer;
 import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.util.Frame;
 
 public class ReplayTest {
@@ -43,8 +45,9 @@ public class ReplayTest {
 		int id0 = tc.submit(1, 2, 11);
 		tc.solve(id0);
 		Contest c1 = tc.getContest();*/
-		
-		final ScoreboardPresentation bt2 = new ScoreboardPresentation(new ContestImpl());
+		PropertyHierarchy hierarchy = new PropertyHierarchy();
+		IProperty base = hierarchy.getProperty("live.clients.noname");
+		final ScoreboardPresentation bt2 = new ScoreboardPresentation(new ContestImpl(), base);
 		new Frame("ReplayTest", bt2);
 		
 		final ContestReplayer replayer = new ContestReplayer();

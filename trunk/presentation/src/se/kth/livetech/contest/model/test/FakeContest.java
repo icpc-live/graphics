@@ -13,6 +13,8 @@ import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.util.Frame;
 
 
@@ -131,7 +133,9 @@ public class FakeContest extends Thread {
 	public static void main(String[] args) {
 		TestContest tc = new TestContest(teams, problems, 0);
 		FakeContest fc = new FakeContest(tc);
-		final ScoreboardPresentation bt = new ScoreboardPresentation(tc.getContest());
+		PropertyHierarchy hierarchy = new PropertyHierarchy();
+		IProperty base = hierarchy.getProperty("live.clients.noname");
+		final ScoreboardPresentation bt = new ScoreboardPresentation(tc.getContest(), base);
 		fc.addContestUpdateListener(new ContestUpdateListener() {
 			@Override
 			public void contestUpdated(ContestUpdateEvent e) {

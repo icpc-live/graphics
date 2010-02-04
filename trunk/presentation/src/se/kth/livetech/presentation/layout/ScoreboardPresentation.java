@@ -43,6 +43,8 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	public static final double RECENT_MID_TIME = 500; // ms
 	public static final double RECENT_MID_ALPHA = .7;
 	public static final double RECENT_FADE_TIME = 500; // ms
+	static final int SCROLL_KEY = -1; // FIXME: hack, remove!
+	static final int SCROLL_EXTRA = 3; // FIXME: hack, remove!
 	final int ROWS = 25;
 	final double NAME_WEIGHT = 5;
 	final double RESULTS_WEIGHT = 5;
@@ -73,10 +75,13 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 
 	public void setPage(int page) {
 		startRow = Math.max(page - 1, 0)*ROWS;
+		stack.setPosition(SCROLL_KEY, (int) startRow);
 		repaint();
 	}
 	
 	public void highlightRow(int row) {
+		startRow = Math.max(row - ROWS + SCROLL_EXTRA, 0);
+		stack.setPosition(SCROLL_KEY, (int) startRow);
 		highlightedRow = row;
 		System.err.println("highlighRow()");
 		repaint();
@@ -277,6 +282,10 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			Interpolated.Double interpolator = new Interpolated.Double(i);
 			stack.interpolate(id, interpolator);
 			double rowPos = interpolator.getValue();
+			double startRow = this.startRow;
+			interpolator = new Interpolated.Double(startRow); // TODO: ...
+			stack.interpolate(SCROLL_KEY, interpolator);
+			startRow = interpolator.getValue();
 			rowPos -= startRow;
 			//double maxStartRow = c.getTeams().size() - ROWS / 2.0;
 			//rowPos -= Math.IEEEremainder(startRow - maxStartRow / 2, maxStartRow) + maxStartRow / 2;

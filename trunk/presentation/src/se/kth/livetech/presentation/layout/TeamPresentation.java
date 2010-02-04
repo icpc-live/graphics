@@ -181,6 +181,9 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		double memberPosy = 0.7*getHeight();
 		g.translate(0.2*getWidth(), memberPosy);
 		if (this.displayMembers && teamReader != null) {
+			if (!teamReader.isConsistent(c))
+				DebugTrace.trace("inconsistent!");
+			
 			String[] memberStrings = teamReader.getTeamMembers(id);
 			PartitionedRowRenderer pr = new PartitionedRowRenderer();
 			

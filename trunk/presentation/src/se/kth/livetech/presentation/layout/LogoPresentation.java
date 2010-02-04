@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.presentation.graphics.Renderable;
 
+@SuppressWarnings("serial")
 public class LogoPresentation extends JPanel {
 	enum Logo { icpc, kth }
 	Renderable logoRenderer;

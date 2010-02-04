@@ -59,4 +59,6 @@ public class ICPCColors {
 		new Color(240,0,56),
 		new Color(3,221,62)
 	};
+
+	public static final Color BG_COLOR_CLOCK = new Color(40, 40, 90, 150);
 }

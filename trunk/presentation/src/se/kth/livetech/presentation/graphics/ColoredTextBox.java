@@ -124,10 +124,10 @@ public class ColoredTextBox implements Renderable {
 			g.setColor(this.style.getTextColor());
 		
 		Font font = style.getFont();
-		double magicScale = d.height / 24d; // TODO constant
+		double magicScale = d.height / 30d; // TODO constant
 		Font nfont = font.deriveFont(AffineTransform.getScaleInstance(magicScale, magicScale));
 		double textMargin = .1;
-		Rectangle2D rect = new Rectangle2D.Double(d.width * textMargin / 2, -d.height*0.1, d.width * (1 - textMargin), d.height); //TODO: constant for raising text
+		Rectangle2D rect = new Rectangle2D.Double(d.width * textMargin / 2, 0, d.width * (1 - textMargin), d.height); //TODO: constant for raising text
 		if (text != null)
 			Utility.drawString3D(g, text, rect, nfont, style.getAlignment());
 	}

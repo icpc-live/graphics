@@ -47,7 +47,7 @@ public class ClockView extends JPanel implements ContestUpdateListener{
 		
 		//TODO: location should depend on bounds
 		String clockString = String.format("%d:%02d:%02d", diffSeconds/60/60, (diffSeconds/60)%60, diffSeconds%60);
-		Renderable r = new ColoredTextBox(clockString, ContentProvider.getCountdownStyle());
+		Renderable r = new ColoredTextBox(clockString, ContentProvider.getClockStyle());
 	
 		Rectangle2D rect = PanAndZoom.getRect(rectProp, new Dimension(100, 40), this.getSize());
 		g2d.translate(rect.getX(), rect.getY());

@@ -235,4 +235,8 @@ public class ContentProvider {
 	public static Style getTeamMemberStyle() {
 		return new ColoredTextBox.BaseStyle(ICPCColors.BG_COLOR_1, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.left);
 	}
+
+	public static Style getClockStyle() {
+		return new ColoredTextBox.BaseStyle(ICPCColors.BG_COLOR_CLOCK, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.left);
+	}
 }

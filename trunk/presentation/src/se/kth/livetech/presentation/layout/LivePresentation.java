@@ -98,7 +98,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				}
 				if (currentView != null)
 					LivePresentation.this.add(currentView);
-				LivePresentation.this.validate();
+				validate();
+				repaint();
 			}
 		};
 		

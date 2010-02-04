@@ -40,10 +40,11 @@ public class ICPCColors {
 	public static final Color SILVER = new Color(180,180,190, 30);
 	public static final Color BRONZE = new Color(140,70,50, 30);
 	
-	public static final Color BG_COLOR_1 = new Color(60, 60, 120, 240);				//(90,90,191,255);
-	public static final Color BG_COLOR_2 = new Color(40, 40, 90, 210);				//(30,30,191,255);
+	public static final Color BG_COLOR_1 = new Color(60, 60, 120, 255);				//(90,90,191,255);
+	public static final Color BG_COLOR_2 = new Color(40, 40, 90, 255);				//(30,30,191,255);
 
 	public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
+	public static final Color COLOR_KEYING = new Color(255, 127, 255, 255);
 
 	public static final Color[] PROBLEM_COLORS = new Color[] {
 		new Color(0,148,182),

@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import se.kth.livetech.communication.RemoteTime;
+import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
@@ -25,12 +26,23 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	List<ContestUpdateListener> sublisteners = new ArrayList<ContestUpdateListener>();
 	Component currentView;
 	List<PropertyListener> propertyListeners;
+	IProperty modeProp, clearProp;
+	
+	public static class Blank extends JPanel {
+		public Blank() {
+			this.setBackground(ICPCColors.COLOR_KEYING);
+		}
+	}
+	private Blank blankView = new Blank();
 	
 	public LivePresentation(Contest c, IProperty base, RemoteTime time) {
 		this.setLayout(null); //absolute positioning of subcomponents
 		
 		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c);
 		TeamReader teamReader;
+
+		modeProp = base.get("mode");
+		clearProp = base.get("clear");
 		
 		try {
 			teamReader = new TeamReader("images/teams2010.txt");
@@ -71,15 +83,19 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 					LivePresentation.this.remove(currentView);
 				
 				
-				String mode = changed.getValue();
-				if(mode.equals("vnc")) {
+				String mode = modeProp.getValue();
+				boolean clear = clearProp.getBooleanValue();
+				if (clear) {
+					currentView = blankView;
+				}
+				else if (mode.equals("vnc")) {
 					currentView = vnc;
 				}
 				else if(mode.equals("score")) {
 					currentView = scoreboard;
 				}
 				else if(mode.equals("blank")) {
-					currentView = null;
+					currentView = blankView;
 				}
 				else if(mode.equals("interview")) {
 					currentView = interview;
@@ -95,6 +111,9 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				}
 				else if(mode.equals("award")) {
 					currentView = winnerPresentation;
+				}
+				else {
+					currentView = blankView;
 				}
 				if (currentView != null)
 					LivePresentation.this.add(currentView);
@@ -137,7 +156,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		propertyListeners.add(pageChange);
 		propertyListeners.add(noFps);
 		
-		base.get("mode").addPropertyListener(modeChange);
+		modeProp.addPropertyListener(modeChange);
+		clearProp.addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(showClockChange);
 		base.get("score.page").addPropertyListener(pageChange);
 		base.get("nofps").addPropertyListener(noFps);

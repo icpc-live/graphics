@@ -16,6 +16,7 @@ import javax.swing.SwingConstants;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.ui.CheckBox;
 import se.kth.livetech.properties.ui.PanAndZoom;
+import se.kth.livetech.properties.ui.Slider;
 import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
 
@@ -124,6 +125,11 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new ToggleButton(base.get("mode"), "cam", "Cam"));
 		
 		c.add(new CheckBox(base.get("clear"), "Clear"));
+		b.add(c);
+
+		c = new Box(BoxLayout.X_AXIS);
+		c.add(new JLabel("Team #"));
+		c.add(new Slider.Int(base.get("team.team"), 1, 105));
 		b.add(c);
 		
 		c = new Box(BoxLayout.X_AXIS);

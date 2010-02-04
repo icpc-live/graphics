@@ -47,4 +47,19 @@ public class Slider extends JSlider implements ChangeListener, PropertyListener 
 			//	}});
 		}
 	}
+	public static class Int extends Slider {
+		public Int(IProperty property, int min, int max) {
+			super(property, min, max);
+		}
+		@Override
+		public void stateChanged(final ChangeEvent e) {
+			if (!pc && this.getValue() != this.current) {
+				//EventQueue.invokeLater(new Runnable() {
+				//	public void run() {
+						//DebugTrace.trace("slider change " + getValue());
+						property.setIntValue((int) fromSlide(getValue()));
+				//	}});
+			}
+		}
+	}
 }

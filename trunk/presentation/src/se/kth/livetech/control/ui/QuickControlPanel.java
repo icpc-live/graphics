@@ -33,7 +33,7 @@ public class QuickControlPanel extends JPanel implements KeyEventDispatcher {
 	private IProperty clientBase;
 	private int numberBuffer;
 	private int numDigits;
-	private static final int MAX_TEAMS = 100;
+	private static final int MAX_TEAMS = 103;
 
 	private Set<Character> numpadPressed = new HashSet<Character>();
 	

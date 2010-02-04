@@ -8,6 +8,9 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -33,6 +36,9 @@ import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.presentation.graphics.Utility;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyHierarchy;
+import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
@@ -51,14 +57,74 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	private boolean showFps = true;
 	public int highlightedRow;
 	public int highlightedProblem;
+	private List<PropertyListener> propertyListeners;
 	private Map<Integer, Color> rowColorations;
 
 	Contest c;
 	
-	public ScoreboardPresentation(Contest c) {
+	public ScoreboardPresentation(Contest c, IProperty base) {
 		this.c = c;
 		this.setBackground(ICPCColors.SCOREBOARD_BG);				//(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
+		
+		propertyListeners = new ArrayList<PropertyListener>();
+		final IProperty scoreBase = base.get("score");
+		
+		final PropertyListener pageListener = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				int page = changed.getIntValue();
+				setPage(page);
+			}
+		};
+		propertyListeners.add(pageListener);
+		scoreBase.get("page").addPropertyListener(pageListener);
+		
+		final PropertyListener rowListener = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				highlightedRow = changed.getIntValue();
+				startRow = Math.max(highlightedRow - ROWS + SCROLL_EXTRA, 0);
+				advance();
+				stack.setPosition(SCROLL_KEY, (int) startRow);
+				repaint();
+			}
+		};
+		propertyListeners.add(rowListener);
+		scoreBase.get("highlightRow").addPropertyListener(rowListener);
+		
+		final PropertyListener problemListener = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				highlightedProblem = changed.getIntValue();
+				repaint();
+			}
+		};
+		propertyListeners.add(problemListener);
+		scoreBase.get("highlightProblem").addPropertyListener(problemListener);
+		
+		final Map<String, Color> colorMap = new HashMap<String, Color>();
+		colorMap.put("bronze", ICPCColors.BRONZE);
+		colorMap.put("silver", ICPCColors.SILVER);
+		colorMap.put("gold", ICPCColors.GOLD);
+		
+		final IProperty colorProperties = scoreBase.get("color");
+		final PropertyListener colorListener = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				for(IProperty prop : colorProperties.getSubProperties()) {
+					String name = prop.getName();
+					name = name.substring(name.lastIndexOf('.')+1);
+					Integer row = Integer.parseInt(name);
+					Color color = colorMap.get(prop.getValue());
+					rowColorations.put(row, color);
+				}
+				repaint();
+			}
+		};
+		propertyListeners.add(colorListener);
+		colorProperties.addPropertyListener(colorListener);
+		
 		this.rowColorations = new TreeMap<Integer, Color>();
 	}
 
@@ -77,26 +143,6 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		startRow = Math.max(page - 1, 0)*ROWS;
 		advance();
 		stack.setPosition(SCROLL_KEY, (int) startRow);
-		repaint();
-	}
-	
-	public void highlightRow(int row) {
-		startRow = Math.max(row - ROWS + SCROLL_EXTRA, 0);
-		advance();
-		stack.setPosition(SCROLL_KEY, (int) startRow);
-		highlightedRow = row;
-		System.err.println("highlighRow()");
-		repaint();
-	}
-	
-	public void setRowColor(int row, Color color) {
-		System.err.println("setRowColor");
-		rowColorations.put(row, color);
-		repaint();
-	}
-	
-	public void highlightProblem(int problem) {
-		highlightedProblem = problem;
 		repaint();
 	}
 	
@@ -349,7 +395,9 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		tc.solve(id2);
 		tc.submit(1, 3, 23);
 		Contest c1 = tc.getContest();
-		Frame frame = new Frame("Scoreboard Presentation", new ScoreboardPresentation(c1));
+		PropertyHierarchy hierarchy = new PropertyHierarchy();
+		IProperty base = hierarchy.getProperty("live.clients.noname");
+		Frame frame = new Frame("Scoreboard Presentation", new ScoreboardPresentation(c1, base));
 		frame.setIconImage(RenderCache.getRenderCache().getImageFor(new IconRenderer(), new Dimension(128, 128)));
 	}
 

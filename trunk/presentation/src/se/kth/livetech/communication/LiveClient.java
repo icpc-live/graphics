@@ -177,11 +177,10 @@ public class LiveClient {
 			
 			List<ContestUpdateListener> contestListeners = new ArrayList<ContestUpdateListener>();
 			
-			ScoreboardPresentation sp = null;
-			
 			if (opts.isTestScoreboard()) {
 				final ContestImpl c = new ContestImpl();
-				sp = new ScoreboardPresentation(c);
+				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
+				final ScoreboardPresentation sp = new ScoreboardPresentation(c, prop_base);
 				contestListeners.add(sp);
 				Frame f = new Frame("TestContest", sp, null, false);
 				if (opts.isFullscreen()) {
@@ -243,7 +242,7 @@ public class LiveClient {
 
 				// ContestReplayControl
 				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
-				final ContestReplayControl crc = new ContestReplayControl(cr, prop_base, sp);
+				final ContestReplayControl crc = new ContestReplayControl(cr, prop_base);
 				cr.addContestUpdateListener(crc);
 
 				for(ContestUpdateListener contestListener : contestListeners) {

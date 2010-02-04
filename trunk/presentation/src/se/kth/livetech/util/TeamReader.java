@@ -62,8 +62,7 @@ public class TeamReader {
 	}
 
 	public TeamReader(InputStream in) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(in));
-		//BufferedReader br = new BufferedReader(new FileReader(in));
+		BufferedReader br = new BufferedReader(new InputStreamReader(in, "UTF8"));
 		teams = new TreeMap<Integer, TeamEntry>();
 
 		for (int i = 1; true; ++i) {

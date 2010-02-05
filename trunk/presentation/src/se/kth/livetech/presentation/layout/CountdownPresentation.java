@@ -63,7 +63,7 @@ public class CountdownPresentation extends JPanel {
 	class Row extends JPanel {
 		Renderable content;
 		double age;
-		Dimension maxSize = new Dimension(400, 300);
+		Dimension maxSize = new Dimension(450, 450);
 		
 		public void setAge(double age) {
 			this.age = age;

@@ -58,6 +58,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 
 		final VLCView cam = new VLCView(base, mainFrame);
 		final ClockView clockPanel = new ClockView(base.get("clockrect"), c, time);
+		final LogoPresentation logoPanel = new LogoPresentation(LogoPresentation.Logo.icpc, base);
 		final InterviewPresentation interview = new InterviewPresentation(base);
 		final WinnerPresentation winnerPresentation = new WinnerPresentation(base);
 	
@@ -67,6 +68,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		sublisteners.add(winnerPresentation);
 		
 		this.add(clockPanel); //always there on top
+		this.add(logoPanel);
+		
 		currentView = scoreboard;
 		this.add(currentView);
 		this.validate();
@@ -125,7 +128,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
-		PropertyListener showClockChange = new PropertyListener() {
+		PropertyListener toggleClock = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				boolean visible = changed.getBooleanValue();
@@ -133,11 +136,13 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
-		/*TODO: unused: PropertyListener logoToggle = new PropertyListener() {
+		PropertyListener toggleLogo = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
+				boolean visible = changed.getBooleanValue();
+				logoPanel.setVisible(visible);
 			}
-		};*/
+		};
 		
 		PropertyListener noFps = new PropertyListener() {
 			@Override
@@ -148,12 +153,14 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		};
 		
 		propertyListeners.add(modeChange);
-		propertyListeners.add(showClockChange);
+		propertyListeners.add(toggleClock);
+		propertyListeners.add(toggleLogo);
 		propertyListeners.add(noFps);
 		
 		modeProp.addPropertyListener(modeChange);
 		clearProp.addPropertyListener(modeChange);
-		base.get("show_clock").addPropertyListener(showClockChange);
+		base.get("show_clock").addPropertyListener(toggleClock);
+		base.get("show_logo").addPropertyListener(toggleLogo);
 		base.get("nofps").addPropertyListener(noFps);
 		
 		this.validate();

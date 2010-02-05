@@ -91,6 +91,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				displayMembers = changed.getBooleanValue();
+				repaint();
 			}
 		};
 		

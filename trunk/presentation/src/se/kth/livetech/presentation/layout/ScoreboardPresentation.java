@@ -24,6 +24,7 @@ import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
+import se.kth.livetech.contest.model.Reset;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.test.TestContest;
@@ -148,11 +149,19 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
+		if (e.getUpdate() instanceof Reset)
+			reset();
 		setContest(e.getNewContest());
 	}
 
-	AnimationStack<Integer, Integer> stack = new AnimationStack<Integer, Integer>();
-	RecentChange<Integer, TeamScore> recent = new RecentChange<Integer, TeamScore>();
+	AnimationStack<Integer, Integer> stack;
+	RecentChange<Integer, TeamScore> recent;
+	{ reset(); }
+	
+	public void reset() {
+		stack = new AnimationStack<Integer, Integer>();
+		recent = new RecentChange<Integer, TeamScore>();
+	}
 
 	boolean firstPaint = true;
 	long lastTime;
@@ -176,6 +185,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		super.paintComponent(gr);
 		Contest c = this.c;
 		Graphics2D g = (Graphics2D) gr;
+		RenderCache.setQuality(g);
 
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
 		Rectangle2D row = new Rectangle2D.Double();
@@ -343,24 +353,28 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			//rowPos -= Math.IEEEremainder(startRow - maxStartRow / 2, maxStartRow) + maxStartRow / 2;
 			Rect.setRow(rect, rowPos, ROWS+1, row); //TODO HERE
 			Rect.setDim(row, dim);
+
+			// Row colors
+			if (rowColorations.containsKey(i)) {
+				double f = 11;
+				RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
+				g.setColor(rowColorations.get(i));
+				g.fill(round);
+			}
+
+			// Content
 			int x = (int) row.getX();
 			int y = (int) row.getY();
 			g.translate(x, y);
 			r.render(g, dim, layer);
 			g.translate(-x, -y);
 			
-			if (rowColorations.containsKey(i)) {
-				double f = 7;
-				RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
-				g.setColor(rowColorations.get(i));
-				g.fill(round);
-			}
-			
-			// highlight row render
-			if(highlightedRow == i) {
-				double f = 7;
+			// Highlight row
+			if (highlightedRow == i) {
+				double f = 3;
 				RoundRectangle2D round = new RoundRectangle2D.Double(row.getX(), row.getY(), row.getWidth(), row.getHeight(), row.getHeight() / f, row.getHeight() / f);
 				g.setColor(ICPCColors.YELLOW);
+				g.setStroke(new BasicStroke(2.5f));
 				g.draw(round);
 			}
 			

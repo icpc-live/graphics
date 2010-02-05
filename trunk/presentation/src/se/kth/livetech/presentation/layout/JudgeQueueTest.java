@@ -146,6 +146,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			state = new TreeMap<Integer, JudgeState>(this.state);
 		}
 		for (int i : state.keySet()) {
+			update = true; // need to rerender until states have timed out, TODO: timed rerender
 			PartitionedRowRenderer r = new PartitionedRowRenderer();
 
 			{ // Background
@@ -160,9 +161,15 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			JudgeState js = state.get(i);
 			Team team = c.getTeam(js.run.getTeam());
 
+			{ // Rank
+				int rank = c.getTeamRank(team.getId());
+				Renderable rankNumber = new ColoredTextBox("" + rank, ContentProvider.getTeamRankStyle());
+				r.add(rankNumber, 1.5, 1, true);
+			}
+
 			{ // Flag
-				String country = ICPCImages.COUNTRY_CODES[i % ICPCImages.COUNTRY_CODES.length];
-				ImageResource image = ICPCImages.getFlag(team.getNationality());
+				String country = team.getNationality();
+				ImageResource image = ICPCImages.getFlag(country);
 				Renderable flag = new ImageRenderer("flag " + country, image);
 				r.add(flag, 1, .9, true);
 			}
@@ -174,10 +181,20 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			}
 
 			{ // Team name
-				// TODO: team name should be in a TeamSubmissionState...
-				//Renderable teamName = new ColoredTextBox("University " + i, ContentProvider.getTeamNameStyle());
 				Renderable teamName = new ColoredTextBox(team.getName(), ContentProvider.getTeamNameStyle());
 				r.add(teamName, 1, 1, false);
+			}
+
+			{ // Problem
+				int problemN = 0;
+				for (int problem : c.getProblems())
+					if (js.run != null && problem == js.run.getProblem())
+						break;
+					else
+						++problemN;
+				char problem = (char) ('A' + problemN);
+				Renderable problemName = new ColoredTextBox("" + problem, ContentProvider.getTeamScoreStyle());
+				r.add(problemName, 1, 1, true);
 			}
 
 			// Testcases

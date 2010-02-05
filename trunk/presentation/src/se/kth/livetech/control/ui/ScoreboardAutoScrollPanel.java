@@ -61,9 +61,9 @@ public class ScoreboardAutoScrollPanel extends JPanel implements Runnable, Prope
 		while (!destroyed && enabled.getBooleanValue()) {
 			try {
 				if (page.getIntValue() == 1) {
-					Thread.sleep(firstDelay.getIntValue() * 1000);
+					Thread.sleep(Math.max(firstDelay.getIntValue(), 1) * 1000);
 				} else {
-					Thread.sleep(restDelay.getIntValue() * 1000);
+					Thread.sleep(Math.max(restDelay.getIntValue(), 1) * 1000);
 				}
 			} catch (InterruptedException e) {}
 

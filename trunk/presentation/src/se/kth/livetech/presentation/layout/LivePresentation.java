@@ -139,7 +139,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		PropertyListener toggleLogo = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
-				boolean visible = changed.getBooleanValue();
+				boolean visible = !changed.getBooleanValue();
 				logoPanel.setVisible(visible);
 			}
 		};
@@ -160,7 +160,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		modeProp.addPropertyListener(modeChange);
 		clearProp.addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(toggleClock);
-		base.get("show_logo").addPropertyListener(toggleLogo);
+		base.get("show_nologo").addPropertyListener(toggleLogo);
 		base.get("nofps").addPropertyListener(noFps);
 		
 		this.validate();

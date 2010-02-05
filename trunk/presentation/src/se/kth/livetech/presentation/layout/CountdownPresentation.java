@@ -65,7 +65,7 @@ public class CountdownPresentation extends JPanel {
 		double age;
 		Dimension maxSize = new Dimension(450, 450);
 		
-		public void setAge(double age) {
+		public void setAge(double age) {	
 			this.age = age;
 		}
 		public double getAge() {

@@ -87,7 +87,7 @@ public class ContentProvider {
 		}
 		else {
 			if(showProblemLetter)
-				text = "" + (char)((int)'A'+problemScore.getProblem());
+				text = "" + (char)((int)'A'+problemScore.getProblem()-1);
 			else
 				text = "";
 		}

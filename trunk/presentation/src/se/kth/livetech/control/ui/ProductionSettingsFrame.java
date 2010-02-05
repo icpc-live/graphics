@@ -5,10 +5,12 @@ import java.awt.Label;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.ui.CheckBox;
 import se.kth.livetech.properties.ui.Combo;
+import se.kth.livetech.properties.ui.PanAndZoom;
 import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
 
@@ -32,7 +34,7 @@ public class ProductionSettingsFrame extends JFrame{
 		addCombo("control", "Control commands", new String[] {"exitfullscreen","fullscreen0","fullscreen1"});
 		addCombo("format", "Video format", new String[] {"SD","HD","projector"});
 		addCheckbox("nofps", "no fps");
-		
+		addPanAndZoom("clockrect", "Clock");
 		this.add(b);
 		this.pack();
 		this.setVisible(false);
@@ -61,7 +63,12 @@ public class ProductionSettingsFrame extends JFrame{
 		c.add(new CheckBox(base.get(prop), name));
 		b.add(c);
 	}
-
-	
-	
+	private void addPanAndZoom(String prop, String name) {
+		Box c = new Box(BoxLayout.X_AXIS);
+		c.add(new JLabel(name));
+		b.add(c);
+		c = new Box(BoxLayout.X_AXIS);
+		c.add(new PanAndZoom(base.get(prop)));
+		b.add(c);
+	}	
 }

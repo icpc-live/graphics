@@ -8,6 +8,7 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import se.kth.livetech.properties.IProperty;
@@ -29,11 +30,26 @@ public class PanAndZoom extends Box {
 		this.posx = new Slider(property.get("posx"), -1, 1);
 		this.posy = new Slider(property.get("posy"), -1, 1);
 		this.zoom = new Slider(property.get("zoom"), 0, 1);
-		this.add(panx);
-		this.add(pany);
-		this.add(posx);
-		this.add(posy);
-		this.add(zoom);
+		Box b = new Box(BoxLayout.X_AXIS);
+		b.add(new JLabel("panx"));
+		b.add(panx);
+		this.add(b);
+		b = new Box(BoxLayout.X_AXIS);
+		b.add(new JLabel("pany"));
+		b.add(pany);
+		this.add(b);
+		b = new Box(BoxLayout.X_AXIS);
+		b.add(new JLabel("posx"));
+		b.add(posx);
+		this.add(b);
+		b = new Box(BoxLayout.X_AXIS);
+		b.add(new JLabel("posy"));
+		b.add(posy);
+		this.add(b);
+		b = new Box(BoxLayout.X_AXIS);
+		b.add(new JLabel("zoom"));
+		b.add(zoom);
+		this.add(b);
 	}
 	public static Rectangle2D getRect(IProperty property, Dimension natural, Dimension screen) {
 		double zoom = property.get("zoom").getDoubleValue();

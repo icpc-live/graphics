@@ -15,7 +15,6 @@ import javax.swing.SwingConstants;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.ui.CheckBox;
-import se.kth.livetech.properties.ui.PanAndZoom;
 import se.kth.livetech.properties.ui.Slider;
 import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
@@ -137,8 +136,6 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new Text(base.get("countdown_from")));
 
 		b.add(c);
-		
-		b.add(new PanAndZoom(base.get("clockrect")));
 		
 		b.add(new JSeparator(SwingConstants.HORIZONTAL));
 		b.add(new ContestReplayPanel(base.get("replay")));

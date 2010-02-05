@@ -24,6 +24,7 @@ import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
+import se.kth.livetech.contest.model.Reset;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.test.TestContest;
@@ -148,11 +149,19 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
+		if (e.getUpdate() instanceof Reset)
+			reset();
 		setContest(e.getNewContest());
 	}
 
-	AnimationStack<Integer, Integer> stack = new AnimationStack<Integer, Integer>();
-	RecentChange<Integer, TeamScore> recent = new RecentChange<Integer, TeamScore>();
+	AnimationStack<Integer, Integer> stack;
+	RecentChange<Integer, TeamScore> recent;
+	{ reset(); }
+	
+	public void reset() {
+		stack = new AnimationStack<Integer, Integer>();
+		recent = new RecentChange<Integer, TeamScore>();
+	}
 
 	boolean firstPaint = true;
 	long lastTime;

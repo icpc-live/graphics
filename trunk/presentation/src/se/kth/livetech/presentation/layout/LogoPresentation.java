@@ -50,8 +50,10 @@ public class LogoPresentation extends JPanel {
 	public void paintComponent(Graphics gr) {
 		Graphics2D g2d = (Graphics2D) gr;
 		Rectangle2D rect = PanAndZoom.getRect(panAndZoom, new Dimension(100, 100), this.getSize());
-		g2d.translate(rect.getX(), rect.getY());
-		logoRenderer.render(g2d, new Dimension((int)(rect.getWidth()), (int)(rect.getHeight())));
-		g2d.translate(-rect.getX(), -rect.getY());
+		if(rect.getWidth() > 0 && rect.getHeight() > 0){
+			g2d.translate(rect.getX(), rect.getY());
+			logoRenderer.render(g2d, new Dimension((int)(rect.getWidth()), (int)(rect.getHeight())));
+			g2d.translate(-rect.getX(), -rect.getY());
+		}
 	}
 }

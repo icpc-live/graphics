@@ -67,7 +67,9 @@ public class ScoreboardAutoScrollPanel extends JPanel implements Runnable, Prope
 				}
 			} catch (InterruptedException e) {}
 
-			page.setIntValue((page.getIntValue() % 5) + 1);
+			if (enabled.getBooleanValue()) {
+				page.setIntValue((page.getIntValue() % 5) + 1);
+			}
 		}
 
 		base.get("score.auto.enabled").setBooleanValue(false);

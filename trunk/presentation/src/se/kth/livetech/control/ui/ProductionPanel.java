@@ -25,6 +25,8 @@ public class ProductionPanel extends JPanel implements ActionListener {
 	String[] interviewPresets = new String[] {
 		"Deirdre Athaide		Fredrik Niemelä|Program Hosts",
 		"Fredrik Niemelä		Deirdre Athaide|Program Hosts",
+		"Deirdre Athaide|Program Host",
+		"Fredrik Niemelä|Program Host",
 		"Sam Ashoo|Head of Systems Team",
 		"Gunnar Kreitz|Development of Automated Judging System, Kattis",
 		"Per Austrin|Judge",

@@ -82,8 +82,11 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		
 		int stepUntil = propertyReplay.get("presentationStep").getIntValue();
 		while(stepCounter < stepUntil) {
+			System.out.println("step");
 			initResolveRank();
-			step(true);
+			System.out.println("init done");
+			System.out.println(step(true));
+			
 		}
 	}
 	
@@ -128,6 +131,11 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		if(resolveRow==-1) {
 			Contest contest = replayer.getContest();
 			resolveRow = contest.getTeams().size();
+			if(resolveRow==0) {
+				System.err.println("No teams in contest!");
+				resolveRow = -1;
+				return;
+			}
 			highlightNext();
 		}
 	}
@@ -151,6 +159,8 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			case 3: // Bronze medal. Should not happen.
 			case 4: // Silver medal. Should not happen.
 			case 5: // Gold medal. Should not happen.
+			case 6: // World champion. Should not happen.
+			case 7: // Toggling between presentation/scoreboard. Should not happen.
 				timer.schedule(new ResolverTask(), resolveTeamDelay);
 				break;
 			case 1: // Processed run for this row.
@@ -166,7 +176,21 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		Contest contest = replayer.getContest();
 		if(updateStepCounter)
 			++stepCounter;
-		if(resolveRow<=0) return -1;
+		if(resolveRow<0) return -1;
+		if(resolveRow==0) {
+			// Toggle between scoreboard and champion presentation.
+			if(showingPresentation) {
+				showingPresentation= false;
+				System.out.println("scoreboard");
+				showScoreboard();
+			} else {
+				showingPresentation = true;
+				System.out.println("Winnerpresentation");
+				Team team = contest.getRankedTeam(1);
+				showWinnerPresentation(team.getId(), "2010 World Champion");
+			}
+			return 7;
+		}
 		int runId = replayer.getHighestRankedRun();
 		Run run = null;
 		if(runId>=0) run = contest.getRun(runId);
@@ -200,13 +224,19 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			showWinnerPresentation(team.getId(), "Silver");
 			showSilverMedal(resolveRow);
 			return 4;
-		} else {
+		} else if(resolveRow>1) {
 			showingPresentation = true;
 			System.out.println("Gold medal to team " + team.getId() + " on row " + resolveRow);
 			showWinnerPresentation(team.getId(), "Gold");
 			showGoldMedal(resolveRow);
 			return 5;
-		}	
+		} else {
+			showingPresentation = true;
+			System.out.println("World champion team " + team.getId() + " on row " + resolveRow);
+			showWinnerPresentation(team.getId(), "2010 World Champion");
+			showGoldMedal(resolveRow);
+			return 6;
+		}
 	}
 
 	@Override

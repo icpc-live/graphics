@@ -50,7 +50,7 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener,
 
 		Renderable r = ContentProvider.getCountdownRenderable(award, team.getName());
 
-		Dimension dim = new Dimension(bounds.width, bounds.height);
+		Dimension dim = new Dimension(bounds.width, bounds.height / 2);
 		int x = (int) (bounds.getCenterX() - dim.width/2);
 		int y = (int) (bounds.getCenterY() - dim.height/2);
 		g2d.translate(x, y);

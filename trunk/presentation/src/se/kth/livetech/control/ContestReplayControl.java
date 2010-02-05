@@ -82,11 +82,8 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		
 		int stepUntil = propertyReplay.get("presentationStep").getIntValue();
 		while(stepCounter < stepUntil) {
-			System.out.println("step");
 			initResolveRank();
-			System.out.println("init done");
-			System.out.println(step(true));
-			
+			step(true);
 		}
 	}
 	
@@ -181,11 +178,9 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			// Toggle between scoreboard and champion presentation.
 			if(showingPresentation) {
 				showingPresentation= false;
-				System.out.println("scoreboard");
 				showScoreboard();
 			} else {
 				showingPresentation = true;
-				System.out.println("Winnerpresentation");
 				Team team = contest.getRankedTeam(1);
 				showWinnerPresentation(team.getId(), "2010 World Champion");
 			}

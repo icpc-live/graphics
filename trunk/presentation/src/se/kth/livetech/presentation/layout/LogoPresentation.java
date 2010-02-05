@@ -8,8 +8,10 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ContentProvider;
+import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.properties.ui.PanAndZoom;
 
 @SuppressWarnings("serial")
@@ -17,8 +19,23 @@ public class LogoPresentation extends JPanel {
 	enum Logo { icpc, kth }
 	Renderable logoRenderer;
 	IProperty panAndZoom;
+	PropertyListener changePositioning;
+	
 	public LogoPresentation(Logo logo, IProperty base) {
+		this.setBackground(ICPCColors.TRANSPARENT);
+		this.setOpaque(false);
+		
 		panAndZoom = base.get("logopz");
+		
+		changePositioning = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				repaint();
+			}
+		};
+		
+		panAndZoom.addPropertyListener(changePositioning);
+		
 		switch (logo) {
 		default:
 		case icpc:

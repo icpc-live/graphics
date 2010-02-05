@@ -35,6 +35,7 @@ public class ProductionSettingsFrame extends JFrame{
 		addCombo("format", "Video format", new String[] {"SD","HD","projector"});
 		addCheckbox("nofps", "no fps");
 		addPanAndZoom("clockrect", "Clock");
+		addPanAndZoom("logopz", "Logo");
 		this.add(b);
 		this.pack();
 		this.setVisible(false);

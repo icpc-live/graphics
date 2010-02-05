@@ -312,7 +312,7 @@ public class LiveClient {
 			
 			if (opts.isControl()) {
 				PropertyHierarchy hierarchy = localState.getHierarchy();
-				IProperty base = hierarchy.getProperty("live.control");
+				IProperty base = hierarchy.getProperty("live.control." + localNode.name);
 				IProperty clients = hierarchy.getProperty("live.clients");
 				new ProductionFrame(hierarchy, base, clients);
 			}

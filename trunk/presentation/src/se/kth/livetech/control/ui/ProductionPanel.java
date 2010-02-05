@@ -67,6 +67,9 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		//c.add(new JLabel("Teams: "));
 		//c.add(new Text(base.get("score.teams")));
 		b.add(c);
+		c = new Box(BoxLayout.X_AXIS);
+		c.add(new ToggleButton(base.get("mode"), "judge", "Judge Queue"));
+		b.add(c);
 		b.add(new JSeparator(SwingConstants.HORIZONTAL));
 
 		//Overlays

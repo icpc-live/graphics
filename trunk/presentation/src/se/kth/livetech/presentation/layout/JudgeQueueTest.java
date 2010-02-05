@@ -127,7 +127,8 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			//update |= this.recent.advance(dt / RECENT_TIME);
 		}
 
-		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
+		Rectangle2D rect = Rect.screenRect(getWidth()/2, getHeight(), .03);
+		
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
 		int rowNumber = 0;
@@ -214,7 +215,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				double rowPos = interpolator.getValue();
 				Rect.setRow(rect, rowPos, N, row);
 				Rect.setDim(row, dim);
-				int x = (int) row.getX();
+				int x = (int) getWidth() - dim.width - (int)0.02*getWidth();
 				int y = (int) row.getY();
 				g.translate(x, y);
 				r.render(g, dim);

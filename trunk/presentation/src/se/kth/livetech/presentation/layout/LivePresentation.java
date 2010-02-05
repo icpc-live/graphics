@@ -71,6 +71,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		
 		this.add(clockPanel); //always there on top
 		this.add(logoPanel);
+		this.add(judgeQueue);
+		judgeQueue.setVisible(false);
 		
 		currentView = scoreboard;
 		this.add(currentView);
@@ -118,9 +120,6 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				else if(mode.equals("award")) {
 					currentView = winnerPresentation;
 				}
-				else if(mode.equals("judge")) {
-					currentView = judgeQueue;
-				}
 				else {
 					currentView = blankView;
 				}
@@ -149,6 +148,15 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			}
 		};
 		
+		PropertyListener toggleQueue = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				DebugTrace.trace("toggling queue");
+				boolean visible = changed.getBooleanValue();
+				judgeQueue.setVisible(visible);
+			}
+		};
+		
 		PropertyListener noFps = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -161,12 +169,14 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		propertyListeners.add(toggleClock);
 		propertyListeners.add(toggleLogo);
 		propertyListeners.add(noFps);
+		propertyListeners.add(toggleQueue);
 		
 		modeProp.addPropertyListener(modeChange);
 		clearProp.addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(toggleClock);
 		base.get("show_nologo").addPropertyListener(toggleLogo);
 		base.get("nofps").addPropertyListener(noFps);
+		base.get("show_queue").addPropertyListener(toggleQueue);
 		
 		this.validate();
 	}

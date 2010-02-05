@@ -17,6 +17,7 @@ public class Text extends JTextField implements ActionListener, PropertyListener
 	//private String name;
 	private Color defaultBackground;
 	public Text(IProperty property) {
+		super(5);
 	    //this.setFocusTraversalKeysEnabled(false);
 		this.property = property;
 		this.defaultBackground = this.getBackground();

@@ -1,9 +1,12 @@
 package se.kth.livetech.control.ui;
 
 import java.awt.Label;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
@@ -19,7 +22,7 @@ public class ProductionSettingsFrame extends JFrame{
 	
 	IProperty base;
 	Box b;
-	public ProductionSettingsFrame(IProperty base){
+	public ProductionSettingsFrame(final IProperty base){
 		this.base=base;
 		b = new Box(BoxLayout.Y_AXIS);
 				
@@ -36,6 +39,17 @@ public class ProductionSettingsFrame extends JFrame{
 		addCheckbox("nofps", "no fps");
 		addPanAndZoom("clockrect", "Clock");
 		addPanAndZoom("logopz", "Logo");
+		JButton autoPage = new JButton("Auto Page");
+		b.add(autoPage);
+		autoPage.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFrame frame = new JFrame("Auto Page");
+				frame.getContentPane().add(new ScoreboardAutoScrollPanel(base));
+				frame.pack();
+				frame.setVisible(true);
+			}
+		});
 		this.add(b);
 		this.pack();
 		this.setVisible(false);

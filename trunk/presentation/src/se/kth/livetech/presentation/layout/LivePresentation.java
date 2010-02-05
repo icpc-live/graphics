@@ -61,11 +61,13 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		final LogoPresentation logoPanel = new LogoPresentation(LogoPresentation.Logo.icpc, base);
 		final InterviewPresentation interview = new InterviewPresentation(base);
 		final WinnerPresentation winnerPresentation = new WinnerPresentation(base);
-	
+		final JudgeQueueTest judgeQueue = new JudgeQueueTest();
+		
 		sublisteners.add(scoreboard);
 		sublisteners.add(teamPresentation);
 		sublisteners.add(clockPanel);
 		sublisteners.add(winnerPresentation);
+		sublisteners.add(judgeQueue);
 		
 		this.add(clockPanel); //always there on top
 		this.add(logoPanel);
@@ -115,6 +117,9 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				}
 				else if(mode.equals("award")) {
 					currentView = winnerPresentation;
+				}
+				else if(mode.equals("judge")) {
+					currentView = judgeQueue;
 				}
 				else {
 					currentView = blankView;

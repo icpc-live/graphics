@@ -246,7 +246,6 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				r.render(g, dim);
 				g.translate(-x, -y);	
 				
-				
 			}	
 		}
 		

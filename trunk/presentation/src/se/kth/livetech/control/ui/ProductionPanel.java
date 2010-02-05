@@ -23,22 +23,23 @@ import se.kth.livetech.properties.ui.ToggleButton;
 public class ProductionPanel extends JPanel implements ActionListener {
 
 	String[] interviewPresets = new String[] {
-		"Nina Hjelmgren      Fredrik Niemelä|Hosts",
-		"Peter Gudmunson|President",
-		"Bill Poucher|Professor",
-		"Stein Norheim       Marcus Isaksson|Analytics Group",
-		"Stan Wileman|Judge",
-		"Ingrid Melinder|Dean",
-		"Andrey Stankevich|Coach",
-		"Anders Flodström|University Chancellor",
-		"Fredrik Heintz|Nordic Contest Director",
-		"Lin Zhao|Professor",
-		"Ben Kelley|Dean",
-		"Robert Greenleaf|Composer",
-		"Roy Andersson|",
-		"Brenda Chow|IBM",
-		"Raewyn Boersten|",
-		"Jonathan Shaeffer|",
+		"Deirdre Athaide		Fredrik Niemelä|Program Hosts",
+		"Fredrik Niemelä		Deirdre Athaide|Program Hosts",
+		"Sam Ashoo|Head of Systems Team",
+		"Gunnar Kreitz|Development of Automated Judging System, Kattis",
+		"Per Austrin|Judge",
+		"Patrick Hynan|ICPC Operations Director",
+		"icpc2010@kth.se"
+		//		"Andrey Stankevich|Coach",
+//		"Anders Flodström|University Chancellor",
+//		"Fredrik Heintz|Nordic Contest Director",
+//		"Lin Zhao|Professor",
+//		"Ben Kelley|Dean",
+//		"Robert Greenleaf|Composer",
+//		"Roy Andersson|",
+//		"Brenda Chow|IBM",
+//		"Raewyn Boersten|",
+//		"Jonathan Shaeffer|",
 	};
 	JComboBox combo;
 	ProductionSettingsFrame presentationFrame;

@@ -32,7 +32,7 @@ public class ProductionFrame extends JFrame implements PropertyListener{
 		this.clients=clients;
 		this.base=base;
 		//this.pmClient=pmClient;
-		int numClients = 3;
+		int numClients = 4;
 		if ( System.getenv("M") != null ) {
 			numClients = Integer.parseInt(System.getenv("M"));
 		}

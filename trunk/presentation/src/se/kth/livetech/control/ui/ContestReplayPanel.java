@@ -46,6 +46,13 @@ public class ContestReplayPanel extends JPanel {
 		b.add(c);
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new IncrementCountButton(base.get("presentationStep"), "Presentation step"));
+		c.add(new IncrementCountButton(base.get("presentationStep"), "+2", 2));
+		c.add(new JLabel("#Blank"));
+		c.add(new Text(base.get("blankMedals")));
+		b.add(c);
+		c = new Box(BoxLayout.X_AXIS);
+		c.add(new JLabel("Winner label: "));
+		c.add(new Text(base.get("winnerString")));
 		b.add(c);
 		this.add(b);
 	}

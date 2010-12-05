@@ -16,7 +16,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	
 	private ContestReplayer replayer;
 	private IProperty propertyReplay, propertyBase, propertyScore;
-	private int bronzeMedals, silverMedals, goldMedals, medals;
+	private int bronzeMedals, silverMedals, goldMedals, blankMedals, medals;
 	private int resolveRow = -1;
 	private int stepCounter = 0;
 	private boolean showingPresentation = false;
@@ -41,7 +41,8 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		bronzeMedals = propertyReplay.get("bronzeMedals").getIntValue();
 		silverMedals = propertyReplay.get("silverMedals").getIntValue();
 		goldMedals = propertyReplay.get("goldMedals").getIntValue();
-		medals = bronzeMedals + silverMedals + goldMedals;
+		blankMedals = propertyReplay.get("blankMedals").getIntValue();
+		medals = bronzeMedals + silverMedals + goldMedals + blankMedals;
 		replayDelay = propertyReplay.get("replayDelay").getIntValue();
 		resolveProblemDelay = propertyReplay.get("resolveProblemDelay").getIntValue();
 		resolveTeamDelay = propertyReplay.get("resolveTeamDelay").getIntValue();
@@ -171,18 +172,23 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 
 	private int step(boolean updateStepCounter) {
 		Contest contest = replayer.getContest();
+		//String winnerString = "2010 World Champion";
+		String winnerString = this.propertyReplay.get("winnerString").getValue();
+		if (winnerString == null || winnerString.length() == 0) {
+			winnerString = "NWERC 2010 Champions";
+		}
 		if(updateStepCounter)
 			++stepCounter;
 		if(resolveRow<0) return -1;
 		if(resolveRow==0) {
 			// Toggle between scoreboard and champion presentation.
 			if(showingPresentation) {
-				showingPresentation= false;
+				showingPresentation = false;
 				showScoreboard();
 			} else {
 				showingPresentation = true;
 				Team team = contest.getRankedTeam(1);
-				showWinnerPresentation(team.getId(), "2010 World Champion");
+				showWinnerPresentation(team.getId(), winnerString);
 			}
 			return 7;
 		}
@@ -190,7 +196,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		Run run = null;
 		if(runId>=0) run = contest.getRun(runId);
 		Team team = contest.getRankedTeam(resolveRow);
-		if(run !=null && run.getTeam() == team.getId()) {
+		if(run != null && run.getTeam() == team.getId()) {
 			showingPresentation = false;
 			// Current row has more runs.
 			// System.out.println("Next run on row "+resolveRow + ", run id "+run.getId());
@@ -199,7 +205,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			Team team2 = replayer.getContest().getRankedTeam(resolveRow);
 			if(team.getId()==team2.getId()) return 1;
 			return 0;
-		} else if(resolveRow>medals || showingPresentation) {
+		} else if(resolveRow>silverMedals+goldMedals+bronzeMedals || showingPresentation) {
 			if(showingPresentation)
 				showScoreboard();
 			showingPresentation = false;
@@ -228,7 +234,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		} else {
 			showingPresentation = true;
 			System.out.println("World champion team " + team.getId() + " on row " + resolveRow);
-			showWinnerPresentation(team.getId(), "2010 World Champion");
+			showWinnerPresentation(team.getId(), winnerString);
 			showGoldMedal(resolveRow);
 			return 6;
 		}

@@ -39,6 +39,7 @@ public class ShadedRectangle {
 		}
 	}
 
+	@SuppressWarnings("unused")
 	public static Paint getPaint(int h/*, Status prelimStatus, Status finalStatus*/, boolean recent, float flash) {
 		Color c = null;
 		int i = -1;

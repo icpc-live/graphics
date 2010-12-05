@@ -89,8 +89,6 @@ public class SketchResolutions extends JPanel {
 		//g.drawString("mobility", 1070, 940);
 
 		g.setTransform(tr);
-		if (0 == 0)
-			return;
 	}
 	public static void main(String[] args) {
 		new Frame("Resolutions : Aspect Ratios", new SketchResolutions());

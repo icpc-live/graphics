@@ -170,7 +170,7 @@ public class LiveClient {
 			System.out.println("I am " + localNode);
 
 			// Local state
-			LiveState localState = new LiveState(spiderFlag);
+			RedisLiveState localState = new RedisLiveState(spiderFlag);
 
 			// Remote node registry
 			NodeRegistry nodeRegistry = new NodeRegistry(localNode, localState);

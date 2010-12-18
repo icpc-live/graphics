@@ -28,29 +28,29 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	Component currentView;
 	List<PropertyListener> propertyListeners;
 	IProperty modeProp, clearProp;
-	
+
 	public static class Blank extends JPanel {
 		public Blank() {
 			this.setBackground(ICPCColors.COLOR_KEYING);
 		}
 	}
 	private Blank blankView = new Blank();
-	
+
 	public LivePresentation(Contest c, IProperty base, RemoteTime time, JFrame mainFrame) {
 		this.setLayout(null); //absolute positioning of subcomponents
-		
+
 		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c, base);
 		TeamReader teamReader;
 
-		modeProp = base.get("mode");
-		clearProp = base.get("clear");
-		
+		this.modeProp = base.get("mode");
+		this.clearProp = base.get("clear");
+
 		try {
 			teamReader = new TeamReader("images/teams2010.txt");
 		} catch (IOException e) {
 			teamReader = null;
 		}
-	
+
 		final TeamPresentation teamPresentation = new TeamPresentation(c, base, teamReader);
 
 		final CountdownPresentation countdown = new CountdownPresentation(time, base);
@@ -62,76 +62,83 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		final InterviewPresentation interview = new InterviewPresentation(base);
 		final WinnerPresentation winnerPresentation = new WinnerPresentation(base);
 		final JudgeQueueTest judgeQueue = new JudgeQueueTest();
-		
-		sublisteners.add(scoreboard);
-		sublisteners.add(teamPresentation);
-		sublisteners.add(clockPanel);
-		sublisteners.add(winnerPresentation);
-		sublisteners.add(judgeQueue);
-		
+		final LayoutPresentation layout = new LayoutPresentation();
+
+		this.sublisteners.add(scoreboard);
+		this.sublisteners.add(teamPresentation);
+		this.sublisteners.add(clockPanel);
+		this.sublisteners.add(winnerPresentation);
+		this.sublisteners.add(judgeQueue);
+		this.sublisteners.add(layout);
+
 		this.add(clockPanel); //always there on top
 		this.add(logoPanel);
 		this.add(judgeQueue);
 		judgeQueue.setVisible(false);
-		
-		currentView = scoreboard;
-		this.add(currentView);
+
+		this.currentView = scoreboard;
+		this.add(this.currentView);
 		this.validate();
-		
+
 		this.base = base;
-		
-		propertyListeners = new ArrayList<PropertyListener>();
+
+		this.propertyListeners = new ArrayList<PropertyListener>();
 		PropertyListener modeChange = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				DebugTrace.trace("Changed %s -> %s", changed, changed.getValue());
-				
+
 				cam.deactivate();
-				if (currentView != null)
-					LivePresentation.this.remove(currentView);
-				
-				
-				String mode = modeProp.getValue();
-				boolean clear = clearProp.getBooleanValue();
+				if (LivePresentation.this.currentView != null) {
+					LivePresentation.this.remove(LivePresentation.this.currentView);
+				}
+
+
+				String mode = LivePresentation.this.modeProp.getValue();
+				boolean clear = LivePresentation.this.clearProp.getBooleanValue();
 				if (clear) {
-					currentView = blankView;
+					LivePresentation.this.currentView = LivePresentation.this.blankView;
+				}
+				else if (mode.equals("layout")) {
+					LivePresentation.this.currentView = layout;
 				}
 				else if (mode.equals("vnc")) {
-					currentView = vnc;
+					LivePresentation.this.currentView = vnc;
 				}
 				else if(mode.equals("score")) {
-					currentView = scoreboard;
+					LivePresentation.this.currentView = scoreboard;
 				}
 				else if(mode.equals("blank")) {
-					currentView = blankView;
+					LivePresentation.this.currentView = LivePresentation.this.blankView;
 				}
 				else if(mode.equals("interview")) {
-					currentView = interview;
+					LivePresentation.this.currentView = interview;
 				}
 				else if(mode.equals("team")) {
-					currentView = teamPresentation;
+					LivePresentation.this.currentView = teamPresentation;
 				}
 				else if(mode.equals("cam")) {
 					cam.activate();
 				}
 				else if(mode.equals("countdown")) {
-					currentView = countdown;
+					LivePresentation.this.currentView = countdown;
 				}
 				else if(mode.equals("award")) {
-					currentView = winnerPresentation;
+					LivePresentation.this.currentView = winnerPresentation;
 				}
 				else {
-					currentView = blankView;
+					LivePresentation.this.currentView = LivePresentation.this.blankView;
 				}
-				if (currentView != null)
-					LivePresentation.this.add(currentView);
-				
+				if (LivePresentation.this.currentView != null) {
+					LivePresentation.this.add(LivePresentation.this.currentView);
+				}
+
 				vnc.connect();
 				validate();
 				repaint();
 			}
 		};
-		
+
 		PropertyListener toggleClock = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -139,7 +146,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				clockPanel.setVisible(visible);
 			}
 		};
-		
+
 		PropertyListener toggleLogo = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -147,7 +154,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				logoPanel.setVisible(visible);
 			}
 		};
-		
+
 		PropertyListener toggleQueue = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -156,39 +163,39 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				judgeQueue.setVisible(visible);
 			}
 		};
-		
+
 		PropertyListener noFps = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				boolean visible = !changed.getBooleanValue();
-				scoreboard.setShowFps(visible);			
+				scoreboard.setShowFps(visible);
 			}
 		};
-		
-		propertyListeners.add(modeChange);
-		propertyListeners.add(toggleClock);
-		propertyListeners.add(toggleLogo);
-		propertyListeners.add(noFps);
-		propertyListeners.add(toggleQueue);
-		
-		modeProp.addPropertyListener(modeChange);
-		clearProp.addPropertyListener(modeChange);
+
+		this.propertyListeners.add(modeChange);
+		this.propertyListeners.add(toggleClock);
+		this.propertyListeners.add(toggleLogo);
+		this.propertyListeners.add(noFps);
+		this.propertyListeners.add(toggleQueue);
+
+		this.modeProp.addPropertyListener(modeChange);
+		this.clearProp.addPropertyListener(modeChange);
 		base.get("show_clock").addPropertyListener(toggleClock);
 		base.get("show_nologo").addPropertyListener(toggleLogo);
 		base.get("nofps").addPropertyListener(noFps);
 		base.get("show_queue").addPropertyListener(toggleQueue);
-		
+
 		this.validate();
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		RenderCache.setQuality((Graphics2D)g);
 	}
-	
+
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
-		for (ContestUpdateListener l : sublisteners) {
+		for (ContestUpdateListener l : this.sublisteners) {
 			l.contestUpdated(e);
 		}
 	}

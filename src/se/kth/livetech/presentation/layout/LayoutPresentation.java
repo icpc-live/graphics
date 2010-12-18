@@ -34,6 +34,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
 		this.content.getContestRef().set(e.getNewContest());
+		repaint();
 	}
 	@Override
 	public void paintComponent(Graphics gr) {

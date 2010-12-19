@@ -7,7 +7,7 @@ public class Rect {
 	public static void setRow(Rectangle2D rect, double i, int n, Rectangle2D rowOut) {
 		setRow(rect, i, i + 1, n, rowOut);
 	}
-	public static void setRow(Rectangle2D rect, double i1, double i2, int n, Rectangle2D rowOut) {
+	public static void setRow(Rectangle2D rect, double i1, double i2, double n, Rectangle2D rowOut) {
 		rowOut.setRect(
 				rect.getX(), rect.getY() + i1 * rect.getHeight() / n,
 				rect.getWidth(), (i2 - i1) * rect.getHeight() / n);

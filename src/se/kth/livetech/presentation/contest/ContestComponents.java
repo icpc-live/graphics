@@ -3,7 +3,7 @@ package se.kth.livetech.presentation.contest;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.presentation.layout.LayoutComponent;
 import se.kth.livetech.presentation.layout.LayoutComposition;
-import se.kth.livetech.presentation.layout.LayoutLeaf;
+import se.kth.livetech.presentation.layout.LayoutContent;
 
 public class ContestComponents {
 	enum Parts {
@@ -32,12 +32,12 @@ public class ContestComponents {
 		final double scoreWeight = 2;
 		LayoutComposition c;
 		c = new LayoutComposition(team, LayoutComposition.Direction.horizontal);
-		c.add(LayoutLeaf.stretch(Parts.name, 1, content.getTeamName(team)));
-		c.add(LayoutLeaf.fixed(Parts.logo, 1, content.getTeamLogo(team)));
-		c.add(LayoutLeaf.fixed(Parts.logo, 1, content.getTeamFlag(team)));
+		c.add(LayoutContent.stretch(Parts.name, 1, .8, content.getTeamName(team)));
+		c.add(LayoutContent.fixed(Parts.logo, 1, .8, content.getTeamLogo(team)));
+		c.add(LayoutContent.fixed(Parts.logo, 1, .8, content.getTeamFlag(team)));
 		c.add(teamProblems(content, team));
-		c.add(LayoutLeaf.fixed(Parts.solved, solvedWeight, content.getSolved(team)));
-		c.add(LayoutLeaf.fixed(Parts.score, scoreWeight, content.getScore(team)));
+		c.add(LayoutContent.fixed(Parts.solved, solvedWeight, .8, content.getSolved(team)));
+		c.add(LayoutContent.fixed(Parts.score, scoreWeight, .8, content.getScore(team)));
 		return c;
 	}
 
@@ -47,7 +47,7 @@ public class ContestComponents {
 		p = new LayoutComposition(team, LayoutComposition.Direction.horizontal);
 		Contest contest = content.getContestRef().get();
 		for (int problem : contest.getProblems()) {
-			p.add(LayoutLeaf.fixed(problem, problemWeight, content.getProblemScore(team, problem)));
+			p.add(LayoutContent.fixed(problem, problemWeight, .8, content.getProblemScore(team, problem)));
 		}
 		return p;
 	}

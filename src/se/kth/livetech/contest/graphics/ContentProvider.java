@@ -9,12 +9,12 @@ import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.presentation.animation.RecentChange;
 import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
+import se.kth.livetech.presentation.graphics.ColoredTextBox.Style;
 import se.kth.livetech.presentation.graphics.HorizontalSplitter;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.Renderable;
-import se.kth.livetech.presentation.graphics.ColoredTextBox.Style;
 
 public class ContentProvider {
 	public static final boolean PROBLEM_SCORES = false;
@@ -86,10 +86,11 @@ public class ContentProvider {
 		else if (problemScore.getAttempts() > 0) {
 		}
 		else {
-			if(showProblemLetter)
-				text = "" + (char)((int)'A'+problemScore.getProblem()-1);
-			else
+			if(showProblemLetter) {
+				text = "" + (char)('A'+problemScore.getProblem()-1);
+			} else {
 				text = "";
+			}
 		}
 		return text;
 	}
@@ -102,10 +103,10 @@ public class ContentProvider {
 	private static ProblemScoreStyle psStyle(Color base) {
 		return new ProblemScoreStyle(base);
 	}
-	private static final ProblemScoreStyle SOLVED;
-	private static final ProblemScoreStyle PENDING;
-	private static final ProblemScoreStyle FAILED;
-	private static final ProblemScoreStyle NONE;
+	public static final ProblemScoreStyle SOLVED;
+	public static final ProblemScoreStyle PENDING;
+	public static final ProblemScoreStyle FAILED;
+	public static final ProblemScoreStyle NONE;
 	static {
 		SOLVED = psStyle(ICPCColors.SOLVED_COLOR);
 		PENDING = psStyle(ICPCColors.PENDING_COLOR);

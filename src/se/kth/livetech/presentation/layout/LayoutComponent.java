@@ -1,9 +1,9 @@
 package se.kth.livetech.presentation.layout;
 
-public interface LayoutComponent<ContentType> {
+public interface LayoutComponent {
 	public Object getKey();
 	public double getFixedWeight();
 	public double getStretchWeight();
 	public boolean isContentLeaf();
-	public ContentType getContentLeaf();
+	public Content getContentLeaf();
 }

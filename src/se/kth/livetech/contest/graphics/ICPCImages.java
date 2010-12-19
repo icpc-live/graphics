@@ -1,5 +1,5 @@
 /*
- * 
+ *
  */
 package se.kth.livetech.contest.graphics;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.util.DebugTrace;
 /**
- * 
+ *
  */
 public class ICPCImages {
 	private static final long serialVersionUID = 1L;
@@ -36,14 +36,16 @@ public class ICPCImages {
 	public static final int STOP = 19;
 	public static final int BANFF_ICON = 20;
 	public static final int KTH_ICON = 21;
-	
+
 	public static final String[] COUNTRY_CODES = "egy zaf irn bgd chn idn hkg vnm ind kor sgp twn jpn rus blr geo pol swe ukr esp gbr fra col bra mex arg usa can nzl aus".split(" ");
-	
+
 	private static ImageResource[] images;
 
 	private static Map<Integer, ImageResource> teamLogos = new HashMap<Integer, ImageResource>();
 
 	private static Map<String, ImageResource> flags = new HashMap<String, ImageResource>();
+
+	private static Map<String, ImageResource> resources = new HashMap<String, ImageResource>();
 
 	static void loadMisc() {
 		images = new ImageResource[22];
@@ -75,10 +77,11 @@ public class ICPCImages {
 	}
 
 	static void loadLogo(int i) {
-		if (i == 0)
+		if (i == 0) {
 			teamLogos.put(0, new ImageResource("logos/unknown.png"));
-		else
+		} else {
 			teamLogos.put(i, new ImageResource(String.format("logos/%d.png", i)));
+		}
 	}
 
 	static void loadFlag(String countryCode) {
@@ -86,54 +89,72 @@ public class ICPCImages {
 		flags.put(countryCode, flag);
 	}
 
+	static void loadResource(String resourceName) {
+		DebugTrace.trace("loadResource %s", resourceName);
+		ImageResource resource = new ImageResource(resourceName);
+		resources.put(resourceName, resource);
+	}
+
 	public static ImageResource getImage(int x) {
-		if (images == null)
+		if (images == null) {
 			loadMisc();
+		}
 		return images[x];
 	}
 
 	private static Map<String, Integer> teamMap = new HashMap<String, Integer>();
 	public static int teamId(String teamName) {
-		if (teamMap.containsKey(teamName))
+		if (teamMap.containsKey(teamName)) {
 			return teamMap.get(teamName);
+		}
 		int teamId = teamMap.size();
 		teamMap.put(teamName, teamId); 	// FIXME: Team id!
 		return teamId;
 	}
 
 	public static ImageResource getTeamLogo(int teamId) {
-		if (!teamLogos.containsKey(teamId))
+		if (!teamLogos.containsKey(teamId)) {
 			loadLogo(teamId);
+		}
 		return teamLogos.get(teamId);
 	}
 
 	public static ImageResource getFlag(String countryCode) {
-		if (!flags.containsKey(countryCode))
+		if (!flags.containsKey(countryCode)) {
 			loadFlag(countryCode);
+		}
 		return flags.get(countryCode);
+	}
+
+	public static ImageResource getResource(String resourceName) {
+		if (!resources.containsKey(resourceName)) {
+			loadResource(resourceName);
+		}
+		return resources.get(resourceName);
 	}
 
 	public static int restrictComponent(int comp) {
 		return (comp < 0) ? 0 : (comp > 255 ? 255 : comp);
 	}
-	
+
 	public static int multiplyComponent(int comp, double factor) {
 		return restrictComponent((int)(comp * factor));
 	}
-	
+
 	public static BufferedImage alphaMultiply(BufferedImage im, double factor) {
 		int w = im.getWidth();
 		int h = im.getHeight();
 		BufferedImage buf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-		for ( int i = 0; i < w; i++ ) 
+		for ( int i = 0; i < w; i++ ) {
 			for ( int j = 0; j < h; j++ ) {
 				int p = im.getRGB(i, j);
 				buf.setRGB(i, j, (p & 0x00FFFFFF) | (multiplyComponent((p & 0xFF000000) >>> 24, factor) << 24));
 			}
+		}
 		return buf;
 	}
-	
+
 	public static Rectangle2D getRectDimension(BufferedImage im) {
-		return new Rectangle2D.Double(0, 0, im.getWidth(), im.getHeight());		
+		return new Rectangle2D.Double(0, 0, im.getWidth(), im.getHeight());
 	}
 }

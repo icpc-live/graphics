@@ -5,8 +5,8 @@ import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.presentation.layout.Content;
 
 public class TeamContent {
-	public static Content<ContestStyle> teamName(final ContestRef contestRef, final int team) {
-		return new Content.Text<ContestStyle>() {
+	public static Content teamName(final ContestRef contestRef, final int team) {
+		return new Content.Text() {
 			private Team team() {
 				Contest contest = contestRef.get();
 				Team t = contest.getTeam(team);
@@ -20,13 +20,13 @@ public class TeamContent {
 
 			@Override
 			public ContestStyle getStyle() {
-				return ContestStyle.none;
+				return ContestStyle.name;
 			}
 		};
 	}
-	
-	public static Content<ContestStyle> teamLogo(final ContestRef contestRef, final int team) {
-		return new Content.Image<ContestStyle>() {
+
+	public static Content teamLogo(final ContestRef contestRef, final int team) {
+		return new Content.Image() {
 			@Override
 			public String getImageName() {
 				return "logos/" + team + ".png";
@@ -34,13 +34,13 @@ public class TeamContent {
 
 			@Override
 			public ContestStyle getStyle() {
-				return ContestStyle.none;
+				return ContestStyle.logo;
 			}
 		};
 	}
 
-	public static Content<ContestStyle> teamFlag(final ContestRef contestRef, final int team) {
-		return new Content.Image<ContestStyle>() {
+	public static Content teamFlag(final ContestRef contestRef, final int team) {
+		return new Content.Image() {
 			private Team team() {
 				Contest contest = contestRef.get();
 				Team t = contest.getTeam(team);
@@ -54,7 +54,7 @@ public class TeamContent {
 
 			@Override
 			public ContestStyle getStyle() {
-				return ContestStyle.none;
+				return ContestStyle.flag;
 			}
 		};
 	}

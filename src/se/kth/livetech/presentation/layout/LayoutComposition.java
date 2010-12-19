@@ -3,7 +3,7 @@ package se.kth.livetech.presentation.layout;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LayoutComposition<ContentType> implements LayoutComponent<ContentType> {
+public class LayoutComposition implements LayoutComponent {
 	public enum Direction {
 		horizontal,
 		vertical,
@@ -12,23 +12,23 @@ public class LayoutComposition<ContentType> implements LayoutComponent<ContentTy
 
 	private final Object key;
 	private final Direction direction;
-	private ArrayList<LayoutComponent<ContentType>> components;
+	private ArrayList<LayoutComponent> components;
 
 	public LayoutComposition(Object key, Direction direction) {
 		this.key = key;
 		this.direction = direction;
-		this.components = new ArrayList<LayoutComponent<ContentType>>();
+		this.components = new ArrayList<LayoutComponent>();
 	}
 
 	public Direction getDirection() {
 		return this.direction;
 	}
 
-	public void add(LayoutComponent<ContentType> component) {
+	public void add(LayoutComponent component) {
 		this.components.add(component);
 	}
 
-	public List<LayoutComponent<ContentType>> getComponents() {
+	public List<LayoutComponent> getComponents() {
 		return this.components;
 	}
 
@@ -40,7 +40,7 @@ public class LayoutComposition<ContentType> implements LayoutComponent<ContentTy
 	@Override
 	public double getFixedWeight() {
 		double s = 0;
-		for (LayoutComponent<ContentType> component : this.components) {
+		for (LayoutComponent component : this.components) {
 			s += component.getFixedWeight();
 		}
 		return s;
@@ -49,7 +49,7 @@ public class LayoutComposition<ContentType> implements LayoutComponent<ContentTy
 	@Override
 	public double getStretchWeight() {
 		double s = 0;
-		for (LayoutComponent<ContentType> component : this.components) {
+		for (LayoutComponent component : this.components) {
 			s += component.getStretchWeight();
 		}
 		return s;
@@ -61,7 +61,7 @@ public class LayoutComposition<ContentType> implements LayoutComponent<ContentTy
 	}
 
 	@Override
-	public ContentType getContentLeaf() {
+	public Content getContentLeaf() {
 		return null;
 	}
 }

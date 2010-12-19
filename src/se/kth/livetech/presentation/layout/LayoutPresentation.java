@@ -7,20 +7,20 @@ import java.awt.geom.Rectangle2D;
 
 import javax.swing.JPanel;
 
-import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
+import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.presentation.contest.ContestComponents;
 import se.kth.livetech.presentation.contest.ContestContent;
 import se.kth.livetech.presentation.contest.ContestRef;
 import se.kth.livetech.presentation.contest.ContestStyle;
-import se.kth.livetech.presentation.graphics.Alignment;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
+import se.kth.livetech.presentation.graphics.ImageRenderer;
+import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
-import se.kth.livetech.util.DebugTrace;
 
 @SuppressWarnings("serial")
 public class LayoutPresentation extends JPanel implements ContestUpdateListener {
@@ -53,7 +53,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		Dimension dim = new Dimension();
 		Rect.setDim(row, dim);
 
-		LayoutComponent<Content<ContestStyle>> component;
+		LayoutComponent component;
 		int team = this.content.getContestRef().get().getRankedTeam(1).getId();
 		component = ContestComponents.teamRow(this.content, team);
 		Renderable r = rend(g, rect, component);
@@ -61,31 +61,36 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		r.render(g, dim);
 	}
 
-	private Renderable rend(Graphics2D g, Rectangle2D rect, LayoutComponent<Content<ContestStyle>> component) {
+	private Renderable rend(Graphics2D g, Rectangle2D rect, LayoutComponent component) {
 		if (component instanceof LayoutComposition) {
-		DebugTrace.trace("rend " + component);
-			LayoutComposition<Content<ContestStyle>> composition = (LayoutComposition<Content<ContestStyle>>) component;
+			LayoutComposition composition = (LayoutComposition) component;
 			PartitionedRowRenderer r = new PartitionedRowRenderer();
-			for (LayoutComponent<Content<ContestStyle>> sub : composition.getComponents()) {
-				double weight = 0;
-				weight += sub.getFixedWeight();
-				weight += sub.getStretchWeight();
-				DebugTrace.trace("sub " + sub + " " + weight);
+			for (LayoutComponent sub : composition.getComponents()) {
+				boolean fixed = sub.getFixedWeight() > 0;
+				double weight;
+				if (fixed) {
+					weight = sub.getFixedWeight();
+				} else {
+					weight = sub.getStretchWeight();
+				}
 
 				Renderable s = rend(g, rect, sub);
 				if (s != null) {
-					r.add(s, weight, 1, true);
+					r.add(s, weight, 1, fixed);
 				}
 			}
 			return r;
 		}
 		else {
-			Content<ContestStyle> content = component.getContentLeaf();
+			Content content = component.getContentLeaf();
 			Renderable r;
 			if (content.isText()) {
-				r = new ColoredTextBox(content.getText(), ContentProvider.getHeaderStyle(Alignment.center));
+				ContestStyle style = (ContestStyle) content.getStyle();
+				r = new ColoredTextBox(content.getText(), ContestStyle.textBoxStyle(style));
 			} else if (content.isImage()) {
-				r = new ColoredTextBox(content.getImageName(), ContentProvider.getHeaderStyle(Alignment.center));
+				String imageName = content.getImageName();
+				ImageResource image = ICPCImages.getResource(imageName);
+				r = new ImageRenderer(imageName, image);
 			} else {
 				r = null;
 			}

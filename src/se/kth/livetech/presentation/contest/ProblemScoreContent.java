@@ -5,7 +5,7 @@ import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.presentation.layout.Content;
 
-public class ProblemScoreContent extends Content.Text<ContestStyle> {
+public class ProblemScoreContent extends Content.Text {
 	private ContestRef contestRef;
 	int team, problem;
 	public ProblemScoreContent(ContestRef contestRef, int team, int problem) {
@@ -13,11 +13,11 @@ public class ProblemScoreContent extends Content.Text<ContestStyle> {
 		this.team = team;
 		this.problem = problem;
 	}
-	
+
 	private ProblemScore score() {
 		Contest contest = this.contestRef.get();
-		TeamScore ts = contest.getTeamScore(team);
-		ProblemScore ps = ts.getProblemScore(problem);
+		TeamScore ts = contest.getTeamScore(this.team);
+		ProblemScore ps = ts.getProblemScore(this.problem);
 		return ps;
 	}
 

@@ -5,8 +5,8 @@ import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.presentation.layout.Content;
 
 public class TeamScoreContent {
-	public static Content<ContestStyle> getSolved(final ContestRef contestRef, final int team) {
-		return new Content.Text<ContestStyle>() {
+	public static Content getSolved(final ContestRef contestRef, final int team) {
+		return new Content.Text() {
 			private TeamScore score() {
 				Contest contest = contestRef.get();
 				TeamScore ts = contest.getTeamScore(team);
@@ -25,8 +25,8 @@ public class TeamScoreContent {
 		};
 	}
 
-	public static Content<ContestStyle> getScore(final ContestRef contestRef, final int team) {
-		return new Content.Text<ContestStyle>() {
+	public static Content getScore(final ContestRef contestRef, final int team) {
+		return new Content.Text() {
 			private TeamScore score() {
 				Contest contest = contestRef.get();
 				TeamScore ts = contest.getTeamScore(team);

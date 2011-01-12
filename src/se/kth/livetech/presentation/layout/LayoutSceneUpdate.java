@@ -11,17 +11,14 @@ import java.util.List;
  * 
  */
 public interface LayoutSceneUpdate {
-	public interface SubSceneUpdate {
-		public Rectangle2D getBounds();
-		public LayoutSceneUpdate getSceneUpdate();
-	}
-
 	public Object getKey();
+
+	public Rectangle2D getBounds();
 
 	// Nullable
 	public Content getContent();
 
-	public List<SubSceneUpdate> getSubs();
+	public List<LayoutSceneUpdate> getSubs();
 	
 	//public List<Object> getRemovals();
 }

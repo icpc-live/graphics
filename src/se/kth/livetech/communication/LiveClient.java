@@ -124,6 +124,9 @@ public class LiveClient {
 
 		@Option(longName="vlc")
 		boolean isVlc();
+		
+		@Option(longName="layout")
+		boolean isLayout();
 
 		@Unparsed
 		List<String> getArgs();
@@ -218,7 +221,10 @@ public class LiveClient {
 					f.setVisible(true);
 				}
 			}
-			if (opts.isLive()) {
+			if (opts.isLayout()) {
+				localState.getHierarchy().getProperty("live.clients.noname").set("mode", "layout");
+			}
+			if (opts.isLive() || opts.isLayout()) {
 				final ContestImpl c = new ContestImpl();
 				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
 				final LivePresentation lpr = new LivePresentation(c, prop_base, nodeRegistry.getRemoteTime(), fullscreenFrame);

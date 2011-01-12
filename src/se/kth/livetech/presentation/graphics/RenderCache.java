@@ -12,7 +12,7 @@ import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 
-import javax.media.j3d.Texture;
+//import javax.media.j3d.Texture;
 
 import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.SoftHashMap;
@@ -64,7 +64,7 @@ public class RenderCache {
 	private static class Value {
 		BufferedImage bi;
 		VolatileImage vi;
-		Texture t;
+		//Texture t;
 		int renderCount;
 	}
 
@@ -207,9 +207,11 @@ public class RenderCache {
 		render(g, 0, 0, r, d);
 		return bi;
 	}
+	/*
 	public Texture getTextureFor(Renderable r, Dimension d) {
 		Value v = getValueFor(r, d);
 		// TODO: create t if null
 		return v.t;
 	}
+	*/
 }

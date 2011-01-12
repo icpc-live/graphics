@@ -12,6 +12,11 @@ public class Rect {
 				rect.getX(), rect.getY() + i1 * rect.getHeight() / n,
 				rect.getWidth(), (i2 - i1) * rect.getHeight() / n);
 	}
+	public static void setCol(Rectangle2D rect, double i1, double i2, double n, Rectangle2D colOut) {
+		colOut.setRect(
+				rect.getX() + i1 * rect.getWidth() / n, rect.getY(),
+				(i2 - i1) * rect.getWidth() / n, rect.getHeight());
+	}
 	public static void setDim(Rectangle2D rect, Dimension dim) {
 		dim.setSize(rect.getWidth(), rect.getHeight());
 	}

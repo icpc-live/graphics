@@ -32,15 +32,13 @@ public class LayoutPositioner {
 				
 					LayoutComposition composition = (LayoutComposition) component;
 					switch (composition.getDirection()) {
-						case horizontal:
-						case onTop: { //rendStack(composition);
+						case onTop: {
 							for (LayoutComponent c : composition.getComponents()) {
 								subScenes.add(position(c, rect));
 							}
 						}
 						break;
-						/*
-						case horizontal: { //rendRow(composition);
+						case horizontal: {
 							double i = 0;
 							double w = rect.getWidth();
 							double h = rect.getHeight();
@@ -50,20 +48,22 @@ public class LayoutPositioner {
 								double i1 = i, i2 = i;
 								double fixed = c.getFixedWidth();
 								double weight = c.getStretchWeight();
-								i2 += Partitioner.w(w, 10, totalFixed, totalWeight, fixed, weight);
+								i2 += Partitioner.w(w, h, totalFixed, totalWeight, fixed, weight);
+								Rectangle2D rel = new Rectangle2D.Double();
+								rel.setRect(0, 0, rect.getWidth(), rect.getHeight());
 								Rectangle2D col = new Rectangle2D.Double();
 								double n = w;
-								Rect.setCol(rect, i1, i2, n, col);
+								Rect.setCol(rel, i1, i2, n, col);
 								subScenes.add(position(c, col));
 								i = i2;
 							}
 						}
-						break; */
+						break;
 						case vertical: { //rendCol(composition);
 							double n = composition.getFixedHeight();
 							double i = 0;
 							for (LayoutComponent c : composition.getComponents()) {
-								double i1 = i, i2 = i + component.getFixedHeight();
+								double i1 = i, i2 = i + c.getFixedHeight();
 								Rectangle2D rel = new Rectangle2D.Double();
 								rel.setRect(0, 0, rect.getWidth(), rect.getHeight());
 								Rectangle2D row = new Rectangle2D.Double();

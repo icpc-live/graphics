@@ -15,6 +15,8 @@ import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.Renderable;
 
 public class LayoutSceneRenderer implements Renderable {
+	public static final boolean DEBUG = true;
+	
 	LayoutSceneUpdate scene;
 	
 	public void updateScene(LayoutSceneUpdate update) {
@@ -31,6 +33,14 @@ public class LayoutSceneRenderer implements Renderable {
 		g.translate(scene.getBounds().getX(), scene.getBounds().getY());
 		Content content = scene.getContent();
 		if (content != null) {
+			if (DEBUG) {
+				AffineTransform bt = g.getTransform();
+				g.setTransform(at);
+				g.setColor(Color.WHITE);
+				g.draw(scene.getBounds());
+				g.setTransform(bt);
+				//return;
+			}
 			Renderable r;
 			if (content.isText()) {
 				ContestStyle style = (ContestStyle) content.getStyle();

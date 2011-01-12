@@ -49,12 +49,6 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		Graphics2D g = (Graphics2D) gr;
 		RenderCache.setQuality(g);
 
-		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
-		Rectangle2D row = new Rectangle2D.Double();
-		Rect.setRow(rect, 0, 17, 20, row);
-		Dimension dim = new Dimension();
-		Rect.setDim(row, dim);
-
 		LayoutComposition composition = new LayoutComposition(0, LayoutComposition.Direction.vertical);
 		for (int i = 1; i <= 17; ++i) {
 			LayoutComponent component;
@@ -62,9 +56,25 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 			component = ContestComponents.teamRow(this.content, team);
 			composition.add(component);
 		}
-		Renderable r = rend(composition);
 
-		r.render(g, dim);
+		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
+		
+		Rectangle2D row = new Rectangle2D.Double();
+		Rect.setRow(rect, 0, 17, 20, row);
+		Dimension dim = new Dimension();
+		Rect.setDim(row, dim);
+
+		//Renderable r = rend(composition);
+
+		//r.render(g, dim);
+		LayoutPositioner pos = new LayoutPositioner();
+		LayoutSceneUpdate scene = pos.position(composition, row);
+		LayoutSceneRenderer re = new LayoutSceneRenderer();
+		re.updateScene(scene);
+		re.render(g, dim);
+		
+		g.setColor(Color.RED);
+		g.draw(row);
 	}
 
 	private Renderable rendRow(LayoutComposition composition) {

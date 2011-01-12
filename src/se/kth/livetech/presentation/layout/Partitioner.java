@@ -85,4 +85,19 @@ public class Partitioner<T> {
 			sum += a;
 		}
  	}
+	
+	/**
+	 * 
+	 * @param w - rect.getWidth()
+	 * @param h - rect.getHeight()
+	 * @param totalFixed - composition.getFixedWidth()
+	 * @param totalWeight - composition.getWeight();
+	 * @param fixed - component.getFixedWidth()
+	 * @param weight - component.getWeight()
+	 * @return
+	 */
+	
+	public static double w(double w, double h, double totalFixed, double totalWeight, double fixed, double weight) {
+		return fixed * h + weight / totalWeight * (w - totalFixed * h);
+	}
 }

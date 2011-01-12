@@ -1,19 +1,14 @@
 package se.kth.livetech.presentation.layout;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-
-import se.kth.livetech.presentation.graphics.Renderable;
 
 public class LayoutPositioner {
 
 	public LayoutPositioner() {}
 	
-	private LayoutSceneUpdate getPositions(final LayoutComponent component, final Rectangle2D rect) {
-		
+	public LayoutSceneUpdate position(final LayoutComponent component, final Rectangle2D rect) {
 		return new LayoutSceneUpdate() {
 		
 			@Override
@@ -37,22 +32,47 @@ public class LayoutPositioner {
 				
 					LayoutComposition composition = (LayoutComposition) component;
 					switch (composition.getDirection()) {
-						case onTop: //rendStack(composition);
-							break;
-						case horizontal: //rendRow(composition);
-														
-							break;
-						case vertical: //rendCol(composition);
+						case horizontal:
+						case onTop: { //rendStack(composition);
+							for (LayoutComponent c : composition.getComponents()) {
+								subScenes.add(position(c, rect));
+							}
+						}
+						break;
+						/*
+						case horizontal: { //rendRow(composition);
+							double i = 0;
+							double w = rect.getWidth();
+							double h = rect.getHeight();
+							double totalFixed = composition.getFixedWidth();
+							double totalWeight = composition.getStretchWeight();
+							for (LayoutComponent c : composition.getComponents()) {
+								double i1 = i, i2 = i;
+								double fixed = c.getFixedWidth();
+								double weight = c.getStretchWeight();
+								i2 += Partitioner.w(w, 10, totalFixed, totalWeight, fixed, weight);
+								Rectangle2D col = new Rectangle2D.Double();
+								double n = w;
+								Rect.setCol(rect, i1, i2, n, col);
+								subScenes.add(position(c, col));
+								i = i2;
+							}
+						}
+						break; */
+						case vertical: { //rendCol(composition);
 							double n = composition.getFixedHeight();
 							double i = 0;
 							for (LayoutComponent c : composition.getComponents()) {
 								double i1 = i, i2 = i + component.getFixedHeight();
+								Rectangle2D rel = new Rectangle2D.Double();
+								rel.setRect(0, 0, rect.getWidth(), rect.getHeight());
 								Rectangle2D row = new Rectangle2D.Double();
-								Rect.setRow(rect, i1, i2, n, row);
-								subScenes.add(getPositions(c, row));
+								Rect.setRow(rel, i1, i2, n, row);
+								subScenes.add(position(c, row));
 								i = i2;
 							}
-							break;
+						}
+						break;
 						default: break;
 					}
 				}
@@ -65,5 +85,4 @@ public class LayoutPositioner {
 			}
 		};
 	}
-	
 }

@@ -83,6 +83,17 @@ public class LiveClient {
 		@Option(longName="file")
 		String getFileName();
 		boolean isFileName();
+		
+		@Option(longName="redis")
+		boolean isRedis();
+		
+		@Option(longName="redis-host")
+		String getRedisHost();
+		boolean isRedisHost();
+		
+		@Option(longName="redis-port")
+		int getRedisPort();
+		boolean isRedisPort();
 
 		@Option(longName="test-triangle")
 		boolean isTestTriangle();
@@ -325,18 +336,33 @@ public class LiveClient {
 				VLCView view = new VLCView(hierarchy.getProperty("live.clients.localhost.vlc"), fullscreenFrame);
 				/*Frame foo = */new Frame("bar", view);
 			}
-		
-			// Listen!
-			System.out.println("Listening on port " + port);
-			LiveService.Iface handler = new BaseHandler(nodeRegistry);
-			Connector.listen(handler, port, true);
-
-			// Connect!
-			if (opts.isArgs()) {
-				for (String arg : opts.getArgs()) {
-					System.out.println(arg);
-					HostPort hostPort = new HostPort(arg);
-					nodeRegistry.connect(hostPort.host, hostPort.port);
+			
+			if(opts.isRedis()) { /* Using Redis, connect! */
+				System.out.println("Connecting to Redis database");
+				String redisHost = "localhost";
+				if(opts.isRedisHost()) {
+					redisHost = opts.getRedisHost();
+				}
+				if(opts.isRedisPort()) {
+					@SuppressWarnings("unused")
+					RedisClient redisClient = new RedisClient(localState, localNode, redisHost, opts.getRedisPort());
+				} else {
+					@SuppressWarnings("unused")
+					RedisClient redisClient = new RedisClient(localState, localNode, redisHost);
+				}
+			} else { /* Not using Redis, fallback to old spider connection. */
+				// Listen!
+				System.out.println("Listening on port " + port);
+				LiveService.Iface handler = new BaseHandler(nodeRegistry);
+				Connector.listen(handler, port, true);
+			
+				// Connect!
+				if (opts.isArgs()) {
+					for (String arg : opts.getArgs()) {
+						System.out.println(arg);
+						HostPort hostPort = new HostPort(arg);
+						nodeRegistry.connect(hostPort.host, hostPort.port);
+					}
 				}
 			}
 			

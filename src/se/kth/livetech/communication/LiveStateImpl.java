@@ -42,7 +42,7 @@ public class LiveStateImpl implements LiveState {
 	}
 
 	@Override
-	public void addListeners(NodeConnection connection) {
+	public void addListeners(NodeUpdateListener connection) {
 		IProperty root = this.hierarchy.getProperty("live"); // TODO: root property
 		root.addPropertyListener(connection);
 		DebugTrace.trace("addListeners %s -> %s", root, connection);
@@ -54,7 +54,7 @@ public class LiveStateImpl implements LiveState {
 		}
 	}
 	@Override
-	public void removeListeners(NodeConnection connection) {
+	public void removeListeners(NodeUpdateListener connection) {
 		IProperty root = this.hierarchy.getProperty("live"); // TODO: root property
 		root.removePropertyListener(connection);
 		for (ContestId id : this.contests.keySet()) {
@@ -86,6 +86,7 @@ public class LiveStateImpl implements LiveState {
 		return hierarchy;
 	}
 	
+	@Override
 	public Set<ContestId> getContests() {
 		return contests.keySet();
 	}

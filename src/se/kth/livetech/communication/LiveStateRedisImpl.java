@@ -1,6 +1,7 @@
 package se.kth.livetech.communication;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import se.kth.livetech.communication.thrift.ContestId;
@@ -23,13 +24,13 @@ public class LiveStateRedisImpl implements LiveState {
 	public void setContestSourceFlag(boolean contestSourceFlag) {}
 
 	@Override
-	public void addListeners(NodeConnection connection) {
+	public void addListeners(NodeUpdateListener connection) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void removeListeners(NodeConnection connection) {
+	public void removeListeners(NodeUpdateListener connection) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -46,5 +47,10 @@ public class LiveStateRedisImpl implements LiveState {
 	@Override
 	public ContestState getContest(ContestId id) {
 		return contests.get(id);
+	}
+
+	@Override
+	public Set<ContestId> getContests() {
+		return contests.keySet();
 	}
 }

@@ -20,6 +20,14 @@ public class RedisConnection {
 	/**
 	 * @param host
 	 *            Redis host
+	 */
+	public RedisConnection(String host) {
+		this(host, 6379);
+	}
+	
+	/**
+	 * @param host
+	 *            Redis host
 	 * @param port
 	 *            Redis port, default 6379
 	 */

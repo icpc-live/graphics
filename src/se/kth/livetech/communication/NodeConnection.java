@@ -11,18 +11,16 @@ import org.apache.thrift.TException;
 import se.kth.livetech.communication.thrift.ContestEvent;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
+import se.kth.livetech.communication.thrift.LiveService.Client;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.communication.thrift.NodeStatus;
 import se.kth.livetech.communication.thrift.PropertyEvent;
-import se.kth.livetech.communication.thrift.LiveService.Client;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
-import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.properties.IProperty;
-import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
 
-public class NodeConnection implements AttrsUpdateListener, PropertyListener, RemoteTime {
+public class NodeConnection implements RemoteTime, NodeUpdateListener {
 
 	static enum State {
 		DISCONNECTED,
@@ -191,6 +189,7 @@ public class NodeConnection implements AttrsUpdateListener, PropertyListener, Re
 		}
 	}
 
+	@Override
 	public NodeId getId() {
 		return id;
 	}

@@ -11,15 +11,15 @@ import se.kth.livetech.util.DebugTrace;
 
 public class NodeRegistry {
 	private NodeId localNode;
-	private LiveStateImpl localState;
+	private LiveState localState;
 
-	public LiveStateImpl getLocalState() {
+	public LiveState getLocalState() {
 		return localState;
 	}
 
 	private TreeMap<NodeId, NodeConnection> connections;
 
-	public NodeRegistry(NodeId localNode, LiveStateImpl localState) {
+	public NodeRegistry(NodeId localNode, LiveState localState) {
 		this.localNode = localNode;
 		this.localState = localState;
 		connections = new TreeMap<NodeId, NodeConnection>(new NodeIdComparator());

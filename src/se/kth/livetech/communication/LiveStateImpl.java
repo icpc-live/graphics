@@ -10,7 +10,7 @@ import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.util.DebugTrace;
 
 /** One class to hold all state for a Live node. */
-public class LiveStateImpl {
+public class LiveStateImpl implements LiveState {
 	/** To start with, we have a server in the middle called the "Spider".
 	 *  Main differences between the spider and other nodes are that the spider's
 	 *  clock is authoritative, and it may have a different role in forwarding
@@ -36,10 +36,12 @@ public class LiveStateImpl {
 		contests.put(id, new ContestState());
 	}
 	
+	@Override
 	public void setContestSourceFlag(boolean contestSourceFlag) {
 		this.contestSourceFlag = contestSourceFlag;
 	}
 
+	@Override
 	public void addListeners(NodeConnection connection) {
 		IProperty root = this.hierarchy.getProperty("live"); // TODO: root property
 		root.addPropertyListener(connection);
@@ -51,6 +53,7 @@ public class LiveStateImpl {
 			}
 		}
 	}
+	@Override
 	public void removeListeners(NodeConnection connection) {
 		IProperty root = this.hierarchy.getProperty("live"); // TODO: root property
 		root.removePropertyListener(connection);
@@ -61,6 +64,7 @@ public class LiveStateImpl {
 		// TODO: contest listeners
 	}
 
+	@Override
 	public boolean isSpider() {
 		return spiderFlag;
 	}
@@ -77,6 +81,7 @@ public class LiveStateImpl {
 		this.clockSkew = clockSkew;
 	}
 	
+	@Override
 	public PropertyHierarchy getHierarchy() {
 		return hierarchy;
 	}
@@ -85,6 +90,7 @@ public class LiveStateImpl {
 		return contests.keySet();
 	}
 
+	@Override
 	public ContestState getContest(ContestId id) {
 		return contests.get(id);
 	}

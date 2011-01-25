@@ -1,4 +1,4 @@
-package se.kth.livetech.contest.replay;
+package se.kth.livetech.contest.feeder;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
@@ -20,14 +20,14 @@ import se.kth.livetech.contest.model.impl.AttrsUpdaterImpl;
 import se.kth.livetech.util.DebugTrace;
 
 /** Reads a log file, report it to {@link AttrsUpdateListener}s. */
-public class LogSpeaker extends AttrsUpdaterImpl {
+public class LogFeed extends AttrsUpdaterImpl {
 	InputStream stream;
 
-	public LogSpeaker(String logName) throws FileNotFoundException {
+	public LogFeed(String logName) throws FileNotFoundException {
 		stream = new BufferedInputStream(new FileInputStream(logName));
 	}
 	
-	public LogSpeaker(InputStream stream) {
+	public LogFeed(InputStream stream) {
 		this.stream = stream;
 	}
 

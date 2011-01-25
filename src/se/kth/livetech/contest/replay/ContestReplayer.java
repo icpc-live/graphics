@@ -14,7 +14,7 @@ import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
 
-// TODO Move all logic to ContetReplayControl, and control it by properties.
+// TODO Move all logic to ContestReplayControl, and control it by properties.
 
 public class ContestReplayer extends ContestPlayer {
 

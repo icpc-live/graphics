@@ -1,11 +1,11 @@
 package se.kth.livetech.contest.model.test;
 
+import se.kth.livetech.contest.feeder.NetworkFeed;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.replay.ContestReplayer;
-import se.kth.livetech.contest.replay.KattisClient;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
@@ -60,7 +60,7 @@ public class ReplayTest {
 		});
 		
 		// Read directly from Kattis
-		KattisClient kattis = new KattisClient();
+		NetworkFeed kattis = new NetworkFeed();
 		kattis.addAttrsUpdateListener(replayer);
 		kattis.startPushReading();
 		

@@ -1,4 +1,4 @@
-package se.kth.livetech.contest.replay;
+package se.kth.livetech.contest.feeder;
 
 import java.io.BufferedOutputStream;
 import java.io.FileNotFoundException;

@@ -19,8 +19,8 @@
  * {@link se.kth.livetech.contest.TeamScore} and
  * {@link se.kth.livetech.contest.ProblemScore}.</p>
  * 
- * <p>{@link se.kth.livetech.contest.replay.impl.LogListener} writes a log file, which
- * {@link se.kth.livetech.contest.replay.impl.LogSpeaker} reads.</p>
+ * <p>{@link se.kth.livetech.contest.feeder.LogWriter.LogListener} writes a log file, which
+ * {@link se.kth.livetech.contest.feeder.LogFeed.LogSpeaker} reads.</p>
  * 
  * <p>{@link se.kth.livetech.contest.replay.impl.ContestPlayer}s replays
  * {@link se.kth.livetech.contest.AttrsUpdateEvent}s.

@@ -14,14 +14,14 @@ import org.apache.thrift.transport.TTransportException;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.NodeId;
+import se.kth.livetech.contest.feeder.NetworkFeed;
+import se.kth.livetech.contest.feeder.LogWriter;
+import se.kth.livetech.contest.feeder.LogFeed;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.model.test.FakeContest;
 import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.contest.replay.ContestReplayer;
-import se.kth.livetech.contest.replay.KattisClient;
-import se.kth.livetech.contest.replay.LogListener;
-import se.kth.livetech.contest.replay.LogSpeaker;
 import se.kth.livetech.control.ContestReplayControl;
 import se.kth.livetech.control.ui.ProductionFrame;
 import se.kth.livetech.presentation.layout.JudgeQueueTest;
@@ -259,28 +259,28 @@ public class LiveClient {
 			// Add contest update providers below!
 			
 			if (opts.isKattis()) {
-				final KattisClient kattisClient;
+				final NetworkFeed kattisClient;
 				
 				if (opts.isKattisHost()) {
 					if (opts.isKattisPort()) {
 						if (opts.isKattisUri()) {
-							kattisClient = new KattisClient(opts.getKattisHost(), opts.getKattisPort(), opts.getKattisUri());
+							kattisClient = new NetworkFeed(opts.getKattisHost(), opts.getKattisPort(), opts.getKattisUri());
 						} else {
-							kattisClient = new KattisClient(opts.getKattisHost(), opts.getKattisPort());
+							kattisClient = new NetworkFeed(opts.getKattisHost(), opts.getKattisPort());
 						}
 					} else {
 						if (opts.isKattisUri()) {
-							kattisClient = new KattisClient(opts.getKattisHost(), opts.getKattisUri());
+							kattisClient = new NetworkFeed(opts.getKattisHost(), opts.getKattisUri());
 						} else {
-							kattisClient = new KattisClient(opts.getKattisHost());
+							kattisClient = new NetworkFeed(opts.getKattisHost());
 						}
 					}
 				} else {
-					kattisClient = new KattisClient();
+					kattisClient = new NetworkFeed();
 				}
 				
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-				final LogListener log = new LogListener("kattislog_"+dateFormat.format(new Date())+".txt");
+				final LogWriter log = new LogWriter("kattislog_"+dateFormat.format(new Date())+".txt");
 				kattisClient.addAttrsUpdateListener(log);
 				
 				// TODO: nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);
@@ -292,7 +292,7 @@ public class LiveClient {
 			}
 			if (opts.isFileName()) {
 				try {
-					final LogSpeaker logSpeaker = new LogSpeaker(opts.getFileName());
+					final LogFeed logSpeaker = new LogFeed(opts.getFileName());
 					// TODO: nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);
 					logSpeaker.addAttrsUpdateListener(localState.getContest(new ContestId("contest", 0)));
 					try {

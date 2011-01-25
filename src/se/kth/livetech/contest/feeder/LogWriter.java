@@ -1,4 +1,4 @@
-package se.kth.livetech.contest.replay;
+package se.kth.livetech.contest.feeder;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -8,10 +8,10 @@ import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 
 /** Listens to AttrsUpdateEvents and writes them to a log file. */
-public class LogListener implements AttrsUpdateListener {
+public class LogWriter implements AttrsUpdateListener {
 	private XMLWriter writer = null;
 
-	public LogListener(String logName) {
+	public LogWriter(String logName) {
 		if(logName==null)
 			writer = new XMLWriter(System.out);
 		else
@@ -39,21 +39,4 @@ public class LogListener implements AttrsUpdateListener {
 		}
 		writer.endElement();
 	}
-	
-	/*public static void main(String args[]) {
-		LogSpeaker speaker = null;
-		try {
-			speaker = new LogSpeaker("kattislog.txt");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		LogListener listener = new LogListener("fakelog.txt");
-		speaker.addAttrsUpdateListener(listener);
-		try {
-			speaker.parse();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		listener.finish();
-	}*/
 }

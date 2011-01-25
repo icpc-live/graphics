@@ -5,11 +5,11 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
 
 /**
- * RedisClient is a gateway to the Redis database.
+ * RedisConnection is a gateway to the Redis database.
  * 
  * @author Hakan Terelius <hakante@kth.se>
  */
-public class RedisClient {
+public class RedisConnection {
 
 	/**
 	 * Jedis is not threadsafe. You shouldn't use the same instance from
@@ -23,7 +23,7 @@ public class RedisClient {
 	 * @param port
 	 *            Redis port, default 6379
 	 */
-	public RedisClient(String host, int port) {
+	public RedisConnection(String host, int port) {
 		pool = new JedisPool(host, port);
 	}
 
@@ -97,7 +97,7 @@ public class RedisClient {
 	}
 
 	public static void main(String[] args) {
-		RedisClient client = new RedisClient("localhost", 6379);
+		RedisConnection client = new RedisConnection("localhost", 6379);
 		Jedis j = client.getJedisInstance();
 		if (!j.exists("counter")) {
 			j.set("counter", "0");

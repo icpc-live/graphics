@@ -80,10 +80,6 @@ public class LiveClient {
 		int getKattisPort();
 		boolean isKattisPort();
 		
-		@Option(longName="kattis-uri")
-		String getKattisUri();
-		boolean isKattisUri();
-		
 		@Option(longName="file")
 		String getFileName();
 		boolean isFileName();
@@ -263,17 +259,9 @@ public class LiveClient {
 				
 				if (opts.isKattisHost()) {
 					if (opts.isKattisPort()) {
-						if (opts.isKattisUri()) {
-							kattisClient = new NetworkFeed(opts.getKattisHost(), opts.getKattisPort(), opts.getKattisUri());
-						} else {
-							kattisClient = new NetworkFeed(opts.getKattisHost(), opts.getKattisPort());
-						}
+						kattisClient = new NetworkFeed(opts.getKattisHost(), opts.getKattisPort());
 					} else {
-						if (opts.isKattisUri()) {
-							kattisClient = new NetworkFeed(opts.getKattisHost(), opts.getKattisUri());
-						} else {
-							kattisClient = new NetworkFeed(opts.getKattisHost());
-						}
+						kattisClient = new NetworkFeed(opts.getKattisHost());
 					}
 				} else {
 					kattisClient = new NetworkFeed();

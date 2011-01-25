@@ -340,16 +340,16 @@ public class LiveClient {
 			if(opts.isRedis()) { /* Using Redis, connect! */
 				System.out.println("Connecting to Redis database");
 				String redisHost = "localhost";
+				RedisClient redisClient;
 				if(opts.isRedisHost()) {
 					redisHost = opts.getRedisHost();
 				}
 				if(opts.isRedisPort()) {
-					@SuppressWarnings("unused")
-					RedisClient redisClient = new RedisClient(localState, localNode, redisHost, opts.getRedisPort());
+					redisClient = new RedisClient(localState, localNode, redisHost, opts.getRedisPort());
 				} else {
-					@SuppressWarnings("unused")
-					RedisClient redisClient = new RedisClient(localState, localNode, redisHost);
+					redisClient = new RedisClient(localState, localNode, redisHost);
 				}
+				redisClient.connect();
 			} else { /* Not using Redis, fallback to old spider connection. */
 				// Listen!
 				System.out.println("Listening on port " + port);

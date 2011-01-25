@@ -10,7 +10,7 @@ import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.util.DebugTrace;
 
 /** One class to hold all state for a Live node. */
-public class LiveState {
+public class LiveStateImpl {
 	/** To start with, we have a server in the middle called the "Spider".
 	 *  Main differences between the spider and other nodes are that the spider's
 	 *  clock is authoritative, and it may have a different role in forwarding
@@ -24,7 +24,7 @@ public class LiveState {
 	private Map<String, byte[]> classes;
 	private Map<String, byte[]> resources;
 	
-	public LiveState(boolean spiderFlag) {
+	public LiveStateImpl(boolean spiderFlag) {
 		this.spiderFlag = spiderFlag;
 		clockSkew = 0;
 		hierarchy = new PropertyHierarchy();

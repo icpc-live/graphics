@@ -1,7 +1,7 @@
 package se.kth.livetech.communication;
 
 
-public class RedisLiveState extends LiveState {
+public class RedisLiveState extends LiveStateImpl {
 	public RedisLiveState(boolean spiderFlag) {
 		super(spiderFlag);
 	}

@@ -6,7 +6,7 @@ import java.util.Map;
 import se.kth.livetech.contest.model.Team;
 
 public class TeamImpl extends EntityImpl implements Team {
-	String university, univ, nationality;
+	String university, univ, nationality, region;
 
 	static Map<String, String> FLAG_MAP;
 	static { // TODO: this is a hack to view nwerc with some flags
@@ -19,6 +19,7 @@ public class TeamImpl extends EntityImpl implements Team {
 
 	public TeamImpl(Map<String, String> attrs) {
 		super(attrs);
+		region = attrs.get("region");
 		if (!attrs.containsKey("university") && !attrs.containsKey("nationality")) {
 			// Extract university and nationality from a "Name (University/NN)"
 			// format
@@ -84,5 +85,9 @@ public class TeamImpl extends EntityImpl implements Team {
 
 	public String getNationality() {
 		return nationality;
+	}
+	
+	public String getRegion() {
+		return region;
 	}
 }

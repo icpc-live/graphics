@@ -38,6 +38,7 @@ public class NetworkFeed extends AttrsUpdaterImpl {
 	private void readFeed() {
 		try {
 			Socket socket = new Socket(host, port);
+			DebugTrace.trace("Connecting to network feed "+host+":"+port);
 			socket.setKeepAlive(true);
 			socket.setSoTimeout(0);
 			BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
@@ -63,7 +64,7 @@ public class NetworkFeed extends AttrsUpdaterImpl {
 			@Override
 			public void run() {
 				readFeed();
-				System.err.println("End of network stream.");
+				DebugTrace.trace("End of network stream.");
 			}
 		};
 		thread.setDaemon(false);

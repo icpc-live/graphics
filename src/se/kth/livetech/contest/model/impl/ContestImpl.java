@@ -12,10 +12,12 @@ import java.util.TreeMap;
 import se.kth.livetech.contest.model.Attrs;
 import se.kth.livetech.contest.model.Clar;
 import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.Finalized;
 import se.kth.livetech.contest.model.Info;
 import se.kth.livetech.contest.model.Judgement;
 import se.kth.livetech.contest.model.Language;
 import se.kth.livetech.contest.model.Problem;
+import se.kth.livetech.contest.model.Region;
 import se.kth.livetech.contest.model.Reset;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Team;
@@ -24,7 +26,9 @@ import se.kth.livetech.contest.model.Testcase;
 
 public class ContestImpl implements Contest {
 	Info info;
+	Finalized finalized;
 	Map<Integer, Team> teams;
+	Map<Integer, Region> regions;
 	Map<Integer, Problem> problems;
 	Map<String, Language> languages;
 	Map<String, Judgement> judgements;
@@ -67,7 +71,9 @@ public class ContestImpl implements Contest {
 
 	public void reset() {
 		info = new InfoImpl(new TreeMap<String, String>());
+		finalized = new FinalizedImpl(new TreeMap<String, String>());
 		teams = new TreeMap<Integer, Team>();
+		regions = new TreeMap<Integer, Region>();
 		problems = new TreeMap<Integer, Problem>();
 		languages = new TreeMap<String, Language>();
 		judgements = new TreeMap<String, Judgement>();
@@ -84,7 +90,9 @@ public class ContestImpl implements Contest {
 
 	public ContestImpl(ContestImpl old, Attrs a) {
 		info = old.info;
+		finalized = old.finalized;
 		teams = old.teams;
+		regions = old.regions;
 		problems = old.problems;
 		languages = old.languages;
 		judgements = old.judgements;
@@ -103,6 +111,10 @@ public class ContestImpl implements Contest {
 	public Info getInfo() {
 		return info;
 	}
+	
+	public Finalized getFinalized() {
+		return finalized;
+	}
 
 	public Set<Integer> getTeams() {
 		return teams.keySet();
@@ -110,6 +122,14 @@ public class ContestImpl implements Contest {
 
 	public Team getTeam(int i) {
 		return teams.get(i);
+	}
+	
+	public Set<Integer> getRegions() {
+		return regions.keySet();
+	}
+	
+	public Region getRegion(int i) {
+		return regions.get(i);
 	}
 
 	public Set<Integer> getProblems() {
@@ -276,11 +296,16 @@ public class ContestImpl implements Contest {
 			// Update ranking to include new team
 			ranking = relist(ranking, t.getId(), teamCompAlpha);
 			teamRows = rerow(ranking);
+		} else if (a instanceof Region) {
+			Region r = (Region) a;
+			regions = remap(regions, r.getId(), r);
 		} else if (a instanceof Judgement) {
 			Judgement j = (Judgement) a;
 			judgements = remap(judgements, j.getAcronym(), j);
 		} else if (a instanceof Info) {
 			info = (Info) a;
+		} else if(a instanceof Finalized) {
+			finalized = (Finalized) a;
 		} else {
 			new Error("Unknown Attrs type " + a.getClass()).printStackTrace();
 		}

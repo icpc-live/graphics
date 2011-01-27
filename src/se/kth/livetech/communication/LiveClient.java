@@ -279,7 +279,7 @@ public class LiveClient {
 				}
 				
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
-				final LogWriter log = new LogWriter("kattislog_"+dateFormat.format(new Date())+".txt");
+				final LogWriter log = new LogWriter("contestlog_"+dateFormat.format(new Date())+".txt");
 				kattisClient.addAttrsUpdateListener(log);
 				
 				// TODO: nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);

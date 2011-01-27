@@ -30,4 +30,8 @@ public class TeamTabImpl extends EntityImpl implements Team {
 	public String getNationality() {
 		return team.nationality;
 	}
+	
+	public String getRegion() {
+		return null; // TODO
+	}
 }

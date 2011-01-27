@@ -7,4 +7,6 @@ public interface Team extends Entity {
 	public String getUniv();
 
 	public String getNationality();
+	
+	public String getRegion();
 }

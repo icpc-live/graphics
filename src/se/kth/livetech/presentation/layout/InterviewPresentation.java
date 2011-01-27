@@ -71,6 +71,12 @@ public class InterviewPresentation extends TeamPresentation {
 						// TODO Auto-generated method stub
 						return null;
 					}
+
+					@Override
+					public String getRegion() {
+						// TODO Auto-generated method stub
+						return null;
+					}
 				};
 				setTeam(fakeTeam);
 				repaint();

@@ -136,6 +136,12 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener,
 				// TODO Auto-generated method stub
 				return null;
 			}
+
+			@Override
+			public String getRegion() {
+				// TODO Auto-generated method stub
+				return null;
+			}
 		}, "World Champion"));
 
 		frame.pack();

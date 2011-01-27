@@ -6,10 +6,16 @@ import java.util.Set;
 /** Contest gathers all data about a contest. */
 public interface Contest {
 	public Info getInfo();
+	
+	public Finalized getFinalized();
 
 	public Set<Integer> getTeams();
 
 	public Team getTeam(int i);
+	
+	public Set<Integer> getRegions();
+	
+	public Region getRegion(int i);
 
 	public Set<Integer> getProblems();
 

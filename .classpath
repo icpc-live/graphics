@@ -9,7 +9,5 @@
 	<classpathentry kind="lib" path="lib/slf4j-api-1.5.8.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-simple-1.5.8.jar"/>
 	<classpathentry kind="lib" path="lib/tightvnc.jar"/>
-	<classpathentry kind="lib" path="lib/jedis-1.5.0.jar"/>
-	<classpathentry kind="lib" path="lib/commons-pool-1.5.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

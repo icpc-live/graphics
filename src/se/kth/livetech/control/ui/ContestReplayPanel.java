@@ -10,11 +10,16 @@ import se.kth.livetech.properties.ui.IncrementCountButton;
 import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
 
+
+
 @SuppressWarnings("serial")
 public class ContestReplayPanel extends JPanel {
 	@SuppressWarnings("unused")
 	private IProperty base;
 	
+	public enum Dir {horizontal,vertical}
+	
+
 	public ContestReplayPanel(IProperty base) {
 		this.base = base;
 		Box b = new Box(BoxLayout.Y_AXIS);
@@ -56,4 +61,5 @@ public class ContestReplayPanel extends JPanel {
 		b.add(c);
 		this.add(b);
 	}
+	
 }

@@ -5,6 +5,24 @@ import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.presentation.layout.Content;
 
 public class TeamScoreContent {
+	public static Content getRank(final ContestRef contestRef, final int team) {
+		return new Content.Text() {
+			private int rank() {
+				Contest contest = contestRef.get();
+				return contest.getTeamRank(team);
+			}
+			@Override
+			public String getText() {
+				return "" + rank();
+			}
+
+			@Override
+			public ContestStyle getStyle() {
+				return ContestStyle.none;
+			}
+		};
+	}
+
 	public static Content getSolved(final ContestRef contestRef, final int team) {
 		return new Content.Text() {
 			private TeamScore score() {

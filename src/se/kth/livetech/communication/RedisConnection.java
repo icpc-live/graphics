@@ -1,5 +1,7 @@
 package se.kth.livetech.communication;
 
+import java.util.Set;
+
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
@@ -86,7 +88,14 @@ public class RedisConnection {
 		j.del(key);
 		pool.returnResource(j);
 	}
-
+	
+	public Set<String> keys(String pattern) {
+		Jedis j = pool.getResource();
+		Set<String> keys = j.keys(pattern);
+		pool.returnResource(j);
+		return keys;
+	}
+	
 	public int getInt(String key) {
 		return Integer.parseInt(get(key));
 	}

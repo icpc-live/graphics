@@ -31,6 +31,9 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 		redis = new RedisConnection(redisHost, redisPort);
 		localState.addListeners(this);
 		redis.subscribe(this, "property", "contest");
+		for(String s: redis.keys("live.*")) {//TODO: check prefix
+			onMessage("property", s); //emulate received messages for all keys
+		}
 	}
 
 	@Override

@@ -41,8 +41,21 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 
 	@Override
 	public void propertyChanged(IProperty changed) {
-		// TODO Called when local property changed
-		
+		String propertyName = changed.getName();
+		if(changed.isSet()){
+			this.redis.set(propertyName, changed.getOwnValue());
+		}
+		else {
+			this.redis.delete(propertyName); //TODO: check
+		}
+		if(changed.isLinked()) {
+			this.redis.set(propertyName + "#link", changed.getLink());
+		}
+		else {
+			this.redis.delete(propertyName + "#link"); //TODO: check
+		}
+		String message = propertyName;
+		this.redis.publish("property", message);
 	}
 
 	@Override
@@ -53,6 +66,22 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	@Override
 	public void onMessage(String channel, String message) {
 		if ("property".equals(channel)) {
+			String propertyName = message;
+			IProperty property = this.localState.getHierarchy().getProperty(propertyName);
+			String value = this.redis.get(propertyName);
+			if(value != null){
+				property.setValue(value);
+			}
+			else{
+				property.clearValue();
+			}
+			String link = this.redis.get(propertyName + "#link");
+			if(link != null) {
+				property.setLink(link);
+			}
+			else{
+				property.clearLink();
+			}
 			// TODO Called when Redis publish a property update.
 		} else if("contest".equals(channel)) {
 			// TODO Called when Reids publish a contest update.

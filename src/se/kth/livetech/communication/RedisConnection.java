@@ -80,6 +80,12 @@ public class RedisConnection {
 		pool.returnResource(j);
 		return val;
 	}
+	
+	public void delete(String key) {
+		Jedis j = pool.getResource();
+		j.del(key);
+		pool.returnResource(j);
+	}
 
 	public int getInt(String key) {
 		return Integer.parseInt(get(key));

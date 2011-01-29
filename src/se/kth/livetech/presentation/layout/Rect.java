@@ -3,6 +3,8 @@ package se.kth.livetech.presentation.layout;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 
+import se.kth.livetech.presentation.layout.LayoutComponent.ExtendedMargin;
+
 public class Rect {
 	public static void setRow(Rectangle2D rect, double i, int n, Rectangle2D rowOut) {
 		setRow(rect, i, i + 1, n, rowOut);
@@ -23,5 +25,17 @@ public class Rect {
 	public static Rectangle2D screenRect(int width, int height, double margin) {
 		double edge = margin * Math.min(width, height);
 		return new Rectangle2D.Double(edge, edge, width - 2 * edge, height - 2 * edge);
+	}
+	
+	public static Rectangle2D marginRect(Rectangle2D rect,
+			double margin,
+			ExtendedMargin extendedMargin) {
+		// TOOD: simple margin
+		if (extendedMargin == null) {
+			return rect;
+		} else {
+			// TODO: calculate rect with margin
+			return rect;
+		}
 	}
 }

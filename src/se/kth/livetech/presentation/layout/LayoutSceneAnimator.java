@@ -2,6 +2,8 @@ package se.kth.livetech.presentation.layout;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -33,21 +35,23 @@ public class LayoutSceneAnimator implements LayoutSceneUpdate {
 	private Content content;
 	private CompRect rect = new CompRect();
 	private AnimationStack<Object, CompRect> stack;
-	private Map<Object, LayoutSceneAnimator> subs;
+	private Map<Object, LayoutSceneAnimator> subs = new HashMap<Object, LayoutSceneAnimator>();
 	
 	public LayoutSceneAnimator(LayoutSceneUpdate scene) {
 		this.stack = new AnimationStack<Object, CompRect>();
+		this.rect.setRect(scene.getBounds());
 		update(scene);
 	}
 	
 	public void update(LayoutSceneUpdate update) {
 		this.key = update.getKey();
 		this.content = update.getContent();
-		this.rect.setRect(update.getBounds());
-		this.stack.setPosition(this.key, rect);
-		Set<Object> remSet = this.subs.keySet();
+		this.rect = new CompRect(update.getBounds());
+		this.stack.setPosition(this.key, this.rect);
+		Set<Object> remSet = new HashSet<Object>(this.subs.keySet());
 		for (LayoutSceneUpdate sub : update.getSubs()) {
-			if (remSet.remove(sub.getKey())) {
+			remSet.remove(sub.getKey());
+			if (subs.containsKey(sub.getKey())) {
 				subs.get(sub.getKey()).update(sub);
 			} else {
 				subs.put(sub.getKey(), new LayoutSceneAnimator(sub));
@@ -55,6 +59,13 @@ public class LayoutSceneAnimator implements LayoutSceneUpdate {
 		}
 		for (Object rem : remSet) {
 			subs.remove(rem);
+		}
+	}
+	
+	public void advance(double advance) {
+		this.stack.advance(advance);
+		for (LayoutSceneAnimator sub : subs.values()) {
+			sub.advance(advance);
 		}
 	}
 
@@ -66,9 +77,9 @@ public class LayoutSceneAnimator implements LayoutSceneUpdate {
 	@Override
 	public Rectangle2D getBounds() {
 		CompRect r = new CompRect(this.rect);
-		Interpolated<CompRect> interp = new Interpolated.Rectangle<CompRect>(r);
+		Interpolated.Rectangle<CompRect> interp = new Interpolated.Rectangle<CompRect>(r);
 		this.stack.interpolate(this.key, interp);
-		return r;
+		return interp.getValue();
 	}
 
 	@Override

@@ -9,6 +9,9 @@ public class LayoutPositioner {
 	public LayoutPositioner() {}
 	
 	public LayoutSceneUpdate position(final LayoutComponent component, final Rectangle2D rect) {
+		
+		final Rectangle2D marginRect = Rect.marginRect(rect, component.getMargin(), component.getExtendedMargin());
+		
 		return new LayoutSceneUpdate() {
 		
 			@Override
@@ -81,7 +84,7 @@ public class LayoutPositioner {
 
 			@Override
 			public Rectangle2D getBounds() {
-				return rect;
+				return marginRect;
 			}
 		};
 	}

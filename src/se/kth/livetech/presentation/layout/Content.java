@@ -6,6 +6,7 @@ public interface Content {
 	public boolean isImage();
 	public String getImageName();
 	public Object getStyle();
+	// TODO: public Object getLayer();
 
 	public static abstract class Text implements Content {
 		@Override

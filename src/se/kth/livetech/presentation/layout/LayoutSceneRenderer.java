@@ -32,15 +32,15 @@ public class LayoutSceneRenderer implements Renderable {
 		AffineTransform at = g.getTransform();
 		g.translate(scene.getBounds().getX(), scene.getBounds().getY());
 		Content content = scene.getContent();
+		if (DEBUG) {
+			AffineTransform bt = g.getTransform();
+			g.setTransform(at);
+			g.setColor(Color.WHITE);
+			g.draw(scene.getBounds());
+			g.setTransform(bt);
+			//return;
+		}
 		if (content != null) {
-			if (DEBUG) {
-				AffineTransform bt = g.getTransform();
-				g.setTransform(at);
-				g.setColor(Color.WHITE);
-				g.draw(scene.getBounds());
-				g.setTransform(bt);
-				//return;
-			}
 			Renderable r;
 			if (content.isText()) {
 				ContestStyle style = (ContestStyle) content.getStyle();

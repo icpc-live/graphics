@@ -14,12 +14,17 @@ public class LayoutComposition implements LayoutComponent {
 	private final Direction direction;
 	private ArrayList<LayoutComponent> components;
 	private double margin;
+	private ExtendedMargin extendedMargin;
 
 	public LayoutComposition(Object key, Direction direction) {
 		this(key, direction, 1d);
 	}
 
 	public LayoutComposition(Object key, Direction direction, double margin) {
+		this(key, direction, margin, null);
+	}
+
+	public LayoutComposition(Object key, Direction direction, double margin, ExtendedMargin extendedMargin) {
 		this.key = key;
 		this.direction = direction;
 		this.components = new ArrayList<LayoutComponent>();
@@ -43,6 +48,11 @@ public class LayoutComposition implements LayoutComponent {
 	@Override
 	public double getMargin() {
 		return this.margin;
+	}
+
+	@Override
+	public ExtendedMargin getExtendedMargin() {
+		return this.extendedMargin;
 	}
 
 	public Direction getDirection() {

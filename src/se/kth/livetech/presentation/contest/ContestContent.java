@@ -16,6 +16,10 @@ public class ContestContent {
 	public Content getProblemScore(final int team, final int problem) {
 		return new ProblemScoreContent(this.contestRef, team, problem);
 	}
+	
+	public Content getTeamRank(final int team) {
+		return TeamScoreContent.getRank(this.contestRef, team);
+	}
 
 	public Content getTeamName(final int team) {
 		return TeamContent.teamName(this.contestRef, team);

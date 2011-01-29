@@ -53,7 +53,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		for (int i = 1; i <= 17; ++i) {
 			LayoutComponent component;
 			int team = this.content.getContestRef().get().getRankedTeam(i).getId();
-			component = ContestComponents.teamRow(this.content, team);
+			component = ContestComponents.teamRow(this.content, team, false);
 			composition.add(component);
 		}
 
@@ -69,13 +69,23 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		//r.render(g, dim);
 		LayoutPositioner pos = new LayoutPositioner();
 		LayoutSceneUpdate scene = pos.position(composition, row);
+		if (this.anim == null) {
+			this.anim = new LayoutSceneAnimator(scene);
+		} else {
+			this.anim.update(scene);
+		}
 		LayoutSceneRenderer re = new LayoutSceneRenderer();
-		re.updateScene(scene);
+		re.updateScene(this.anim);
 		re.render(g, dim);
 		
 		g.setColor(Color.RED);
 		g.draw(row);
+		
+		this.anim.advance(.1);
+		repaint();
 	}
+	
+	LayoutSceneAnimator anim;
 
 	private Renderable rendRow(LayoutComposition composition) {
 		PartitionedRowRenderer r = new PartitionedRowRenderer();

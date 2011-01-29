@@ -27,6 +27,10 @@ public class LayoutContent implements LayoutComponent {
 	public double getMargin() {
 		return this.margin;
 	}
+	
+	public ExtendedMargin getExtendedMargin() {
+		return null;
+	}
 
 	@Override
 	public Object getKey() {

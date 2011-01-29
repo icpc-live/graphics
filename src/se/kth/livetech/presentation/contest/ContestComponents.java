@@ -7,9 +7,10 @@ import se.kth.livetech.presentation.layout.LayoutContent;
 
 public class ContestComponents {
 	enum Parts {
-		name,
+		rank,
 		logo,
 		flag,
+		name,
 		problems,
 		solved,
 		score,
@@ -22,20 +23,30 @@ public class ContestComponents {
 		int rows = contest.getTeams().size();
 		for (int row = 0; row < rows; ++row) {
 			int team = contest.getRankedTeam(row + 1).getId();
-			r.add(teamRow(content, team));
+			r.add(teamRow(content, team, false));
 		}
 		return r;
 	}
 
-	public static LayoutComponent teamRow(ContestContent content, int team) {
+	public static LayoutComponent teamRow(ContestContent content, int team, boolean teamPresentation) {
 		final double solvedWeight = 1.5;
 		final double scoreWeight = 2;
 		LayoutComposition c;
 		c = new LayoutComposition(team, LayoutComposition.Direction.horizontal);
-		c.add(LayoutContent.stretch(Parts.name, 1, .8, content.getTeamName(team)));
+		c.add(LayoutContent.fixed(Parts.rank, 1, .8, content.getTeamRank(team)));
 		c.add(LayoutContent.fixed(Parts.logo, 1, .8, content.getTeamLogo(team)));
-		c.add(LayoutContent.fixed(Parts.logo, 1, .8, content.getTeamFlag(team)));
-		c.add(teamProblems(content, team));
+		c.add(LayoutContent.fixed(Parts.flag, 1, .8, content.getTeamFlag(team)));
+		
+		if (teamPresentation) {
+			LayoutComposition d;
+			d = new LayoutComposition(team, LayoutComposition.Direction.vertical);
+			d.add(LayoutContent.stretch(Parts.name, 1, .8, content.getTeamName(team)));
+			d.add(teamProblems(content, team));
+			c.add(d);
+		} else {
+			c.add(LayoutContent.stretch(Parts.name, 1, .8, content.getTeamName(team)));
+			c.add(teamProblems(content, team));
+		}
 		c.add(LayoutContent.fixed(Parts.solved, solvedWeight, .8, content.getSolved(team)));
 		c.add(LayoutContent.fixed(Parts.score, scoreWeight, .8, content.getScore(team)));
 		return c;

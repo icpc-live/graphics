@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import se.kth.livetech.util.DebugTrace;
+
 
 public class Partitioner<T> {
 	private static class Part<T> {
@@ -98,6 +100,12 @@ public class Partitioner<T> {
 	 */
 	
 	public static double w(double w, double h, double totalFixed, double totalWeight, double fixed, double weight) {
-		return fixed * h + weight / totalWeight * (w - totalFixed * h);
+		double width = fixed * h;
+		if (totalWeight > 0)
+			width += weight / totalWeight * (w - totalFixed * h);
+		if (Double.isNaN(width)) {
+			DebugTrace.trace("NaN-bredd in w(%s, %s, %s, %s, %s, %s)", w, h, totalFixed, totalWeight, fixed, weight);
+		}
+		return width;
 	}
 }

@@ -37,6 +37,7 @@ public class LayoutSceneRenderer implements Renderable {
 			g.setTransform(at);
 			g.setColor(Color.WHITE);
 			g.draw(scene.getBounds());
+			g.drawString("" + scene.getSubs().size(), (int) scene.getBounds().getX(), (int) scene.getBounds().getY());
 			g.setTransform(bt);
 			//return;
 		}

@@ -12,7 +12,7 @@ public class LayoutPositioner {
 		
 		//DebugTrace.trace("Position " + component.getKey() + " in " + rect);
 		
-		final Rectangle2D marginRect = Rect.marginRect(rect, component.getMargin(), component.getExtendedMargin());
+		final Rectangle2D marginRect = Rect.margin(rect, component.getMargin(), component.getExtendedMargin());
 		
 		return new LayoutSceneUpdate() {
 		

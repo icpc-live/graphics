@@ -1,10 +1,13 @@
 package se.kth.livetech.communication;
 
-import se.kth.livetech.communication.thrift.NodeId;
-import se.kth.livetech.contest.model.AttrsUpdateEvent;
-import se.kth.livetech.properties.IProperty;
+import java.util.Set;
 
 import redis.clients.jedis.JedisPubSub;
+import se.kth.livetech.communication.thrift.ContestId;
+import se.kth.livetech.communication.thrift.NodeId;
+import se.kth.livetech.contest.model.AttrsUpdateEvent;
+import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
+import se.kth.livetech.properties.IProperty;
 
 public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	
@@ -34,12 +37,44 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 		for(String s: redis.keys("live.*")) {//TODO: check prefix
 			onMessage("property", s); //emulate received messages for all keys
 		}
+		Set<String> contests = redis.sMembers("contests");
+		for(String contest : contests) {
+			Set<String> events = redis.sMembers(contest + ".events");
+			for(String event : events) {
+				onMessage("contest", contest + "." + event);
+			}
+		}
 	}
 
 	@Override
 	public void attrsUpdated(AttrsUpdateEvent e) {
-		// TODO Called when local contest changed
+		// Called when local contest changed
+		final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
+		assert(!contestId.name.contains("."));
+		final String contestIdString = contestId.name +"."+ Long.toString(contestId.starttime);
+		String eventId = e.getProperty("event-id");
 		
+		final String contestkey = "contest." + contestIdString;
+		final String basekey = contestkey + "." + eventId;
+		boolean publish = false;
+		if (!e.getType().equals(redis.get(basekey + ".type"))) {
+			publish = true;
+			redis.set(basekey + ".type", e.getType());
+		}
+		for (String name : e.getProperties()) {
+			String key = basekey + "." + name;
+			String value = e.getProperty(name);
+			if (!value.equals(redis.get(key))) {
+				redis.set(key, value);
+				redis.sAdd(basekey + ".fields", name);
+				publish = true;
+			}
+		}
+		if(publish) {
+			redis.sAdd(contestkey + ".events", eventId);
+			redis.sAdd("contests", contestkey);
+			redis.publish("contest", basekey);
+		}
 	}
 
 	@Override
@@ -69,6 +104,7 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	@Override
 	public void onMessage(String channel, String message) {
 		if ("property".equals(channel)) {
+			// Called when Redis publish a property update.
 			String propertyName = message;
 			IProperty property = this.localState.getHierarchy().getProperty(propertyName);
 			String value = this.redis.get(propertyName);
@@ -85,9 +121,19 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 			else{
 				property.clearLink();
 			}
-			// TODO Called when Redis publish a property update.
 		} else if("contest".equals(channel)) {
-			// TODO Called when Reids publish a contest update.
+			// Called when Redis publish a contest update.
+			String[] keys = message.split("\\.", 4);
+			assert(keys.length==4);
+			assert(keys[0].equals("contest"));
+			ContestId contestId = new ContestId(keys[1], Long.valueOf(keys[2]));
+			Set<String> fields = redis.sMembers(message + ".fields");
+			String type = redis.get(message + ".type");
+			AttrsUpdateEventImpl e = new AttrsUpdateEventImpl(0, type);
+			for (String field : fields) {
+				e.setProperty(field, redis.get(message + "." + field));
+			}
+			localState.getContest(contestId).attrsUpdated(e);
 		}
 	}
 

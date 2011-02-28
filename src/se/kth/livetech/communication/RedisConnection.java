@@ -105,6 +105,19 @@ public class RedisConnection {
 		j.set(key, value);
 		pool.returnResource(j);
 	}
+	
+	public void sAdd(String key, String value) {
+		Jedis j = pool.getResource();
+		j.sadd(key, value);
+		pool.returnResource(j);
+	}
+	
+	public Set<String> sMembers(String key) {
+		Jedis j = pool.getResource();
+		Set<String> members = j.smembers(key);
+		pool.returnResource(j);
+		return members;
+	}
 
 	public void setPublish(String key, String value, String channel) {
 		Jedis j = pool.getResource();

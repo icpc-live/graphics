@@ -10,6 +10,7 @@ import se.kth.livetech.util.DebugTrace;
 
 public class AttrsUpdaterImpl implements AttrsUpdater {
 	
+	private int feedId = 0;
 	private List<AttrsUpdateListener> listeners;
 	
 	public AttrsUpdaterImpl() {
@@ -29,6 +30,10 @@ public class AttrsUpdaterImpl implements AttrsUpdater {
 	}
 
 	public void send(AttrsUpdateEvent e) {
+		if (e instanceof AttrsUpdateEventImpl) {
+			AttrsUpdateEventImpl impl = (AttrsUpdateEventImpl) e;
+			impl.setProperty("event-id", Integer.toString(feedId++));
+		}
 		for (AttrsUpdateListener listener : listeners)
 			listener.attrsUpdated(e);
 	}

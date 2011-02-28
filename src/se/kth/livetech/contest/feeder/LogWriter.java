@@ -32,6 +32,7 @@ public class LogWriter implements AttrsUpdateListener {
 		writer.beginElement(event.getType(), xmlAttrs);
 		AttrsUpdateEventImpl i = (AttrsUpdateEventImpl) event;
 		for (String attr : i.getProperties()) {
+			if (attr == "event-id") continue;
 			writer.beginElement(attr);
 			String property = i.getProperty(attr);
 			writer.addCharacters(property);

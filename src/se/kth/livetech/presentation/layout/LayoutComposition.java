@@ -1,41 +1,43 @@
 package se.kth.livetech.presentation.layout;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class LayoutComposition implements LayoutComponent {
-	public enum Direction {
-		onTop,
-		horizontal,
-		vertical,
-	}
-
+public class LayoutComposition implements LayoutDescription {
 	private final Object key;
 	private final Direction direction;
-	private ArrayList<LayoutComponent> components;
-	private double margin;
-	private ExtendedMargin extendedMargin;
+	private ArrayList<LayoutDescription> components;
+	private double topMargin;
+	private double bottomMargin;
+	private double leftMargin;
+	private double rightMargin;
+	private double aspectMin;
+	private double aspectMax;
 
 	public LayoutComposition(Object key, Direction direction) {
 		this(key, direction, 1d);
 	}
 
 	public LayoutComposition(Object key, Direction direction, double margin) {
-		this(key, direction, margin, null);
-	}
-
-	public LayoutComposition(Object key, Direction direction, double margin, ExtendedMargin extendedMargin) {
 		this.key = key;
 		this.direction = direction;
-		this.components = new ArrayList<LayoutComponent>();
-		this.margin = margin;
+		this.components = new ArrayList<LayoutDescription>();
+		setMargin(margin);
+	}
+	
+	public void setMargin(double margin) {
+		this.topMargin = margin;
+		this.bottomMargin = margin;
+		this.leftMargin = margin;
+		this.rightMargin = margin;
 	}
 
 	@Override
 	public double getFixedHeight() {
 		double fixedHeight = 0d;
-		for (LayoutComponent component : this.components) {
-			if (this.direction == Direction.vertical) {
+		for (LayoutDescription component : this.components) {
+			if (this.direction == Direction.VERTICAL) {
 				fixedHeight += component.getFixedHeight();
 			}
 			else {
@@ -45,25 +47,15 @@ public class LayoutComposition implements LayoutComponent {
 		return fixedHeight;
 	}
 
-	@Override
-	public double getMargin() {
-		return this.margin;
-	}
-
-	@Override
-	public ExtendedMargin getExtendedMargin() {
-		return this.extendedMargin;
-	}
-
 	public Direction getDirection() {
 		return this.direction;
 	}
 
-	public void add(LayoutComponent component) {
+	public void add(LayoutDescription component) {
 		this.components.add(component);
 	}
 
-	public List<LayoutComponent> getComponents() {
+	public List<LayoutDescription> getComponents() {
 		return this.components;
 	}
 
@@ -75,7 +67,7 @@ public class LayoutComposition implements LayoutComponent {
 	@Override
 	public double getFixedWidth() {
 		double s = 0;
-		for (LayoutComponent component : this.components) {
+		for (LayoutDescription component : this.components) {
 			s += component.getFixedWidth();
 		}
 		return s;
@@ -84,19 +76,85 @@ public class LayoutComposition implements LayoutComponent {
 	@Override
 	public double getStretchWeight() {
 		double s = 0;
-		for (LayoutComponent component : this.components) {
+		for (LayoutDescription component : this.components) {
 			s += component.getStretchWeight();
 		}
 		return s;
 	}
 
 	@Override
-	public boolean isContent() {
+	public boolean hasContent() {
 		return false;
 	}
 
 	@Override
 	public Content getContent() {
+		return null;
+	}
+
+	@Override
+	public double getTopMargin() {
+		return this.topMargin;
+	}
+
+	@Override
+	public double getBottomMargin() {
+		return this.bottomMargin;
+	}
+
+	@Override
+	public double getLeftMargin() {
+		return this.leftMargin;
+	}
+
+	@Override
+	public double getRightMargin() {
+		return this.rightMargin;
+	}
+
+	@Override
+	public double getAspectMin() {
+		return this.aspectMin;
+	}
+
+	@Override
+	public double getAspectMax() {
+		return this.aspectMax;
+	}
+
+	@Override
+	public Iterable<Object> getSubOrder() {
+		return new Iterable<Object>() {
+			@Override
+			public Iterator<Object> iterator() {
+				final Iterator<LayoutDescription> it = LayoutComposition.this.components.iterator();
+				return new Iterator<Object>() {
+					@Override
+					public boolean hasNext() {
+						return it.hasNext();
+					}
+
+					@Override
+					public Object next() {
+						return it.next().getKey();
+					}
+
+					@Override
+					public void remove() {
+						it.remove();
+					}
+				};
+			}
+		};
+	}
+
+	@Override
+	public LayoutDescription getSub(Object key) {
+		for (LayoutDescription sub : this.components) {
+			if (sub.getKey().equals(key)) {
+				return sub;
+			}
+		}
 		return null;
 	}
 }

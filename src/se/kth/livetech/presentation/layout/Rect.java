@@ -3,8 +3,6 @@ package se.kth.livetech.presentation.layout;
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 
-import se.kth.livetech.presentation.layout.LayoutComponent.ExtendedMargin;
-
 public class Rect {
 	public static void setRow(Rectangle2D rect, double i, int n, Rectangle2D rowOut) {
 		setRow(rect, i, i + 1, n, rowOut);
@@ -68,25 +66,19 @@ public class Rect {
 	}
 	
 	public static Rectangle2D margin(Rectangle2D rect,
-			double margin,
-			ExtendedMargin extendedMargin) {
-		if (margin != 0) {
-			rect = margin(rect, margin);
-		}
-		if (extendedMargin != null) {
-			double top = extendedMargin.getTop();
-			double bottom = extendedMargin.getBottom();
-			double left = extendedMargin.getLeft();
-			double right = extendedMargin.getRight();
-			if (top != 0 || bottom != 0 || left != 0 || right != 0) {
-				rect = subRect(rect, left, top, 1 - left - right, 1 - top - bottom);
-			}
+			double top,
+			double bottom,
+			double left,
+			double right,
+			double minimumAspectRatio,
+			double maximumAspectRatio) {
 
-			double minimumAspectRatio = extendedMargin.getAspectMin();
-			double maximumAspectRatio = extendedMargin.getAspectMax();
-			rect = Rect.aspect(rect, minimumAspectRatio, maximumAspectRatio);
+		if (top != 0 || bottom != 0 || left != 0 || right != 0) {
+			rect = subRect(rect, left, top, 1 - left - right, 1 - top - bottom);
 		}
-		// TODO: calculate rect with margin
+
+		rect = Rect.aspect(rect, minimumAspectRatio, maximumAspectRatio);
+
 		return rect;
 	}
 }

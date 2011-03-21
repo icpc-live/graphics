@@ -4,13 +4,13 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 /**
- * Scene description update,
+ * Scene description,
  * with keyed hierarchical components,
  * positioning, animation keys, removals.
  * 
- * 
+ * Removals are used when a scene is used as an update.
  */
-public interface LayoutSceneUpdate {
+public interface LayoutScene {
 	public Object getKey();
 
 	public Rectangle2D getBounds();
@@ -18,7 +18,7 @@ public interface LayoutSceneUpdate {
 	// Nullable
 	public Content getContent();
 
-	public List<LayoutSceneUpdate> getSubs();
+	public List<LayoutScene> getSubs();
 	
 	//public List<Object> getRemovals();
 }

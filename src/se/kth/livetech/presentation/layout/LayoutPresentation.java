@@ -49,9 +49,9 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		Graphics2D g = (Graphics2D) gr;
 		RenderCache.setQuality(g);
 
-		LayoutComposition composition = new LayoutComposition(0, LayoutComposition.Direction.vertical);
+		LayoutComposition composition = new LayoutComposition(0, LayoutComposition.Direction.VERTICAL);
 		for (int i = 1; i <= 17; ++i) {
-			LayoutComponent component;
+			LayoutDescription component;
 			int team = this.content.getContestRef().get().getRankedTeam(i).getId();
 			component = ContestComponents.teamRow(this.content, team, false);
 			composition.add(component);
@@ -68,7 +68,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 		//r.render(g, dim);
 		LayoutPositioner pos = new LayoutPositioner();
-		LayoutSceneUpdate scene = pos.position(composition, row);
+		LayoutScene scene = pos.position(composition, row);
 		if (this.anim == null) {
 			this.anim = new LayoutSceneAnimator(scene);
 		} else {
@@ -89,7 +89,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 	private Renderable rendRow(LayoutComposition composition) {
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
-		for (LayoutComponent sub : composition.getComponents()) {
+		for (LayoutDescription sub : composition.getComponents()) {
 			boolean fixed = sub.getFixedWidth() > 0;
 			double weight;
 			if (fixed) {
@@ -100,7 +100,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 			Renderable s = rend(sub);
 			if (s != null) {
-				r.add(s, weight, sub.getMargin(), fixed);
+				r.add(s, weight, /*FIXME*/sub.getLeftMargin(), fixed);
 			}
 		}
 		return r;
@@ -114,7 +114,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 				Rectangle2D row = new Rectangle2D.Double();
 				double n = composition.getFixedHeight();
 				double i = 0;
-				for (LayoutComponent component : composition.getComponents()) {
+				for (LayoutDescription component : composition.getComponents()) {
 					double i1 = i, i2 = i + component.getFixedHeight();
 					Rect.setRow(rect, i1, i2, n, row);
 					g.translate(row.getX(), row.getY());
@@ -131,23 +131,23 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		return new Renderable() {
 			@Override
 			public void render(Graphics2D g, Dimension d) {
-				for (LayoutComponent component : composition.getComponents()) {
+				for (LayoutDescription component : composition.getComponents()) {
 					rend(component).render(g, d);
 				}
 			}
 		};
 	}
 
-	private Renderable rend(LayoutComponent component) {
+	private Renderable rend(LayoutDescription component) {
 		if (component instanceof LayoutComposition) {
 			LayoutComposition composition = (LayoutComposition) component;
 			switch (composition.getDirection()) {
 			default: // pass through
-			case horizontal:
+			case HORIZONTAL:
 				return rendRow(composition);
-			case vertical:
+			case VERTICAL:
 				return rendCol(composition);
-			case onTop:
+			case ON_TOP:
 				return rendStack(composition);
 			}
 		}

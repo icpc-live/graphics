@@ -4,17 +4,27 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import se.kth.livetech.util.DebugTrace;
+
 public class LayoutPositioner {
 
-	public LayoutPositioner() {}
+	public LayoutPositioner() { }
 	
-	public LayoutSceneUpdate position(final LayoutComponent component, Rectangle2D rect) {
+	public LayoutScene position(final LayoutDescription component, Rectangle2D rect) {
+		
+		DebugTrace.trace(component);
 		
 		//DebugTrace.trace("Position " + component.getKey() + " in " + rect);
 		
-		final Rectangle2D marginRect = Rect.margin(rect, component.getMargin(), component.getExtendedMargin());
+		final Rectangle2D marginRect = Rect.margin(rect,
+				component.getTopMargin(),
+				component.getBottomMargin(),
+				component.getLeftMargin(),
+				component.getRightMargin(),
+				component.getAspectMin(),
+				component.getAspectMax());
 		
-		return new LayoutSceneUpdate() {
+		return new LayoutScene() {
 		
 			@Override
 			public Object getKey(){
@@ -23,33 +33,33 @@ public class LayoutPositioner {
 
 			@Override
 			public Content getContent() {
-				if(component.isContent()) {
+				if(component.hasContent()) {
 					return component.getContent();
 				} 
 				return null;
 			}
 
 			@Override
-			public List<LayoutSceneUpdate> getSubs() {
+			public List<LayoutScene> getSubs() {
 				
-				List<LayoutSceneUpdate> subScenes = new ArrayList<LayoutSceneUpdate>();
+				List<LayoutScene> subScenes = new ArrayList<LayoutScene>();
 				if(component instanceof LayoutComposition) {
 				
 					LayoutComposition composition = (LayoutComposition) component;
 					switch (composition.getDirection()) {
-						case onTop: {
-							for (LayoutComponent c : composition.getComponents()) {
+						case ON_TOP: {
+							for (LayoutDescription c : composition.getComponents()) {
 								subScenes.add(position(c, marginRect));
 							}
 						}
 						break;
-						case horizontal: {
+						case HORIZONTAL: {
 							double i = 0;
 							double w = marginRect.getWidth();
 							double h = marginRect.getHeight();
 							double totalFixed = composition.getFixedWidth();
 							double totalWeight = composition.getStretchWeight();
-							for (LayoutComponent c : composition.getComponents()) {
+							for (LayoutDescription c : composition.getComponents()) {
 								double i1 = i, i2 = i;
 								double fixed = c.getFixedWidth();
 								double weight = c.getStretchWeight();
@@ -64,10 +74,10 @@ public class LayoutPositioner {
 							}
 						}
 						break;
-						case vertical: { //rendCol(composition);
+						case VERTICAL: { //rendCol(composition);
 							double n = composition.getFixedHeight();
 							double i = 0;
-							for (LayoutComponent c : composition.getComponents()) {
+							for (LayoutDescription c : composition.getComponents()) {
 								double i1 = i, i2 = i + c.getFixedHeight();
 								Rectangle2D rel = new Rectangle2D.Double();
 								rel.setRect(0, 0, marginRect.getWidth(), marginRect.getHeight());

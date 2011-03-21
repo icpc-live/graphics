@@ -15,11 +15,11 @@ import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.Renderable;
 
 public class LayoutSceneRenderer implements Renderable {
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	
-	LayoutSceneUpdate scene;
+	LayoutScene scene;
 	
-	public void updateScene(LayoutSceneUpdate update) {
+	public void updateScene(LayoutScene update) {
 		this.scene = update;
 	}
 	
@@ -28,7 +28,7 @@ public class LayoutSceneRenderer implements Renderable {
 		render(g, this.scene);
 	}
 
-	private void render(Graphics2D g, LayoutSceneUpdate scene) {
+	private void render(Graphics2D g, LayoutScene scene) {
 		AffineTransform at = g.getTransform();
 		g.translate(scene.getBounds().getX(), scene.getBounds().getY());
 		Content content = scene.getContent();
@@ -62,10 +62,14 @@ public class LayoutSceneRenderer implements Renderable {
 			}
 			Dimension d = new Dimension();
 			d.setSize(scene.getBounds().getWidth() + .99, scene.getBounds().getHeight() + .99);
-			r.render(g, d);
+			if (d.getWidth() > 0 && d.getHeight() > 0) {
+				r.render(g, d);
+			} else {
+				// FIXME
+			}
 		}
 		
-		for (LayoutSceneUpdate sub : scene.getSubs()) {
+		for (LayoutScene sub : scene.getSubs()) {
 			render(g, sub);
 		}
 		g.setTransform(at);

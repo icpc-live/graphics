@@ -4,7 +4,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import se.kth.livetech.util.DebugTrace;
+//import se.kth.livetech.util.DebugTrace;
 
 public class LayoutPositioner {
 
@@ -12,7 +12,7 @@ public class LayoutPositioner {
 	
 	public LayoutScene position(final LayoutDescription component, Rectangle2D rect) {
 		
-		DebugTrace.trace(component);
+		//DebugTrace.trace(component);
 		
 		//DebugTrace.trace("Position " + component.getKey() + " in " + rect);
 		

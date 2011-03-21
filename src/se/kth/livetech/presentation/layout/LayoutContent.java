@@ -1,6 +1,8 @@
 package se.kth.livetech.presentation.layout;
 
-public class LayoutContent implements LayoutComponent {
+import java.util.Collections;
+
+public class LayoutContent implements LayoutDescription {
 	private Object key;
 	private double fixedWidth;
 	private double fixedHeight = 1d;
@@ -24,14 +26,6 @@ public class LayoutContent implements LayoutComponent {
 		return new LayoutContent(key, 0, weight, margin, content);
 	}
 
-	public double getMargin() {
-		return this.margin;
-	}
-	
-	public ExtendedMargin getExtendedMargin() {
-		return null;
-	}
-
 	@Override
 	public Object getKey() {
 		return this.key;
@@ -53,12 +47,57 @@ public class LayoutContent implements LayoutComponent {
 	}
 
 	@Override
-	public boolean isContent() {
+	public boolean hasContent() {
 		return true;
 	}
 
 	@Override
 	public Content getContent() {
 		return this.content;
+	}
+
+	@Override
+	public double getTopMargin() {
+		return this.margin;
+	}
+
+	@Override
+	public double getBottomMargin() {
+		return this.margin;
+	}
+
+	@Override
+	public double getLeftMargin() {
+		return this.margin;
+	}
+
+	@Override
+	public double getRightMargin() {
+		return this.margin;
+	}
+
+	@Override
+	public double getAspectMin() {
+		return 0;
+	}
+
+	@Override
+	public double getAspectMax() {
+		return Double.POSITIVE_INFINITY;
+	}
+
+	@Override
+	public Direction getDirection() {
+		return Direction.ON_TOP;
+	}
+
+	@Override
+	public Iterable<Object> getSubOrder() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public LayoutDescription getSub(Object key) {
+		return null;
 	}
 }

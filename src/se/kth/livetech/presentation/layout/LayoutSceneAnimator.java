@@ -15,7 +15,7 @@ import se.kth.livetech.presentation.animation.Interpolated;
  * An animator that takes layout scene updates and animates transitions between them,
  * itself being a layout scene update.
  */
-public class LayoutSceneAnimator implements LayoutSceneUpdate {
+public class LayoutSceneAnimator implements LayoutScene {
 
 	@SuppressWarnings("serial")
 	private static class CompRect extends Rectangle2D.Double implements Comparable<CompRect> {
@@ -37,19 +37,19 @@ public class LayoutSceneAnimator implements LayoutSceneUpdate {
 	private AnimationStack<Object, CompRect> stack;
 	private Map<Object, LayoutSceneAnimator> subs = new HashMap<Object, LayoutSceneAnimator>();
 	
-	public LayoutSceneAnimator(LayoutSceneUpdate scene) {
+	public LayoutSceneAnimator(LayoutScene scene) {
 		this.stack = new AnimationStack<Object, CompRect>();
 		this.rect.setRect(scene.getBounds());
 		update(scene);
 	}
 	
-	public void update(LayoutSceneUpdate update) {
+	public void update(LayoutScene update) {
 		this.key = update.getKey();
 		this.content = update.getContent();
 		this.rect = new CompRect(update.getBounds());
 		this.stack.setPosition(this.key, this.rect);
 		Set<Object> remSet = new HashSet<Object>(this.subs.keySet());
-		for (LayoutSceneUpdate sub : update.getSubs()) {
+		for (LayoutScene sub : update.getSubs()) {
 			remSet.remove(sub.getKey());
 			if (subs.containsKey(sub.getKey())) {
 				subs.get(sub.getKey()).update(sub);
@@ -88,8 +88,8 @@ public class LayoutSceneAnimator implements LayoutSceneUpdate {
 	}
 
 	@Override
-	public List<LayoutSceneUpdate> getSubs() {
+	public List<LayoutScene> getSubs() {
 		// TODO: Change return type to Collection instead?
-		return new ArrayList<LayoutSceneUpdate>(this.subs.values());
+		return new ArrayList<LayoutScene>(this.subs.values());
 	}
 }

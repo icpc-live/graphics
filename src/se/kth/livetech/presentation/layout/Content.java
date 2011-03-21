@@ -6,8 +6,9 @@ public interface Content {
 	public boolean isImage();
 	public String getImageName();
 	public Object getStyle();
-	// TODO: public Object getLayer();
+	public int getLayer();
 
+	@Deprecated
 	public static abstract class Text implements Content {
 		@Override
 		public boolean isText() {
@@ -23,8 +24,14 @@ public interface Content {
 		public String getImageName() {
 			return null;
 		}
+		
+		@Override
+		public int getLayer() {
+			return 0;
+		}
 	}
 
+	@Deprecated
 	public static abstract class Image implements Content {
 		@Override
 		public boolean isText() {
@@ -39,6 +46,11 @@ public interface Content {
 		@Override
 		public boolean isImage() {
 			return true;
+		}
+		
+		@Override
+		public int getLayer() {
+			return 0;
 		}
 	}
 }

@@ -81,6 +81,7 @@ public class LayoutSceneRenderer implements Renderable {
 				}
 			}
 			Dimension d = new Dimension();
+			// FIXME: Do not add .99!
 			d.setSize(scene.getBounds().getWidth() + .99, scene.getBounds().getHeight() + .99);
 			if (d.getWidth() > 0 && d.getHeight() > 0) {
 				r.render(g, d);

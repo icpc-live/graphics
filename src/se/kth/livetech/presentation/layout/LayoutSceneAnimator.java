@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
 
 import se.kth.livetech.presentation.animation.AnimationStack;
 import se.kth.livetech.presentation.animation.Interpolated;
@@ -36,6 +37,7 @@ public class LayoutSceneAnimator implements LayoutScene {
 	private CompRect rect = new CompRect();
 	private AnimationStack<Object, CompRect> stack;
 	private Map<Object, LayoutSceneAnimator> subs = new HashMap<Object, LayoutSceneAnimator>();
+	private SortedSet<Object> layers;
 	
 	public LayoutSceneAnimator(LayoutScene scene) {
 		this.stack = new AnimationStack<Object, CompRect>();
@@ -60,6 +62,7 @@ public class LayoutSceneAnimator implements LayoutScene {
 		for (Object rem : remSet) {
 			subs.remove(rem);
 		}
+		this.layers = update.getLayers();
 	}
 	
 	public void advance(double advance) {
@@ -91,5 +94,10 @@ public class LayoutSceneAnimator implements LayoutScene {
 	public List<LayoutScene> getSubs() {
 		// TODO: Change return type to Collection instead?
 		return new ArrayList<LayoutScene>(this.subs.values());
+	}
+
+	@Override
+	public SortedSet<Object> getLayers() {
+		return this.layers;
 	}
 }

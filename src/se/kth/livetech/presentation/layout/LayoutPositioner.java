@@ -4,6 +4,8 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 //import se.kth.livetech.util.DebugTrace;
 
@@ -99,6 +101,18 @@ public class LayoutPositioner {
 			@Override
 			public Rectangle2D getBounds() {
 				return marginRect;
+			}
+
+			@Override
+			public SortedSet<Object> getLayers() {
+				SortedSet<Object> s = new TreeSet<Object>();
+				for (LayoutScene sub : this.getSubs()) {
+					s.addAll(sub.getLayers());
+				}
+				if (this.getContent() != null) {
+					s.add(this.getContent().getLayer());
+				}
+				return s;
 			}
 		};
 	}

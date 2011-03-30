@@ -2,7 +2,7 @@ package se.kth.livetech.presentation.layout;
 
 import java.awt.geom.Rectangle2D;
 import java.util.List;
-import java.util.Set;
+import java.util.SortedSet;
 
 /**
  * Scene description,
@@ -23,5 +23,5 @@ public interface LayoutScene {
 	
 	//public List<Object> getRemovals();
 	
-	//public Set<Object> getLayers();
+	public SortedSet<Object> getLayers();
 }

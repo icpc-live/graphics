@@ -5,12 +5,12 @@ package se.kth.livetech.presentation.layout;
  * count, exposing methods to generate new layout components,
  * automatically dropping old ones.
  */
-public interface LayoutUpdater {
+public interface LayoutDescriptionUpdater {
 	public void beginGeneration(); // FIXME: rename to frame!
 	public void finishGeneration();
 
 	/** The order of the first sub layout calls determines the layout order. */
-	public LayoutUpdater getSubLayoutUpdater(Object key);
+	public LayoutDescriptionUpdater getSubLayoutUpdater(Object key);
 
 	/** Cleared or unset weights means they are calculated. */
 	public void clearWeights();
@@ -26,8 +26,8 @@ public interface LayoutUpdater {
 	
 	public interface ContentUpdater {
 		public void setText(String text);
-		public void setImage(String name);
-		public void getStyle(Object style);
+		public void setImageName(String name);
+		public void setStyle(Object style);
 		public void setLayer(int layer);
 	}
 }

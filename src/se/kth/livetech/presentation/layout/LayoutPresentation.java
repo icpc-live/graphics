@@ -31,6 +31,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 	public LayoutPresentation() {
 		this.content = new ContestContent(new ContestRef());
 		this.setBackground(ICPCColors.SCOREBOARD_BG);				//(Color.BLUE.darker().darker());
+		this.setPreferredSize(new Dimension(1024, 576));
 	}
 
 	@Override
@@ -66,9 +67,17 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 		//Renderable r = rend(composition);
 
+		SceneDescription updater = new SceneDescription(composition.getKey());
+		updater.beginGeneration();
+		composition.update(updater);
+		updater.finishGeneration();
+		//System.out.println(updater);
+		
 		//r.render(g, dim);
 		LayoutPositioner pos = new LayoutPositioner();
-		LayoutScene scene = pos.position(composition, row);
+		LayoutScene scene = pos.position(/*composition*/updater, row);
+		//System.out.println(row);
+		//System.out.println(pos.toString(scene));
 		if (this.anim == null) {
 			this.anim = new LayoutSceneAnimator(scene);
 		} else {

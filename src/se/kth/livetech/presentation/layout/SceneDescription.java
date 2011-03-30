@@ -1,5 +1,7 @@
 package se.kth.livetech.presentation.layout;
 
+import java.util.AbstractCollection;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -8,7 +10,7 @@ import java.util.TreeMap;
 /**
  * Updates a layout composition.
  */
-public class SceneLayoutUpdater implements LayoutDescription, LayoutUpdater {
+public class SceneDescription implements LayoutDescription, LayoutDescriptionUpdater {
 	final Object key;
 	
 	int generation;
@@ -17,17 +19,17 @@ public class SceneLayoutUpdater implements LayoutDescription, LayoutUpdater {
 	boolean weightFlag;
 	double fixedWidth, fixedHeight, stretchWeight;
 	double topMargin, bottomMargin, leftMargin, rightMargin;
-	double aspectMin, aspectMax;
+	double aspectMin = 0, aspectMax = Double.POSITIVE_INFINITY;
 	Direction direction;
 	
 	SceneContentUpdater content;
 
-	Map<Object, SceneLayoutUpdater> subLayouts;
+	Map<Object, SceneDescription> subLayouts;
 	Map<Integer, Object> layoutOrder;
 	
-	public SceneLayoutUpdater(Object key) {
+	public SceneDescription(Object key) {
 		this.key = key;
-		this.subLayouts = new HashMap<Object, SceneLayoutUpdater>();
+		this.subLayouts = new HashMap<Object, SceneDescription>();
 		this.layoutOrder = new TreeMap<Integer, Object>();
 	}
 	
@@ -41,8 +43,8 @@ public class SceneLayoutUpdater implements LayoutDescription, LayoutUpdater {
 
 	@Override
 	public void finishGeneration() {
-		for (Iterator<SceneLayoutUpdater> it = this.subLayouts.values().iterator(); it.hasNext(); ) {
-			SceneLayoutUpdater sub = it.next();
+		for (Iterator<SceneDescription> it = this.subLayouts.values().iterator(); it.hasNext(); ) {
+			SceneDescription sub = it.next();
 			if (sub.generation == this.generation) {
 				sub.finishGeneration();
 			} else {
@@ -67,7 +69,7 @@ public class SceneLayoutUpdater implements LayoutDescription, LayoutUpdater {
 	}
 	
 	private void calculateWeights() {
-		for (SceneLayoutUpdater sub : this.subLayouts.values()) {
+		for (SceneDescription sub : this.subLayouts.values()) {
 			switch (this.direction) {
 			case HORIZONTAL: {
 				this.fixedWidth += sub.fixedWidth;
@@ -146,13 +148,13 @@ public class SceneLayoutUpdater implements LayoutDescription, LayoutUpdater {
 		}
 
 		@Override
-		public void setImage(String name) {
+		public void setImageName(String name) {
 			this.imageName = name;
 			this.text = null;
 		}
 
 		@Override
-		public void getStyle(Object style) {
+		public void setStyle(Object style) {
 			this.style = style;
 		}
 
@@ -203,10 +205,10 @@ public class SceneLayoutUpdater implements LayoutDescription, LayoutUpdater {
 	}
 
 	@Override
-	public LayoutUpdater getSubLayoutUpdater(Object key) {
-		SceneLayoutUpdater sub = this.subLayouts.get(key);
+	public LayoutDescriptionUpdater getSubLayoutUpdater(Object key) {
+		SceneDescription sub = this.subLayouts.get(key);
 		if (sub == null) {
-			sub = new SceneLayoutUpdater(key);
+			sub = new SceneDescription(key);
 			this.subLayouts.put(key, sub);
 		}
 		if (sub.generation != this.generation) {
@@ -214,7 +216,7 @@ public class SceneLayoutUpdater implements LayoutDescription, LayoutUpdater {
 			sub.generation = this.generation;
 			this.layoutOrder.put(this.orderCounter++, key);
 		}
-		return null;
+		return sub;
 	}
 	
 	// LayoutDescription implementation:
@@ -285,12 +287,44 @@ public class SceneLayoutUpdater implements LayoutDescription, LayoutUpdater {
 	}
 
 	@Override
-	public Iterable<Object> getSubOrder() {
+	public Collection<Object> getSubOrder() {
 		return this.layoutOrder.values();
+	}
+	
+	@Override
+	public Collection<SceneDescription> getSubs() {
+		final Collection<Object> order = getSubOrder();
+		return new AbstractCollection<SceneDescription>() {
+			@Override
+			public Iterator<SceneDescription> iterator() {
+				final Iterator<Object> it = order.iterator();
+
+				return new Iterator<SceneDescription>() {
+					@Override
+					public boolean hasNext() {
+						return it.hasNext();
+					}
+
+					@Override
+					public SceneDescription next() {
+						return SceneDescription.this.getSub(it.next());
+					}
+
+					@Override
+					public void remove() {
+					}
+				};
+			}
+
+			@Override
+			public int size() {
+				return order.size();
+			}
+		};
 	}
 
 	@Override
-	public LayoutDescription getSub(Object key) {
+	public SceneDescription getSub(Object key) {
 		return this.subLayouts.get(key);
 	}
 	
@@ -302,8 +336,12 @@ public class SceneLayoutUpdater implements LayoutDescription, LayoutUpdater {
 
 	public void toString(StringBuilder s) {
 		s.append('(');
+		if (this.direction != null) {
+			s.append(this.direction);
+			s.append(' ');
+		}
 		
-		if (this.weightFlag) {
+		if (!this.weightFlag) {
 			s.append("calc ");
 		}
 		
@@ -312,6 +350,16 @@ public class SceneLayoutUpdater implements LayoutDescription, LayoutUpdater {
 		s.append(this.fixedHeight);
 		s.append('/');
 		s.append(this.stretchWeight);
+		s.append(' ');
+
+		s.append('^');
+		s.append(this.topMargin);
+		s.append('v');
+		s.append(this.bottomMargin);
+		s.append('<');
+		s.append(this.leftMargin);
+		s.append('>');
+		s.append(this.rightMargin);
 		s.append(' ');
 
 		if (this.content != null) {

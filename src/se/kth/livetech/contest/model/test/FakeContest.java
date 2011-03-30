@@ -12,6 +12,7 @@ import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.impl.ContestUpdateEventImpl;
+import se.kth.livetech.presentation.layout.LayoutPresentation;
 import se.kth.livetech.presentation.layout.ScoreboardPresentation;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
@@ -136,13 +137,16 @@ public class FakeContest extends Thread {
 		PropertyHierarchy hierarchy = new PropertyHierarchy();
 		IProperty base = hierarchy.getProperty("live.clients.noname");
 		final ScoreboardPresentation bt = new ScoreboardPresentation(tc.getContest(), base);
+		final LayoutPresentation lp = new LayoutPresentation();
 		fc.addContestUpdateListener(new ContestUpdateListener() {
 			@Override
 			public void contestUpdated(ContestUpdateEvent e) {
 				bt.setContest(e.getNewContest());
+				lp.contestUpdated(e);
 			}
 		});
-		Frame frame = new Frame("Fake Contest", bt, null, false);
+		//Frame frame = new Frame("Fake Contest", bt, null, false);
+		Frame frame = new Frame("Fake Contest", lp, null, false);
 		fc.start();
 		if (FULL_SCREEN) {
 			frame.fullScreen(0);

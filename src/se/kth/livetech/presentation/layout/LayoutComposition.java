@@ -1,8 +1,12 @@
 package se.kth.livetech.presentation.layout;
 
+import java.util.AbstractCollection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+
+import se.kth.livetech.presentation.layout.LayoutDescriptionUpdater.ContentUpdater;
 
 public class LayoutComposition implements LayoutDescription {
 	private final Object key;
@@ -12,11 +16,11 @@ public class LayoutComposition implements LayoutDescription {
 	private double bottomMargin;
 	private double leftMargin;
 	private double rightMargin;
-	private double aspectMin;
-	private double aspectMax;
+	private double aspectMin = 0;
+	private double aspectMax = Double.POSITIVE_INFINITY;
 
 	public LayoutComposition(Object key, Direction direction) {
-		this(key, direction, 1d);
+		this(key, direction, 0d);
 	}
 
 	public LayoutComposition(Object key, Direction direction, double margin) {
@@ -123,11 +127,12 @@ public class LayoutComposition implements LayoutDescription {
 	}
 
 	@Override
-	public Iterable<Object> getSubOrder() {
-		return new Iterable<Object>() {
+	public Collection<Object> getSubOrder() {
+		final Collection<LayoutDescription> components = this.components;
+		return new AbstractCollection<Object>() {
 			@Override
 			public Iterator<Object> iterator() {
-				final Iterator<LayoutDescription> it = LayoutComposition.this.components.iterator();
+				final Iterator<LayoutDescription> it = components.iterator();
 				return new Iterator<Object>() {
 					@Override
 					public boolean hasNext() {
@@ -145,7 +150,17 @@ public class LayoutComposition implements LayoutDescription {
 					}
 				};
 			}
+
+			@Override
+			public int size() {
+				return components.size();
+			}
 		};
+	}
+	
+	@Override
+	public Collection<LayoutDescription> getSubs() {
+		return this.components;
 	}
 
 	@Override
@@ -156,5 +171,29 @@ public class LayoutComposition implements LayoutDescription {
 			}
 		}
 		return null;
+	}
+	
+	public void update(LayoutDescriptionUpdater updater) {
+		updater.setDirection(this.direction);
+		updater.setAspect(this.aspectMin, this.aspectMax);
+		updater.setMargin(this.topMargin, this.bottomMargin, this.leftMargin, this.rightMargin);
+		for (LayoutDescription sub : this.components) {
+			Object key = sub.getKey();
+			LayoutDescriptionUpdater subUpdater = updater.getSubLayoutUpdater(key);
+			if (sub instanceof LayoutComposition) {
+				((LayoutComposition) sub).update(subUpdater);
+			} else {
+				subUpdater.setWeights(sub.getFixedWidth(), sub.getFixedHeight(), sub.getStretchWeight());
+				ContentUpdater contentUpdater = subUpdater.getContentUpdater();
+				Content content = sub.getContent();
+				contentUpdater.setLayer(content.getLayer());
+				if (content.isText()) {
+					contentUpdater.setText(content.getText());
+				} else if (content.isImage()) {
+					contentUpdater.setImageName(content.getImageName());
+				}
+				contentUpdater.setStyle(content.getStyle());
+			}
+		}
 	}
 }

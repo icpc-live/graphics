@@ -1,5 +1,7 @@
 package se.kth.livetech.presentation.layout;
 
+import java.util.Collection;
+
 
 public interface LayoutDescription {
 	public Object getKey();
@@ -24,6 +26,7 @@ public interface LayoutDescription {
 		VERTICAL,
 	}
 	public Direction getDirection();
-	public Iterable<Object> getSubOrder();
+	public Collection<Object> getSubOrder();
+	public Collection<? extends LayoutDescription> getSubs();
 	public LayoutDescription getSub(Object key);
 }

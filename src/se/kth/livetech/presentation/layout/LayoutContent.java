@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.layout;
 
+import java.util.Collection;
 import java.util.Collections;
 
 public class LayoutContent implements LayoutDescription {
@@ -7,7 +8,7 @@ public class LayoutContent implements LayoutDescription {
 	private double fixedWidth;
 	private double fixedHeight = 1d;
 	private double stretchWeight;
-	private double margin = 1d;
+	private double margin = 0d;
 	private Content content;
 
 	public LayoutContent(Object key, double fixedWidth, double stretchWeight, double margin, Content content) {
@@ -92,7 +93,12 @@ public class LayoutContent implements LayoutDescription {
 	}
 
 	@Override
-	public Iterable<Object> getSubOrder() {
+	public Collection<Object> getSubOrder() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public Collection<LayoutDescription> getSubs() {
 		return Collections.emptyList();
 	}
 

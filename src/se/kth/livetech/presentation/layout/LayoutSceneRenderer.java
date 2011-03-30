@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.util.Set;
+import java.util.TreeSet;
 
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCImages;
@@ -13,6 +15,7 @@ import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.Renderable;
+import se.kth.livetech.util.DebugTrace;
 
 public class LayoutSceneRenderer implements Renderable {
 	public static final boolean DEBUG = true;
@@ -29,6 +32,23 @@ public class LayoutSceneRenderer implements Renderable {
 	}
 
 	private void render(Graphics2D g, LayoutScene scene) {
+		Set<Integer> s = new TreeSet<Integer>();
+
+		for (Object layer : scene.getLayers()) {
+			s.add((Integer) layer);
+			DebugTrace.trace("Layer1 " + layer);
+		}
+		for (int layer : s) {
+			DebugTrace.trace("Layer2 " + layer);
+			render(g, scene, layer);
+		}
+	}
+
+	private void render(Graphics2D g, LayoutScene scene, Object layer) {
+		if (!scene.getLayers().contains(layer)) {
+			return;
+		}
+
 		AffineTransform at = g.getTransform();
 		g.translate(scene.getBounds().getX(), scene.getBounds().getY());
 		Content content = scene.getContent();
@@ -37,11 +57,11 @@ public class LayoutSceneRenderer implements Renderable {
 			g.setTransform(at);
 			g.setColor(Color.WHITE);
 			g.draw(scene.getBounds());
-			g.drawString("" + scene.getSubs().size(), (int) scene.getBounds().getX(), (int) scene.getBounds().getY());
+			g.drawString("" + scene.getSubs().size() + '/' + scene.getLayers(), (int) scene.getBounds().getX(), (int) scene.getBounds().getY());
 			g.setTransform(bt);
 			//return;
 		}
-		if (content != null) {
+		if (content != null && content.getLayer() == (int) (Integer) layer) {
 			Renderable r;
 			if (content.isText()) {
 				ContestStyle style = (ContestStyle) content.getStyle();
@@ -70,7 +90,7 @@ public class LayoutSceneRenderer implements Renderable {
 		}
 		
 		for (LayoutScene sub : scene.getSubs()) {
-			render(g, sub);
+			render(g, sub, layer);
 		}
 		g.setTransform(at);
 	}

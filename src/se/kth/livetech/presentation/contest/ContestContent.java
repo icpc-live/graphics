@@ -40,4 +40,8 @@ public class ContestContent {
 	public Content getScore(final int team) {
 		return TeamScoreContent.getScore(this.contestRef, team);
 	}
+	
+	public Content getRowBackground(final int row) {
+		return TeamContent.rowBackground(row);
+	}
 }

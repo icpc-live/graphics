@@ -58,4 +58,17 @@ public class TeamContent {
 			}
 		};
 	}
+	
+	public static Content rowBackground(final int row) {
+		return new Content.Background() {
+			@Override
+			public Object getStyle() {
+				if (row % 2 == 0) {
+					return ContestStyle.rowBackground1;
+				} else {
+					return ContestStyle.rowBackground2;
+				}
+			}
+		};
+	}
 }

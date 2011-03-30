@@ -53,4 +53,32 @@ public interface Content {
 			return 0;
 		}
 	}
+	
+	@Deprecated
+	public static abstract class Background implements Content {
+		@Override
+		public boolean isText() {
+			return false;
+		}
+
+		@Override
+		public String getText() {
+			return null;
+		}
+
+		@Override
+		public boolean isImage() {
+			return false;
+		}
+		
+		@Override
+		public String getImageName() {
+			return null;
+		}
+		
+		@Override
+		public int getLayer() {
+			return -1;
+		}
+	}
 }

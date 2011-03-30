@@ -27,6 +27,10 @@ public class ContestComponents {
 		}
 		return r;
 	}
+	
+	public static LayoutDescription teamBackground(ContestContent content, int row) {
+		return LayoutContent.stretch(-row, 1, .9, content.getRowBackground(row));
+	}
 
 	public static LayoutDescription teamRow(ContestContent content, int team, boolean teamPresentation) {
 		final double solvedWeight = 1.5;

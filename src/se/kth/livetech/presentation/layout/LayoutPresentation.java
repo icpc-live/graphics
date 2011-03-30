@@ -23,6 +23,7 @@ import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.PartitionedRowRenderer;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
+import se.kth.livetech.util.DebugTrace;
 
 @SuppressWarnings("serial")
 public class LayoutPresentation extends JPanel implements ContestUpdateListener {
@@ -39,6 +40,9 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		this.content.getContestRef().set(e.getNewContest());
 		repaint();
 	}
+	
+	public static final boolean DEBUG = true;
+	
 	@Override
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
@@ -50,13 +54,24 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		Graphics2D g = (Graphics2D) gr;
 		RenderCache.setQuality(g);
 
-		LayoutComposition composition = new LayoutComposition(0, LayoutComposition.Direction.VERTICAL);
+		LayoutComposition composition = new LayoutComposition(0, LayoutComposition.Direction.ON_TOP);
+
+		LayoutComposition backComposition = new LayoutComposition(-1, LayoutComposition.Direction.VERTICAL);
+		for (int i = 1; i <= 17; ++i) {
+			LayoutDescription background;
+			background = ContestComponents.teamBackground(this.content, i);
+			backComposition.add(background);
+		}
+		composition.add(backComposition);
+
+		LayoutComposition teamComposition = new LayoutComposition(0, LayoutComposition.Direction.VERTICAL);
 		for (int i = 1; i <= 17; ++i) {
 			LayoutDescription component;
 			int team = this.content.getContestRef().get().getRankedTeam(i).getId();
 			component = ContestComponents.teamRow(this.content, team, false);
-			composition.add(component);
+			teamComposition.add(component);
 		}
+		composition.add(teamComposition);
 
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
 		
@@ -71,13 +86,13 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		updater.beginGeneration();
 		composition.update(updater);
 		updater.finishGeneration();
-		//System.out.println(updater);
-		
+		if (DEBUG) DebugTrace.trace(updater);
+
 		//r.render(g, dim);
 		LayoutPositioner pos = new LayoutPositioner();
 		LayoutScene scene = pos.position(/*composition*/updater, row);
 		//System.out.println(row);
-		//System.out.println(pos.toString(scene));
+		if (DEBUG) DebugTrace.trace(pos.toString(scene));
 		if (this.anim == null) {
 			this.anim = new LayoutSceneAnimator(scene);
 		} else {

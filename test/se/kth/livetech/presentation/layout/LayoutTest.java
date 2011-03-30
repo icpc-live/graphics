@@ -2,7 +2,7 @@ package se.kth.livetech.presentation.layout;
 
 import java.awt.geom.Rectangle2D;
 
-import se.kth.livetech.presentation.layout.LayoutDescription.Direction;
+import se.kth.livetech.presentation.layout.ISceneDescription.Direction;
 
 public class LayoutTest {
 	public void verticalTest() {
@@ -20,7 +20,7 @@ public class LayoutTest {
 		System.out.println(u);
 		
 		LayoutPositioner p = new LayoutPositioner();
-		LayoutScene s = p.position(u, new Rectangle2D.Double(0, 0, 1, 3));
+		ISceneLayout s = p.position(u, new Rectangle2D.Double(0, 0, 1, 3));
 		
 		System.out.println(s);
 	}

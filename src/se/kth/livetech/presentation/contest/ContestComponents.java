@@ -1,7 +1,7 @@
 package se.kth.livetech.presentation.contest;
 
 import se.kth.livetech.contest.model.Contest;
-import se.kth.livetech.presentation.layout.LayoutDescription;
+import se.kth.livetech.presentation.layout.ISceneDescription;
 import se.kth.livetech.presentation.layout.LayoutComposition;
 import se.kth.livetech.presentation.layout.LayoutContent;
 
@@ -16,7 +16,7 @@ public class ContestComponents {
 		score,
 	}
 
-	public static LayoutDescription scoreboard(ContestContent content) {
+	public static ISceneDescription scoreboard(ContestContent content) {
 		LayoutComposition r;
 		r = new LayoutComposition(0, LayoutComposition.Direction.VERTICAL); // FIXME key?
 		Contest contest = content.getContestRef().get();
@@ -32,13 +32,13 @@ public class ContestComponents {
 		return LayoutContent.stretch(-row, 1, .9, content.getRowBackground(row));
 	}
 
-	public static LayoutDescription teamRow(ContestContent content, int team, boolean teamPresentation) {
+	public static ISceneDescription teamRow(ContestContent content, int team, boolean teamPresentation) {
 		final double solvedWeight = 1.5;
 		final double scoreWeight = 2;
 		
 		/*
 		LayoutUpdater u;
-		u.setDirection(LayoutDescription.Direction.HORIZONTAL);
+		u.setDirection(ISceneDescription.Direction.HORIZONTAL);
 
 		// change LayoutContent so it updates a LayoutUpdater
 		// change ContestContent so it updates a LayoutUpdater.ContentUpdater
@@ -67,7 +67,7 @@ public class ContestComponents {
 		return c;
 	}
 
-	public static LayoutDescription teamProblems(ContestContent content, int team) {
+	public static ISceneDescription teamProblems(ContestContent content, int team) {
 		final double problemWeight = 1.5;
 		LayoutComposition p;
 		p = new LayoutComposition(team, LayoutComposition.Direction.HORIZONTAL);

@@ -13,7 +13,7 @@ public class LayoutPositioner {
 
 	public LayoutPositioner() { }
 
-	public LayoutScene position(final LayoutDescription description, Rectangle2D rect) {
+	public ISceneLayout position(final ISceneDescription description, Rectangle2D rect) {
 
 		//DebugTrace.trace(component);
 
@@ -27,7 +27,7 @@ public class LayoutPositioner {
 				description.getAspectMin(),
 				description.getAspectMax());
 
-		return new LayoutScene() {
+		return new ISceneLayout() {
 
 			@Override
 			public Object getKey(){
@@ -43,16 +43,16 @@ public class LayoutPositioner {
 			}
 
 			@Override
-			public List<LayoutScene> getSubs() {
+			public List<ISceneLayout> getSubs() {
 				if (description.getSubs().isEmpty()) {
 					return Collections.emptyList();
 				}
 
-				List<LayoutScene> subScenes = new ArrayList<LayoutScene>();
+				List<ISceneLayout> subScenes = new ArrayList<ISceneLayout>();
 
 				switch (description.getDirection()) {
 				case ON_TOP: {
-					for (LayoutDescription c : description.getSubs()) {
+					for (ISceneDescription c : description.getSubs()) {
 						subScenes.add(position(c, marginRect));
 					}
 					break;
@@ -63,7 +63,7 @@ public class LayoutPositioner {
 					double h = marginRect.getHeight();
 					double totalFixed = description.getFixedWidth();
 					double totalWeight = description.getStretchWeight();
-					for (LayoutDescription c : description.getSubs()) {
+					for (ISceneDescription c : description.getSubs()) {
 						double i1 = i, i2 = i;
 						double fixed = c.getFixedWidth();
 						double weight = c.getStretchWeight();
@@ -81,7 +81,7 @@ public class LayoutPositioner {
 				case VERTICAL: {
 					double n = description.getFixedHeight();
 					double i = 0;
-					for (LayoutDescription c : description.getSubs()) {
+					for (ISceneDescription c : description.getSubs()) {
 						double i1 = i, i2 = i + c.getFixedHeight();
 						Rectangle2D rel = new Rectangle2D.Double();
 						rel.setRect(0, 0, marginRect.getWidth(), marginRect.getHeight());
@@ -106,7 +106,7 @@ public class LayoutPositioner {
 			@Override
 			public SortedSet<Object> getLayers() {
 				SortedSet<Object> s = new TreeSet<Object>();
-				for (LayoutScene sub : this.getSubs()) {
+				for (ISceneLayout sub : this.getSubs()) {
 					s.addAll(sub.getLayers());
 				}
 				if (this.getContent() != null) {
@@ -117,17 +117,17 @@ public class LayoutPositioner {
 		};
 	}
 	
-	public String toString(LayoutScene scene) {
+	public String toString(ISceneLayout scene) {
 		StringBuilder s = new StringBuilder();
 		toString(s, scene);
 		return s.toString();
 	}
-	public void toString(StringBuilder s, LayoutScene scene) {
+	public void toString(StringBuilder s, ISceneLayout scene) {
 		s.append('(');
 		s.append(scene.getKey());
 		s.append(' ');
 		s.append(scene.getBounds());
-		for (LayoutScene sub : scene.getSubs()) {
+		for (ISceneLayout sub : scene.getSubs()) {
 			s.append(' ');
 			toString(s, sub);
 		}

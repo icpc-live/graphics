@@ -11,7 +11,7 @@ import java.util.SortedSet;
  * 
  * Removals are used when a scene is used as an update.
  */
-public interface LayoutScene {
+public interface ISceneLayout {
 	public Object getKey();
 
 	public Rectangle2D getBounds();
@@ -19,7 +19,7 @@ public interface LayoutScene {
 	// Nullable
 	public Content getContent();
 
-	public List<LayoutScene> getSubs();
+	public List<ISceneLayout> getSubs();
 	
 	//public List<Object> getRemovals();
 	

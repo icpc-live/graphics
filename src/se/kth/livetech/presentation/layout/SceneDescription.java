@@ -10,7 +10,7 @@ import java.util.TreeMap;
 /**
  * Updates a layout composition.
  */
-public class SceneDescription implements LayoutDescription, LayoutDescriptionUpdater {
+public class SceneDescription implements ISceneDescription, ISceneDescriptionUpdater {
 	final Object key;
 	
 	int generation;
@@ -205,7 +205,7 @@ public class SceneDescription implements LayoutDescription, LayoutDescriptionUpd
 	}
 
 	@Override
-	public LayoutDescriptionUpdater getSubLayoutUpdater(Object key) {
+	public ISceneDescriptionUpdater getSubLayoutUpdater(Object key) {
 		SceneDescription sub = this.subLayouts.get(key);
 		if (sub == null) {
 			sub = new SceneDescription(key);
@@ -219,7 +219,7 @@ public class SceneDescription implements LayoutDescription, LayoutDescriptionUpd
 		return sub;
 	}
 	
-	// LayoutDescription implementation:
+	// ISceneDescription implementation:
 
 	@Override
 	public Object getKey() {

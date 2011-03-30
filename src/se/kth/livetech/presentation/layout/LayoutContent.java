@@ -3,7 +3,7 @@ package se.kth.livetech.presentation.layout;
 import java.util.Collection;
 import java.util.Collections;
 
-public class LayoutContent implements LayoutDescription {
+public class LayoutContent implements ISceneDescription {
 	private Object key;
 	private double fixedWidth;
 	private double fixedHeight = 1d;
@@ -98,12 +98,12 @@ public class LayoutContent implements LayoutDescription {
 	}
 
 	@Override
-	public Collection<LayoutDescription> getSubs() {
+	public Collection<ISceneDescription> getSubs() {
 		return Collections.emptyList();
 	}
 
 	@Override
-	public LayoutDescription getSub(Object key) {
+	public ISceneDescription getSub(Object key) {
 		return null;
 	}
 }

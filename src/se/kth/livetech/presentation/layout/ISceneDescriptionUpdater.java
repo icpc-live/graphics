@@ -5,12 +5,12 @@ package se.kth.livetech.presentation.layout;
  * count, exposing methods to generate new layout components,
  * automatically dropping old ones.
  */
-public interface LayoutDescriptionUpdater {
+public interface ISceneDescriptionUpdater {
 	public void beginGeneration(); // FIXME: rename to frame!
 	public void finishGeneration();
 
 	/** The order of the first sub layout calls determines the layout order. */
-	public LayoutDescriptionUpdater getSubLayoutUpdater(Object key);
+	public ISceneDescriptionUpdater getSubLayoutUpdater(Object key);
 
 	/** Cleared or unset weights means they are calculated. */
 	public void clearWeights();
@@ -19,7 +19,7 @@ public interface LayoutDescriptionUpdater {
 	public void setMargin(double topMargin, double bottomMargin, double leftMargin, double rightMargin);
 	public void setAspect(double aspect);
 	public void setAspect(double aspectMin, double aspectMax);
-	public void setDirection(LayoutDescription.Direction direction);
+	public void setDirection(ISceneDescription.Direction direction);
 
 	public void clearContent();
 	public ContentUpdater getContentUpdater();

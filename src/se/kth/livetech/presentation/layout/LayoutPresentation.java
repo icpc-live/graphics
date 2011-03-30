@@ -52,7 +52,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 		LayoutComposition composition = new LayoutComposition(0, LayoutComposition.Direction.VERTICAL);
 		for (int i = 1; i <= 17; ++i) {
-			LayoutDescription component;
+			ISceneDescription component;
 			int team = this.content.getContestRef().get().getRankedTeam(i).getId();
 			component = ContestComponents.teamRow(this.content, team, false);
 			composition.add(component);
@@ -75,7 +75,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		
 		//r.render(g, dim);
 		LayoutPositioner pos = new LayoutPositioner();
-		LayoutScene scene = pos.position(/*composition*/updater, row);
+		ISceneLayout scene = pos.position(/*composition*/updater, row);
 		//System.out.println(row);
 		//System.out.println(pos.toString(scene));
 		if (this.anim == null) {
@@ -98,7 +98,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 	private Renderable rendRow(LayoutComposition composition) {
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
-		for (LayoutDescription sub : composition.getComponents()) {
+		for (ISceneDescription sub : composition.getComponents()) {
 			boolean fixed = sub.getFixedWidth() > 0;
 			double weight;
 			if (fixed) {
@@ -123,7 +123,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 				Rectangle2D row = new Rectangle2D.Double();
 				double n = composition.getFixedHeight();
 				double i = 0;
-				for (LayoutDescription component : composition.getComponents()) {
+				for (ISceneDescription component : composition.getComponents()) {
 					double i1 = i, i2 = i + component.getFixedHeight();
 					Rect.setRow(rect, i1, i2, n, row);
 					g.translate(row.getX(), row.getY());
@@ -140,14 +140,14 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		return new Renderable() {
 			@Override
 			public void render(Graphics2D g, Dimension d) {
-				for (LayoutDescription component : composition.getComponents()) {
+				for (ISceneDescription component : composition.getComponents()) {
 					rend(component).render(g, d);
 				}
 			}
 		};
 	}
 
-	private Renderable rend(LayoutDescription component) {
+	private Renderable rend(ISceneDescription component) {
 		if (component instanceof LayoutComposition) {
 			LayoutComposition composition = (LayoutComposition) component;
 			switch (composition.getDirection()) {

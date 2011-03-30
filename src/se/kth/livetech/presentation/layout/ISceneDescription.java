@@ -3,7 +3,7 @@ package se.kth.livetech.presentation.layout;
 import java.util.Collection;
 
 
-public interface LayoutDescription {
+public interface ISceneDescription {
 	public Object getKey();
 	public double getFixedWidth();
 	public double getFixedHeight();
@@ -27,6 +27,6 @@ public interface LayoutDescription {
 	}
 	public Direction getDirection();
 	public Collection<Object> getSubOrder();
-	public Collection<? extends LayoutDescription> getSubs();
-	public LayoutDescription getSub(Object key);
+	public Collection<? extends ISceneDescription> getSubs();
+	public ISceneDescription getSub(Object key);
 }

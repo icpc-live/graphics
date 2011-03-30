@@ -17,9 +17,9 @@ import se.kth.livetech.presentation.graphics.Renderable;
 public class LayoutSceneRenderer implements Renderable {
 	public static final boolean DEBUG = true;
 	
-	LayoutScene scene;
+	ISceneLayout scene;
 	
-	public void updateScene(LayoutScene update) {
+	public void updateScene(ISceneLayout update) {
 		this.scene = update;
 	}
 	
@@ -28,7 +28,7 @@ public class LayoutSceneRenderer implements Renderable {
 		render(g, this.scene);
 	}
 
-	private void render(Graphics2D g, LayoutScene scene) {
+	private void render(Graphics2D g, ISceneLayout scene) {
 		AffineTransform at = g.getTransform();
 		g.translate(scene.getBounds().getX(), scene.getBounds().getY());
 		Content content = scene.getContent();
@@ -69,7 +69,7 @@ public class LayoutSceneRenderer implements Renderable {
 			}
 		}
 		
-		for (LayoutScene sub : scene.getSubs()) {
+		for (ISceneLayout sub : scene.getSubs()) {
 			render(g, sub);
 		}
 		g.setTransform(at);

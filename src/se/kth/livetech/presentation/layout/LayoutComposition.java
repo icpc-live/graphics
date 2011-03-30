@@ -6,12 +6,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import se.kth.livetech.presentation.layout.LayoutDescriptionUpdater.ContentUpdater;
+import se.kth.livetech.presentation.layout.ISceneDescriptionUpdater.ContentUpdater;
 
-public class LayoutComposition implements LayoutDescription {
+public class LayoutComposition implements ISceneDescription {
 	private final Object key;
 	private final Direction direction;
-	private ArrayList<LayoutDescription> components;
+	private ArrayList<ISceneDescription> components;
 	private double topMargin;
 	private double bottomMargin;
 	private double leftMargin;
@@ -26,7 +26,7 @@ public class LayoutComposition implements LayoutDescription {
 	public LayoutComposition(Object key, Direction direction, double margin) {
 		this.key = key;
 		this.direction = direction;
-		this.components = new ArrayList<LayoutDescription>();
+		this.components = new ArrayList<ISceneDescription>();
 		setMargin(margin);
 	}
 	
@@ -40,7 +40,7 @@ public class LayoutComposition implements LayoutDescription {
 	@Override
 	public double getFixedHeight() {
 		double fixedHeight = 0d;
-		for (LayoutDescription component : this.components) {
+		for (ISceneDescription component : this.components) {
 			if (this.direction == Direction.VERTICAL) {
 				fixedHeight += component.getFixedHeight();
 			}
@@ -55,11 +55,11 @@ public class LayoutComposition implements LayoutDescription {
 		return this.direction;
 	}
 
-	public void add(LayoutDescription component) {
+	public void add(ISceneDescription component) {
 		this.components.add(component);
 	}
 
-	public List<LayoutDescription> getComponents() {
+	public List<ISceneDescription> getComponents() {
 		return this.components;
 	}
 
@@ -71,7 +71,7 @@ public class LayoutComposition implements LayoutDescription {
 	@Override
 	public double getFixedWidth() {
 		double s = 0;
-		for (LayoutDescription component : this.components) {
+		for (ISceneDescription component : this.components) {
 			s += component.getFixedWidth();
 		}
 		return s;
@@ -80,7 +80,7 @@ public class LayoutComposition implements LayoutDescription {
 	@Override
 	public double getStretchWeight() {
 		double s = 0;
-		for (LayoutDescription component : this.components) {
+		for (ISceneDescription component : this.components) {
 			s += component.getStretchWeight();
 		}
 		return s;
@@ -128,11 +128,11 @@ public class LayoutComposition implements LayoutDescription {
 
 	@Override
 	public Collection<Object> getSubOrder() {
-		final Collection<LayoutDescription> components = this.components;
+		final Collection<ISceneDescription> components = this.components;
 		return new AbstractCollection<Object>() {
 			@Override
 			public Iterator<Object> iterator() {
-				final Iterator<LayoutDescription> it = components.iterator();
+				final Iterator<ISceneDescription> it = components.iterator();
 				return new Iterator<Object>() {
 					@Override
 					public boolean hasNext() {
@@ -159,13 +159,13 @@ public class LayoutComposition implements LayoutDescription {
 	}
 	
 	@Override
-	public Collection<LayoutDescription> getSubs() {
+	public Collection<ISceneDescription> getSubs() {
 		return this.components;
 	}
 
 	@Override
-	public LayoutDescription getSub(Object key) {
-		for (LayoutDescription sub : this.components) {
+	public ISceneDescription getSub(Object key) {
+		for (ISceneDescription sub : this.components) {
 			if (sub.getKey().equals(key)) {
 				return sub;
 			}
@@ -173,13 +173,13 @@ public class LayoutComposition implements LayoutDescription {
 		return null;
 	}
 	
-	public void update(LayoutDescriptionUpdater updater) {
+	public void update(ISceneDescriptionUpdater updater) {
 		updater.setDirection(this.direction);
 		updater.setAspect(this.aspectMin, this.aspectMax);
 		updater.setMargin(this.topMargin, this.bottomMargin, this.leftMargin, this.rightMargin);
-		for (LayoutDescription sub : this.components) {
+		for (ISceneDescription sub : this.components) {
 			Object key = sub.getKey();
-			LayoutDescriptionUpdater subUpdater = updater.getSubLayoutUpdater(key);
+			ISceneDescriptionUpdater subUpdater = updater.getSubLayoutUpdater(key);
 			if (sub instanceof LayoutComposition) {
 				((LayoutComposition) sub).update(subUpdater);
 			} else {

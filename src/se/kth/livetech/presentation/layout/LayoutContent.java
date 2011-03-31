@@ -3,6 +3,8 @@ package se.kth.livetech.presentation.layout;
 import java.util.Collection;
 import java.util.Collections;
 
+import se.kth.livetech.presentation.layout.ISceneDescriptionUpdater.ContentUpdater;
+
 public class LayoutContent implements ISceneDescription {
 	private Object key;
 	private double fixedWidth;
@@ -19,12 +21,28 @@ public class LayoutContent implements ISceneDescription {
 		this.content = content;
 	}
 
+	@Deprecated
 	public static LayoutContent fixed(Object key, double weight, double margin, Content content) {
 		return new LayoutContent(key, weight, 0, margin, content);
 	}
 
+	@Deprecated
 	public static LayoutContent stretch(Object key, double weight, double margin, Content content) {
 		return new LayoutContent(key, 0, weight, margin, content);
+	}
+
+	public static ContentUpdater fixed(Object key, double width, double margin, ISceneDescriptionUpdater updater) {
+		ISceneDescriptionUpdater sub = updater.getSubLayoutUpdater(key);
+		//sub.setMargin(margin);
+		sub.setWeights(width, 1d, 0d);
+		return sub.getContentUpdater();
+	}
+
+	public static ContentUpdater stretch(Object key, double weight, double margin, ISceneDescriptionUpdater updater) {
+		ISceneDescriptionUpdater sub = updater.getSubLayoutUpdater(key);
+		//sub.setMargin(margin);
+		sub.setWeights(0d, 1d, weight);
+		return sub.getContentUpdater();
 	}
 
 	@Override

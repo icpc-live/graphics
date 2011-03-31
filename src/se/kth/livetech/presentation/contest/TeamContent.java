@@ -3,8 +3,17 @@ package se.kth.livetech.presentation.contest;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.presentation.layout.Content;
+import se.kth.livetech.presentation.layout.ISceneDescriptionUpdater.ContentUpdater;
 
 public class TeamContent {
+	public static void name(final ContestRef contestRef, final int team, ContentUpdater updater) {
+		Contest contest = contestRef.get();
+		Team t = contest.getTeam(team);
+		updater.setText(t.getUniversity());
+		updater.setStyle(ContestStyle.name);
+	}
+
+	@Deprecated
 	public static Content teamName(final ContestRef contestRef, final int team) {
 		return new Content.Text() {
 			private Team team() {
@@ -25,6 +34,12 @@ public class TeamContent {
 		};
 	}
 
+	public static void logo(final ContestRef contestRef, final int team, ContentUpdater updater) {
+		updater.setImageName("logos/" + team + ".png");
+		updater.setStyle(ContestStyle.logo);
+	}
+
+	@Deprecated
 	public static Content teamLogo(final ContestRef contestRef, final int team) {
 		return new Content.Image() {
 			@Override
@@ -39,6 +54,14 @@ public class TeamContent {
 		};
 	}
 
+	public static void flag(final ContestRef contestRef, final int team, ContentUpdater updater) {
+		Contest contest = contestRef.get();
+		Team t = contest.getTeam(team);
+		updater.setImageName("flags/" + t.getNationality() + ".png");
+		updater.setStyle(ContestStyle.flag);
+	}
+
+	@Deprecated
 	public static Content teamFlag(final ContestRef contestRef, final int team) {
 		return new Content.Image() {
 			private Team team() {
@@ -59,6 +82,7 @@ public class TeamContent {
 		};
 	}
 	
+	@Deprecated
 	public static Content rowBackground(final int row) {
 		return new Content.Background() {
 			@Override

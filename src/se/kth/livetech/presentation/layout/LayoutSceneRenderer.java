@@ -18,7 +18,7 @@ import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.util.DebugTrace;
 
 public class LayoutSceneRenderer implements Renderable {
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	
 	ISceneLayout scene;
 	
@@ -44,7 +44,7 @@ public class LayoutSceneRenderer implements Renderable {
 		}
 	}
 
-	private void render(Graphics2D g, LayoutScene scene, Object layer) {
+	private void render(Graphics2D g, ISceneLayout scene, Object layer) {
 		if (!scene.getLayers().contains(layer)) {
 			return;
 		}

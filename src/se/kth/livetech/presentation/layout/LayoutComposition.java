@@ -8,6 +8,7 @@ import java.util.List;
 
 import se.kth.livetech.presentation.layout.ISceneDescriptionUpdater.ContentUpdater;
 
+@Deprecated
 public class LayoutComposition implements ISceneDescription {
 	private final Object key;
 	private final Direction direction;

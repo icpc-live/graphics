@@ -20,7 +20,7 @@ public class SceneDescription implements LayoutDescription, LayoutDescriptionUpd
 	double fixedWidth, fixedHeight, stretchWeight;
 	double topMargin, bottomMargin, leftMargin, rightMargin;
 	double aspectMin = 0, aspectMax = Double.POSITIVE_INFINITY;
-	Direction direction;
+	Direction direction = Direction.ON_TOP;
 	
 	SceneContentUpdater content;
 

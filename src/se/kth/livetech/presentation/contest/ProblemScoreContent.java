@@ -4,16 +4,42 @@ import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.presentation.layout.Content;
+import se.kth.livetech.presentation.layout.LayoutDescriptionUpdater.ContentUpdater;
 
 public class ProblemScoreContent extends Content.Text {
 	private ContestRef contestRef;
 	int team, problem;
+
+	public static void score(ContestRef contestRef, int team, int problem, ContentUpdater updater) {
+		Contest contest = contestRef.get();
+		TeamScore ts = contest.getTeamScore(team);
+		ProblemScore ps = ts.getProblemScore(problem);
+
+		if (ps.getAttempts() > 0) {
+			updater.setText("" + ps.getAttempts());
+		} else {
+			updater.setText("");
+		}
+
+		if (ps.isSolved()) {
+			updater.setStyle(ContestStyle.solved);
+		} else if (ps.isPending()) {
+			updater.setStyle(ContestStyle.pending);
+		} else if (ps.getAttempts() > 0) {
+			updater.setStyle(ContestStyle.failed);
+		} else {
+			updater.setStyle(ContestStyle.none);
+		}
+	}
+	
+	@Deprecated
 	public ProblemScoreContent(ContestRef contestRef, int team, int problem) {
 		this.contestRef = contestRef;
 		this.team = team;
 		this.problem = problem;
 	}
 
+	@Deprecated
 	private ProblemScore score() {
 		Contest contest = this.contestRef.get();
 		TeamScore ts = contest.getTeamScore(this.team);
@@ -22,6 +48,7 @@ public class ProblemScoreContent extends Content.Text {
 	}
 
 	@Override
+	@Deprecated
 	public String getText() {
 		ProblemScore ps = score();
 		if (ps.getAttempts() > 0) {
@@ -32,6 +59,7 @@ public class ProblemScoreContent extends Content.Text {
 	}
 
 	@Override
+	@Deprecated
 	public ContestStyle getStyle() {
 		ProblemScore ps = score();
 		if (ps.isSolved()) {

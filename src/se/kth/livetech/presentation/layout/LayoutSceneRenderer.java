@@ -18,7 +18,7 @@ import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.util.DebugTrace;
 
 public class LayoutSceneRenderer implements Renderable {
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	
 	LayoutScene scene;
 	

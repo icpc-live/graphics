@@ -41,9 +41,10 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		repaint();
 	}
 	
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	
 	@Override
+	@SuppressWarnings("deprecation")
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
 		if (this.content.getContestRef().get() == null) {
@@ -58,8 +59,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 		LayoutComposition backComposition = new LayoutComposition(-1, LayoutComposition.Direction.VERTICAL);
 		for (int i = 1; i <= 17; ++i) {
-			LayoutDescription background;
-			background = ContestComponents.teamBackground(this.content, i);
+			LayoutDescription background = ContestComponents.teamBackground(this.content, i);
 			backComposition.add(background);
 		}
 		composition.add(backComposition);
@@ -84,7 +84,18 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 		SceneDescription updater = new SceneDescription(composition.getKey());
 		updater.beginGeneration();
-		composition.update(updater);
+
+		// Note: this overrides the otherwise calculated height!
+		//updater.setWeights(0, 17, 1);
+		//ContestComponents.scoreboard(this.content, updater);
+		updater.setDirection(LayoutDescription.Direction.VERTICAL);
+		for (int i = 1; i <= 17; ++i) {
+			int team = this.content.getContestRef().get().getRankedTeam(i).getId();
+			ContestComponents.teamRow(this.content, team, false, updater.getSubLayoutUpdater(team));
+		}
+		
+		//composition.update(updater);
+
 		updater.finishGeneration();
 		if (DEBUG) DebugTrace.trace(updater);
 

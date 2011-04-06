@@ -37,7 +37,8 @@ public class ICPCImages {
 	public static final int BANFF_ICON = 20;
 	public static final int KTH_ICON = 21;
 
-	public static final String[] COUNTRY_CODES = "egy zaf irn bgd chn idn hkg vnm ind kor sgp twn jpn rus blr geo pol swe ukr esp gbr fra col bra mex arg usa can nzl aus".split(" ");
+	//public static final String[] COUNTRY_CODES = "egy zaf irn bgd chn idn hkg vnm ind kor sgp twn jpn rus blr geo pol swe ukr esp gbr fra col bra mex arg usa can nzl aus".split(" ");
+	public static final String[] COUNTRY_CODES = "egy zaf irn bgd chn hkg vnm ind kor sgp twn jpn rus blr pol swe ukr esp fra col bra mex arg usa can nzl aus cub deu fin lbn phl ven".split(" ");
 
 	private static ImageResource[] images;
 

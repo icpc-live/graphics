@@ -4,18 +4,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
-import java.util.Set;
-import java.util.TreeSet;
 
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.graphics.RowFrameRenderer;
+import se.kth.livetech.contest.graphics.TestcaseStatusRenderer;
 import se.kth.livetech.presentation.contest.ContestStyle;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.Renderable;
-import se.kth.livetech.util.DebugTrace;
 
 public class LayoutSceneRenderer implements Renderable {
 	public static final boolean DEBUG = false;
@@ -32,14 +30,7 @@ public class LayoutSceneRenderer implements Renderable {
 	}
 
 	private void render(Graphics2D g, ISceneLayout scene) {
-		Set<Integer> s = new TreeSet<Integer>();
-
 		for (Object layer : scene.getLayers()) {
-			s.add((Integer) layer);
-			DebugTrace.trace("Layer1 " + layer);
-		}
-		for (int layer : s) {
-			DebugTrace.trace("Layer2 " + layer);
 			render(g, scene, layer);
 		}
 	}
@@ -70,6 +61,10 @@ public class LayoutSceneRenderer implements Renderable {
 				String imageName = content.getImageName();
 				ImageResource image = ICPCImages.getResource(imageName);
 				r = new ImageRenderer(imageName, image);
+			} else if (content.getStyle() instanceof TestcaseStatusRenderer.Status) {
+				TestcaseStatusRenderer.Status status;
+				status = (TestcaseStatusRenderer.Status) content.getStyle();
+				r = new TestcaseStatusRenderer(status);
 			} else {
 				ContestStyle style = (ContestStyle) content.getStyle();
 				Color row1 = ICPCColors.BG_COLOR_1;

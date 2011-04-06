@@ -2,19 +2,24 @@ package se.kth.livetech.presentation.contest;
 
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.presentation.layout.ISceneDescription;
-import se.kth.livetech.presentation.layout.LayoutComposition;
+//import se.kth.livetech.presentation.layout.LayoutComposition;
 import se.kth.livetech.presentation.layout.LayoutContent;
 import se.kth.livetech.presentation.layout.ISceneDescriptionUpdater;
 
 public class ContestComponents {
-	enum Parts {
+	public enum Parts {
 		rank,
 		logo,
 		flag,
 		name,
+		problemLabels,
 		problems,
 		solved,
 		score,
+		
+		judgeQueueCompiling,
+		judgeQueueRunning,
+		judgeQueueValidating,
 	}
 	
 	public static void scoreboard(ContestContent content, ISceneDescriptionUpdater u) {
@@ -27,7 +32,7 @@ public class ContestComponents {
 		}
 	}
 
-	@Deprecated
+	/*@Deprecated
 	public static ISceneDescription scoreboard(ContestContent content) {
 		LayoutComposition r;
 		r = new LayoutComposition(0, ISceneDescription.Direction.VERTICAL); // FIXME key?
@@ -38,16 +43,16 @@ public class ContestComponents {
 			r.add(teamRow(content, team, false));
 		}
 		return r;
-	}
+	}*/
 
 	public static void teamBackground(ContestContent content, int row, ISceneDescriptionUpdater u) {
-		content.rowBackground(row, LayoutContent.stretch(-row, 1, .9, u));
+		content.rowBackground(row, LayoutContent.stretch(-row, 1, 1, u));
 	}
 	
-	@Deprecated
+	/*@Deprecated
 	public static ISceneDescription teamBackground(ContestContent content, int row) {
 		return LayoutContent.stretch(-row, 1, .9, content.getRowBackground(row));
-	}
+	}*/
 	
 	public static void teamRow(ContestContent content, int team, boolean teamPresentation, ISceneDescriptionUpdater u) {
 		final double solvedWeight = 1.5;
@@ -62,16 +67,16 @@ public class ContestComponents {
 			ISceneDescriptionUpdater d = u.getSubLayoutUpdater(team);
 			d.setDirection(ISceneDescription.Direction.VERTICAL);
 			content.teamName(team, LayoutContent.stretch(Parts.name, 1, .8, d));
-			teamProblems(content, team, d);
+			teamProblems(content, team, true, d);
 		} else {
 			content.teamName(team, LayoutContent.stretch(Parts.name, 1, .8, u));
-			teamProblems(content, team, u);
+			teamProblems(content, team, false, u);
 		}
 		content.teamSolved(team, LayoutContent.fixed(Parts.solved, solvedWeight, .8, u));
 		content.teamScore(team, LayoutContent.fixed(Parts.score, scoreWeight, .8, u));
 	}
 
-	@Deprecated
+	/*@Deprecated
 	public static ISceneDescription teamRow(ContestContent content, int team, boolean teamPresentation) {
 		final double solvedWeight = 1.5;
 		final double scoreWeight = 2;
@@ -95,19 +100,40 @@ public class ContestComponents {
 		c.add(LayoutContent.fixed(Parts.solved, solvedWeight, .8, content.getSolved(team)));
 		c.add(LayoutContent.fixed(Parts.score, scoreWeight, .8, content.getScore(team)));
 		return c;
-	}
+	}*/
 
-	public static void teamProblems(ContestContent content, int team, ISceneDescriptionUpdater u) {
-		final double problemWeight = 1.5;
+	public static final double problemWidth = 1.5;
+	public static void teamProblems(ContestContent content, int team, boolean stretch, ISceneDescriptionUpdater u) {
+		final double labelHeight = .3;
+		Contest contest = content.getContestRef().get();
+		
+		if (stretch) {
+			ISceneDescriptionUpdater l = u.getSubLayoutUpdater(Parts.problemLabels);
+			l.setDirection(ISceneDescription.Direction.HORIZONTAL);
+			for (int problem : contest.getProblems()) {
+				// TODO: Problem labels
+				content.problemLabel(problem, LayoutContent.stretch(problem, 1, .8, l));
+			}
+			// decrease height
+			l.setWeights(0, labelHeight, contest.getProblems().size());
+		}
+		
 		ISceneDescriptionUpdater p = u.getSubLayoutUpdater(Parts.problems);
 		p.setDirection(ISceneDescription.Direction.HORIZONTAL);
-		Contest contest = content.getContestRef().get();
 		for (int problem : contest.getProblems()) {
-			content.problemScore(team, problem, LayoutContent.fixed(problem, problemWeight, .8, p));
+			if (stretch) {
+				content.problemScore(team, problem, LayoutContent.stretch(problem, 1, .8, p));
+			} else {
+				content.problemScore(team, problem, LayoutContent.fixed(problem, problemWidth, .8, p));
+			}
+		}
+		if (stretch) {
+			// decrease height
+			p.setWeights(0, 1 - labelHeight, contest.getProblems().size());
 		}
 	}
 
-	@Deprecated
+	/*@Deprecated
 	public static ISceneDescription teamProblems(ContestContent content, int team) {
 		final double problemWeight = 1.5;
 		LayoutComposition p;
@@ -117,5 +143,5 @@ public class ContestComponents {
 			p.add(LayoutContent.fixed(problem, problemWeight, .8, content.getProblemScore(team, problem)));
 		}
 		return p;
-	}
+	}*/
 }

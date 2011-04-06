@@ -21,7 +21,7 @@ public class LayoutContent implements ISceneDescription {
 		this.content = content;
 	}
 
-	@Deprecated
+	/*@Deprecated
 	public static LayoutContent fixed(Object key, double weight, double margin, Content content) {
 		return new LayoutContent(key, weight, 0, margin, content);
 	}
@@ -29,18 +29,18 @@ public class LayoutContent implements ISceneDescription {
 	@Deprecated
 	public static LayoutContent stretch(Object key, double weight, double margin, Content content) {
 		return new LayoutContent(key, 0, weight, margin, content);
-	}
+	}*/
 
-	public static ContentUpdater fixed(Object key, double width, double margin, ISceneDescriptionUpdater updater) {
+	public static ContentUpdater fixed(Object key, double width, double size, ISceneDescriptionUpdater updater) {
 		ISceneDescriptionUpdater sub = updater.getSubLayoutUpdater(key);
-		//sub.setMargin(margin);
+		sub.setMargin((1 - size) / 2);
 		sub.setWeights(width, 1d, 0d);
 		return sub.getContentUpdater();
 	}
 
-	public static ContentUpdater stretch(Object key, double weight, double margin, ISceneDescriptionUpdater updater) {
+	public static ContentUpdater stretch(Object key, double weight, double size, ISceneDescriptionUpdater updater) {
 		ISceneDescriptionUpdater sub = updater.getSubLayoutUpdater(key);
-		//sub.setMargin(margin);
+		sub.setMargin((1 - size) / 2);
 		sub.setWeights(0d, 1d, weight);
 		return sub.getContentUpdater();
 	}

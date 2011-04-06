@@ -65,11 +65,12 @@ public class LayoutSceneAnimator implements ISceneLayout {
 		this.layers = update.getLayers();
 	}
 	
-	public void advance(double advance) {
-		this.stack.advance(advance);
+	public boolean advance(double advance) {
+		boolean updated = this.stack.advance(advance);
 		for (LayoutSceneAnimator sub : subs.values()) {
-			sub.advance(advance);
+			updated |= sub.advance(advance);
 		}
+		return updated;
 	}
 
 	@Override

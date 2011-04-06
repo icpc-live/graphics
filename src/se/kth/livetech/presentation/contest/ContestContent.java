@@ -13,15 +13,19 @@ public class ContestContent {
 	public ContestRef getContestRef() {
 		return this.contestRef;
 	}
+	
+	public void problemLabel(final int problem, ContentUpdater updater) {
+		ProblemScoreContent.label(this.contestRef, problem, updater);
+	}
 
 	public void problemScore(final int team, final int problem, ContentUpdater updater) {
 		ProblemScoreContent.score(this.contestRef, team, problem, updater);
 	}
 
-	@Deprecated
+	/*@Deprecated
 	public Content getProblemScore(final int team, final int problem) {
 		return new ProblemScoreContent(this.contestRef, team, problem);
-	}
+	}*/
 	
 	public void teamRank(final int team, ContentUpdater updater) {
 		TeamScoreContent.rank(this.contestRef, team, updater);

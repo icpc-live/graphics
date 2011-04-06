@@ -52,8 +52,10 @@ public class LayoutPositioner {
 
 				switch (description.getDirection()) {
 				case ON_TOP: {
+					Rectangle2D rel = new Rectangle2D.Double();
+					rel.setRect(0, 0, marginRect.getWidth(), marginRect.getHeight());
 					for (ISceneDescription c : description.getSubs()) {
-						subScenes.add(position(c, marginRect));
+						subScenes.add(position(c, rel));
 					}
 					break;
 				}

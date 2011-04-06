@@ -205,7 +205,7 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 	}
 
 	@Override
-	public ISceneDescriptionUpdater getSubLayoutUpdater(Object key) {
+	public SceneDescription getSubLayoutUpdater(Object key) {
 		SceneDescription sub = this.subLayouts.get(key);
 		if (sub == null) {
 			sub = new SceneDescription(key);

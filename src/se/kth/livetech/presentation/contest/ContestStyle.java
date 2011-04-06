@@ -24,6 +24,7 @@ public enum ContestStyle {
 	countdown,
 	winner,
 	title,
+	backgroundImage,
 	;
 
 	public static ColoredTextBox.Style textBoxStyle(ContestStyle style) {

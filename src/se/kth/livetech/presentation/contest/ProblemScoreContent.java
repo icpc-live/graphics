@@ -3,12 +3,19 @@ package se.kth.livetech.presentation.contest;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.TeamScore;
-import se.kth.livetech.presentation.layout.Content;
+//import se.kth.livetech.presentation.layout.Content;
 import se.kth.livetech.presentation.layout.ISceneDescriptionUpdater.ContentUpdater;
 
-public class ProblemScoreContent extends Content.Text {
-	private ContestRef contestRef;
-	int team, problem;
+public class ProblemScoreContent { // extends Content.Text {
+	//private ContestRef contestRef;
+	//private int team, problem;
+
+	public static void label(ContestRef contestRef, int problem, ContentUpdater updater) {
+		Contest contest = contestRef.get();
+		String name = contest.getProblem(problem).getName();
+		updater.setText(name);
+		updater.setStyle(ContestStyle.title);
+	}
 
 	public static void score(ContestRef contestRef, int team, int problem, ContentUpdater updater) {
 		Contest contest = contestRef.get();
@@ -32,6 +39,7 @@ public class ProblemScoreContent extends Content.Text {
 		}
 	}
 	
+	/*
 	@Deprecated
 	public ProblemScoreContent(ContestRef contestRef, int team, int problem) {
 		this.contestRef = contestRef;
@@ -71,5 +79,5 @@ public class ProblemScoreContent extends Content.Text {
 		} else {
 			return ContestStyle.none;
 		}
-	}
+	}*/
 }

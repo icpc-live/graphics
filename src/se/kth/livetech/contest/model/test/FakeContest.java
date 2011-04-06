@@ -20,6 +20,7 @@ import se.kth.livetech.util.Frame;
 
 
 public class FakeContest extends Thread {
+	final static boolean SCREENSHOTS = true;
 
 	final static int teams = 100;
 	final static int problems = 12;
@@ -154,6 +155,30 @@ public class FakeContest extends Thread {
 		else {
 			frame.pack();
 			frame.setVisible(true);
+		}
+		
+		if (SCREENSHOTS) {
+			new Thread(new Runnable() {
+				public void run() {
+					try {
+						Thread.sleep(5000);
+					} catch (InterruptedException e) {
+						throw new RuntimeException(e);
+					}
+					lp.queue = false;
+					lp.board = true;
+					lp.screenshot();
+					lp.board = false;
+					lp.screenshot();
+					lp.queue = true;
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+						throw new RuntimeException(e);
+					}
+					lp.screenshot();
+				}
+			}).start();
 		}
 	}
 }

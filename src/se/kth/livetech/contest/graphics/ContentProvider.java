@@ -137,6 +137,11 @@ public class ContentProvider {
 		Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
 		return teamName;
 	}
+	
+	public static Renderable getInterviewedRenderable(String name) {
+		Renderable interviewedName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
+		return interviewedName;
+	}
 
 	public static final double RECENT_TIME = 5000; // ms
 	public static final double RECENT_MID_TIME = 500; // ms

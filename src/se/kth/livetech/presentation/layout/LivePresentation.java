@@ -59,7 +59,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		final VLCView cam = new VLCView(base, mainFrame);
 		final ClockView clockPanel = new ClockView(base.get("clockrect"), c, time);
 		final LogoPresentation logoPanel = new LogoPresentation(LogoPresentation.Logo.icpc, base);
-		final InterviewPresentation interview = new InterviewPresentation(base);
+		final InterviewPresentation interview = new InterviewPresentation(c, base);
 		final WinnerPresentation winnerPresentation = new WinnerPresentation(base);
 		final JudgeQueueTest judgeQueue = new JudgeQueueTest();
 		final LayoutPresentation layout = new LayoutPresentation();

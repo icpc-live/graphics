@@ -167,16 +167,21 @@ public class FakeContest extends Thread {
 					}
 					lp.queue = false;
 					lp.board = true;
-					lp.screenshot();
+					lp.screenshot("scoreboard");
 					lp.board = false;
-					lp.screenshot();
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						throw new RuntimeException(e);
+					}
+					lp.screenshot("team");
 					lp.queue = true;
 					try {
 						Thread.sleep(3000);
 					} catch (InterruptedException e) {
 						throw new RuntimeException(e);
 					}
-					lp.screenshot();
+					lp.screenshot("judgequeue");
 				}
 			}).start();
 		}

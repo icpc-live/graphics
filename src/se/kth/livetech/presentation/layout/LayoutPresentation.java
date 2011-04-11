@@ -52,13 +52,16 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		repaint();
 	}
 	
-	public synchronized void screenshot() {
+	boolean screenshot;
+	
+	public synchronized void screenshot(String name) {
 		int W = 1280, H = 720;
 		BufferedImage target = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) target.getGraphics();
 		this.anim = null; // reset animation for now
+		screenshot = true;
 		paintComponent(g, W, H);
-		File shot = new File("screenshot-" + System.currentTimeMillis() + ".png");
+		File shot = new File("screenshot-" + name + "-" + System.currentTimeMillis() / 1000 + ".png");
 		try {
 			ImageIO.write(target, "png", shot);
 		} catch (IOException e) {
@@ -68,10 +71,16 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 	
 	@Override
 	public synchronized void paintComponent(Graphics gr) {
+		screenshot = false;
 		paintComponent(gr, getWidth(), getHeight());
 	}
 	public void paintComponent(Graphics gr, int width, int height) {
-		super.paintComponent(gr);
+		if (screenshot) {
+			gr.setColor(getBackground());
+			gr.fillRect(0, 0, width, height);
+		} else {
+			super.paintComponent(gr);
+		}
 		advance();
 		long now = System.currentTimeMillis();
 
@@ -98,7 +107,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 			content.setImageName("back/080409-DH-1200-_08D0633.jpg");
 			content.setLayer(-2);
 			content.setStyle(ContestStyle.logo); // FIXME, this causes image rendering
-			if (!queue) {
+			if (!queue || screenshot) {
 				paintScene(g, rect, backImage);
 			}
 
@@ -110,9 +119,11 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		}
 
 		paintScene(g, row, scene);
-		
+
+		/*
 		g.setColor(Color.RED);
 		g.drawLine((int) (now % getWidth()), 0, (int) (System.currentTimeMillis() % getWidth()), 10);
+		*/
 		
 		if (this.anim.advance(0)) {
 			repaint();

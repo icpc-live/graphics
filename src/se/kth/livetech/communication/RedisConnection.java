@@ -1,5 +1,7 @@
 package se.kth.livetech.communication;
 
+import java.io.IOException;
+import java.net.UnknownHostException;
 import java.util.Set;
 
 import redis.clients.jedis.Jedis;
@@ -45,21 +47,43 @@ public class RedisConnection {
 	 * @param listener
 	 *            Listener for updates
 	 */
-	public void subscribe(final RedisClient listener, final String... channels) {
+	public void subscribe(final JedisPubSub listener, final String... channels) {
 		Thread t = new Thread() {
+			@Override
 			public void run() {
 				while(true){
-					Runnable fetcher = listener.getFetcher();
-					synchronized(fetcher){
-						fetcher.notify();
-						//TODO: how to do this properly with Jedis?
-					}
+					
 					Jedis j = getJedisInstance();
 					try {
 						j.subscribe(listener, channels);
 					}
-					catch(redis.clients.jedis.JedisException e){
+					catch(redis.clients.jedis.JedisException e) {
+						//e.printStackTrace();
+						try {
+							j.disconnect();
+						} catch (IOException e2) {
+							// TODO Auto-generated catch block
+							e2.printStackTrace();
+						}
 						System.out.println("Dropped connection - reconnecting.");
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						if (!j.isConnected())
+							System.out.println("Reconnecting.");
+							try {
+								j.connect();
+							} catch (UnknownHostException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+
 					}
 					returnJedisInstance(j);
 				}
@@ -158,27 +182,33 @@ public class RedisConnection {
 			System.out.println("KEY: " + key + ", VALUE " + j.get(key));
 		}
 		JedisPubSub myListener = new JedisPubSub() {
+			@Override
 			public void onUnsubscribe(String arg0, int arg1) {
 				System.out.println("UNSUBSCRIBED: " + arg0);
 			}
 
+			@Override
 			public void onSubscribe(String arg0, int arg1) {
 				System.out.println("SUBSCRIBED: " + arg0);
 			}
 
+			@Override
 			public void onPUnsubscribe(String arg0, int arg1) {
 				System.out.println("PUNSUBSCRIBED: " + arg0);
 			}
 
+			@Override
 			public void onPSubscribe(String arg0, int arg1) {
 				System.out.println("PSUBSCRIBED: " + arg0);
 			}
 
+			@Override
 			public void onPMessage(String arg0, String arg1, String arg2) {
 				System.out.println("PMESSAGE: " + arg2 + " on " + arg0 + " = "
 						+ arg1);
 			}
 
+			@Override
 			public void onMessage(String arg0, String arg1) {
 				System.out.println("MESSAGE: " + arg1 + " on " + arg0);
 			}

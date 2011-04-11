@@ -38,25 +38,6 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	public void connect() {
 		redis = new RedisConnection(redisHost, redisPort);
 		localState.addListeners(this);
-
-		this.fetcher = new Runnable() {
-			@Override
-			public void run() {
-				while(true){
-					synchronized(this){
-						try {
-							wait();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-					for(String s: redis.keys("live.*")) {//TODO: check prefix
-						onMessage("property", s); //emulate received messages for all keys
-					}
-				}
-			}
-		};
-		new Thread(fetcher).start();
 		
 		redis.subscribe(this, "property", "contest");
 
@@ -173,7 +154,11 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	public void onPUnsubscribe(String channel, int subscribedChannels) {}
 
 	@Override
-	public void onSubscribe(String channel, int subscribedChannels) {}
+	public void onSubscribe(String channel, int subscribedChannels) {
+		for(String s: redis.keys("live.*")) {//TODO: check prefix
+			onMessage("property", s); //emulate received messages for all keys
+		}
+	}
 
 	@Override
 	public void onUnsubscribe(String channel, int subscribedChannels) {}

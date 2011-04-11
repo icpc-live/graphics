@@ -16,7 +16,12 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	private RedisConnection redis;
 	private LiveState localState;
 	private NodeId localNode;
+	private Runnable fetcher;
 	
+	public Runnable getFetcher() {
+		return fetcher;
+	}
+
 	public RedisClient(LiveState localState, NodeId localNode, String redisHost) {
 		this.redisHost = redisHost;
 		this.localState = localState;
@@ -33,7 +38,28 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	public void connect() {
 		redis = new RedisConnection(redisHost, redisPort);
 		localState.addListeners(this);
+
+		this.fetcher = new Runnable() {
+			@Override
+			public void run() {
+				while(true){
+					synchronized(this){
+						try {
+							wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+					for(String s: redis.keys("live.*")) {//TODO: check prefix
+						onMessage("property", s); //emulate received messages for all keys
+					}
+				}
+			}
+		};
+		new Thread(fetcher).start();
+		
 		redis.subscribe(this, "property", "contest");
+
 		for(String s: redis.keys("live.*")) {//TODO: check prefix
 			onMessage("property", s); //emulate received messages for all keys
 		}

@@ -45,12 +45,24 @@ public class RedisConnection {
 	 * @param listener
 	 *            Listener for updates
 	 */
-	public void subscribe(final JedisPubSub listener, final String... channels) {
+	public void subscribe(final RedisClient listener, final String... channels) {
 		Thread t = new Thread() {
 			public void run() {
-				Jedis j = getJedisInstance();
-				j.subscribe(listener, channels);
-				returnJedisInstance(j);
+				while(true){
+					Runnable fetcher = listener.getFetcher();
+					synchronized(fetcher){
+						fetcher.notify();
+						//TODO: how to do this properly with Jedis?
+					}
+					Jedis j = getJedisInstance();
+					try {
+						j.subscribe(listener, channels);
+					}
+					catch(redis.clients.jedis.JedisException e){
+						System.out.println("Dropped connection - reconnecting.");
+					}
+					returnJedisInstance(j);
+				}
 			}
 		};
 		t.setDaemon(true);

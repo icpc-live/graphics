@@ -161,7 +161,7 @@ public class FakeContest extends Thread {
 			new Thread(new Runnable() {
 				public void run() {
 					try {
-						Thread.sleep(5000);
+						Thread.sleep(50000);
 					} catch (InterruptedException e) {
 						throw new RuntimeException(e);
 					}

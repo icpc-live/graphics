@@ -13,6 +13,7 @@ import se.kth.livetech.presentation.contest.ContestStyle;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.ImageResource;
+import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.presentation.graphics.Renderable;
 
 public class LayoutSceneRenderer implements Renderable {
@@ -39,7 +40,7 @@ public class LayoutSceneRenderer implements Renderable {
 		if (!scene.getLayers().contains(layer)) {
 			return;
 		}
-
+		
 		AffineTransform at = g.getTransform();
 		g.translate(scene.getBounds().getX(), scene.getBounds().getY());
 		Content content = scene.getContent();
@@ -67,8 +68,8 @@ public class LayoutSceneRenderer implements Renderable {
 				r = new TestcaseStatusRenderer(status);
 			} else {
 				ContestStyle style = (ContestStyle) content.getStyle();
-				Color row1 = ICPCColors.BG_COLOR_1;
-				Color row2 = ICPCColors.BG_COLOR_2;
+				Color row1 = ICPCColors.BG_COLOR_1_TR;
+				Color row2 = ICPCColors.BG_COLOR_2_TR;
 				if (style == ContestStyle.rowBackground1) {
 					r = new RowFrameRenderer(row1, row2);
 				} else {
@@ -79,6 +80,7 @@ public class LayoutSceneRenderer implements Renderable {
 			// FIXME: Do not add .99!
 			d.setSize(scene.getBounds().getWidth() + .99, scene.getBounds().getHeight() + .99);
 			if (d.getWidth() > 0 && d.getHeight() > 0) {
+				RenderCache.setQuality(g);
 				r.render(g, d);
 			} else {
 				// FIXME

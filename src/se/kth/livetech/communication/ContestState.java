@@ -15,6 +15,10 @@ public class ContestState implements AttrsUpdateListener {
 		listeners = new LinkedList<AttrsUpdateListener>();
 	}
 
+	public List<AttrsUpdateEvent> getEvents() {
+		return events;
+	}
+
 	public synchronized void addAttrsUpdateListener(AttrsUpdateListener listener) {
 		for (AttrsUpdateEvent event : events) {
 			listener.attrsUpdated(event);

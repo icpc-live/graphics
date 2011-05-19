@@ -8,20 +8,32 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ICPCColors;
+import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
+import se.kth.livetech.contest.model.Team;
+import se.kth.livetech.contest.model.TeamScore;
+import se.kth.livetech.presentation.animation.AnimationStack;
+import se.kth.livetech.presentation.animation.RecentChange;
 import se.kth.livetech.presentation.contest.ContestComponents;
 import se.kth.livetech.presentation.contest.ContestContent;
 import se.kth.livetech.presentation.contest.ContestRef;
 import se.kth.livetech.presentation.contest.ContestStyle;
 import se.kth.livetech.presentation.graphics.RenderCache;
+import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
 
 @SuppressWarnings("serial")
@@ -29,23 +41,140 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 	public static final boolean DEBUG = false;
 	
 	public static final double ANIMATION_TIME = 1000; // ms
+    
+    static final int SCROLL_KEY = -1; // FIXME: hack, remove!
+    static final int SCROLL_EXTRA = 3; // FIXME: hack, remove!
+    final int ROWS = 21;
+
+
+
 
 	public boolean board = true;
 	public boolean queue = false;
 	
-	ContestContent content;
+    public int highlightedRow;
+    public int highlightedProblem;
+    private Map<Integer, Color> rowColorations;
 
-	public LayoutPresentation() {
+	ContestContent content;
+    Contest contest;
+
+    IProperty base;
+    List<ContestUpdateListener> sublisteners = new ArrayList<ContestUpdateListener>();
+    List<PropertyListener> propertyListeners;
+
+	public LayoutPresentation(Contest c, IProperty base) {
+        this.contest = c;
 		this.content = new ContestContent(new ContestRef());
 		this.setBackground(ICPCColors.SCOREBOARD_BG);				//(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
+
+
+
+        propertyListeners = new ArrayList<PropertyListener>();
+        final IProperty scoreBase = base.get("score");
+
+        final PropertyListener pageListener = new PropertyListener() {
+            @Override
+            public void propertyChanged(IProperty changed) {
+                int page = changed.getIntValue();
+                setPage(page);
+            }
+        };
+        propertyListeners.add(pageListener);
+        scoreBase.get("page").addPropertyListener(pageListener);
+
+        final PropertyListener rowListener = new PropertyListener() {
+            @Override
+            public void propertyChanged(IProperty changed) {
+                highlightedRow = changed.getIntValue();
+                startRow = Math.max(highlightedRow - ROWS + SCROLL_EXTRA, 0);
+                advance();
+                stack.setPosition(SCROLL_KEY, (int) startRow);
+                repaint();
+            }
+        };
+        propertyListeners.add(rowListener);
+        scoreBase.get("highlightRow").addPropertyListener(rowListener);
+
+        final PropertyListener problemListener = new PropertyListener() {
+            @Override
+            public void propertyChanged(IProperty changed) {
+                highlightedProblem = changed.getIntValue();
+                repaint();
+            }
+        };
+        propertyListeners.add(problemListener);
+        scoreBase.get("highlightProblem").addPropertyListener(problemListener);
+
+        final Map<String, Color> colorMap = new HashMap<String, Color>();
+        colorMap.put("bronze", ICPCColors.BRONZE);
+        colorMap.put("silver", ICPCColors.SILVER);
+        colorMap.put("gold", ICPCColors.GOLD);
+
+        final IProperty colorProperties = scoreBase.get("color");
+        final PropertyListener colorListener = new PropertyListener() {
+            @Override
+            public void propertyChanged(IProperty changed) {
+                for(IProperty prop : colorProperties.getSubProperties()) {
+                    String name = prop.getName();
+                    name = name.substring(name.lastIndexOf('.')+1);
+                    Integer row = Integer.parseInt(name);
+                    Color color = colorMap.get(prop.getValue());
+                    rowColorations.put(row, color);
+                }
+                repaint();
+            }
+        };
+        propertyListeners.add(colorListener);
+        colorProperties.addPropertyListener(colorListener);
+
+        this.rowColorations = new TreeMap<Integer, Color>();
+
+
+
+
+
+
+
+
+
+    }
+
+    public void setPage(int page) {
+        startRow = Math.max(page - 1, 0)*ROWS;
+        advance();
+        stack.setPosition(SCROLL_KEY, (int) startRow);
+        repaint();
 	}
 	
 	Set<ContestUpdateListener> listeners = new HashSet<ContestUpdateListener>();
+    AnimationStack<Integer, Integer> stack = new AnimationStack<Integer, Integer>();
+    RecentChange<Integer, TeamScore> recent = new RecentChange<Integer, TeamScore>();
+
+    public void reset() {
+        stack = new AnimationStack<Integer, Integer>();
+        recent = new RecentChange<Integer, TeamScore>();
+    }
+
+
+    private synchronized void updateTeams() {
+        //contest = e.getNewContest();
+        //this.content.getContestRef().set(contest);
+        for (int i = 1; i <= contest.getTeams().size(); ++i) {
+            Team team = contest.getRankedTeam(i);
+            int id = team.getId();
+            stack.setPosition(id, i);
+            recent.set(id, contest.getTeamScore(id));
+        }
+    }
 
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
-		this.content.getContestRef().set(e.getNewContest());
+        updateTeams();
+        //setContest(e);
+        this.contest = e.getNewContest();
+		this.content.getContestRef().set(this.contest);
 		for (ContestUpdateListener listener : this.listeners) {
 			listener.contestUpdated(e);
 		}
@@ -144,7 +273,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		ISceneDescriptionUpdater backgroundUpdater;
 		backgroundUpdater = updater.getSubLayoutUpdater(-1);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
-		ContestComponents.teamBackground(this.content, 1, backgroundUpdater);
+		ContestComponents.teamBackground(this.content, 1, backgroundUpdater, false);
 
 		updater.finishGeneration();
 		if (DEBUG) DebugTrace.trace(updater);
@@ -167,7 +296,6 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 	}
 	
 	public SceneDescription scoreboard() {
-
 		SceneDescription updater = new SceneDescription(0);
 		updater.beginGeneration();
 		updater.setDirection(ISceneDescription.Direction.ON_TOP);
@@ -185,11 +313,22 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		}
 		*/
 
+        Contest c = this.contest;
 		ISceneDescriptionUpdater backgroundUpdater;
 		backgroundUpdater = updater.getSubLayoutUpdater(-1);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
+        boolean glow;
 		for (int i = 1; i <= 17; ++i) {
-			ContestComponents.teamBackground(this.content, i, backgroundUpdater);
+            glow = false;
+            Team team = c.getRankedTeam(i);
+            int id = team.getId();
+            TeamScore ts = c.getTeamScore(id);
+            TeamScore prev = recent.get(id);
+            if (ts.getSolved() != prev.getSolved()) {
+                glow = true;
+            }
+			ContestComponents.teamBackground(this.content, i, backgroundUpdater, glow);
+
 		}
 		
 		updater.finishGeneration();
@@ -222,6 +361,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 	
 	boolean firstPaint = true;
 	long lastTime;
+    double startRow = 0;
 	public void advance() {
 		if (this.anim == null) {
 			repaint();
@@ -237,6 +377,8 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 			long dt = now - this.lastTime;
 			this.lastTime = now;
 			updated = this.anim.advance(dt / ANIMATION_TIME);
+            //updated |= this.stack.advance(dt / ANIMATION_TIME);
+            //updated |= this.recent.advance(dt / RECENT_TIME);
 		}
 		
 		if (updated) {

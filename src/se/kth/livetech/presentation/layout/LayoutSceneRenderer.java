@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 
+import se.kth.livetech.contest.graphics.ContentProvider;
+import se.kth.livetech.contest.graphics.GlowRenderer;
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.contest.graphics.RowFrameRenderer;
@@ -76,10 +78,16 @@ public class LayoutSceneRenderer implements Renderable {
 				}
 			}
 			Dimension d = new Dimension();
+            Dimension d2 = new Dimension();
+            Renderable glowRenderer = new GlowRenderer(ICPCColors.YELLOW, ContentProvider.STATS_GLOW_MARGIN, false, 0.5);
 			// FIXME: Do not add .99!
-			d.setSize(scene.getBounds().getWidth() + .99, scene.getBounds().getHeight() + .99);
+			d.setSize(scene.getBounds().getWidth(), scene.getBounds().getHeight());
 			if (d.getWidth() > 0 && d.getHeight() > 0) {
 				r.render(g, d);
+                if(content.getStyle() == ContestStyle.glowBackground) {
+                    d2.setSize(scene.getBounds().getWidth() + .99, scene.getBounds().getHeight() + .99);
+                    glowRenderer.render(g, d2);
+                }
 			} else {
 				// FIXME
 			}

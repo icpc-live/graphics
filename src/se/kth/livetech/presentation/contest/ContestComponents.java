@@ -45,8 +45,8 @@ public class ContestComponents {
 		return r;
 	}*/
 
-	public static void teamBackground(ContestContent content, int row, ISceneDescriptionUpdater u) {
-		content.rowBackground(row, LayoutContent.stretch(-row, 1, 1, u));
+	public static void teamBackground(ContestContent content, int row, ISceneDescriptionUpdater u, boolean glow) {
+		content.rowBackground(row, LayoutContent.stretch(-row, 1, 1, u), glow);
 	}
 	
 	/*@Deprecated

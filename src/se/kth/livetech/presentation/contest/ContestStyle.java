@@ -25,6 +25,7 @@ public enum ContestStyle {
 	winner,
 	title,
 	backgroundImage,
+    glowBackground,
 	;
 
 	public static ColoredTextBox.Style textBoxStyle(ContestStyle style) {

@@ -62,7 +62,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		final InterviewPresentation interview = new InterviewPresentation(c, base);
 		final WinnerPresentation winnerPresentation = new WinnerPresentation(base);
 		final JudgeQueueTest judgeQueue = new JudgeQueueTest();
-		final LayoutPresentation layout = new LayoutPresentation();
+		final LayoutPresentation layout = new LayoutPresentation(c, base);
 
 		this.sublisteners.add(scoreboard);
 		this.sublisteners.add(teamPresentation);

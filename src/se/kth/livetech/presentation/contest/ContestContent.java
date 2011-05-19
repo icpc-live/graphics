@@ -81,7 +81,7 @@ public class ContestContent {
 		return TeamScoreContent.getScore(this.contestRef, team);
 	}
 	
-	public void rowBackground(final int row, ContentUpdater updater) {
+	public void rowBackground(final int row, ContentUpdater updater, boolean glow) {
 		updater.setText(null);
 
 		if (row % 2 == 0) {
@@ -89,6 +89,10 @@ public class ContestContent {
 		} else {
 			updater.setStyle(ContestStyle.rowBackground2);
 		}
+
+        if(glow) {
+            updater.setStyle(ContestStyle.glowBackground);
+        }
 		
 		updater.setLayer(-1);
 	}

@@ -116,7 +116,7 @@ public class JudgeQueue implements ContestUpdateListener {
 			SceneDescription row = rowAndBack.getSubLayoutUpdater(0);
 			row.setDirection(ISceneDescription.Direction.HORIZONTAL);
 
-			ContestComponents.teamBackground(content, i, rowAndBack.getSubLayoutUpdater(-1));
+			ContestComponents.teamBackground(content, i, rowAndBack.getSubLayoutUpdater(-1), false);
 
 			Team team = c.getTeam(js.run.getTeam());
 			int teamId = team.getId();

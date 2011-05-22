@@ -139,7 +139,7 @@ public class FakeContest extends Thread {
 		PropertyHierarchy hierarchy = new PropertyHierarchy();
 		IProperty base = hierarchy.getProperty("live.clients.noname");
 		final ScoreboardPresentation bt = new ScoreboardPresentation(tc.getContest(), base);
-		final LayoutPresentation lp = new LayoutPresentation();
+		final LayoutPresentation lp = new LayoutPresentation(tc.getContest(), base);
 		fc.addContestUpdateListener(new ContestUpdateListener() {
 			@Override
 			public void contestUpdated(ContestUpdateEvent e) {

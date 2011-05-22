@@ -1,1 +1,2 @@
-java -Xmx1000m $JVM_ARGS -cp lib/jewelcli-0.6.jar:lib/libthrift.jar:thrift/gen-java.jar:lib/slf4j-api-1.5.8.jar:lib/slf4j-simple-1.5.8.jar:lib/org-netbeans-swing-outline.jar:lib/tightvnc.jar:bin/:lib/jedis-1.5.0.jar:lib/commons-pool-1.5.5.jar se.kth.livetech.communication.LiveClient "$@"
+DECKLINK_CP=:magiclib/magiclib.jar:magiclib/jna.jar
+java -Xmx1000m $JVM_ARGS -cp lib/jewelcli-0.6.jar:lib/libthrift.jar:thrift/gen-java.jar:lib/slf4j-api-1.5.8.jar:lib/slf4j-simple-1.5.8.jar:lib/org-netbeans-swing-outline.jar:lib/tightvnc.jar:bin/:lib/jedis-1.5.0.jar:lib/commons-pool-1.5.5.jar"$DECKLINK_CP" se.kth.livetech.communication.LiveClient "$@"

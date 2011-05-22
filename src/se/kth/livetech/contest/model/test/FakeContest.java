@@ -26,8 +26,9 @@ public class FakeContest extends Thread {
 	final static int problems = 12;
 	final static int testcases = 10;
 	final static boolean FULL_SCREEN = false;
+	final static double TIME_SCALE_FACTOR = 20; // TODO
 	TestContest test;
-	
+
 	private static class ProblemStatus {
 		int id;
 		int counter;

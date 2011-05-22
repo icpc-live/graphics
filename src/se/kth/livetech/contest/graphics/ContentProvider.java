@@ -69,6 +69,19 @@ public class ContentProvider {
 		return new ColoredTextBox.BaseStyle(null, ICPCFonts.HEADER_FONT, ColoredTextBox.Style.Shape.roundRect, alignment);
 	}
 
+	public static ColoredTextBox.Style getProblemColorStyle(boolean judged, boolean solved, int problem) {
+		Color color = ICPCColors.PROBLEM_COLORS[problem];
+		Color fgColor = Color.WHITE;
+		if (!judged) {
+			color = new Color(color.getRed(), color.getGreen(), (255 + color.getBlue()) / 2, color.getAlpha() / 2);
+			fgColor = ICPCColors.PENDING_COLOR;
+		} else if (!solved) {
+			color = new Color((255 + color.getRed()) / 2, color.getGreen(), color.getBlue(), color.getAlpha() / 2);
+			fgColor = ICPCColors.FAILED_COLOR;
+		}
+		return new ColoredTextBox.BaseStyle(color, fgColor, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
+	}
+
 	public static String getProblemScoreText(ProblemScore problemScore, boolean showProblemLetter) {
 		if (problemScore == null) {
 			return "";

@@ -43,6 +43,9 @@ public class ICPCColors {
 	public static final Color BG_COLOR_1 = new Color(60, 60, 120, 255);				//(90,90,191,255);
 	public static final Color BG_COLOR_2 = new Color(40, 40, 90, 255);				//(30,30,191,255);
 
+	public static final Color BG_COLOR_1_TR = new Color(60, 60, 120, 207);				//(90,90,191,255);
+	public static final Color BG_COLOR_2_TR = new Color(40, 40, 90, 207);				//(30,30,191,255);
+
 	public static final Color TRANSPARENT = new Color(0, 0, 0, 0);
 	public static final Color COLOR_KEYING = new Color(0, 255, 0, 255);
 
@@ -51,14 +54,14 @@ public class ICPCColors {
 		new Color(99,0, 113),
 		new Color(251, 161, 178),
 		new Color(164,164,164),
-		//new Color(192,192,192),
 		new Color(255,84,232),
 		new Color(253,128,7),
 		Color.WHITE,
 		Color.BLACK, 
 		Color.YELLOW,
 		new Color(240,0,56),
-		new Color(3,221,62)
+		new Color(3,221,62),
+		new Color(192,192,192),
 	};
 
 	public static final Color BG_COLOR_CLOCK = new Color(40, 40, 90, 150);

@@ -27,7 +27,9 @@ import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.presentation.animation.AnimationStack;
 import se.kth.livetech.presentation.animation.RecentChange;
+import se.kth.livetech.contest.model.stats.SubmissionStats;
 import se.kth.livetech.presentation.contest.ContestComponents;
+import se.kth.livetech.presentation.contest.ContestComponents.Parts;
 import se.kth.livetech.presentation.contest.ContestContent;
 import se.kth.livetech.presentation.contest.ContestRef;
 import se.kth.livetech.presentation.contest.ContestStyle;
@@ -211,6 +213,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 			super.paintComponent(gr);
 		}
 		advance();
+		@SuppressWarnings("unused")
 		long now = System.currentTimeMillis();
 
 		if (this.content.getContestRef().get() == null) {
@@ -228,7 +231,17 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		SceneDescription scene;
 
 		if (board) {
-			scene = scoreboard();
+			boolean timeline = System.currentTimeMillis() / 20000 % 2 == 0;
+			if (!timeline) {
+				boolean cumulative = System.currentTimeMillis() / 10000 % 2 == 0;
+				//scene = scoreboard();
+				scene = problemboard();
+				//scene = submissionGraph(cumulative);
+			} else {
+				boolean zoomedOut = System.currentTimeMillis() / 5000 % 2 == 0;
+				boolean problemColors = System.currentTimeMillis() / 10000 % 2 == 0;
+				scene = timeline(zoomedOut, problemColors);
+			}
 		} else {
 			SceneDescription backImage = new SceneDescription(-2);
 			ISceneDescriptionUpdater.ContentUpdater content;
@@ -329,6 +342,88 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
             }
 			ContestComponents.teamBackground(this.content, i, backgroundUpdater, glow);
 
+		}
+		
+		updater.finishGeneration();
+		if (DEBUG) DebugTrace.trace(updater);
+		
+		return updater;
+	}
+	
+	public SceneDescription problemboard() {
+
+		SceneDescription updater = new SceneDescription(0);
+		updater.beginGeneration();
+		updater.setDirection(ISceneDescription.Direction.ON_TOP);
+
+		ISceneDescriptionUpdater problemsUpdater;
+		problemsUpdater = updater.getSubLayoutUpdater(0);
+		// Note: this overrides the otherwise calculated height!
+		problemsUpdater.setWeights(0, 17, 1);
+		ContestComponents.problemboard(this.content, problemsUpdater);
+
+		ISceneDescriptionUpdater backgroundUpdater;
+		backgroundUpdater = updater.getSubLayoutUpdater(-1);
+		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
+		for (int i = 1; i <= 17; ++i) {
+			ContestComponents.teamBackground(this.content, i, backgroundUpdater);
+		}
+		
+		updater.finishGeneration();
+		if (DEBUG) DebugTrace.trace(updater);
+		
+		return updater;
+	}
+
+	public SceneDescription timeline(boolean zoomedOut, boolean problemColors) {
+
+		SceneDescription updater = new SceneDescription(0);
+		updater.beginGeneration();
+		updater.setDirection(ISceneDescription.Direction.ON_TOP);
+
+		ISceneDescriptionUpdater problemsUpdater;
+		problemsUpdater = updater.getSubLayoutUpdater(0);
+		// Note: this overrides the otherwise calculated height!
+		problemsUpdater.setWeights(0, zoomedOut ? this.content.getContestRef().get().getTeams().size() : 17, 1);
+		ContestComponents.timeline(this.content, problemsUpdater, problemColors);
+		/*
+		teamsUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
+		for (int i = 1; i <= 17; ++i) {
+			int team = this.content.getContestRef().get().getRankedTeam(i).getId();
+			ContestComponents.teamRow(this.content, team, false, teamsUpdater.getSubLayoutUpdater(team));
+		}
+		*/
+
+		ISceneDescriptionUpdater backgroundUpdater;
+		backgroundUpdater = updater.getSubLayoutUpdater(-1);
+		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
+		for (int i = 1; i <= 17; ++i) {
+			ContestComponents.teamBackground(this.content, i, backgroundUpdater);
+		}
+		
+		updater.finishGeneration();
+		if (DEBUG) DebugTrace.trace(updater);
+		
+		return updater;
+	}
+	
+	public SceneDescription submissionGraph(boolean cumulative) {
+		SceneDescription updater = new SceneDescription(0);
+		updater.beginGeneration();
+		updater.setDirection(ISceneDescription.Direction.ON_TOP);
+
+		ISceneDescriptionUpdater graphUpdater;
+		graphUpdater = updater.getSubLayoutUpdater(Parts.submissionGraph);
+		ContestComponents.submissionGraph(this.content, SubmissionStats.allProblems(), cumulative, Color.YELLOW, Color.GREEN, graphUpdater.getSubLayoutUpdater(-1));
+		for (int problem : this.content.getContestRef().get().getProblems()) {
+			ContestComponents.submissionGraph(this.content, SubmissionStats.oneProblem(problem), cumulative, Color.BLACK, ICPCColors.PROBLEM_COLORS[problem], graphUpdater.getSubLayoutUpdater(problem));
+		}
+
+		ISceneDescriptionUpdater backgroundUpdater;
+		backgroundUpdater = updater.getSubLayoutUpdater(-1);
+		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
+		for (int i = 1; i <= 1; ++i) {
+			ContestComponents.teamBackground(this.content, i, backgroundUpdater);
 		}
 		
 		updater.finishGeneration();

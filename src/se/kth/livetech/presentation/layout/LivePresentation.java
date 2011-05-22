@@ -35,6 +35,10 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		}
 	}
 	private Blank blankView = new Blank();
+	
+	public Component getCurrentView() {
+		return this.currentView;
+	}
 
 	public LivePresentation(Contest c, IProperty base, RemoteTime time, JFrame mainFrame) {
 		this.setLayout(null); //absolute positioning of subcomponents

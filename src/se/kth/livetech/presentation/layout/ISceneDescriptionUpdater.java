@@ -27,7 +27,14 @@ public interface ISceneDescriptionUpdater {
 	public interface ContentUpdater {
 		public void setText(String text);
 		public void setImageName(String name);
+		public GraphUpdater setGraph();
 		public void setStyle(Object style);
 		public void setLayer(int layer);
+	}
+	
+	public interface GraphUpdater {
+		public void setLineWidth(double lineWidth);
+		public void setLineStyle(Object lineStyle);
+		public void node(Object key, double x, double y, Object style);
 	}
 }

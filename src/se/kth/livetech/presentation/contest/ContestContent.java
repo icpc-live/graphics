@@ -1,5 +1,7 @@
 package se.kth.livetech.presentation.contest;
 
+import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.presentation.layout.Content;
 import se.kth.livetech.presentation.layout.ISceneDescriptionUpdater.ContentUpdater;
 
@@ -100,5 +102,45 @@ public class ContestContent {
 	@Deprecated
 	public Content getRowBackground(final int row) {
 		return TeamContent.rowBackground(row);
+	}
+
+	public void problemBoardSolved(int problem, int solved, ContentUpdater updater) {
+		updater.setText(solved > 0 ? "" + solved : "");
+		updater.setStyle(solved > 0 ? ContestStyle.solved : ContestStyle.none);
+	}
+	
+	public void problemBoardFailed(int problem, int failed, ContentUpdater updater) {
+		updater.setText(failed > 0 ? "" + failed : "");
+		updater.setStyle(failed > 0 ? ContestStyle.failed : ContestStyle.none);
+	}
+	
+	public void problemBoardPendings(int problem, int pendings, ContentUpdater updater) {
+		updater.setText(pendings > 0 ? "" + pendings : "");
+		updater.setStyle(pendings > 0 ? ContestStyle.pending : ContestStyle.none);
+	}
+	
+	public void problemBoardScore(int problem, int score, ContentUpdater updater) {
+		updater.setText(score > 0 ? "" + score : "");
+		updater.setStyle(ContestStyle.none);
+	}
+
+	public void runLetter(Contest c, Run r, ContentUpdater updater, boolean problemColors) {
+		String letter = c.getProblem(r.getProblem()).getName(); // FIXME: Problem letter!!!
+		updater.setText(letter);
+		if (problemColors) {
+			updater.setStyle(new ContestStyle.ProblemStyle(r.isJudged(), r.isSolved(), r.getProblem()));
+		} else {
+			updater.setStyle(r.isJudged() ? r.isSolved() ? ContestStyle.solved : ContestStyle.failed : ContestStyle.pending);
+		}
+	}
+	
+	public void space(ContentUpdater updater) {
+		final boolean SPACE_DEBUG = false;
+		if (SPACE_DEBUG) {
+			updater.setText("space");
+		} else {
+			updater.setText("");
+		}
+		updater.setStyle(ContestStyle.none);
 	}
 }

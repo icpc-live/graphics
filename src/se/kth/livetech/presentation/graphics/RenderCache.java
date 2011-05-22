@@ -94,6 +94,10 @@ public class RenderCache {
 				RenderingHints.VALUE_RENDER_QUALITY);
 		hints.put(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		/* Would want slight gradients to be dithered? Does not seem to help.
+		 * hints.put(RenderingHints.KEY_DITHERING,
+		 * 		RenderingHints.VALUE_DITHER_ENABLE);
+		 */
 	}
 	
 	public static void setQuality(Graphics2D g) {

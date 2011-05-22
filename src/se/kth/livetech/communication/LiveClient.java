@@ -9,14 +9,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import org.apache.thrift.transport.TTransportException;
 
+import se.kth.livetech.blackmagic.MagicPanel;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
 import se.kth.livetech.communication.thrift.NodeId;
-import se.kth.livetech.contest.feeder.NetworkFeed;
-import se.kth.livetech.contest.feeder.LogWriter;
 import se.kth.livetech.contest.feeder.LogFeed;
+import se.kth.livetech.contest.feeder.LogWriter;
+import se.kth.livetech.contest.feeder.NetworkFeed;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.model.test.FakeContest;
@@ -123,6 +127,13 @@ public class LiveClient {
 		int getScreen();
 		boolean isScreen();
 		
+		@Option(longName="magic")
+		boolean isMagic();
+		
+		@Option(longName="device")
+		int getDevice();
+		boolean isDevice();
+		
 		@Option(helpRequest=true)
 		boolean getHelp();
 		
@@ -148,6 +159,22 @@ public class LiveClient {
 			port = Integer.parseInt(parts[1]);
 		}
 	}
+	static Frame fullscreenFrame = null;
+	static JComponent magicComponent = null;
+	private static void mainComponent(String name, JComponent component, Options opts, Dimension dim) {
+		if (opts.isMagic()) {
+			magicComponent = component;
+		} else if (opts.isFullscreen()) {
+			fullscreenFrame = new Frame(name, component, null, false);
+		} else {
+			Frame f = new Frame(name, component, null, false);
+			if (dim != null) {
+				f.setPreferredSize(dim);
+			}
+			f.pack();
+			f.setVisible(true);
+		}
+	}
 	public static void main(String[] args) {
 		try {
 			// Parse options
@@ -162,7 +189,6 @@ public class LiveClient {
 			
 			boolean spiderFlag = opts.isSpider() || !opts.isArgs();
 			
-			Frame fullscreenFrame = null;
 
 			// Setup local node id
 			String name = opts.isName() ? opts.getName() : opts.isAutoName() ? null : "noname";
@@ -192,14 +218,7 @@ public class LiveClient {
 				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
 				final ScoreboardPresentation sp = new ScoreboardPresentation(c, prop_base);
 				contestListeners.add(sp);
-				Frame f = new Frame("TestContest", sp, null, false);
-				if (opts.isFullscreen()) {
-					fullscreenFrame = f;
-				}
-				else {
-					f.pack();
-					f.setVisible(true);
-				}
+				mainComponent("TestContest", sp, opts, null);
 			}
 			if (opts.isTestTeam()) {
 //				BROKEN:
@@ -208,7 +227,7 @@ public class LiveClient {
 //				contestListeners.add(tp);
 //				tp.setTeamId(1); // FIXME remove
 //				Frame f = new Frame("TeamPresentation", tp, null, false);
-//				if (opts.isFullscreen()) {
+//				if (fullscreenFlag) {
 //					fullscreenFrame = f;
 //				}
 //				else {
@@ -219,14 +238,7 @@ public class LiveClient {
 			if (opts.isTestJudgeQueue()) {
 				final JudgeQueueTest jqt = new JudgeQueueTest();
 				contestListeners.add(jqt);
-				Frame f = new Frame("TestJudgeQueue", jqt, null, false);
-				if (opts.isFullscreen()) {
-					fullscreenFrame = f;
-				}
-				else {
-					f.pack();
-					f.setVisible(true);
-				}
+				mainComponent("TestJudgeQueue", jqt, opts, null);
 			}
 			if (opts.isLayout()) {
 				localState.getHierarchy().getProperty("live.clients.noname").set("mode", "layout");
@@ -236,16 +248,7 @@ public class LiveClient {
 				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
 				final LivePresentation lpr = new LivePresentation(c, prop_base, nodeRegistry.getRemoteTime(), fullscreenFrame);
 				contestListeners.add(lpr);
-				Frame f = new Frame("Live", lpr, null, false);
-				f.setPreferredSize(new Dimension(1024, 576));
-
-				if (opts.isFullscreen()) {
-					fullscreenFrame = f;
-				}
-				else {
-					f.pack();
-					f.setVisible(true);
-				}
+				mainComponent("Live", lpr, opts, new Dimension(1024, 576));
 			}
 
 			// Add contest update listeners above!
@@ -369,6 +372,13 @@ public class LiveClient {
 			if (fullscreenFrame != null) {
 				int screen = opts.isScreen() ? opts.getScreen() : 0;
 				fullscreenFrame.fullScreen(screen);
+			}
+			
+			if (opts.isMagic()) {
+				int device = opts.isDevice() ? opts.getDevice() : 0;
+				JPanel magicPanel = new MagicPanel(magicComponent, device);
+				@SuppressWarnings("unused")
+				Frame magicFrame = new Frame("MagicFrame", magicPanel, null, true);
 			}
 		} catch (TTransportException e) {
 			// TODO Auto-generated catch block

@@ -54,14 +54,14 @@ public class ICPCColors {
 		new Color(99,0, 113),
 		new Color(251, 161, 178),
 		new Color(164,164,164),
-		//new Color(192,192,192),
 		new Color(255,84,232),
 		new Color(253,128,7),
 		Color.WHITE,
 		Color.BLACK, 
 		Color.YELLOW,
 		new Color(240,0,56),
-		new Color(3,221,62)
+		new Color(3,221,62),
+		new Color(192,192,192),
 	};
 
 	public static final Color BG_COLOR_CLOCK = new Color(40, 40, 90, 150);

@@ -27,6 +27,25 @@ public enum ContestStyle {
 	backgroundImage,
 	;
 
+	public static class ProblemStyle {
+		private boolean judged, solved;
+		private int problem;
+
+		public ProblemStyle(boolean judged, boolean solved, int problem) {
+			this.judged = judged;
+			this.solved = solved;
+			this.problem = problem;
+		}
+		
+		public int getProblem() {
+			return this.problem;
+		}
+
+		public ColoredTextBox.Style textBoxStyle() {
+			return ContentProvider.getProblemColorStyle(this.judged, this.solved, this.problem);
+		}
+	}
+
 	public static ColoredTextBox.Style textBoxStyle(ContestStyle style) {
 		switch (style) {
 		// scoreboard

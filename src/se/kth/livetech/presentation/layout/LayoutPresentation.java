@@ -366,7 +366,8 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		backgroundUpdater = updater.getSubLayoutUpdater(-1);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
 		for (int i = 1; i <= 17; ++i) {
-			ContestComponents.teamBackground(this.content, i, backgroundUpdater);
+			boolean glow = false; // TODO: Problem glow?
+			ContestComponents.teamBackground(this.content, i, backgroundUpdater, glow);
 		}
 		
 		updater.finishGeneration();
@@ -398,7 +399,8 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		backgroundUpdater = updater.getSubLayoutUpdater(-1);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
 		for (int i = 1; i <= 17; ++i) {
-			ContestComponents.teamBackground(this.content, i, backgroundUpdater);
+			boolean glow = false; // TODO: Timeline glow
+			ContestComponents.teamBackground(this.content, i, backgroundUpdater, glow);
 		}
 		
 		updater.finishGeneration();
@@ -423,7 +425,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		backgroundUpdater = updater.getSubLayoutUpdater(-1);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
 		for (int i = 1; i <= 1; ++i) {
-			ContestComponents.teamBackground(this.content, i, backgroundUpdater);
+			ContestComponents.teamBackground(this.content, i, backgroundUpdater, false);
 		}
 		
 		updater.finishGeneration();

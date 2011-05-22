@@ -11,6 +11,7 @@ import se.kth.livetech.contest.graphics.RowFrameRenderer;
 import se.kth.livetech.contest.graphics.TestcaseStatusRenderer;
 import se.kth.livetech.presentation.contest.ContestStyle;
 import se.kth.livetech.presentation.graphics.ColoredTextBox;
+import se.kth.livetech.presentation.graphics.GraphRenderer;
 import se.kth.livetech.presentation.graphics.ImageRenderer;
 import se.kth.livetech.presentation.graphics.ImageResource;
 import se.kth.livetech.presentation.graphics.RenderCache;
@@ -56,12 +57,20 @@ public class LayoutSceneRenderer implements Renderable {
 		if (content != null && content.getLayer() == (int) (Integer) layer) {
 			Renderable r;
 			if (content.isText()) {
-				ContestStyle style = (ContestStyle) content.getStyle();
-				r = new ColoredTextBox(content.getText(), ContestStyle.textBoxStyle(style));
+				// HACK:
+				if (content.getStyle() instanceof ContestStyle.ProblemStyle) {
+					ContestStyle.ProblemStyle style = (ContestStyle.ProblemStyle) content.getStyle();
+					r = new ColoredTextBox(content.getText(), style.textBoxStyle());
+				} else {
+					ContestStyle style = (ContestStyle) content.getStyle();
+					r = new ColoredTextBox(content.getText(), ContestStyle.textBoxStyle(style));
+				}
 			} else if (content.isImage()) {
 				String imageName = content.getImageName();
 				ImageResource image = ICPCImages.getResource(imageName);
 				r = new ImageRenderer(imageName, image);
+			} else if (content.isGraph()) {
+				r = new GraphRenderer(content.getGraph());
 			} else if (content.getStyle() instanceof TestcaseStatusRenderer.Status) {
 				TestcaseStatusRenderer.Status status;
 				status = (TestcaseStatusRenderer.Status) content.getStyle();

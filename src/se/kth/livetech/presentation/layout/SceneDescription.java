@@ -4,8 +4,11 @@ import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+
+import se.kth.livetech.presentation.layout.Content.Graph;
 
 /**
  * Updates a layout composition.
@@ -138,6 +141,7 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 	
 	private class SceneContentUpdater implements Content, ContentUpdater {
 		String text, imageName;
+		SceneGraphUpdater graph;
 		Object style;
 		int layer;
 		
@@ -145,12 +149,24 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 		public void setText(String text) {
 			this.text = text;
 			this.imageName = null;
+			this.graph = null;
 		}
 
 		@Override
 		public void setImageName(String name) {
 			this.imageName = name;
 			this.text = null;
+			this.graph = null;
+		}
+		
+		public GraphUpdater setGraph() {
+			if (this.graph == null) {
+				this.graph = new SceneGraphUpdater();
+			}
+			this.text = null;
+			this.imageName = null;
+			this.graph.reset();
+			return this.graph;
 		}
 
 		@Override
@@ -186,8 +202,90 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 		}
 
 		@Override
+		public boolean isGraph() {
+			return this.graph != null;
+		}
+
+		@Override
 		public String getImageName() {
 			return this.imageName;
+		}
+
+		@Override
+		public Graph getGraph() {
+			return this.graph;
+		}
+	}
+	
+	private static class SceneGraphUpdater implements Graph, GraphUpdater {
+		private static class SceneGraphNode implements Node {
+			Object key, style;
+			double x, y;
+
+			@Override
+			public Object getKey() {
+				return key;
+			}
+			@Override
+			public double getX() {
+				return x;
+			}
+			@Override
+			public double getY() {
+				return y;
+			}
+			@Override
+			public Object getNodeStyle() {
+				return style;
+			}
+		}
+		private double lineWidth;
+		private Object lineStyle;
+		LinkedHashMap<Object, SceneGraphNode> nodes = new LinkedHashMap<Object, SceneGraphNode>();
+		LinkedHashMap<Object, SceneGraphNode> oldNodes = new LinkedHashMap<Object, SceneGraphNode>();
+		
+		private void reset() {
+			oldNodes.clear();
+			oldNodes.putAll(nodes);
+			nodes.clear();
+		}
+		
+		@Override
+		public void node(Object key, double x, double y, Object style) {
+			SceneGraphNode node = oldNodes.get(key);
+			if (node == null) {
+				node = new SceneGraphNode();
+				node.key = key;
+			}
+			node.x = x;
+			node.y = y;
+			node.style = style;
+			nodes.put(key, node);
+		}
+
+		@Override
+		public Collection<SceneGraphNode> getNodes() {
+			return this.nodes.values();
+		}
+
+		@Override
+		public void setLineWidth(double lineWidth) {
+			this.lineWidth = lineWidth;
+		}
+
+		@Override
+		public void setLineStyle(Object lineStyle) {
+			this.lineStyle = lineStyle;
+		}
+
+		@Override
+		public Object getLineStyle() {
+			return this.lineStyle;
+		}
+
+		@Override
+		public double getLineWidth() {
+			return this.lineWidth;
 		}
 	}
 

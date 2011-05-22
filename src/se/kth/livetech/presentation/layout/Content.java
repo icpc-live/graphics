@@ -1,12 +1,28 @@
 package se.kth.livetech.presentation.layout;
 
+import java.util.Collection;
+
 public interface Content {
 	public boolean isText();
 	public String getText();
 	public boolean isImage();
 	public String getImageName();
+	public boolean isGraph();
+	public Graph getGraph();
 	public Object getStyle();
 	public int getLayer();
+	
+	public interface Graph {
+		public interface Node {
+			Object getKey();
+			double getX();
+			double getY();
+			Object getNodeStyle();
+		}
+		public Object getLineStyle();
+		public double getLineWidth();
+		public Collection<? extends Node> getNodes();
+	}
 
 	@Deprecated
 	public static abstract class Text implements Content {
@@ -22,6 +38,16 @@ public interface Content {
 
 		@Override
 		public String getImageName() {
+			return null;
+		}
+
+		@Override
+		public boolean isGraph() {
+			return false;
+		}
+
+		@Override
+		public Graph getGraph() {
 			return null;
 		}
 		
@@ -46,6 +72,16 @@ public interface Content {
 		@Override
 		public boolean isImage() {
 			return true;
+		}
+
+		@Override
+		public boolean isGraph() {
+			return false;
+		}
+
+		@Override
+		public Graph getGraph() {
+			return null;
 		}
 		
 		@Override
@@ -73,6 +109,16 @@ public interface Content {
 		
 		@Override
 		public String getImageName() {
+			return null;
+		}
+
+		@Override
+		public boolean isGraph() {
+			return false;
+		}
+
+		@Override
+		public Graph getGraph() {
 			return null;
 		}
 		

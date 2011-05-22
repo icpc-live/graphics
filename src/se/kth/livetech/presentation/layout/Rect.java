@@ -58,7 +58,7 @@ public class Rect {
 					rect.getX() +
 					(rect.getWidth() - width) / 2,
 					rect.getY(),
-					rect.getHeight(), width);
+					width, rect.getHeight());
 		} else {
 			// perfect!
 			return rect;

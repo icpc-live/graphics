@@ -1,5 +1,6 @@
 package se.kth.livetech.communication;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -23,6 +24,7 @@ public class LiveStateImpl implements LiveState {
 	private Map<ContestId, ContestState> contests;
 	private Map<String, byte[]> classes;
 	private Map<String, byte[]> resources;
+	private Set<NodeUpdateListener> listeners;
 	
 	public LiveStateImpl(boolean spiderFlag) {
 		this.spiderFlag = spiderFlag;
@@ -31,6 +33,7 @@ public class LiveStateImpl implements LiveState {
 		contests = new TreeMap<ContestId, ContestState>();
 		classes = new TreeMap<String, byte[]>();
 		resources = new TreeMap<String, byte[]>();
+		listeners = new HashSet<NodeUpdateListener>();
 		
 		ContestId id = new ContestId("contest", 0);
 		contests.put(id, new ContestState());
@@ -49,9 +52,10 @@ public class LiveStateImpl implements LiveState {
 		if (this.spiderFlag || this.contestSourceFlag) {
 			for (ContestId id : this.contests.keySet()) {
 				DebugTrace.trace("contest sync %s -> %s", id, connection.getId());
-				this.contests.get(id).addAttrsUpdateListener(connection);
+				this.contests.get(id).addAttrsUpdateListener(connection.getAttrsUpdateListener(id));
 			}
 		}
+		this.listeners.add(connection);
 	}
 	@Override
 	public void removeListeners(NodeUpdateListener connection) {
@@ -59,9 +63,9 @@ public class LiveStateImpl implements LiveState {
 		root.removePropertyListener(connection);
 		for (ContestId id : this.contests.keySet()) {
 			DebugTrace.trace("contest sync remove %s -> %s", id, connection.getId());
-			this.contests.get(id).removeAttrsUpdateListener(connection);
+			this.contests.get(id).removeAttrsUpdateListener(connection.getAttrsUpdateListener(id));
 		}
-		// TODO: contest listeners
+		this.listeners.remove(connection);
 	}
 
 	@Override
@@ -93,7 +97,15 @@ public class LiveStateImpl implements LiveState {
 
 	@Override
 	public ContestState getContest(ContestId id) {
-		return contests.get(id);
+		ContestState state = contests.get(id);
+		if (state == null) {
+			state = new ContestState();
+			contests.put(id, state);
+			for (NodeUpdateListener listener : this.listeners) {
+				state.addAttrsUpdateListener(listener.getAttrsUpdateListener(id));
+			}
+		}
+		return state;
 	}
 
 	public void setContest(ContestId id, ContestState dump) {

@@ -6,6 +6,7 @@ import redis.clients.jedis.JedisPubSub;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
+import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.properties.IProperty;
 
@@ -53,10 +54,9 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 		}
 	}
 
-	@Override
-	public void attrsUpdated(AttrsUpdateEvent e) {
+	public void attrsUpdated(ContestId contestId, AttrsUpdateEvent e) {
 		// Called when local contest changed
-		final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
+		//final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
 		assert(!contestId.name.contains("."));
 		final String contestIdString = contestId.name +"."+ Long.toString(contestId.starttime);
 		String eventId = e.getProperty("event-id");
@@ -162,4 +162,15 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 
 	@Override
 	public void onUnsubscribe(String channel, int subscribedChannels) {}
+
+	@Override
+	public AttrsUpdateListener getAttrsUpdateListener(final ContestId contestId) {
+		return new AttrsUpdateListener() {
+			@Override
+			public void attrsUpdated(AttrsUpdateEvent e) {
+				// TODO Auto-generated method stub
+				RedisClient.this.attrsUpdated(contestId, e);
+			}
+		};
+	}
 }

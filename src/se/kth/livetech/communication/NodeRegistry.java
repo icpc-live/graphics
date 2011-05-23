@@ -84,7 +84,7 @@ public class NodeRegistry {
 
 	public void addContest(ContestId id, AttrsUpdater contest) {
 		for (NodeId node : connections.keySet()) {
-			contest.addAttrsUpdateListener(connections.get(node));
+			contest.addAttrsUpdateListener(connections.get(node).getAttrsUpdateListener(id));
 		}
 	}
 

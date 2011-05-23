@@ -16,6 +16,7 @@ import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.communication.thrift.NodeStatus;
 import se.kth.livetech.communication.thrift.PropertyEvent;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
+import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.util.DebugTrace;
@@ -168,15 +169,14 @@ public class NodeConnection implements RemoteTime, NodeUpdateListener {
 		return status;
 	}
 
-	@Override
-	public void attrsUpdated(AttrsUpdateEvent e) {
+	public void attrsUpdated(final ContestId contestId, AttrsUpdateEvent e) {
 		DebugTrace.trace("attrsUpdate %s %s %s", e.getType(), id.name, id.address);
 
 		Map<String, String> attrs = new LinkedHashMap<String, String>();
 		for (String name : e.getProperties()) {
 			attrs.put(name, e.getProperty(name));
 		}
-		final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
+		//final ContestId contestId = new ContestId("contest", 0); // TODO: contest id
 		final ContestEvent update = new ContestEvent(e.getTime(), e.getType(), attrs);
 
 		if (e != this.updatingAttrs) {
@@ -229,5 +229,16 @@ public class NodeConnection implements RemoteTime, NodeUpdateListener {
 	@Override
 	public long getRemoteTimeMillis() {
 		return System.currentTimeMillis() + this.status.clockSkew;
+	}
+
+	@Override
+	public AttrsUpdateListener getAttrsUpdateListener(final ContestId contestId) {
+		return new AttrsUpdateListener() {
+			@Override
+			public void attrsUpdated(AttrsUpdateEvent e) {
+				// TODO Auto-generated method stub
+				NodeConnection.this.attrsUpdated(contestId, e);
+			}
+		};
 	}
 }

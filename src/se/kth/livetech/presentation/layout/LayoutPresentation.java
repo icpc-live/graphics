@@ -236,9 +236,19 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 			boolean timeline = System.currentTimeMillis() / 20000 % 2 == 0;
 			if (!timeline) {
 				boolean cumulative = System.currentTimeMillis() / 10000 % 2 == 0;
-				//scene = scoreboard();
-				scene = problemboard();
-				//scene = submissionGraph(cumulative);
+				int which = (int) (System.currentTimeMillis() / 3333 % 3);
+				switch (which) {
+				default:
+				case 0:
+					scene = scoreboard();
+					break;
+				case 1:
+					scene = problemboard();
+					break;
+				case 2:
+					scene = submissionGraph(cumulative);
+					break;
+				}
 			} else {
 				boolean zoomedOut = System.currentTimeMillis() / 5000 % 2 == 0;
 				boolean problemColors = System.currentTimeMillis() / 10000 % 2 == 0;

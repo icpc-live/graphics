@@ -14,7 +14,7 @@ public class ProblemScoreContent { // extends Content.Text {
 		Contest contest = contestRef.get();
 		String name = contest.getProblem(problem).getName();
 		updater.setText(name);
-		updater.setStyle(ContestStyle.title);
+		updater.setStyle(new ContestStyle.ProblemStyle(true, true, problem));
 	}
 
 	public static void score(ContestRef contestRef, int team, int problem, ContentUpdater updater) {

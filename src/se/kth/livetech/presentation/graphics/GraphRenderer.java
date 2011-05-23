@@ -17,6 +17,8 @@ public class GraphRenderer implements Renderable {
 	
 	@Override
 	public void render(Graphics2D g, Dimension d) {
+		RenderCache.setQuality((Graphics2D)g);
+		
 		double lineWidth = this.graph.getLineWidth();
 		Object lineStyle = this.graph.getLineStyle();
 		if (lineStyle instanceof Color) {

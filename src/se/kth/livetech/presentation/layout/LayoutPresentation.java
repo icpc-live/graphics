@@ -57,6 +57,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
     public int highlightedRow;
     public int highlightedProblem;
     private Map<Integer, Color> rowColorations;
+    private Map<Integer, Long> glowTimer;
 
 	ContestContent content;
     Contest contest;
@@ -132,6 +133,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
         colorProperties.addPropertyListener(colorListener);
 
         this.rowColorations = new TreeMap<Integer, Color>();
+        this.glowTimer = new HashMap<Integer, Long>();
 
 
 
@@ -326,13 +328,13 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		}
 		*/
 
-        Contest c = this.contest;
 		ISceneDescriptionUpdater backgroundUpdater;
 		backgroundUpdater = updater.getSubLayoutUpdater(-1);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
         boolean glow;
 		for (int i = 1; i <= 17; ++i) {
-            glow = false;
+            glow = shouldGlow(i);
+            /*
             Team team = c.getRankedTeam(i);
             int id = team.getId();
             TeamScore ts = c.getTeamScore(id);
@@ -340,6 +342,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
             if (ts.getSolved() != prev.getSolved()) {
                 glow = true;
             }
+            */
 			ContestComponents.teamBackground(this.content, i, backgroundUpdater, glow);
 
 		}
@@ -349,6 +352,26 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		
 		return updater;
 	}
+
+    private boolean shouldGlow(int teamRank){
+        boolean glow = false;
+        Team team = this.contest.getRankedTeam(teamRank);
+        int teamID = team.getId();
+        long now = System.currentTimeMillis();
+
+        TeamScore ts = this.contest.getTeamScore(teamID);
+        TeamScore prev = recent.get(teamID);
+        if (ts.getSolved() != prev.getSolved()) {
+            if(glowTimer.containsKey(teamID)) {
+                glow = (now - glowTimer.get(teamID)) < 5000;
+            } else {
+                glow = true;
+                glowTimer.put(teamID, new Long(now));
+            }
+        }
+
+        return glow;
+    }
 	
 	public SceneDescription problemboard() {
 

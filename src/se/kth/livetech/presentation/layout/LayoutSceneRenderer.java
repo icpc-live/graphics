@@ -89,7 +89,7 @@ public class LayoutSceneRenderer implements Renderable {
 			}
 			Dimension d = new Dimension();
             Dimension d2 = new Dimension();
-            Renderable glowRenderer = new GlowRenderer(ICPCColors.YELLOW, ContentProvider.STATS_GLOW_MARGIN, false, 0.5);
+            Renderable glowRenderer = new GlowRenderer(ICPCColors.SILVER2, ContentProvider.STATS_GLOW_MARGIN, false, 0.5);
 			// FIXME: Do not add .99!
 			d.setSize(scene.getBounds().getWidth(), scene.getBounds().getHeight());
 			if (d.getWidth() > 0 && d.getHeight() > 0) {

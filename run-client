@@ -1,4 +1,4 @@
 DECKLINK_CP=:magiclib/magiclib.jar:magiclib/jna.jar
 DECKLINK_JNA=-Djna.library.path=magiclib
 DECKLINK_PATH=-Djava.library.path=magiclib
-java -Xmx1000m $JVM_ARGS -cp lib/jewelcli-0.6.jar:lib/libthrift.jar:thrift/gen-java.jar:lib/slf4j-api-1.5.8.jar:lib/slf4j-simple-1.5.8.jar:lib/org-netbeans-swing-outline.jar:lib/tightvnc.jar:bin/:lib/jedis-1.5.0.jar:lib/commons-pool-1.5.5.jar"$DECKLINK_CP" $DECKLINK_JNA $DECKLINK_PATH se.kth.livetech.communication.LiveClient "$@"
+java -Xmx1000m $JVM_ARGS -cp lib/jewelcli-0.6.jar:lib/libthrift.jar:thrift/gen-java.jar:lib/slf4j-api-1.5.8.jar:lib/slf4j-simple-1.5.8.jar:lib/org-netbeans-swing-outline.jar:lib/tightvnc.jar:bin/:lib/jedis-1.5.2.jar:lib/commons-pool-1.5.5.jar"$DECKLINK_CP" $DECKLINK_JNA $DECKLINK_PATH se.kth.livetech.communication.LiveClient "$@"

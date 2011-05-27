@@ -3,9 +3,9 @@ package se.kth.livetech.communication;
 import java.util.Set;
 
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisException;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.exceptions.JedisException;
 
 /**
  * RedisConnection is a gateway to the Redis database.
@@ -51,21 +51,26 @@ public class RedisConnection {
 			@Override
 			public void run() {
 				while(true){
-					
+					Jedis j = null;
 					try {
-						Jedis j = pool.getResource();
-
-						System.out.println("RedisConnection - subscribing to " + channels.length + " channels");
+						j = pool.getResource();
+						System.out.println("RedisConnection - Starting subscription to " + channels.length + " channels.");
 						j.subscribe(listener, channels);
-
 						pool.returnResource(j);
 					} catch (JedisException e) {
-						System.out.println("RedisConnection - Error: " + e.getMessage());
+						System.out.println("RedisConnection - Jedis Error: " + e.getMessage());
+						System.out.println("RedisConnection - Returning broken resource to pool");
+						pool.returnBrokenResource(j);
+					} catch (Exception e) {
+						e.printStackTrace();
+						if (j != null) {
+							System.out.println("RedisConnection - Returning orphaned resource to pool.");
+							pool.returnResource(j);
+						}
 					}
-
 					
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(3000); // wait a little while before retrying
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

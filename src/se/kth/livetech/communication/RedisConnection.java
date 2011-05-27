@@ -1,10 +1,9 @@
 package se.kth.livetech.communication;
 
-import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.Set;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisException;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPubSub;
 
@@ -53,39 +52,23 @@ public class RedisConnection {
 			public void run() {
 				while(true){
 					
-					Jedis j = getJedisInstance();
 					try {
-						j.subscribe(listener, channels);
-					}
-					catch(redis.clients.jedis.JedisException e) {
-						//e.printStackTrace();
-						try {
-							j.disconnect();
-						} catch (IOException e2) {
-							// TODO Auto-generated catch block
-							e2.printStackTrace();
-						}
-						System.out.println("Dropped connection - reconnecting.");
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						if (!j.isConnected())
-							System.out.println("Reconnecting.");
-							try {
-								j.connect();
-							} catch (UnknownHostException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
+						Jedis j = pool.getResource();
 
+						System.out.println("RedisConnection - subscribing to " + channels.length + " channels");
+						j.subscribe(listener, channels);
+
+						pool.returnResource(j);
+					} catch (JedisException e) {
+						System.out.println("RedisConnection - Error: " + e.getMessage());
 					}
-					returnJedisInstance(j);
+
+					
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		};
@@ -93,24 +76,7 @@ public class RedisConnection {
 		t.start();
 	}
 
-	/**
-	 * Don't forget to return the resource when you are done!
-	 * 
-	 * @return A new Jedis instance.
-	 */
-	public Jedis getJedisInstance() {
-		return pool.getResource();
-	}
 
-	/**
-	 * Returns a resource so that it can be reused.
-	 * 
-	 * @param jedis
-	 *            Instance to return.
-	 */
-	public void returnJedisInstance(Jedis jedis) {
-		pool.returnResource(jedis);
-	}
 
 	public String get(String key) {
 		Jedis j = pool.getResource();
@@ -168,9 +134,13 @@ public class RedisConnection {
 		pool.returnResource(j);
 	}
 
+	private JedisPool getPool() {
+		return pool;
+	}
+	
 	public static void main(String[] args) {
 		RedisConnection client = new RedisConnection("localhost", 6379);
-		Jedis j = client.getJedisInstance();
+		Jedis j = client.getPool().getResource();
 		if (!j.exists("counter")) {
 			j.set("counter", "0");
 		} else {
@@ -214,7 +184,6 @@ public class RedisConnection {
 			}
 		};
 		client.subscribe(myListener, "CHA", "CHA1");
-		client.returnJedisInstance(j);
 		try {
 			Thread.sleep(1000);
 		} catch (InterruptedException e) {

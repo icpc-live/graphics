@@ -17,10 +17,9 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	private RedisConnection redis;
 	private LiveState localState;
 	private NodeId localNode;
-	private Runnable fetcher;
 	
 	public Runnable getFetcher() {
-		return fetcher;
+		return null;
 	}
 
 	public RedisClient(LiveState localState, NodeId localNode, String redisHost) {

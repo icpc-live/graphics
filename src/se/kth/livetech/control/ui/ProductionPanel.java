@@ -144,10 +144,12 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new Text(base.get("countdown_from")));
 
 		b.add(c);
-
+		/*
 		b.add(new JSeparator(SwingConstants.HORIZONTAL));
 		b.add(new ContestReplayPanel(base.get("replay")));
+		*/
 		this.add(b);
+		
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

@@ -1,4 +1,4 @@
-package se.kth.livetech.control.ui;
+package se.kth.livetech.control.ui.backup;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,8 +7,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 
@@ -26,8 +24,6 @@ public class ProductionFrame extends JFrame implements PropertyListener{
 	//PMAbstractClient pmClient;
 	PropertyFrame propertyFrame;
 	PropertyHierarchy hierarchy;
-	private JMenuBar menuBar;
-	private JMenuItem mainPanelItem, resolverItem, closeItem, propertiesItem, printPropItem, presentationItem;
 	
 	Box c=null;
 	public ProductionFrame(final PropertyHierarchy hierarchy, IProperty base, IProperty clients/*, PMAbstractClient pmClient */){
@@ -36,7 +32,7 @@ public class ProductionFrame extends JFrame implements PropertyListener{
 		this.clients=clients;
 		this.base=base;
 		//this.pmClient=pmClient;
-		int numClients = 1;
+		int numClients = 4;
 		if ( System.getenv("M") != null ) {
 			numClients = Integer.parseInt(System.getenv("M"));
 		}
@@ -50,8 +46,6 @@ public class ProductionFrame extends JFrame implements PropertyListener{
 //		TestContestDataSource ds = new TestContestDataSource(true);
 //		ds.addListener(pmClient);
 //		ds.start();
-		
-		
 		base.get("preview").addPropertyListener(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		c=new Box(BoxLayout.Y_AXIS);

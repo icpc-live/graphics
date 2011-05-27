@@ -25,14 +25,14 @@ import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
+import se.kth.livetech.contest.model.stats.SubmissionStats;
 import se.kth.livetech.presentation.animation.AnimationStack;
 import se.kth.livetech.presentation.animation.RecentChange;
-import se.kth.livetech.contest.model.stats.SubmissionStats;
 import se.kth.livetech.presentation.contest.ContestComponents;
-import se.kth.livetech.presentation.contest.ContestComponents.Parts;
 import se.kth.livetech.presentation.contest.ContestContent;
 import se.kth.livetech.presentation.contest.ContestRef;
 import se.kth.livetech.presentation.contest.ContestStyle;
+import se.kth.livetech.presentation.contest.ContestComponents.Parts;
 import se.kth.livetech.presentation.graphics.RenderCache;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
@@ -57,7 +57,6 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
     public int highlightedRow;
     public int highlightedProblem;
     private Map<Integer, Color> rowColorations;
-    private Map<Integer, Long> glowTimer;
 
 	ContestContent content;
     Contest contest;
@@ -133,15 +132,6 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
         colorProperties.addPropertyListener(colorListener);
 
         this.rowColorations = new TreeMap<Integer, Color>();
-        this.glowTimer = new HashMap<Integer, Long>();
-
-
-
-
-
-
-
-
 
     }
 
@@ -163,8 +153,6 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 
     private synchronized void updateTeams() {
-        //contest = e.getNewContest();
-        //this.content.getContestRef().set(contest);
         for (int i = 1; i <= contest.getTeams().size(); ++i) {
             Team team = contest.getRankedTeam(i);
             int id = team.getId();
@@ -176,7 +164,6 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
         updateTeams();
-        //setContest(e);
         this.contest = e.getNewContest();
 		this.content.getContestRef().set(this.contest);
 		for (ContestUpdateListener listener : this.listeners) {
@@ -235,7 +222,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		if (board) {
 			boolean timeline = System.currentTimeMillis() / 20000 % 2 == 0;
 			if (!timeline) {
-				boolean cumulative = System.currentTimeMillis() / 10000 % 2 == 0;
+				//boolean cumulative = System.currentTimeMillis() / 10000 % 2 == 0;
 				//scene = scoreboard();
 				scene = problemboard();
 				//scene = submissionGraph(cumulative);
@@ -283,7 +270,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		teamsUpdater = updater.getSubLayoutUpdater(0);
 		teamsUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
 		int team = this.content.getContestRef().get().getRankedTeam(1).getId();
-		ContestComponents.teamRow(this.content, team, true, teamsUpdater.getSubLayoutUpdater(team));
+		ContestComponents.teamRow(this.content, team, true, teamsUpdater.getSubLayoutUpdater(team), null);
 
 		ISceneDescriptionUpdater backgroundUpdater;
 		backgroundUpdater = updater.getSubLayoutUpdater(-1);
@@ -319,7 +306,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		teamsUpdater = updater.getSubLayoutUpdater(0);
 		// Note: this overrides the otherwise calculated height!
 		teamsUpdater.setWeights(0, 17, 1);
-		ContestComponents.scoreboard(this.content, teamsUpdater);
+		ContestComponents.scoreboard(this.content, teamsUpdater, recent);
 		/*
 		teamsUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
 		for (int i = 1; i <= 17; ++i) {
@@ -329,31 +316,22 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		*/
 
 		ISceneDescriptionUpdater backgroundUpdater;
-		backgroundUpdater = updater.getSubLayoutUpdater(-1);
+		backgroundUpdater = updater.getSubLayoutUpdater(-2);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
         boolean glow;
 		for (int i = 1; i <= 17; ++i) {
-            glow = shouldGlow(i);
-            /*
-            Team team = c.getRankedTeam(i);
-            int id = team.getId();
-            TeamScore ts = c.getTeamScore(id);
-            TeamScore prev = recent.get(id);
-            if (ts.getSolved() != prev.getSolved()) {
-                glow = true;
-            }
-            */
+            glow = /*shouldGlow(i);*/ false;
 			ContestComponents.teamBackground(this.content, i, backgroundUpdater, glow);
 
 		}
-		
+
 		updater.finishGeneration();
 		if (DEBUG) DebugTrace.trace(updater);
 		
 		return updater;
 	}
-
-    private boolean shouldGlow(int teamRank){
+/*
+    private boolean shouldProblemGlow(int teamRank){
         boolean glow = false;
         Team team = this.contest.getRankedTeam(teamRank);
         int teamID = team.getId();
@@ -361,18 +339,25 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
         TeamScore ts = this.contest.getTeamScore(teamID);
         TeamScore prev = recent.get(teamID);
-        if (ts.getSolved() != prev.getSolved()) {
-            if(glowTimer.containsKey(teamID)) {
-                glow = (now - glowTimer.get(teamID)) < 5000;
-            } else {
-                glow = true;
-                glowTimer.put(teamID, new Long(now));
-            }
-        }
+    	for (int j : this.contest.getProblems()) {
+    		ProblemScore ps = ts.getProblemScore(j);
+    		ProblemScore pps = prev.getProblemScore(j);
+    		if(ps != null && !ps.equals(pps)) {
+    			if(glowTimer.containsKey(teamID)) {
+    				glow = (now - glowTimer.get(teamID)) < 5000;
+    	        } else {
+    	            glow = true;
+    	            glowTimer.put(teamID, new Long(now));
+    	        }    				
+    		}
+    	}	
 
-        return glow;
+        return false;
+        
     }
-	
+*/    
+    
+    
 	public SceneDescription problemboard() {
 
 		SceneDescription updater = new SceneDescription(0);
@@ -386,7 +371,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		ContestComponents.problemboard(this.content, problemsUpdater);
 
 		ISceneDescriptionUpdater backgroundUpdater;
-		backgroundUpdater = updater.getSubLayoutUpdater(-1);
+		backgroundUpdater = updater.getSubLayoutUpdater(-2);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
 		for (int i = 1; i <= 17; ++i) {
 			boolean glow = false; // TODO: Problem glow?
@@ -419,13 +404,13 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		*/
 
 		ISceneDescriptionUpdater backgroundUpdater;
-		backgroundUpdater = updater.getSubLayoutUpdater(-1);
+		backgroundUpdater = updater.getSubLayoutUpdater(-2);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
 		for (int i = 1; i <= 17; ++i) {
 			boolean glow = false; // TODO: Timeline glow
 			ContestComponents.teamBackground(this.content, i, backgroundUpdater, glow);
 		}
-		
+
 		updater.finishGeneration();
 		if (DEBUG) DebugTrace.trace(updater);
 		
@@ -445,7 +430,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		}
 
 		ISceneDescriptionUpdater backgroundUpdater;
-		backgroundUpdater = updater.getSubLayoutUpdater(-1);
+		backgroundUpdater = updater.getSubLayoutUpdater(-2);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
 		for (int i = 1; i <= 1; ++i) {
 			ContestComponents.teamBackground(this.content, i, backgroundUpdater, false);

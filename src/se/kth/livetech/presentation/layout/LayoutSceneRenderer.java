@@ -57,6 +57,7 @@ public class LayoutSceneRenderer implements Renderable {
 			//return;
 		}
 		if (content != null && content.getLayer() == (int) (Integer) layer) {
+
 			Renderable r;
 			if (content.isText()) {
 				// HACK:
@@ -67,6 +68,7 @@ public class LayoutSceneRenderer implements Renderable {
 					ContestStyle style = (ContestStyle) content.getStyle();
 					r = new ColoredTextBox(content.getText(), ContestStyle.textBoxStyle(style));
 				}
+
 			} else if (content.isImage()) {
 				String imageName = content.getImageName();
 				ImageResource image = ICPCImages.getResource(imageName);
@@ -86,10 +88,11 @@ public class LayoutSceneRenderer implements Renderable {
 				} else {
 					r = new RowFrameRenderer(row2, row1);
 				}
+				
 			}
 			Dimension d = new Dimension();
             Dimension d2 = new Dimension();
-            Renderable glowRenderer = new GlowRenderer(ICPCColors.SILVER2, ContentProvider.STATS_GLOW_MARGIN, false, 0.5);
+            Renderable glowRenderer = new GlowRenderer(ICPCColors.SILVER2, ContentProvider.STATS_GLOW_MARGIN, false, 0.3);
 			// FIXME: Do not add .99!
 			d.setSize(scene.getBounds().getWidth(), scene.getBounds().getHeight());
 			if (d.getWidth() > 0 && d.getHeight() > 0) {

@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.contest;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,7 @@ import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.stats.ProblemStats;
 import se.kth.livetech.contest.model.stats.SubmissionStats;
+import se.kth.livetech.presentation.animation.RecentChange;
 import se.kth.livetech.presentation.layout.ISceneDescription;
 import se.kth.livetech.presentation.layout.ISceneDescriptionUpdater;
 import se.kth.livetech.presentation.layout.ISceneDescriptionUpdater.GraphUpdater;
@@ -24,6 +26,8 @@ public class ContestComponents {
 		problems,
 		solved,
 		score,
+		
+		rankGlow,
 		
 		judgeQueueCompiling,
 		judgeQueueRunning,
@@ -41,6 +45,8 @@ public class ContestComponents {
 		submissionsSolved,
 	}
 
+	static Map<Integer, Long> glowTimer = new HashMap<Integer, Long>();
+	
 	public static void problemboard(ContestContent content, ISceneDescriptionUpdater u) {
 		u.setDirection(ISceneDescription.Direction.VERTICAL);
 		final Contest contest = content.getContestRef().get();
@@ -55,15 +61,36 @@ public class ContestComponents {
 		}
 	}
 	
-	public static void scoreboard(ContestContent content, ISceneDescriptionUpdater u) {
+	public static void scoreboard(ContestContent content, ISceneDescriptionUpdater u, RecentChange<Integer, TeamScore> recent) {
 		u.setDirection(ISceneDescription.Direction.VERTICAL);
 		Contest contest = content.getContestRef().get();
 		int rows = contest.getTeams().size();
 		for (int row = 0; row < rows; ++row) {
-			int team = contest.getRankedTeam(row + 1).getId();
-			teamRow(content, team, false, u.getSubLayoutUpdater(team));
+			int teamID = contest.getRankedTeam(row + 1).getId();
+			teamRow(content, teamID, false, u.getSubLayoutUpdater(teamID), recent);
 		}
 	}
+	
+    private static boolean shouldGlow(int teamID, ContestContent content, RecentChange<Integer, TeamScore> recent){
+    	Contest contest = content.getContestRef().get();
+        boolean glow = false;
+        long now = System.currentTimeMillis();
+
+        TeamScore ts = contest.getTeamScore(teamID);
+        TeamScore prev = recent.get(new Integer(teamID));
+        if (ts.getSolved() != prev.getSolved()) {
+            if(glowTimer.containsKey(teamID)) {
+                glow = (now - glowTimer.get(teamID)) < 5000;
+            } else {
+                glow = true;
+                glowTimer.put(teamID, new Long(now));
+            }
+        }
+       
+        return glow;
+        
+    }
+
 	
 	public static void timeline(ContestContent content, ISceneDescriptionUpdater u, boolean problemColors) {
 		u.setDirection(ISceneDescription.Direction.VERTICAL);
@@ -122,15 +149,26 @@ public class ContestComponents {
 		content.problemBoardScore(problem, stats.getScoreStats().getAverage(), LayoutContent.fixed(Parts.problemBoardAverage, scoreWeight, .8, u));
 	}
 	
-	public static void teamRow(ContestContent content, int team, boolean teamPresentation, ISceneDescriptionUpdater u) {
+	public static void teamRow(ContestContent content, int team, boolean teamPresentation, ISceneDescriptionUpdater u,RecentChange<Integer, TeamScore> recent ) {
 		final double solvedWeight = 1.5;
 		final double scoreWeight = 2;
+		boolean glow = shouldGlow(team, content, recent);
 
 		u.setDirection(ISceneDescription.Direction.HORIZONTAL);
-		content.teamRank(team, LayoutContent.fixed(Parts.rank, 1, .8, u));
+		ISceneDescriptionUpdater rankU = u.getSubLayoutUpdater(Parts.rank);
+		if(glow) {
+			content.backgroundGlow(team, LayoutContent.fixed(Parts.rankGlow, 1, .8, rankU));
+		}
+		content.teamRank(team, LayoutContent.fixed(Parts.rank, 1, .8, rankU));
 		content.teamLogo(team, LayoutContent.fixed(Parts.logo, 1, .8, u));
 		content.teamFlag(team, LayoutContent.fixed(Parts.flag, 1, .8, u));
 		
+		/*
+		ISceneDescriptionUpdater nameU = u.getSubLayoutUpdater(Parts.name);
+		if(glow) {
+			content.backgroundGlow(team, LayoutContent.fixed(Parts.rankGlow, 1, .8, nameU));
+		}
+		*/
 		if (teamPresentation) {
 			ISceneDescriptionUpdater d = u.getSubLayoutUpdater(team);
 			d.setDirection(ISceneDescription.Direction.VERTICAL);
@@ -143,7 +181,7 @@ public class ContestComponents {
 		content.teamSolved(team, LayoutContent.fixed(Parts.solved, solvedWeight, .8, u));
 		content.teamScore(team, LayoutContent.fixed(Parts.score, scoreWeight, .8, u));
 	}
-
+	
 	public static void timeRow(ContestContent content, int team, boolean teamPresentation, ISceneDescriptionUpdater u, boolean problemColors) {
 		final double solvedWeight = 1.5;
 		final double scoreWeight = 2;
@@ -222,7 +260,37 @@ public class ContestComponents {
 			p.setWeights(0, 1 - labelHeight, contest.getProblems().size());
 		}
 	}
-
+/*
+	public static void glowProblems(ContestContent content, int team, boolean glow, ISceneDescriptionUpdater u) {
+		final double labelHeight = .3;
+		Contest contest = content.getContestRef().get();
+		
+		if (glow) {
+			ISceneDescriptionUpdater l = u.getSubLayoutUpdater(Parts.problemLabels);
+			l.setDirection(ISceneDescription.Direction.HORIZONTAL);
+			for (int problem : contest.getProblems()) {
+				// TODO: Problem labels
+				content.problemLabel(problem, LayoutContent.stretch(problem, 1, .8, l));
+			}
+			// decrease height
+			l.setWeights(0, labelHeight, contest.getProblems().size());
+		}
+		
+		ISceneDescriptionUpdater p = u.getSubLayoutUpdater(Parts.problems);
+		p.setDirection(ISceneDescription.Direction.HORIZONTAL);
+		for (int problem : contest.getProblems()) {
+			if (glow) {
+				content.problemScore(team, problem, LayoutContent.stretch(problem, 1, .8, p));
+			} else {
+				content.problemScore(team, problem, LayoutContent.fixed(problem, problemWidth, .8, p));
+			}
+		}
+		if (glow) {
+			// decrease height
+			p.setWeights(0, 1 - labelHeight, contest.getProblems().size());
+		}
+	}
+*/
 	public static final double timeWidth = 1;
 	public static final double timeStretch = 5;
 	public static void timeProblems(ContestContent content, int team, boolean stretch, ISceneDescriptionUpdater u, boolean problemColors) {

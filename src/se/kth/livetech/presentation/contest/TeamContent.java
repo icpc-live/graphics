@@ -13,6 +13,14 @@ public class TeamContent {
 		updater.setStyle(ContestStyle.name);
 	}
 
+	public static void backgroundGlow(final ContestRef contestRef, final int team, ContentUpdater updater) {
+		//Contest contest = contestRef.get();
+		//Team t = contest.getTeam(team);
+		updater.setText("");
+		updater.setStyle(ContestStyle.glowBackground);
+		updater.setLayer(-1);
+	}
+
 	@Deprecated
 	public static Content teamName(final ContestRef contestRef, final int team) {
 		return new Content.Text() {

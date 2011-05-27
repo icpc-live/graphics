@@ -41,6 +41,11 @@ public class ContestContent {
 	public void teamName(final int team, ContentUpdater updater) {
 		TeamContent.name(this.contestRef, team, updater);
 	}
+	
+	public void backgroundGlow(final int team, ContentUpdater updater) {
+		TeamContent.backgroundGlow(this.contestRef, team, updater);
+	}
+	
 
 	@Deprecated
 	public Content getTeamName(final int team) {
@@ -96,7 +101,7 @@ public class ContestContent {
             updater.setStyle(ContestStyle.glowBackground);
         }
 		
-		updater.setLayer(-1);
+		updater.setLayer(-2);
 	}
 	
 	@Deprecated

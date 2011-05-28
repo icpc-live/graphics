@@ -46,7 +46,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 	Box c = null;
 
 	public ProductionFrame(final PropertyHierarchy hierarchy, IProperty base,
-			IProperty clients/* , PMAbstractClient pmClient */) {
+		IProperty clients/* , PMAbstractClient pmClient */) {
 		this.hierarchy = hierarchy;
 		this.propertyFrame = new PropertyFrame("", hierarchy);
 		this.presentationFrame = new ProductionSettingsFrame(clients);

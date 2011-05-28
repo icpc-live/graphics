@@ -187,7 +187,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		b.add(c);
 	
 		this.add(b);
-
+	
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

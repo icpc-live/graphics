@@ -143,10 +143,13 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
     }
 	
-	public void setView(String view) {
+	public boolean setView(String view) {
 		try {
 			this.currentView = Views.valueOf(view);
-		} catch (Exception e) {}
+			return true;
+		} catch (Exception e) {
+			return false;
+		}
 	}
 	
 	public String getView() {

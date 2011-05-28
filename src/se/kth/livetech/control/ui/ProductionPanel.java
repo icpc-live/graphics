@@ -148,6 +148,15 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		b.add(new JSeparator(SwingConstants.HORIZONTAL));
 		b.add(new ContestReplayPanel(base.get("replay")));
 		*/
+		
+		b.add(new JSeparator(SwingConstants.HORIZONTAL));
+
+		// Problemboard and Timeline
+		c = new Box(BoxLayout.X_AXIS);
+		c.add(new ToggleButton(base.get("mode"), "problemboard", "Problem board"));
+		c.add(new ToggleButton(base.get("mode"), "timeline", "Timeline"));
+		b.add(c);
+
 		this.add(b);
 		
 	}

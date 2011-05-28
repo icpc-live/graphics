@@ -101,60 +101,47 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				String mode = LivePresentation.this.modeProp.getValue();
 				boolean clear = LivePresentation.this.clearProp.getBooleanValue();
 				boolean oldViews = LivePresentation.this.oldProp.getBooleanValue();
+
+				if (!oldViews) {
+					LivePresentation.this.currentView = layout;
+					if (!layout.setView(mode)) {
+						oldViews = true;
+					}
+				}
 				if (clear) {
 					LivePresentation.this.currentView = LivePresentation.this.blankView;
 				} 
-				else if (mode.equals("layout")) {
-					LivePresentation.this.currentView = layout;
-				}
-				else if (mode.equals("vnc")) {
-					LivePresentation.this.currentView = vnc;
-				}
-				else if(mode.equals("score")) {
-					if(oldViews) {
+				else if (oldViews) {
+					if (mode.equals("layout")) {
+						LivePresentation.this.currentView = layout;
+					}
+					else if (mode.equals("vnc")) {
+						LivePresentation.this.currentView = vnc;
+					}
+					else if(mode.equals("score")) {
 						LivePresentation.this.currentView = scoreboard;
-					} else {
-						layout.setView("score");
-						LivePresentation.this.currentView = layout;
 					}
-				}
-				else if(mode.equals("blank")) {
-					LivePresentation.this.currentView = LivePresentation.this.blankView;
-				}
-				else if(mode.equals("interview")) {
+					else if(mode.equals("blank")) {
+						LivePresentation.this.currentView = LivePresentation.this.blankView;
+					}
+					else if(mode.equals("interview")) {
 						LivePresentation.this.currentView = interview;	
-				}
-				else if(mode.equals("team")) {
-					if(oldViews) {
-						LivePresentation.this.currentView = teamPresentation;
-					} else {
-						layout.setView("team");
-						LivePresentation.this.currentView = layout;
 					}
-				}
-				else if(mode.equals("cam")) {
-					cam.activate();
-				}
-				else if(mode.equals("countdown")) {
-					LivePresentation.this.currentView = countdown;
-				}
-				else if(mode.equals("award")) {
-					LivePresentation.this.currentView = winnerPresentation;
-				}
-				else if(mode.equals("problemboard")) {
-					layout.setView("problemboard");
-					LivePresentation.this.currentView = layout;
-				}
-				else if(mode.equals("timeline")) {
-					layout.setView("timeline");
-					LivePresentation.this.currentView = layout;
-				}
-				else if(mode.equals("submissiongraph")) {
-					layout.setView("submissiongraph");
-					LivePresentation.this.currentView = layout;
-				}
-				else {
-					LivePresentation.this.currentView = LivePresentation.this.blankView;
+					else if(mode.equals("team")) {
+						LivePresentation.this.currentView = teamPresentation;
+					}
+					else if(mode.equals("cam")) {
+						cam.activate();
+					}
+					else if(mode.equals("countdown")) {
+						LivePresentation.this.currentView = countdown;
+					}
+					else if(mode.equals("award")) {
+						LivePresentation.this.currentView = winnerPresentation;
+					}
+					else {
+						LivePresentation.this.currentView = LivePresentation.this.blankView;
+					}
 				}
 				if (LivePresentation.this.currentView != null) {
 					LivePresentation.this.add(LivePresentation.this.currentView);

@@ -33,13 +33,15 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 	private JMenuItem  closeItem;
 	private JMenuItem  propertiesItem;
 	private JMenuItem  printPropItem;
-
+	ContestReplayFrame contestReplayFrame;
+	
 	Box c = null;
 
 	public ProductionFrame(final PropertyHierarchy hierarchy, IProperty base,
 			IProperty clients/* , PMAbstractClient pmClient */) {
 		this.hierarchy = hierarchy;
 		this.propertyFrame = new PropertyFrame("", hierarchy);
+		this.contestReplayFrame = new ContestReplayFrame(clients);
 		this.clients = clients;
 		this.base = base;
 		// this.pmClient=pmClient;
@@ -93,7 +95,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		
 		resolverItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
-				//TODO
+				contestReplayFrame.setVisible(true);
 			}
 		});
 		
@@ -194,10 +196,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		base.get("team.show_members").setBooleanValue(false);
 		base.get("team.show_extra").setBooleanValue(false);
 		base.get("clear").setBooleanValue(false);
-		base
-				.get("presentation")
-				.setValue(
-						"org.icpc_cli.presentation.contest.internal.presentations.ProductionPresentation");
+		base.get("presentation").setValue("org.icpc_cli.presentation.contest.internal.presentations.ProductionPresentation");
 
 	}
 

@@ -8,12 +8,10 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ContentProvider;
-import se.kth.livetech.contest.graphics.GlowRenderer;
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCFonts;
 import se.kth.livetech.contest.graphics.RowFrameRenderer;
@@ -22,7 +20,6 @@ import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
-import se.kth.livetech.contest.model.impl.ContestImpl;
 import se.kth.livetech.contest.model.test.TestContest;
 import se.kth.livetech.presentation.animation.AnimationStack;
 import se.kth.livetech.presentation.animation.RecentChange;

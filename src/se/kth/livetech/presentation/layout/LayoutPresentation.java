@@ -49,7 +49,15 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
     final int ROWS = 21;
 
 
-
+    public enum Views {
+    	score,
+    	problemboard,
+    	timeline,
+    	team,
+    }
+    
+    
+    
 
 	public boolean board = true;
 	public boolean queue = false;
@@ -60,18 +68,18 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 	ContestContent content;
     Contest contest;
+    Views currentView;
 
     IProperty base;
     List<ContestUpdateListener> sublisteners = new ArrayList<ContestUpdateListener>();
     List<PropertyListener> propertyListeners;
 
 	public LayoutPresentation(Contest c, IProperty base) {
+		this.currentView = Views.score;
         this.contest = c;
 		this.content = new ContestContent(new ContestRef());
 		this.setBackground(ICPCColors.SCOREBOARD_BG);				//(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
-
-
 
         propertyListeners = new ArrayList<PropertyListener>();
         final IProperty scoreBase = base.get("score");
@@ -81,7 +89,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
             public void propertyChanged(IProperty changed) {
                 int page = changed.getIntValue();
                 setPage(page);
-            }
+             }
         };
         propertyListeners.add(pageListener);
         scoreBase.get("page").addPropertyListener(pageListener);
@@ -134,6 +142,16 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
         this.rowColorations = new TreeMap<Integer, Color>();
 
     }
+	
+	public void setView(String view) {
+		try {
+			this.currentView = Views.valueOf(view);
+		} catch (Exception e) {}
+	}
+	
+	public String getView() {
+		return this.currentView.toString();
+	}
 
     public void setPage(int page) {
         startRow = Math.max(page - 1, 0)*ROWS;
@@ -220,9 +238,28 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		Rectangle2D row = new Rectangle2D.Double();
 		Rect.setRow(rect, board ? 2 : queue ? 1 : 16, 19, 20, row);
 		
-		SceneDescription scene;
+		SceneDescription scene = null;
 
 		if (board) {
+			Views view = this.currentView;
+			switch (view) {
+			case score:
+					scene = scoreboard();
+					break;
+			case problemboard:
+					scene = problemboard();
+					break;
+			case timeline:
+				boolean cumulative = System.currentTimeMillis() / 10000 % 2 == 0;
+				scene = submissionGraph(cumulative);
+				break;
+			case team:
+				scene = teamView();
+				break;
+			default:				
+			}
+			
+			/*
 			boolean timeline = System.currentTimeMillis() / 20000 % 2 == 0;
 			if (!timeline) {
 				boolean cumulative = System.currentTimeMillis() / 10000 % 2 == 0;
@@ -244,6 +281,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 				boolean problemColors = System.currentTimeMillis() / 10000 % 2 == 0;
 				scene = timeline(zoomedOut, problemColors);
 			}
+			*/
 		} else {
 			SceneDescription backImage = new SceneDescription(-2);
 			ISceneDescriptionUpdater.ContentUpdater content;

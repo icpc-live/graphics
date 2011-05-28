@@ -27,7 +27,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	List<ContestUpdateListener> sublisteners = new ArrayList<ContestUpdateListener>();
 	Component currentView;
 	List<PropertyListener> propertyListeners;
-	IProperty modeProp, clearProp;
+	IProperty modeProp, clearProp, oldProp;
 
 	public static class Blank extends JPanel {
 		public Blank() {
@@ -48,6 +48,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 
 		this.modeProp = base.get("mode");
 		this.clearProp = base.get("clear");
+		this.oldProp = base.get("old");
 
 		try {
 			teamReader = new TeamReader("images/teams2010.txt");
@@ -91,7 +92,6 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				DebugTrace.trace("Changed %s -> %s", changed, changed.getValue());
-
 				cam.deactivate();
 				if (LivePresentation.this.currentView != null) {
 					LivePresentation.this.remove(LivePresentation.this.currentView);
@@ -100,9 +100,10 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 
 				String mode = LivePresentation.this.modeProp.getValue();
 				boolean clear = LivePresentation.this.clearProp.getBooleanValue();
+				boolean oldViews = LivePresentation.this.oldProp.getBooleanValue();
 				if (clear) {
 					LivePresentation.this.currentView = LivePresentation.this.blankView;
-				}
+				} 
 				else if (mode.equals("layout")) {
 					LivePresentation.this.currentView = layout;
 				}
@@ -110,16 +111,26 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 					LivePresentation.this.currentView = vnc;
 				}
 				else if(mode.equals("score")) {
-					LivePresentation.this.currentView = scoreboard;
+					if(oldViews) {
+						LivePresentation.this.currentView = scoreboard;
+					} else {
+						layout.setView("score");
+						LivePresentation.this.currentView = layout;
+					}
 				}
 				else if(mode.equals("blank")) {
 					LivePresentation.this.currentView = LivePresentation.this.blankView;
 				}
 				else if(mode.equals("interview")) {
-					LivePresentation.this.currentView = interview;
+						LivePresentation.this.currentView = interview;	
 				}
 				else if(mode.equals("team")) {
-					LivePresentation.this.currentView = teamPresentation;
+					if(oldViews) {
+						LivePresentation.this.currentView = teamPresentation;
+					} else {
+						layout.setView("team");
+						LivePresentation.this.currentView = layout;
+					}
 				}
 				else if(mode.equals("cam")) {
 					cam.activate();
@@ -130,13 +141,25 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				else if(mode.equals("award")) {
 					LivePresentation.this.currentView = winnerPresentation;
 				}
+				else if(mode.equals("problemboard")) {
+					layout.setView("problemboard");
+					LivePresentation.this.currentView = layout;
+				}
+				else if(mode.equals("timeline")) {
+					layout.setView("timeline");
+					LivePresentation.this.currentView = layout;
+				}
+				else if(mode.equals("submissiongraph")) {
+					layout.setView("submissiongraph");
+					LivePresentation.this.currentView = layout;
+				}
 				else {
 					LivePresentation.this.currentView = LivePresentation.this.blankView;
 				}
 				if (LivePresentation.this.currentView != null) {
 					LivePresentation.this.add(LivePresentation.this.currentView);
 				}
-
+				
 				vnc.connect();
 				validate();
 				repaint();

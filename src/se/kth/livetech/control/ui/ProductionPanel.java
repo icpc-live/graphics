@@ -1,17 +1,21 @@
 package se.kth.livetech.control.ui;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
+
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.ui.CheckBox;
@@ -44,12 +48,13 @@ public class ProductionPanel extends JPanel implements ActionListener {
 //		"Jonathan Shaeffer|",
 	};
 	JComboBox combo;
-	ProductionSettingsFrame presentationFrame;
+	//ProductionSettingsFrame presentationFrame;
 	IProperty base;
+	
 	public ProductionPanel(IProperty base){
 		this.base = base;
 //		DebugTrace.trace("Production panel from: "+base.toString());
-		this.presentationFrame = new ProductionSettingsFrame(base);
+		//this.presentationFrame = new ProductionSettingsFrame(base);
 		Box b = new Box(BoxLayout.Y_AXIS);
 		Box c;
 
@@ -58,17 +63,26 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new ToggleButton(base.get("mode"), "score", "Scoreboard"));
 		c.add(new JLabel("Page: "));
 		c.add(new Text(base.get("score.page")));
+		
+		TitledBorder scoreBoarder;
+		scoreBoarder = BorderFactory.createTitledBorder("Scoreboard");
+		scoreBoarder.setTitleJustification(TitledBorder.CENTER);
+		c.setBorder(scoreBoarder);
+		
+		/*
 		JButton presentationButton = new JButton("Presentation");
 		presentationButton.addActionListener(new ActionListener() { @Override
 		public void actionPerformed(ActionEvent ae) { ProductionPanel.this.presentationFrame.setVisible(true); } } );
 		c.add(presentationButton);
-
+		*/
+		
+		
 //		String s = "org.icpc_cli.presentation.contest.internal.presentations.ProductionPresentation";
 //		c.add(new ToggleButton(base.get("presentation"), s, "Production"));
 		//c.add(new JLabel("Teams: "));
 		//c.add(new Text(base.get("score.teams")));
 		b.add(c);
-		b.add(new JSeparator(SwingConstants.HORIZONTAL));
+		//b.add(new JSeparator(SwingConstants.HORIZONTAL));
 
 		//Overlays
 		c = new Box(BoxLayout.X_AXIS);
@@ -78,8 +92,13 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new CheckBox(base.get("show_nologo"), "No Logo"));
 		c.add(new CheckBox(base.get("old_views"), "Old Views"));
 		
+		TitledBorder overlay;
+		overlay = BorderFactory.createTitledBorder("Overlays");
+		overlay.setTitleJustification(TitledBorder.CENTER);
+		c.setBorder(overlay);
+		
 		b.add(c);
-		b.add(new JSeparator(SwingConstants.HORIZONTAL));
+		//b.add(new JSeparator(SwingConstants.HORIZONTAL));
 
 		// Interview
 		c = new Box(BoxLayout.X_AXIS);
@@ -112,7 +131,13 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		d.add(e);
 		c.add(d);
 		b.add(c);
-		b.add(new JSeparator(SwingConstants.HORIZONTAL));
+		//b.add(new JSeparator(SwingConstants.HORIZONTAL));
+		
+		TitledBorder interviewBorder;
+		interviewBorder = BorderFactory.createTitledBorder("Interview");
+		interviewBorder.setTitleJustification(TitledBorder.CENTER);
+		c.setBorder(interviewBorder);
+		
 
 		// Team
 		c = new Box(BoxLayout.X_AXIS);
@@ -122,7 +147,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new CheckBox(base.get("team.show_results"), "Results"));
 		b.add(c);
 
-		b.add(new JSeparator(SwingConstants.HORIZONTAL));
+		//b.add(new JSeparator(SwingConstants.HORIZONTAL));
 
 		// Team selection, surveillance, clearing
 		c = new Box(BoxLayout.X_AXIS);
@@ -143,13 +168,19 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new ToggleButton(base.get("mode"), "countdown", "Countdown"));
 		c.add(new Text(base.get("countdown_from")));
 
+		TitledBorder teamBorder;
+		teamBorder = BorderFactory.createTitledBorder("Team");
+		teamBorder.setTitleJustification(TitledBorder.CENTER);
+		c.setBorder(teamBorder);
+		
 		b.add(c);
 		/*
 		b.add(new JSeparator(SwingConstants.HORIZONTAL));
 		b.add(new ContestReplayPanel(base.get("replay")));
 		*/
-		this.add(b);
 		
+		this.add(b);
+
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {

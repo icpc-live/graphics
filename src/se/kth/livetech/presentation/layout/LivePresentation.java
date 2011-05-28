@@ -48,7 +48,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 
 		this.modeProp = base.get("mode");
 		this.clearProp = base.get("clear");
-		this.oldProp = base.get("old");
+		this.oldProp = base.get("old_views");
 
 		try {
 			teamReader = new TeamReader("images/teams2010.txt");

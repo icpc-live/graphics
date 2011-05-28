@@ -76,7 +76,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new CheckBox(base.get("show_queue"), "Queue"));
 		c.add(new CheckBox(base.get("show_clock"), "Clock"));
 		c.add(new CheckBox(base.get("show_nologo"), "No Logo"));
-		c.add(new CheckBox(base.get("old_view"), "Old View"));
+		c.add(new CheckBox(base.get("old_view"), "Old Views"));
 		
 		b.add(c);
 		b.add(new JSeparator(SwingConstants.HORIZONTAL));

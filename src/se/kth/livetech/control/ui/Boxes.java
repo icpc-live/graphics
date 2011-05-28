@@ -18,6 +18,10 @@ public class Boxes {
 		this.box = new Box(axis);
 	}
 	
+	public Boxes() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public Boxes add(Component component) {
 		this.box.add(component);
 		return this;		
@@ -27,5 +31,4 @@ public class Boxes {
 		return this.box;
 	}
 	
-
 }

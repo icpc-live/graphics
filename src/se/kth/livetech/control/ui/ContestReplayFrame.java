@@ -1,9 +1,13 @@
 package se.kth.livetech.control.ui;
 
+import java.awt.Dimension;
+
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JFrame;
+import javax.swing.JSeparator;
+import javax.swing.SwingConstants;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.ui.IncrementCountButton;
@@ -13,14 +17,15 @@ import se.kth.livetech.properties.ui.ToggleButton;
 
 
 @SuppressWarnings("serial")
-public class ContestReplayPanel extends JPanel {
+public class ContestReplayFrame extends JFrame {
 	@SuppressWarnings("unused")
 	private IProperty base;
 	
 	public enum Dir {horizontal,vertical}
 	
 
-	public ContestReplayPanel(IProperty base) {
+	public ContestReplayFrame(IProperty base) {
+		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		this.base = base;
 		Box b = new Box(BoxLayout.Y_AXIS);
 		Box c = new Box(BoxLayout.X_AXIS);
@@ -41,6 +46,7 @@ public class ContestReplayPanel extends JPanel {
 		c.add(new JLabel("Resolve problem delay: "));
 		c.add(new Text(base.get("resolveProblemDelay")));
 		b.add(c);
+		b.add(new JSeparator(SwingConstants.HORIZONTAL));
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new JLabel("#Gold"));
 		c.add(new Text(base.get("goldMedals")));
@@ -49,6 +55,8 @@ public class ContestReplayPanel extends JPanel {
 		c.add(new JLabel("#Bronze"));
 		c.add(new Text(base.get("bronzeMedals")));
 		b.add(c);
+		b.add(new JSeparator(SwingConstants.HORIZONTAL));
+		b.add(new JSeparator(SwingConstants.HORIZONTAL));
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new IncrementCountButton(base.get("presentationStep"), "Presentation step"));
 		c.add(new IncrementCountButton(base.get("presentationStep"), "+2", 2));
@@ -60,6 +68,8 @@ public class ContestReplayPanel extends JPanel {
 		c.add(new Text(base.get("winnerString")));
 		b.add(c);
 		this.add(b);
+		this.setPreferredSize(new Dimension(400, 220));
+		this.pack();
 	}
 	
 }

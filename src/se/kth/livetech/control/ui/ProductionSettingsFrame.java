@@ -4,11 +4,13 @@ import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.border.TitledBorder;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.ui.CheckBox;
@@ -50,6 +52,13 @@ public class ProductionSettingsFrame extends JFrame{
 				frame.setVisible(true);
 			}
 		});
+		
+		TitledBorder productionBorder;
+		productionBorder = BorderFactory.createTitledBorder("Presentation");
+		productionBorder.setTitleJustification(TitledBorder.CENTER);
+		b.setBorder(productionBorder);
+		
+		
 		this.add(b);
 		this.pack();
 		this.setVisible(false);

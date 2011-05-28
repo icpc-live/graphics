@@ -1,22 +1,28 @@
 package se.kth.livetech.control.ui;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
+import javax.swing.border.TitledBorder;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.properties.ui.PropertyFrame;
+import se.kth.livetech.properties.ui.Text;
+import se.kth.livetech.properties.ui.ToggleButton;
 
 @SuppressWarnings("serial")
 public class ProductionFrame extends JFrame implements PropertyListener {
@@ -29,10 +35,12 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 	PropertyHierarchy hierarchy;
 	private JMenuBar menuBar = new JMenuBar();
 	private JMenuItem mainPanelItem;
-	private JMenuItem  resolverItem;
-	private JMenuItem  closeItem;
-	private JMenuItem  propertiesItem;
-	private JMenuItem  printPropItem;
+	private JMenuItem resolverItem;
+	private JMenuItem closeItem;
+	private JMenuItem presentationItem;
+	private JMenuItem propertiesItem;
+	private JMenuItem printPropItem;
+	ProductionSettingsFrame presentationFrame;
 	ContestReplayFrame contestReplayFrame;
 	
 	Box c = null;
@@ -41,6 +49,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 			IProperty clients/* , PMAbstractClient pmClient */) {
 		this.hierarchy = hierarchy;
 		this.propertyFrame = new PropertyFrame("", hierarchy);
+		this.presentationFrame = new ProductionSettingsFrame(clients);
 		this.contestReplayFrame = new ContestReplayFrame(clients);
 		this.clients = clients;
 		this.base = base;
@@ -69,6 +78,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		addMenu.addSeparator();
 		closeItem = addMenu.add("Close");
 		
+		presentationItem = adminMenu.add("Presentation");
 		propertiesItem = adminMenu.add("Properties");
 		printPropItem = adminMenu.add("Print Properties");
 		
@@ -84,7 +94,9 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 			b.add(new ProductionControlPanel(base, clients, m));
 			b.add(new JSeparator(SwingConstants.VERTICAL));
 		}
+		
 		Box a = new Box(BoxLayout.Y_AXIS);
+		
 		JButton fullscreenOnButton = new JButton("Enable fullscreen");
 		JButton fullscreenOffButton = new JButton("Leave fullscreen");
 
@@ -104,6 +116,12 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 				setVisible(false);
 				dispose();
 			}
+		});
+		
+		presentationItem.addActionListener(new ActionListener() { @Override
+			public void actionPerformed(ActionEvent ae) { 
+				presentationFrame.setVisible(true); 
+			} 
 		});
 		
 		propertiesItem.addActionListener(new ActionListener() { 
@@ -129,6 +147,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 				fullScreen(false);
 			}
 		});
+			
 		
 		QuickControlPanel qcp = new QuickControlPanel(base, clients);
 		qcp.setAlignmentX(0);
@@ -136,6 +155,16 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		b.add(a);
 		c.add(b);
 		getContentPane().add(c);
+		
+		TitledBorder qcpBorder;
+		qcpBorder = BorderFactory.createTitledBorder("Quick Control Panel");
+		qcpBorder.setTitleJustification(TitledBorder.CENTER);
+		a.setBorder(qcpBorder);
+		
+		TitledBorder conBorder;
+		conBorder = BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "ICPC Live Controller");
+		conBorder.setTitleJustification(TitledBorder.CENTER);
+		c.setBorder(conBorder);
 		pack();
 		setVisible(true);
 	}

@@ -179,6 +179,12 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		b.add(new ContestReplayPanel(base.get("replay")));
 		*/
 		
+		// Problemboard and Timeline
+		c = new Box(BoxLayout.X_AXIS);
+		c.add(new ToggleButton(base.get("mode"), "problemboard", "Problem board"));
+		c.add(new ToggleButton(base.get("mode"), "timeline", "Timeline"));
+		b.add(c);
+	
 		this.add(b);
 
 	}

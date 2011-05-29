@@ -221,6 +221,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 	@Override
 	public void paintComponent(Graphics gr, int W, int H) {
 		RenderCache.setQuality((Graphics2D)gr);
+		//this.component.setBounds(0, 0, W, H);
 		this.currentView.setSize(W, H);
 		//if (!(this.currentView instanceof MagicComponent)) {
 			this.currentView.paint(gr);

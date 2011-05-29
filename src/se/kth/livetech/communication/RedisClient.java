@@ -209,9 +209,12 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 
 	@Override
 	public void onSubscribe(String channel, int subscribedChannels) {
-		for(String s: redis.keys("live.*")) {//TODO: check prefix
+		Jedis j = new Jedis(redisShardInfo);
+		j.connect();
+		for(String s: j.keys("live.*")) {//TODO: check prefix
 			onMessage("property", s); //emulate received messages for all keys
 		}
+		j.disconnect();
 	}
 
 	@Override

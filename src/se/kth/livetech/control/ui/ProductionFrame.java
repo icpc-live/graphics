@@ -37,11 +37,11 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 	private JMenuItem mainPanelItem;
 	private JMenuItem resolverItem;
 	private JMenuItem closeItem;
-	private JMenuItem presentationItem;
+	//private JMenuItem presentationItem;
 	private JMenuItem propertiesItem;
 	private JMenuItem printPropItem;
 	//ProductionSettingsFrame presentationFrame;
-	ContestReplayFrame contestReplayFrame;
+	//ContestReplayFrame contestReplayFrame;
 	
 	Box c = null;
 
@@ -50,7 +50,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		this.hierarchy = hierarchy;
 		this.propertyFrame = new PropertyFrame("", hierarchy);
 		//this.presentationFrame = new ProductionSettingsFrame(base);
-		this.contestReplayFrame = new ContestReplayFrame(base);
+		//this.contestReplayFrame = new ContestReplayFrame(base);
 		this.clients = clients;
 		this.base = base;
 		// this.pmClient=pmClient;
@@ -78,7 +78,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		addMenu.addSeparator();
 		closeItem = addMenu.add("Close");
 		
-		presentationItem = adminMenu.add("Presentation");
+		//presentationItem = adminMenu.add("Presentation");
 		propertiesItem = adminMenu.add("Properties");
 		printPropItem = adminMenu.add("Print Properties");
 		
@@ -111,11 +111,11 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 				//TODO
 			}});
 		
-		resolverItem.addActionListener(new ActionListener() {
+		/*resolverItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				contestReplayFrame.setVisible(true);
 			}
-		});
+		});*/
 		
 		closeItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
@@ -155,7 +155,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		});
 			
 		
-		QuickControlPanel qcp = new QuickControlPanel(base, clients);
+		QuickControlPanel qcp = new QuickControlPanel(base, base/*clients*/);
 		qcp.setAlignmentX(0);
 		a.add(qcp);
 		b.add(a);
@@ -220,9 +220,11 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 	}
 
 	public void setupMaster(IProperty base) {
-		base.get("vnc.host").setValue("icpc-01.csc.kth.se");
+		//base.get("vnc.host").setValue("icpc-01.csc.kth.se");
+		base.get("vnc.host").setValue("192.168.1.141");
 		base.get("vnc.port").setValue("59000");
-		base.get("cam.host").setValue("icpc-01.csc.kth.se");
+		//base.get("cam.host").setValue("icpc-01.csc.kth.se");
+		base.get("cam.host").setValue("192.168.1.141");
 		base.get("cam.port").setValue("58000");
 		base.get("show_queue").setBooleanValue(false);
 		base.get("show_clock").setBooleanValue(false);

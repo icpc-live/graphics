@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.layout;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -257,6 +258,11 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 				scene = submissionGraph(cumulative);
 				break;
 			case team:
+				g.setPaint(ICPCColors.TRANSPARENT);
+				g.setComposite(AlphaComposite.Clear);
+				g.fillRect(0, 0, width, height);
+				g.setComposite(AlphaComposite.SrcOver);
+
 				scene = teamView();
 				break;
 			default:				
@@ -323,12 +329,14 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		ISceneDescriptionUpdater teamsUpdater;
 		teamsUpdater = updater.getSubLayoutUpdater(0);
 		teamsUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
+		teamsUpdater.setMargin(.7,.1,0,0);
 		int team = this.content.getContestRef().get().getRankedTeam(1).getId();
 		ContestComponents.teamRow(this.content, team, true, teamsUpdater.getSubLayoutUpdater(team), null);
 
 		ISceneDescriptionUpdater backgroundUpdater;
 		backgroundUpdater = updater.getSubLayoutUpdater(-1);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
+		backgroundUpdater.setMargin(.7,.1,0,0);
 		ContestComponents.teamBackground(this.content, 1, backgroundUpdater, false);
 
 		updater.finishGeneration();

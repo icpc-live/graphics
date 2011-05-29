@@ -38,7 +38,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		@Override
 		public void paintComponent(Graphics gr) {
 			Graphics2D g = (Graphics2D) gr;
-			g.setPaint(ICPCColors.TRANSPARENT_GREEN);
+			g.setPaint(ICPCColors.TRANSPARENT);
 			g.setComposite(AlphaComposite.Clear);
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			g.setComposite(AlphaComposite.SrcOver);

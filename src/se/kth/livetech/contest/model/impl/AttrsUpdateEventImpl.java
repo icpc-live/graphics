@@ -8,6 +8,7 @@ import se.kth.livetech.contest.model.Attrs;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.Judgement;
+import se.kth.livetech.util.DebugTrace;
 
 public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 	long time;
@@ -122,6 +123,7 @@ public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 		return type.equals(event.type) && update.equals(event.update);
 	}
 
+	@Override
 	public String toString() {
 		StringBuffer s = new StringBuffer();
 		s.append(type);

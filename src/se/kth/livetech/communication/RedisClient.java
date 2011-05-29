@@ -1,11 +1,11 @@
 package se.kth.livetech.communication;
 
+import java.util.List;
 import java.util.Set;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.JedisShardInfo;
-import redis.clients.jedis.exceptions.JedisException;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
@@ -50,8 +50,9 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 			}
 			Set<String> contests = redis.smembers("contests");
 			for(String contest : contests) {
-				Set<String> events = redis.smembers(String.format("%s.events", contest));
+				List<String> events = redis.lrange(String.format("%s.events", contest), 0, -1);
 				for(String event : events) {
+					//don't these events have to be sorted???
 					onMessage("contest", String.format("%s.%s", contest, event));
 				}
 			}
@@ -130,7 +131,7 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 			}
 			
 			if (publish) {
-				redis.sadd(String.format("%s.events", contestKey), eventId);
+				redis.rpush(String.format("%s.events", contestKey), eventId);
 				redis.sadd("contests", contestKey);
 				redis.publish("contest", eventKey);
 			}
@@ -199,6 +200,7 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 				for (String field : fields) {
 					e.setProperty(field, j.get(message + "." + field));
 				}
+				//DebugTrace.trace(e.toString());
 				localState.getContest(contestId).attrsUpdated(e);
 			}
 		}

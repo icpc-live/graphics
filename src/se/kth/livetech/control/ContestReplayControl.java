@@ -175,7 +175,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		//String winnerString = "2010 World Champion";
 		String winnerString = this.propertyReplay.get("winnerString").getValue();
 		if (winnerString == null || winnerString.length() == 0) {
-			winnerString = "NWERC 2010 Champions";
+			winnerString = "ICPC 2011 Champions";
 		}
 		if(updateStepCounter)
 			++stepCounter;

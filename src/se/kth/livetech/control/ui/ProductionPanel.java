@@ -1,22 +1,27 @@
 package se.kth.livetech.control.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
-
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.ui.CheckBox;
@@ -26,33 +31,23 @@ import se.kth.livetech.properties.ui.ToggleButton;
 
 @SuppressWarnings("serial")
 public class ProductionPanel extends JPanel implements ActionListener {
-
-	String[] interviewPresets = new String[] {
-		"Deirdre Athaide		Fredrik Niemelä|Program Hosts",
-		"Fredrik Niemelä		Deirdre Athaide|Program Hosts",
-		"Deirdre Athaide|Program Host",
-		"Fredrik Niemelä|Program Host",
-		"Sam Ashoo|Head of Systems Team",
-		"Gunnar Kreitz|Development of Automated Judging System, Kattis",
-		"Per Austrin|Judge",
-		"Patrick Hynan|ICPC Operations Director",
-		"icpc2010@kth.se"
-		//		"Andrey Stankevich|Coach",
-//		"Anders Flodström|University Chancellor",
-//		"Fredrik Heintz|Nordic Contest Director",
-//		"Lin Zhao|Professor",
-//		"Ben Kelley|Dean",
-//		"Robert Greenleaf|Composer",
-//		"Roy Andersson|",
-//		"Brenda Chow|IBM",
-//		"Raewyn Boersten|",
-//		"Jonathan Shaeffer|",
-	};
+	
+	final String PROPERTIES_FILE = System.getenv("HOME") + "/livetech/presentation/conf/interviewpresets.properties";
+	final int SECOND_INTERVIEW_GUEST_POSITION = 32;
+	
+	Properties interviewPresets;
+	List<String> presetsList;
+	
+	ListComboBoxModel comboModel;
 	JComboBox combo;
 	//ProductionSettingsFrame presentationFrame;
 	IProperty base;
 	
 	public ProductionPanel(IProperty base){
+		
+		this.interviewPresets = new Properties();
+		this.presetsList = new ArrayList<String>();
+		
 		this.base = base;
 //		DebugTrace.trace("Production panel from: "+base.toString());
 		//this.presentationFrame = new ProductionSettingsFrame(base);
@@ -102,11 +97,22 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		//b.add(new JSeparator(SwingConstants.HORIZONTAL));
 
 		// Interview
-		c = new Box(BoxLayout.X_AXIS);
 		Box d = new Box(BoxLayout.Y_AXIS);
+		c = new Box(BoxLayout.X_AXIS);
 		d.add(new ToggleButton(base.get("mode"), "interview", "Interview"));
 		d.add(new ToggleButton(base.get("mode"), "layout", "Layout"));
+			final JButton load = new JButton("Load pretests");
+			load.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					updateInterviewPresets();
+					comboModel.actionPerformed(new ActionEvent(load, 0, "update"));
+				}
+			});
+		d.add(load);
 		c.add(d);
+		
 		d = new Box(BoxLayout.Y_AXIS);
 		Box e = new Box(BoxLayout.X_AXIS);
 		e.add(new JLabel("Name: "));
@@ -122,12 +128,12 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		d.add(e);
 		e = new Box(BoxLayout.X_AXIS);
 		e.add(new JLabel("Preset: "));
+		this.comboModel = new ListComboBoxModel(this.presetsList);
 		this.combo = new JComboBox();
+		this.combo.setModel(this.comboModel);
 		this.combo.addActionListener(this);
 		this.combo.setPreferredSize(new Dimension(100, 28));
-		for ( int i = 0; i < this.interviewPresets.length; i++ ) {
-			this.combo.addItem((i+1) + ". " + this.interviewPresets[i]);
-		}
+				
 		e.add(this.combo);
 		d.add(e);
 		c.add(d);
@@ -194,12 +200,126 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		if ( s == null ) {
 			s = "";
 		}
-		int idx = s.indexOf(' ');
-		if ( idx >= 0 ) {
-			String real = s.substring(idx+1);
-			String[] nameAndTitle = real.split("\\|");
-			this.base.get("interview.name").setValue(nameAndTitle[0]);
-			this.base.get("interview.title").setValue(nameAndTitle[1]);
+		
+		if(s.indexOf("|") >= 0) {
+			String[] namesTitles = s.split("\\|");
+			String[] names = namesTitles[0].split("#");
+			String[] titles = namesTitles[1].split("#");
+		
+			String name = names[0];
+			if(names.length > 1) {
+				name = formatString(name, names[1], "and");
+			}
+		
+			String title = titles[0];
+			if(titles.length > 1) {
+				title = formatString(title, titles[1], ",");
+			}
+
+			this.base.get("interview.name").setValue(name);
+			this.base.get("interview.title").setValue(title);
+		}
+	}
+	
+	private String formatString(String str1, String str2, String separator) {
+		String ret = str1;
+		String spaces = "";
+		int numberOfSpaces = SECOND_INTERVIEW_GUEST_POSITION - ret.length();
+		if(numberOfSpaces > 4) {
+			for(int i = 0; i<numberOfSpaces; i++) {
+				spaces += " ";
+			}
+			ret += spaces + str2;
+		} else {
+			ret += " " + separator + " " + str2;
+		}
+		return ret;
+		
+	}
+	
+	private void updateInterviewPresets() {
+		try {
+			interviewPresets.load(new FileInputStream(PROPERTIES_FILE));
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		if(this.presetsList.size() > 0) {
+			this.presetsList.clear();
+		}
+		int numberOfPresets = Integer.parseInt(interviewPresets.getProperty("interview.presets"));
+		for(int i=0; i<numberOfPresets; i++){
+			String name = interviewPresets.getProperty("interview.name" + (i+1));
+			String title = interviewPresets.getProperty("interview.title" + (i+1));
+			String post = name + "|" + title;
+			this.presetsList.add(post);
+		}
+	}
+	
+	private class ListComboBoxModel implements ComboBoxModel, ActionListener {
+
+		protected List<String> data;
+		protected List<ListDataListener> listeners;
+		protected Object selected;
+		
+		public ListComboBoxModel(List<String> list) {
+			this.listeners = new ArrayList<ListDataListener>();
+			this.data = list;
+			if(list.size() > 0) {
+				selected = list.get(0);
+			}
+		}
+		
+		@Override
+		public Object getSelectedItem() {
+			return this.selected;
+		}
+
+		@Override
+		public void setSelectedItem(Object anItem) {
+			this.selected = anItem;
+			
+		}
+
+		@Override
+		public void addListDataListener(ListDataListener listener) {
+			this.listeners.add(listener);
+		}
+
+		@Override
+		public Object getElementAt(int i) {
+			return this.data.get(i);
+		}
+
+		@Override
+		public int getSize() {
+			return this.data.size();
+		}
+
+		@Override
+		public void removeListDataListener(ListDataListener listener) {
+			this.listeners.remove(listener);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(e.getActionCommand().equals("update")) {
+				this.fireUpdate();
+			}
+		}
+		
+		public void fireUpdate() {
+			ListDataEvent le = new ListDataEvent(this,
+				ListDataEvent.CONTENTS_CHANGED,
+				0,
+				data.size());
+			for(int i=0; i<listeners.size(); i++) {
+				ListDataListener l = (ListDataListener)listeners.get(i);
+				l.contentsChanged(le);
+			}
 		}
 	}
 }

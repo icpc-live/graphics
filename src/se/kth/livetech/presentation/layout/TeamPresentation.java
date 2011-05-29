@@ -133,7 +133,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 		Contest c = this.c;
 		Graphics2D g = (Graphics2D) gr;
 
-		g.setPaint(ICPCColors.TRANSPARENT_GREEN);
+		g.setPaint(ICPCColors.TRANSPARENT);
 		g.setComposite(AlphaComposite.Clear);
 		g.fillRect(0, 0, getWidth(), getHeight());
 		g.setComposite(AlphaComposite.SrcOver);

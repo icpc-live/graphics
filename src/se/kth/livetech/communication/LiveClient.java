@@ -145,10 +145,14 @@ public class LiveClient {
 		
 		@Option(longName="layout")
 		boolean isLayout();
-
+		
+		@Option(longName="contest-name", defaultValue="contest")
+		String getContestName();
+		
 		@Unparsed
 		List<String> getArgs();
 		boolean isArgs();
+		
 	}
 	public static class HostPort {
 		String host;
@@ -257,7 +261,7 @@ public class LiveClient {
 			// Add contest update listeners above!
 			if (!contestListeners.isEmpty()) {
 				final ContestReplayer cr = new ContestReplayer();
-				localState.getContest(new ContestId("contest", 0)).addAttrsUpdateListener(cr);
+				localState.getContest(new ContestId(opts.getContestName(), 0)).addAttrsUpdateListener(cr);
 
 				// ContestReplayControl
 				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
@@ -289,7 +293,7 @@ public class LiveClient {
 				kattisClient.addAttrsUpdateListener(log);
 				
 				// TODO: nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);
-				kattisClient.addAttrsUpdateListener(localState.getContest(new ContestId("contest", 0)));
+				kattisClient.addAttrsUpdateListener(localState.getContest(new ContestId(opts.getContestName(), 0)));
 
 				kattisClient.startPushReading();
 
@@ -299,7 +303,7 @@ public class LiveClient {
 				try {
 					final LogFeed logSpeaker = new LogFeed(opts.getFileName());
 					// TODO: nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);
-					logSpeaker.addAttrsUpdateListener(localState.getContest(new ContestId("contest", 0)));
+					logSpeaker.addAttrsUpdateListener(localState.getContest(new ContestId(opts.getContestName(), 0)));
 					try {
 						logSpeaker.parse();
 					} catch (IOException e) {
@@ -315,7 +319,7 @@ public class LiveClient {
 				TestContest tc = new TestContest(100, 12, 15000);
 				FakeContest fc = new FakeContest(tc);
 				//TODO: nodeRegistry.addContest(new ContestId("contest", 0), tc);
-				tc.addAttrsUpdateListener(localState.getContest(new ContestId("contest", 0)));
+				tc.addAttrsUpdateListener(localState.getContest(new ContestId(opts.getContestName(), 0)));
 				fc.start();
 				
 				localState.setContestSourceFlag(true);

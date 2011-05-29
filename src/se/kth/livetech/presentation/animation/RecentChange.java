@@ -23,6 +23,7 @@ public class RecentChange<Key, Value> {
 	}
 	public Value get(Key key) {
 		State state = states.get(key);
+		if (state == null)	return null;
 		while (state.chain != null)
 			state = state.chain;
 		return state.value;

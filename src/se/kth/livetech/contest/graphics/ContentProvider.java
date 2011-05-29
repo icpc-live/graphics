@@ -161,7 +161,7 @@ public class ContentProvider {
 	public static final double RECENT_MID_ALPHA = .7;
 	public static final double RECENT_FADE_TIME = 500; // ms
 	public static final double STATS_GLOW_MARGIN = 1.5;
-	public static final double PROBLEM_GLOW_MARGIN = 2.5;
+	public static final double PROBLEM_GLOW_MARGIN = 1.5; // was 2.5
 
 	public static Renderable getTeamResultsHeader(Contest c){
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
@@ -188,7 +188,7 @@ public class ContentProvider {
 			String text = ContentProvider.getProblemScoreText(ps, showProblemLetter);
 			ColoredTextBox.Style style = ContentProvider.getProblemScoreStyle(ps);
 			ColoredTextBox problem = new ColoredTextBox(text, style);
-			int key = r.add(problem, 1, .95, false);
+			int key = r.add(problem, 1, .8, false);
 			if (style != NONE && ps != null && !ps.equals(pps)) {
 				GlowRenderer glow = new GlowRenderer(style.getColor(), PROBLEM_GLOW_MARGIN, false, glowAlpha); // TODO: alpha per problem
 				r.setDecoration(key, glow, PROBLEM_GLOW_MARGIN);

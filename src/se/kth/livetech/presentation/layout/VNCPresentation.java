@@ -15,11 +15,11 @@ import com.tightvnc.VncViewerFactory;
  */
 @SuppressWarnings("serial")
 public class VNCPresentation extends JPanel {
-	private String host = "192.168.2.200";
+	private String host = "192.168.1.141";
 	private String password = "";
 	double zoom = 1;
 	int portBase = 59000;
-	int teamPort = 105;
+	int teamPort = 1;
 		
 	private VncViewer vv = null;
 	private ScrollPane sp = null;
@@ -47,7 +47,7 @@ public class VNCPresentation extends JPanel {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				if(changed.getValue().isEmpty())
-					changed.setValue("192.168.2.200"); //default
+					changed.setValue("192.168.1.141"); //default
 
 				host = changed.getValue();
 				connect();

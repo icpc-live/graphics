@@ -220,7 +220,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	public void paintComponent(Graphics g, int W, int H) {
 		RenderCache.setQuality((Graphics2D)g);
 		this.currentView.setSize(W, H);
-		this.currentView.paint(g);
+		//this.currentView.paint(g);
+		((JPanel) this.currentView).paintComponents(g);
 	}
 
 

@@ -218,7 +218,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
             	String[] names = namesTitles[0].split("#");
             	name = names[0];
             	if(names.length > 1) {
-            		name = formatString(name, names[1], "and");
+            		name = formatString(name, names[1]);
             	}
             }
             
@@ -227,7 +227,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
             	String[] titles = namesTitles[1].split("#");
             	title = titles[0];
             	if(titles.length > 1) {
-            		title = formatString(title, titles[1], "    ");
+            		title = formatString(title, titles[1]);
             	}
             }
             
@@ -236,17 +236,17 @@ public class ProductionPanel extends JPanel implements ActionListener {
         }
     }
 
-    private String formatString(String str1, String str2, String separator) {
+    private String formatString(String str1, String str2) {
         String ret = str1;
         String spaces = "";
         int numberOfSpaces = INTERVIEW_SECOND_NAME_POSITION - ret.length();
-        if(numberOfSpaces > 4) {
+        if(numberOfSpaces > 6) {
             for(int i = 0; i<numberOfSpaces; i++) {
                 spaces += " ";
             }
             ret += spaces + str2;
         } else {
-            ret += " " + separator + " " + str2;
+            ret += "       " + str2;
         }
         return ret;
 

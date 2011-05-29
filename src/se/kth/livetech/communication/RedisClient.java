@@ -12,6 +12,7 @@ import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.util.DebugTrace;
 
 public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	
@@ -189,6 +190,8 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 			String type = j.get(message + ".type");
 			AttrsUpdateEventImpl e = new AttrsUpdateEventImpl(0, type);
 			for (String field : fields) {
+				//String lol = j.get(message + "." + field);
+				//DebugTrace.trace(String.format("lol values: %s %s", field, lol));
 				e.setProperty(field, j.get(message + "." + field));
 			}
 			localState.getContest(contestId).attrsUpdated(e);

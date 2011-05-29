@@ -139,7 +139,6 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		interviewBorder.setTitleJustification(TitledBorder.CENTER);
 		c.setBorder(interviewBorder);
 		
-
 		// Team
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new ToggleButton(base.get("mode"), "team", "Team"));

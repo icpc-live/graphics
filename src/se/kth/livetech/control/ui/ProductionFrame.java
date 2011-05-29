@@ -100,6 +100,12 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		JButton fullscreenOnButton = new JButton("Enable fullscreen");
 		JButton fullscreenOffButton = new JButton("Leave fullscreen");
 
+		Box f = new Box(BoxLayout.X_AXIS);
+		f.add(fullscreenOnButton);
+		f.add(fullscreenOffButton);
+		
+		c.add(f);
+		
 		mainPanelItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ae) {
 				//TODO

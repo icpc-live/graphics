@@ -40,7 +40,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 	private JMenuItem presentationItem;
 	private JMenuItem propertiesItem;
 	private JMenuItem printPropItem;
-	ProductionSettingsFrame presentationFrame;
+	//ProductionSettingsFrame presentationFrame;
 	ContestReplayFrame contestReplayFrame;
 	
 	Box c = null;
@@ -49,8 +49,8 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		IProperty clients/* , PMAbstractClient pmClient */) {
 		this.hierarchy = hierarchy;
 		this.propertyFrame = new PropertyFrame("", hierarchy);
-		this.presentationFrame = new ProductionSettingsFrame(clients);
-		this.contestReplayFrame = new ContestReplayFrame(clients);
+		//this.presentationFrame = new ProductionSettingsFrame(base);
+		this.contestReplayFrame = new ContestReplayFrame(base);
 		this.clients = clients;
 		this.base = base;
 		// this.pmClient=pmClient;
@@ -124,11 +124,11 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 			}
 		});
 		
-		presentationItem.addActionListener(new ActionListener() { @Override
-			public void actionPerformed(ActionEvent ae) { 
-				presentationFrame.setVisible(true); 
-			} 
-		});
+		//presentationItem.addActionListener(new ActionListener() { @Override
+		//	public void actionPerformed(ActionEvent ae) { 
+		//		presentationFrame.setVisible(true); 
+		//	} 
+		//});
 		
 		propertiesItem.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent ae) {

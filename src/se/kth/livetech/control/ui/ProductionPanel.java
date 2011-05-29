@@ -49,13 +49,13 @@ public class ProductionPanel extends JPanel implements ActionListener {
 //		"Jonathan Shaeffer|",
 	};
 	JComboBox combo;
-	//ProductionSettingsFrame presentationFrame;
+	ProductionSettingsFrame presentationFrame;
 	IProperty base;
 	
 	public ProductionPanel(IProperty base){
 		this.base = base;
 //		DebugTrace.trace("Production panel from: "+base.toString());
-		//this.presentationFrame = new ProductionSettingsFrame(base);
+		this.presentationFrame = new ProductionSettingsFrame(base);
 		Box b = new Box(BoxLayout.Y_AXIS);
 		Box c;
 
@@ -70,12 +70,12 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		scoreBoarder.setTitleJustification(TitledBorder.CENTER);
 		c.setBorder(scoreBoarder);
 		
-		/*
+		
 		JButton presentationButton = new JButton("Presentation");
 		presentationButton.addActionListener(new ActionListener() { @Override
 		public void actionPerformed(ActionEvent ae) { ProductionPanel.this.presentationFrame.setVisible(true); } } );
 		c.add(presentationButton);
-		*/
+		
 		
 		
 //		String s = "org.icpc_cli.presentation.contest.internal.presentations.ProductionPresentation";

@@ -147,6 +147,9 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 	public boolean setView(String view) {
 		try {
 			this.currentView = Views.valueOf(view);
+			if (this.currentView == Views.score || this.currentView == Views.team) {
+				return false; // Use old views
+			}
 			return true;
 		} catch (Exception e) {
 			return false;

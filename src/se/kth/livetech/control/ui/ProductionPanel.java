@@ -1,13 +1,11 @@
 package se.kth.livetech.control.ui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -20,8 +18,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
@@ -110,7 +106,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		Box d = new Box(BoxLayout.Y_AXIS);
 		d.add(new ToggleButton(base.get("mode"), "interview", "Interview"));
 		d.add(new ToggleButton(base.get("mode"), "layout", "Layout"));
-            final JButton load = new Button("Load Presets");
+            final JButton load = new JButton("Load Presets");
             load.addActionListener(new ActionListener() {
             
                 @Override
@@ -216,20 +212,25 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		}
 
 		if(s.indexOf("|") >= 0) {
-            String[] namesTitles[0] = s.split("\\|");
-            String[] names = namesTitles[0].split("#");
-            String[] titles = namesTitles[1].split("#");
-
-            String name = names[0];
-            if(names.length > 1) {
-                name = formatString(name, names[1], "and");
+            String[] namesTitles = s.split("\\|");
+            String name = "";
+            if(namesTitles.length > 0) {
+            	String[] names = namesTitles[0].split("#");
+            	name = names[0];
+            	if(names.length > 1) {
+            		name = formatString(name, names[1], "and");
+            	}
             }
-
-            String title = titles[0];
-            if(titles.length > 1) {
-                title = formatString(title, titles[1], "    ");
+            
+            String title = "";
+            if(namesTitles.length > 1) {
+            	String[] titles = namesTitles[1].split("#");
+            	title = titles[0];
+            	if(titles.length > 1) {
+            		title = formatString(title, titles[1], "    ");
+            	}
             }
-
+            
             this.base.get("interview.name").setValue(name);
             this.base.get("interview.title").setValue(title);
         }

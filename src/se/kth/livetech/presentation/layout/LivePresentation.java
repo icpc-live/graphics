@@ -35,7 +35,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		}
 	}
 	private Blank blankView = new Blank();
-	
+
 	public Component getCurrentView() {
 		return this.currentView;
 	}
@@ -110,7 +110,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				}
 				if (clear) {
 					LivePresentation.this.currentView = LivePresentation.this.blankView;
-				} 
+				}
 				else if (oldViews) {
 					if (mode.equals("layout")) {
 						LivePresentation.this.currentView = layout;
@@ -125,7 +125,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 						LivePresentation.this.currentView = LivePresentation.this.blankView;
 					}
 					else if(mode.equals("interview")) {
-						LivePresentation.this.currentView = interview;	
+						LivePresentation.this.currentView = interview;
 					}
 					else if(mode.equals("team")) {
 						LivePresentation.this.currentView = teamPresentation;
@@ -146,7 +146,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				if (LivePresentation.this.currentView != null) {
 					LivePresentation.this.add(LivePresentation.this.currentView);
 				}
-				
+
 				vnc.connect();
 				validate();
 				repaint();
@@ -206,6 +206,13 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	public void paintComponent(Graphics g) {
 		RenderCache.setQuality((Graphics2D)g);
 	}
+
+	public void paintComponent(Graphics g, int W, int H) {
+		RenderCache.setQuality((Graphics2D)g);
+		this.currentView.setSize(W, H);
+		this.currentView.paint(g);
+	}
+
 
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {

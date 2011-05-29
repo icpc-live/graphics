@@ -17,7 +17,6 @@ import java.util.TreeSet;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import se.kth.livetech.presentation.layout.LayoutPresentation;
 import se.kth.livetech.presentation.layout.LivePresentation;
 import se.kth.livetech.presentation.layout.Rect;
 
@@ -33,17 +32,17 @@ public class MagicPanel extends JPanel {
 
 	Object device, output;
 	Method displayIntArrayFrameSync;
-	
+
 	SortedSet<Long> paintTimes = new TreeSet<Long>();
 
 	public MagicPanel(JComponent component, int deviceN) {
 		add(component);
 		setBackground(Color.BLACK);
-		
+
 		this.component = component;
 		this.deviceN = deviceN;
 		this.img = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
-		this.buffer = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
+		this.buffer = ((DataBufferInt) this.img.getRaster().getDataBuffer()).getData();
 
 		Class<?> deckLinkDeviceClass;
 		Class<?> deckLinkOutputClass;
@@ -53,7 +52,7 @@ public class MagicPanel extends JPanel {
 			deckLinkOutputClass = Class.forName("se.kth.livetech.blackmagic.DeckLink$Output");
 			deckLinkTestClass = Class.forName("se.kth.livetech.blackmagic.DeckLinkTest");
 		} catch (ClassNotFoundException e) {
-			err = e;
+			this.err = e;
 			e.printStackTrace();
 			return;
 		}
@@ -62,51 +61,51 @@ public class MagicPanel extends JPanel {
 		try {
 			setup720p50 = deckLinkTestClass.getMethod("setup720p50", int.class);
 			getOutput = deckLinkDeviceClass.getMethod("getOutput");
-			displayIntArrayFrameSync = deckLinkOutputClass.getMethod("displayIntArrayFrameSync", int.class, int.class, int[].class);
+			this.displayIntArrayFrameSync = deckLinkOutputClass.getMethod("displayIntArrayFrameSync", int.class, int.class, int[].class);
 		} catch (NoSuchMethodException e) {
-			err = e;
+			this.err = e;
 			e.printStackTrace();
 			return;
 		}
 
 		try {
-			device = setup720p50.invoke(null, deviceN);
-			output = getOutput.invoke(device);
+			this.device = setup720p50.invoke(null, deviceN);
+			this.output = getOutput.invoke(this.device);
 		} catch (SecurityException e) {
-			err = e;
+			this.err = e;
 			e.printStackTrace();
 		} catch (IllegalArgumentException e) {
-			err = e;
+			this.err = e;
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			err = e;
+			this.err = e;
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			err = e;
+			this.err = e;
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void displayIntArrayFrameSync(int w, int h, int[] frame) {
 		try {
-			this.displayIntArrayFrameSync.invoke(output, w, h, frame);
+			this.displayIntArrayFrameSync.invoke(this.output, w, h, frame);
 		} catch (IllegalArgumentException e) {
-			err = e;
+			this.err = e;
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			err = e;
+			this.err = e;
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			err = e;
+			this.err = e;
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public Dimension getPreferredSize() {
 		return new Dimension(W, H);
 	}
-	
+
 	@Override
 	public void paintChildren(Graphics gr) {
 		// Do not paint children, but schedule this panel to repaint...
@@ -116,18 +115,20 @@ public class MagicPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
-		
+
 		// FIXME: Thread away drawing and magic frame sync
 		{
-			Graphics2D g = (Graphics2D) img.getGraphics();
+			Graphics2D g = (Graphics2D) this.img.getGraphics();
 			g.setPaint(new Color(0,0,0,0));
 			g.setComposite(AlphaComposite.Clear);
 			g.fillRect(0, 0, W, H);
 			g.setComposite(AlphaComposite.SrcOver);
-			component.setSize(W, H);
+			this.component.setSize(W, H);
 			//System.err.println("MagicSize " + component.getWidth() + "x" + component.getHeight());
-			//component.paint(g); // FIXME: Does not paint?
-			((LayoutPresentation) ((LivePresentation) component).getCurrentView()).paintComponent(g, W, H);
+			//this.component.paint(g); // FIXME: Does not paint?
+			//this.component.paintAll(g); // FIXME: Does not paint?
+			//((LayoutPresentation) ((LivePresentation) component).getCurrentView()).paintComponent(g, W, H);
+			((LivePresentation) component).paintComponent(g, W, H);
 			g.dispose();
 		}
 
@@ -136,7 +137,7 @@ public class MagicPanel extends JPanel {
 				displayIntArrayFrameSync(W, H, this.buffer);
 			}
 		}
-		
+
 		Rectangle2D rect = new Rectangle(0, 0, getWidth(), getHeight());
 		double aspect = (double) W / H;
 		rect = Rect.aspect(rect, aspect, aspect);
@@ -145,11 +146,11 @@ public class MagicPanel extends JPanel {
 				0, 0, W, H,
 				this);
 
-		if (err != null) {
+		if (this.err != null) {
 			gr.setColor(Color.RED);
 			gr.drawLine(0, 0, 20, 20);
 			gr.drawLine(0, 20, 20, 0);
-			gr.drawString(err.toString(), 10, 40);
+			gr.drawString(this.err.toString(), 10, 40);
 		}
 
 		{

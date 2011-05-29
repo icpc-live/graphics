@@ -81,17 +81,16 @@ public class ContestComponents {
 
         TeamScore ts = contest.getTeamScore(teamID);
         TeamScore prev = recent.get(teamID);
-        if (ts.getSolved() != prev.getSolved()) {
+        if (ts != null && prev != null && ts.getSolved() != prev.getSolved()) {
             if(glowTimer.containsKey(teamID)) {
                 glow = (now - glowTimer.get(teamID)) < 5000;
             } else {
                 glow = true;
-                glowTimer.put(teamID, new Long(now));
+                glowTimer.put(teamID, now);
             }
         }
        
         return glow;
-        
     }
 
 	

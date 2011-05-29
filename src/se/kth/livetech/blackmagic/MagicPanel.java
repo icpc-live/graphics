@@ -123,12 +123,13 @@ public class MagicPanel extends JPanel {
 			g.setComposite(AlphaComposite.Clear);
 			g.fillRect(0, 0, W, H);
 			g.setComposite(AlphaComposite.SrcOver);
+			this.component.setBounds(0, 0, W, H);
 			this.component.setSize(W, H);
 			//System.err.println("MagicSize " + component.getWidth() + "x" + component.getHeight());
 			//this.component.paint(g); // FIXME: Does not paint?
 			//this.component.paintAll(g); // FIXME: Does not paint?
 			//((LayoutPresentation) ((LivePresentation) component).getCurrentView()).paintComponent(g, W, H);
-			((LivePresentation) component).paintComponent(g, W, H);
+			((LivePresentation) this.component).paintComponent(g, W, H);
 			g.dispose();
 		}
 

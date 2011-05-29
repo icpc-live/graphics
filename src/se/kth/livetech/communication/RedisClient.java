@@ -44,14 +44,16 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 		
 		spawnSubscriptionThread();
 		
-		for(String s: redis.keys("live.*")) {//TODO: check prefix
-			onMessage("property", s); //emulate received messages for all keys
-		}
-		Set<String> contests = redis.smembers("contests");
-		for(String contest : contests) {
-			Set<String> events = redis.smembers(String.format("%s.events", contest));
-			for(String event : events) {
-				onMessage("contest", String.format("%s.%s", contest, event));
+		synchronized (redis) {
+			for(String s: redis.keys("live.*")) {//TODO: check prefix
+				onMessage("property", s); //emulate received messages for all keys
+			}
+			Set<String> contests = redis.smembers("contests");
+			for(String contest : contests) {
+				Set<String> events = redis.smembers(String.format("%s.events", contest));
+				for(String event : events) {
+					onMessage("contest", String.format("%s.%s", contest, event));
+				}
 			}
 		}
 	}
@@ -95,64 +97,69 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	
 	// Called when local contest changed
 	public void attrsUpdated(ContestId contestId, AttrsUpdateEvent e) {
-		assert(!contestId.name.contains("."));
+		synchronized (redis) {
 		
-		if (!redis.isConnected())
-			redis.connect();
-		
-		String eventId = e.getProperty("event-id");
-		
-		final String contestKey = String.format("contest.%s.%d", contestId.name, contestId.starttime);
-		final String eventKey = String.format("%s.%s", contestKey, eventId);
-		
-		String eventTypeKey = String.format("%s.type", eventKey);
-		String eventType = redis.get(eventTypeKey);
-		
-		boolean publish = false;
-
-		if (!e.getType().equals(eventType)) {
-			redis.set(eventTypeKey, e.getType());
-			publish = true;
-		}
-		
-		for (String name : e.getProperties()) {
-			String key = String.format("%s.%s", eventKey, name);
-			String value = e.getProperty(name);
-			if (!value.equals(redis.get(key))) {
-				redis.set(key, value);
-				redis.sadd(String.format("%s.fields", eventKey), name);
+			assert(!contestId.name.contains("."));
+			
+			if (!redis.isConnected())
+				redis.connect();
+			
+			String eventId = e.getProperty("event-id");
+			
+			final String contestKey = String.format("contest.%s.%d", contestId.name, contestId.starttime);
+			final String eventKey = String.format("%s.%s", contestKey, eventId);
+			
+			String eventTypeKey = String.format("%s.type", eventKey);
+			String eventType = redis.get(eventTypeKey);
+			
+			boolean publish = false;
+	
+			if (!e.getType().equals(eventType)) {
+				redis.set(eventTypeKey, e.getType());
 				publish = true;
 			}
-		}
-		
-		if (publish) {
-			redis.sadd(String.format("%s.events", contestKey), eventId);
-			redis.sadd("contests", contestKey);
-			redis.publish("contest", eventKey);
+			
+			for (String name : e.getProperties()) {
+				String key = String.format("%s.%s", eventKey, name);
+				String value = e.getProperty(name);
+				if (!value.equals(redis.get(key))) {
+					redis.set(key, value);
+					redis.sadd(String.format("%s.fields", eventKey), name);
+					publish = true;
+				}
+			}
+			
+			if (publish) {
+				redis.sadd(String.format("%s.events", contestKey), eventId);
+				redis.sadd("contests", contestKey);
+				redis.publish("contest", eventKey);
+			}
 		}
 	}
 
 	@Override
 	public void propertyChanged(IProperty changed) {
-		if (!redis.isConnected())
-			redis.connect();
-		
-		String propertyName = changed.getName();
-		
-		if(changed.isSet()){
-			redis.set(propertyName, changed.getOwnValue());
+		synchronized (redis) {
+			if (!redis.isConnected())
+				redis.connect();
+			
+			String propertyName = changed.getName();
+			
+			if(changed.isSet()){
+				redis.set(propertyName, changed.getOwnValue());
+			}
+			else {
+				redis.del(propertyName); //TODO: check
+			}
+			if(changed.isLinked()) {
+				redis.set(propertyName + "#link", changed.getLink());
+			}
+			else {
+				redis.del(propertyName + "#link"); //TODO: check
+			}
+			String message = propertyName;
+			redis.publish("property", message);
 		}
-		else {
-			redis.del(propertyName); //TODO: check
-		}
-		if(changed.isLinked()) {
-			redis.set(propertyName + "#link", changed.getLink());
-		}
-		else {
-			redis.del(propertyName + "#link"); //TODO: check
-		}
-		String message = propertyName;
-		redis.publish("property", message);
 	}
 
 	@Override
@@ -160,38 +167,40 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 		return localNode;
 	}
 
-	public synchronized void onMessage(Jedis j, String channel, String message) {
-		if ("property".equals(channel)) {
-			// Called when Redis publish a property update.
-			String propertyName = message;
-			IProperty property = this.localState.getHierarchy().getProperty(propertyName);
-			String value = j.get(propertyName);
-			if(value != null){
-				property.setValue(value);
+	public void onMessage(Jedis j, String channel, String message) {
+		synchronized (j) {
+			if ("property".equals(channel)) {
+				// Called when Redis publish a property update.
+				String propertyName = message;
+				IProperty property = this.localState.getHierarchy().getProperty(propertyName);
+				String value = j.get(propertyName);
+				if(value != null){
+					property.setValue(value);
+				}
+				else{
+					property.clearValue();
+				}
+				String link = j.get(propertyName + "#link");
+				if(link != null) {
+					property.setLink(link);
+				}
+				else{
+					property.clearLink();
+				}
+			} else if("contest".equals(channel)) {
+				// Called when Redis publish a contest update.
+				String[] keys = message.split("\\.", 4);
+				assert(keys.length==4);
+				assert(keys[0].equals("contest"));
+				ContestId contestId = new ContestId(keys[1], Long.valueOf(keys[2]));
+				Set<String> fields = j.smembers(message + ".fields");
+				String type = j.get(message + ".type");
+				AttrsUpdateEventImpl e = new AttrsUpdateEventImpl(0, type);
+				for (String field : fields) {
+					e.setProperty(field, j.get(message + "." + field));
+				}
+				localState.getContest(contestId).attrsUpdated(e);
 			}
-			else{
-				property.clearValue();
-			}
-			String link = j.get(propertyName + "#link");
-			if(link != null) {
-				property.setLink(link);
-			}
-			else{
-				property.clearLink();
-			}
-		} else if("contest".equals(channel)) {
-			// Called when Redis publish a contest update.
-			String[] keys = message.split("\\.", 4);
-			assert(keys.length==4);
-			assert(keys[0].equals("contest"));
-			ContestId contestId = new ContestId(keys[1], Long.valueOf(keys[2]));
-			Set<String> fields = j.smembers(message + ".fields");
-			String type = j.get(message + ".type");
-			AttrsUpdateEventImpl e = new AttrsUpdateEventImpl(0, type);
-			for (String field : fields) {
-				e.setProperty(field, j.get(message + "." + field));
-			}
-			localState.getContest(contestId).attrsUpdated(e);
 		}
 	}
 

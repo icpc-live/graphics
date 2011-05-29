@@ -162,20 +162,19 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 		return localNode;
 	}
 
-	@Override
-	public void onMessage(String channel, String message) {
+	public void onMessage(Jedis j, String channel, String message) {
 		if ("property".equals(channel)) {
 			// Called when Redis publish a property update.
 			String propertyName = message;
 			IProperty property = this.localState.getHierarchy().getProperty(propertyName);
-			String value = redis.get(propertyName);
+			String value = j.get(propertyName);
 			if(value != null){
 				property.setValue(value);
 			}
 			else{
 				property.clearValue();
 			}
-			String link = this.redis.get(propertyName + "#link");
+			String link = j.get(propertyName + "#link");
 			if(link != null) {
 				property.setLink(link);
 			}
@@ -188,16 +187,21 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 			assert(keys.length==4);
 			assert(keys[0].equals("contest"));
 			ContestId contestId = new ContestId(keys[1], Long.valueOf(keys[2]));
-			Set<String> fields = redis.smembers(message + ".fields");
-			String type = redis.get(message + ".type");
+			Set<String> fields = j.smembers(message + ".fields");
+			String type = j.get(message + ".type");
 			AttrsUpdateEventImpl e = new AttrsUpdateEventImpl(0, type);
 			for (String field : fields) {
-				e.setProperty(field, redis.get(message + "." + field));
+				e.setProperty(field, j.get(message + "." + field));
 			}
 			localState.getContest(contestId).attrsUpdated(e);
 		}
 	}
 
+	@Override
+	public void onMessage(String channel, String message) {
+		onMessage(redis, channel, message);
+	}	
+	
 	@Override
 	public void onPMessage(String pattern, String channel, String message) {}
 
@@ -212,7 +216,7 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 		Jedis j = new Jedis(redisShardInfo);
 		j.connect();
 		for(String s: j.keys("live.*")) {//TODO: check prefix
-			onMessage("property", s); //emulate received messages for all keys
+			onMessage(j, "property", s); //emulate received messages for all keys
 		}
 		j.disconnect();
 	}

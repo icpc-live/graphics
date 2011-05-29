@@ -253,7 +253,7 @@ public class ContestImpl implements Contest {
 	}
 
 	private void update(Attrs a) {
-		DebugTrace.trace("update " + a);
+		//DebugTrace.trace("update " + a);
 		if (a instanceof Reset) {
 			reset();
 		}

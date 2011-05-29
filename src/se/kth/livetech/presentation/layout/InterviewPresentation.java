@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.layout;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -37,7 +38,7 @@ import se.kth.livetech.util.Frame;
 @SuppressWarnings("serial")
 //public class InterviewPresentation extends TeamPresentation {
 public class InterviewPresentation extends JPanel implements ContestUpdateListener {
-	
+
 	public static final double ANIMATION_TIME = 1500; // ms
 	public static final double ROW_TIME = 1000; // ms
 	public static final double RECENT_TIME = 5000; // ms
@@ -46,34 +47,34 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 	public static final double RECENT_FADE_TIME = 500; // ms
 	final double NAME_WEIGHT = 5;
 
-	
+
 	Team fakeTeam;
 	int fakeTeamId;
 	String names = "";
 	Contest contest;
 	String extraInfo;
-	
+
 	List<PropertyListener> listeners = new ArrayList<PropertyListener>();
-	
+
 	public InterviewPresentation(Contest c, IProperty props) {
 		this.contest = c;
-		
+
 		this.setBackground(ICPCColors.COLOR_KEYING);
 		this.setPreferredSize(new Dimension(1024, 576));
-	
+
 		PropertyListener nameChange = new PropertyListener() {
 
 			@Override
 			public void propertyChanged(IProperty changed) {
 				DebugTrace.trace("Creating fake team for interview");
-				names = changed.getValue();
+				InterviewPresentation.this.names = changed.getValue();
 				repaint();
 			}
-				
+
 		};
-		
+
 		PropertyListener titleChange = new PropertyListener() {
-			
+
 			@Override
 			public void propertyChanged(IProperty changed) {
 				DebugTrace.trace("Changed title to " + changed.getValue());
@@ -82,28 +83,28 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 			}
 		};
 
-		listeners.add(nameChange);
-		listeners.add(titleChange);
-		
+		this.listeners.add(nameChange);
+		this.listeners.add(titleChange);
+
 		props.get("interview.name").addPropertyListener(nameChange);
 		props.get("interview.title").addPropertyListener(titleChange);
-			
-		
+
+
 	}
-	
+
 	public String getExtraInfo() {
-		return extraInfo;
+		return this.extraInfo;
 	}
 
 	public void setExtraInfo(String extraInfo) {
 		this.extraInfo = extraInfo;
-	}	
-	
+	}
+
 	public synchronized void setContest(Contest nc) {
 		this.contest = nc;
 		repaint();
 	}
-	
+
 	public synchronized void setTeam(Team team){
 		this.fakeTeam = team;
 		this.fakeTeamId = team.getId();
@@ -115,9 +116,9 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 		setContest(e.getNewContest());
 	}
 
-	
-	
-	
+
+
+
 	AnimationStack<Integer, Integer> stack = new AnimationStack<Integer, Integer>();
 	RecentChange<Integer, TeamScore> recent = new RecentChange<Integer, TeamScore>();
 
@@ -125,6 +126,7 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 	long lastTime;
 	double startRow = 0;
 	//private boolean displayMembers = true;
+	@Override
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
 		Contest c = this.contest;
@@ -133,18 +135,23 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), 0);
 		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
 
+		g.setPaint(ICPCColors.TRANSPARENT_GREEN);
+		g.setComposite(AlphaComposite.Clear);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		g.setComposite(AlphaComposite.SrcOver);
+
 		boolean update = false;
 		{ // Advance
 			long now = System.currentTimeMillis();
-			if (firstPaint) {
+			if (this.firstPaint) {
 				this.lastTime = now;
-				firstPaint = false;
+				this.firstPaint = false;
 			}
 			long dt = now - this.lastTime;
 			this.lastTime = now;
 			update |= this.stack.advance(dt / ANIMATION_TIME);
 			update |= this.recent.advance(dt / RECENT_TIME);
-			startRow += dt / ROW_TIME;
+			this.startRow += dt / ROW_TIME;
 		}
 
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
@@ -154,17 +161,18 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 			Color row2 = ICPCColors.BG_COLOR_2;
 			r.setBackground(new RowFrameRenderer(row2, row1));
 		}
-		
+
 		int posy = (int) (getHeight()*440.0/576);
-		
+
 		g.translate(0, posy);
 		{ // Render
 			r.render(g, dim);
 		}
-		
-		stack.setPosition(fakeTeamId, 0); //TODO: needed?
-		if (c.getTeamScore(fakeTeamId) != null)
-			recent.set(fakeTeamId, c.getTeamScore(fakeTeamId));
+
+		this.stack.setPosition(this.fakeTeamId, 0); //TODO: needed?
+		if (c.getTeamScore(this.fakeTeamId) != null) {
+			this.recent.set(this.fakeTeamId, c.getTeamScore(this.fakeTeamId));
+		}
 
 		/*TODO: unused: Shape clip = */g.getClip();
 		g.setClip(rect);
@@ -173,15 +181,15 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 		paintRow(g, c, PartitionedRowRenderer.Layer.contents, false);
 		paintRow(g, c, PartitionedRowRenderer.Layer.decorations, true);
 		paintRow(g, c, PartitionedRowRenderer.Layer.contents, true);
-		
+
 		g.translate(0, -posy);//TODO: change to calculated value
-		
+
 		g.setClip(this.getBounds());
-		
+
 		double memberPosy = 0.7*getHeight();
 		g.translate(0.2*getWidth(), memberPosy);
 		g.translate(-0.2*getWidth(), memberPosy);
-		
+
 		paintFps(g);
 
 		{ // Update?
@@ -194,26 +202,27 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 	}
 
 	public void paintRow(Graphics2D g, Contest c, PartitionedRowRenderer.Layer layer, boolean up) {
-		
-		if (stack.isUp(fakeTeamId) != up)
+
+		if (this.stack.isUp(this.fakeTeamId) != up) {
 			return;
-		
+		}
+
 		// TODO: remove duplicate objects/code
 		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
 		double splitRatio = 0.4;
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
-		
+
 		 // Team name and results
-		Renderable mainInfo = ContentProvider.getInterviewedRenderable(names);
+		Renderable mainInfo = ContentProvider.getInterviewedRenderable(this.names);
 		Renderable extra;
 		extra = new ColoredTextBox(this.getExtraInfo(), ContentProvider.getInterviewExtraInfoStyle());
 		Renderable nameAndExtra = new HorizontalSplitter(mainInfo, extra, 0.65);
-		r.addWithoutCache(nameAndExtra, NAME_WEIGHT, 0.9, false);
+		r.addWithoutCache(nameAndExtra, this.NAME_WEIGHT, 0.9, false);
 		{ // Render
 			r.render(g, dim, layer);
 		}
 	}
-		
+
 	public void paintFps(Graphics2D g) {
 		{ // FPS count
 			Rectangle2D r = new Rectangle2D.Double(5, 5, 50, 20);
@@ -223,6 +232,7 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 	}
 
 	public static class IconRenderer implements Renderable {
+		@Override
 		public void render(Graphics2D g, Dimension d) {
 			g.setColor(Color.GREEN);
 			g.setStroke(new BasicStroke((d.width + d.height) / 10));
@@ -256,21 +266,21 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 
 
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
+
 /*
 	public InterviewPresentation(IProperty props) {
 		super(new ContestImpl(), props, null);
-		
+
 		PropertyListener nameChange = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -278,48 +288,48 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 				names = changed.getValue();
 				// create a new temporary team...
 				fakeTeam = new Team() {
-					
+
 					@Override
 					public String getType() {
 						// TODO Auto-generated method stub
 						return null;
 					}
-					
+
 					@Override
 					public String getProperty(String name) {
 						// TODO Auto-generated method stub
 						return null;
 					}
-					
+
 					@Override
 					public Set<String> getProperties() {
 						// TODO Auto-generated method stub
 						return null;
 					}
-					
+
 					@Override
 					public String getName() {
 						return names;
 					}
-					
+
 					@Override
 					public int getId() {
 						// TODO Auto-generated method stub
 						return 0;
 					}
-					
+
 					@Override
 					public String getUniversity() {
 						// TODO Auto-generated method stub
 						return null;
 					}
-					
+
 					@Override
 					public String getUniv() {
 						// TODO Auto-generated method stub
 						return null;
 					}
-					
+
 					@Override
 					public String getNationality() {
 						// TODO Auto-generated method stub
@@ -337,7 +347,7 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 			}
 		};
 		PropertyListener titleChange = new PropertyListener() {
-			
+
 			@Override
 			public void propertyChanged(IProperty changed) {
 				DebugTrace.trace("Changed title to " + changed.getValue());
@@ -348,11 +358,11 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 
 		listeners.add(nameChange);
 		listeners.add(titleChange);
-		
+
 		props.get("interview.name").addPropertyListener(nameChange);
 		props.get("interview.title").addPropertyListener(titleChange);
 	}
-	
+
 	@Override
 	public void paintComponent(Graphics g) {
 		super.displayResults = false; //make sure it shows extra info and not results

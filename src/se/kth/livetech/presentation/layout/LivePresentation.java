@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.layout;
 
+import java.awt.AlphaComposite;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -33,9 +34,18 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		public Blank() {
 			this.setBackground(ICPCColors.COLOR_KEYING);
 		}
+
+		@Override
+		public void paintComponent(Graphics gr) {
+			Graphics2D g = (Graphics2D) gr;
+			g.setPaint(ICPCColors.TRANSPARENT_GREEN);
+			g.setComposite(AlphaComposite.Clear);
+			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			g.setComposite(AlphaComposite.SrcOver);
+		}
 	}
 	private Blank blankView = new Blank();
-	
+
 	public Component getCurrentView() {
 		return this.currentView;
 	}
@@ -110,7 +120,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				}
 				if (clear) {
 					LivePresentation.this.currentView = LivePresentation.this.blankView;
-				} 
+				}
 				else if (oldViews) {
 					if (mode.equals("layout")) {
 						LivePresentation.this.currentView = layout;
@@ -125,7 +135,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 						LivePresentation.this.currentView = LivePresentation.this.blankView;
 					}
 					else if(mode.equals("interview")) {
-						LivePresentation.this.currentView = interview;	
+						LivePresentation.this.currentView = interview;
 					}
 					else if(mode.equals("team")) {
 						LivePresentation.this.currentView = teamPresentation;
@@ -146,7 +156,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 				if (LivePresentation.this.currentView != null) {
 					LivePresentation.this.add(LivePresentation.this.currentView);
 				}
-				
+
 				vnc.connect();
 				validate();
 				repaint();
@@ -206,6 +216,13 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	public void paintComponent(Graphics g) {
 		RenderCache.setQuality((Graphics2D)g);
 	}
+
+	public void paintComponent(Graphics g, int W, int H) {
+		RenderCache.setQuality((Graphics2D)g);
+		this.currentView.setSize(W, H);
+		this.currentView.paint(g);
+	}
+
 
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {

@@ -23,6 +23,7 @@ public class CountdownPresentation extends JPanel {
 	long targetServerTime;
 	
 	int displaySeconds = 30;
+	boolean CHINESE_NUMERALS = false;
 	final static int ANIMATE_FROM = 800;
 	final static int START_MESSAGE_LENGTH = 300; 
 	Row[] rows;
@@ -37,7 +38,7 @@ public class CountdownPresentation extends JPanel {
 			@Override
 			public void propertyChanged(IProperty changed) {
 				int secondsFromNow = changed.getValue().isEmpty()?-START_MESSAGE_LENGTH:changed.getIntValue();
-				if( secondsFromNow > 99 )
+				if(CHINESE_NUMERALS && secondsFromNow > 99 )
 					secondsFromNow = 99;
 				displaySeconds = secondsFromNow;
 				
@@ -46,8 +47,15 @@ public class CountdownPresentation extends JPanel {
 
 				for(int i = 0; i <= displaySeconds; ++i) {
 					int secs = i;
-					String row1Text = ChineseNumerals.moonspeak(secs);
-					String row2Text = "" + secs + " [" + ChineseNumerals.pinyin(secs) + "]";
+					String row1Text, row2Text;
+					if (CHINESE_NUMERALS) {
+						row1Text = ChineseNumerals.moonspeak(secs);
+						row2Text = "" + secs + " [" + ChineseNumerals.pinyin(secs) + "]";
+					}
+					else{
+						row1Text = "";
+						row2Text = "" + secs;
+					}
 					rows[i] = new Row(ContentProvider.getCountdownRenderable(row1Text, row2Text));
 				}
 								

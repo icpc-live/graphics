@@ -28,7 +28,7 @@ public class ContestReplayFrame extends JFrame {
 
 	public ContestReplayFrame(IProperty base) {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-		this.base = base;
+		this.base = base.get("replay");
 		Box b = new Box(BoxLayout.Y_AXIS);
 		Box c = new Box(BoxLayout.X_AXIS);
 		c.add(new ToggleButton(base.get("state"), "pause", "Pause"));
@@ -48,7 +48,6 @@ public class ContestReplayFrame extends JFrame {
 		c.add(new JLabel("Resolve problem delay: "));
 		c.add(new Text(base.get("resolveProblemDelay")));
 		b.add(c);
-		//b.add(new JSeparator(SwingConstants.HORIZONTAL));
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new JLabel("#Gold"));
 		c.add(new Text(base.get("goldMedals")));
@@ -57,8 +56,6 @@ public class ContestReplayFrame extends JFrame {
 		c.add(new JLabel("#Bronze"));
 		c.add(new Text(base.get("bronzeMedals")));
 		b.add(c);
-		//b.add(new JSeparator(SwingConstants.HORIZONTAL));
-		//b.add(new JSeparator(SwingConstants.HORIZONTAL));
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new IncrementCountButton(base.get("presentationStep"), "Presentation step"));
 		c.add(new IncrementCountButton(base.get("presentationStep"), "+2", 2));

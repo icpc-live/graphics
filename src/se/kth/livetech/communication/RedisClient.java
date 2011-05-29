@@ -160,7 +160,7 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 		return localNode;
 	}
 
-	public void onMessage(Jedis j, String channel, String message) {
+	public synchronized void onMessage(Jedis j, String channel, String message) {
 		if ("property".equals(channel)) {
 			// Called when Redis publish a property update.
 			String propertyName = message;

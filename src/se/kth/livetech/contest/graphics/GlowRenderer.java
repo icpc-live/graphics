@@ -23,7 +23,7 @@ public class GlowRenderer implements Renderable {
 	}
 	public void render(Graphics2D g, Dimension d) {
 		final int N = 20;
-		double mid = this.ellipse ? .5 : 1;
+		double mid = this.ellipse ? .5 : .8;
 		for (int i = 0; i < N; ++i) {
 			g.setColor(Utility.alpha(base, (int) (alpha * 47 * i / N)));
 			

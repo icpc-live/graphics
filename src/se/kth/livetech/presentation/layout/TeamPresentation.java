@@ -70,7 +70,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 		this.teamReader = teamReader;
 		//this.setBackground(Color.BLUE.darker().darker());
 		//this.setBackground(ICPCColors.SCOREBOARD_BG);
-		this.setBackground(ICPCColors.TRANSPARENT);
+		this.setBackground(ICPCColors.COLOR_KEYING);
 		this.setPreferredSize(new Dimension(1024, 576));
 		PropertyListener showResultsChanger = new PropertyListener() {
 			@Override

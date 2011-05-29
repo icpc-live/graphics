@@ -6,12 +6,14 @@ import java.util.Set;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.JedisShardInfo;
+import redis.clients.jedis.exceptions.JedisException;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.util.DebugTrace;
 
 public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	
@@ -99,7 +101,6 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	// Called when local contest changed
 	public void attrsUpdated(ContestId contestId, AttrsUpdateEvent e) {
 		synchronized (redis) {
-		
 			assert(!contestId.name.contains("."));
 			
 			if (!redis.isConnected())
@@ -119,7 +120,6 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 				redis.set(eventTypeKey, e.getType());
 				publish = true;
 			}
-			
 			for (String name : e.getProperties()) {
 				String key = String.format("%s.%s", eventKey, name);
 				String value = e.getProperty(name);

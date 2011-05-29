@@ -12,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.TitledBorder;
@@ -50,12 +49,14 @@ public class ProductionPanel extends JPanel implements ActionListener {
 	};
 	JComboBox combo;
 	ProductionSettingsFrame presentationFrame;
+	ContestReplayFrame contestReplayFrame;
 	IProperty base;
 	
 	public ProductionPanel(IProperty base){
 		this.base = base;
 //		DebugTrace.trace("Production panel from: "+base.toString());
 		this.presentationFrame = new ProductionSettingsFrame(base);
+		this.contestReplayFrame = new ContestReplayFrame(base);
 		Box b = new Box(BoxLayout.Y_AXIS);
 		Box c;
 
@@ -76,6 +77,10 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		public void actionPerformed(ActionEvent ae) { ProductionPanel.this.presentationFrame.setVisible(true); } } );
 		c.add(presentationButton);
 		
+		JButton resolverButton = new JButton("Resolver");
+		resolverButton.addActionListener(new ActionListener() { @Override
+		public void actionPerformed(ActionEvent ae) { ProductionPanel.this.contestReplayFrame.setVisible(true); } } );
+		c.add(resolverButton);
 		
 		
 //		String s = "org.icpc_cli.presentation.contest.internal.presentations.ProductionPresentation";
@@ -183,6 +188,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new ToggleButton(base.get("mode"), "problemboard", "Problem board"));
 		c.add(new ToggleButton(base.get("mode"), "timeline", "Timeline"));
+		
 		b.add(c);
 	
 		this.add(b);

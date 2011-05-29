@@ -168,5 +168,7 @@ public class MagicPanel extends JPanel {
 				repaint();
 			}
 		}
+
+		repaint(); // Always repaint..
 	}
 }

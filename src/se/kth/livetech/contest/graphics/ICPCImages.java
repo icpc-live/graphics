@@ -86,6 +86,7 @@ public class ICPCImages {
 	}
 
 	static void loadFlag(String countryCode) {
+		countryCode = countryCode.toLowerCase();
 		ImageResource flag = new ImageResource("flags/" + countryCode + ".png");
 		flags.put(countryCode, flag);
 	}

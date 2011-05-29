@@ -242,6 +242,8 @@ public class LiveClient {
 			}
 			if (opts.isLayout()) {
 				localState.getHierarchy().getProperty("live.clients.noname").set("mode", "layout");
+			}
+			if (name.equals("noname")) {
 				localState.getHierarchy().getProperty("live.control.noname.panel1").set("name", "noname");
 			}
 			if (opts.isLive() || opts.isLayout()) {

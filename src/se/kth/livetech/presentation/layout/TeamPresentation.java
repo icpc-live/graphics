@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import se.kth.livetech.blackmagic.MagicComponent;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.GlowRenderer;
 import se.kth.livetech.contest.graphics.ICPCColors;
@@ -38,7 +39,7 @@ import se.kth.livetech.util.Frame;
 import se.kth.livetech.util.TeamReader;
 
 @SuppressWarnings("serial")
-public class TeamPresentation extends JPanel implements ContestUpdateListener {
+public class TeamPresentation extends JPanel implements ContestUpdateListener, MagicComponent {
 	public static final double ANIMATION_TIME = 1500; // ms
 	public static final double ROW_TIME = 1000; // ms
 	public static final double RECENT_TIME = 5000; // ms
@@ -129,17 +130,22 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener {
 	private boolean displayMembers = true;
 	@Override
 	public void paintComponent(Graphics gr) {
+		paintComponent(gr, getWidth(), getHeight());
+	}
+
+	@Override
+	public void paintComponent(Graphics gr, int W, int H) {
 		//super.paintComponent(gr);
 		Contest c = this.c;
 		Graphics2D g = (Graphics2D) gr;
 
 		g.setPaint(ICPCColors.TRANSPARENT);
 		g.setComposite(AlphaComposite.Clear);
-		g.fillRect(0, 0, getWidth(), getHeight());
+		g.fillRect(0, 0, W, H);
 		g.setComposite(AlphaComposite.SrcOver);
 
-		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), 0);
-		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
+		Rectangle2D rect = Rect.screenRect(W, H, 0);
+		Dimension dim = new Dimension(W, (int) (H*100.0/576));
 
 		boolean update = false;
 		{ // Advance

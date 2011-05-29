@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import se.kth.livetech.blackmagic.MagicComponent;
 import se.kth.livetech.communication.RemoteTime;
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.model.Contest;
@@ -23,7 +24,7 @@ import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.TeamReader;
 
 @SuppressWarnings("serial")
-public class LivePresentation extends JPanel implements ContestUpdateListener {
+public class LivePresentation extends JPanel implements ContestUpdateListener, MagicComponent {
 	IProperty base;
 	List<ContestUpdateListener> sublisteners = new ArrayList<ContestUpdateListener>();
 	Component currentView;
@@ -217,19 +218,24 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 		RenderCache.setQuality((Graphics2D)g);
 	}
 
+	@Override
 	public void paintComponent(Graphics gr, int W, int H) {
 		RenderCache.setQuality((Graphics2D)gr);
 		this.currentView.setSize(W, H);
-		this.currentView.paint(gr);
-		/*
-		Graphics2D g = (Graphics2D) gr;
-		g.setPaint(ICPCColors.TRANSPARENT);
-		g.setComposite(AlphaComposite.Clear);
-		g.fillRect(0, 0, W, H);
-		g.setComposite(AlphaComposite.SrcOver);
+		if (!(this.currentView instanceof MagicComponent)) {
+			this.currentView.paint(gr);
+		} else {
+			MagicComponent mc = (MagicComponent) this.currentView;
 
-		((JPanel) this.currentView).paintComponents(gr);
-		*/
+			Graphics2D g = (Graphics2D) gr;
+			g.setPaint(ICPCColors.TRANSPARENT);
+			g.setComposite(AlphaComposite.Clear);
+			g.fillRect(0, 0, W, H);
+			g.setComposite(AlphaComposite.SrcOver);
+
+			System.err.println("magic paintComponent " + (this.currentView));
+			mc.paintComponent(gr, W, H);
+		}
 	}
 
 

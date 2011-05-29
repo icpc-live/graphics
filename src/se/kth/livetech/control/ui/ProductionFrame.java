@@ -74,7 +74,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		JMenu addMenu = new JMenu("Add");
 		JMenu adminMenu = new JMenu("Admin");
 		mainPanelItem = addMenu.add("Main Panel");
-		resolverItem = addMenu.add("Resolver");
+		//resolverItem = addMenu.add("Resolver");
 		addMenu.addSeparator();
 		closeItem = addMenu.add("Close");
 		
@@ -155,7 +155,8 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		});
 			
 		
-		QuickControlPanel qcp = new QuickControlPanel(base, base/*clients*/);
+		
+		QuickControlPanel qcp = new QuickControlPanel(clients, base);
 		qcp.setAlignmentX(0);
 		a.add(qcp);
 		b.add(a);
@@ -167,12 +168,14 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		qcpBorder.setTitleJustification(TitledBorder.CENTER);
 		a.setBorder(qcpBorder);
 		
+		
 		TitledBorder conBorder;
 		conBorder = BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "ICPC Live Controller");
 		conBorder.setTitleJustification(TitledBorder.CENTER);
 		c.setBorder(conBorder);
 		pack();
-		setVisible(true);
+		setVisible(true); 
+		
 	}
 
 	public void setupLinks(boolean linea) {

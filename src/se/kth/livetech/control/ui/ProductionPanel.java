@@ -146,6 +146,10 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		
 		// Team
 		c = new Box(BoxLayout.X_AXIS);
+		TitledBorder teamBorder;
+		teamBorder = BorderFactory.createTitledBorder("Team");
+		teamBorder.setTitleJustification(TitledBorder.CENTER);
+		c.setBorder(teamBorder);
 		c.add(new ToggleButton(base.get("mode"), "team", "Team"));
 		c.add(new CheckBox(base.get("team.show_members"), "Members"));
 		c.add(new CheckBox(base.get("team.show_extra"), "Extra"));
@@ -156,14 +160,16 @@ public class ProductionPanel extends JPanel implements ActionListener {
 
 		// Team selection, surveillance, clearing
 		c = new Box(BoxLayout.X_AXIS);
+		
+		
 		c.add(new JLabel("Team #"));
 		c.add(new Text(base.get("team.team")));
 		c.add(new ToggleButton(base.get("mode"), "vnc", "Vnc"));
 		c.add(new ToggleButton(base.get("mode"), "cam", "Cam"));
-
 		c.add(new CheckBox(base.get("clear"), "Clear"));
 		b.add(c);
 
+		
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new JLabel("Team #"));
 		c.add(new Slider.Int(base.get("team.team"), 1, 105));
@@ -173,12 +179,8 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new ToggleButton(base.get("mode"), "countdown", "Countdown"));
 		c.add(new Text(base.get("countdown_from")));
 
-		TitledBorder teamBorder;
-		teamBorder = BorderFactory.createTitledBorder("Team");
-		teamBorder.setTitleJustification(TitledBorder.CENTER);
-		c.setBorder(teamBorder);
-		
 		b.add(c);
+		
 		/*
 		b.add(new JSeparator(SwingConstants.HORIZONTAL));
 		b.add(new ContestReplayPanel(base.get("replay")));

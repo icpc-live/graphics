@@ -23,6 +23,7 @@ import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
 import se.kth.livetech.contest.model.Testcase;
+import se.kth.livetech.util.DebugTrace;
 
 public class ContestImpl implements Contest {
 	Info info;
@@ -61,7 +62,12 @@ public class ContestImpl implements Contest {
 			int ds = -getTeamScore(a).compareTo(getTeamScore(b));
 			if (ds != 0)
 				return ds;
-			return getTeam(a).getName().compareTo(getTeam(b).getName());
+			Team teamA = getTeam(a);
+			Team teamB = getTeam(b);
+			if(teamA != null && teamB != null) {
+				return getTeam(a).getName().compareTo(getTeam(b).getName());
+			}
+			return teamA != null ? 1 : teamB != null ? -1 : 0;
 		}
 	}
 
@@ -247,13 +253,17 @@ public class ContestImpl implements Contest {
 	}
 
 	private void update(Attrs a) {
-		//System.err.println("update " + a);
+		DebugTrace.trace("update " + a);
 		if (a instanceof Reset) {
 			reset();
 		}
 		else if (a instanceof Run) {
 			Run r = (Run) a;
 			int i = r.getId(), t = r.getTeam(), p = r.getProblem();
+			if (!this.teams.containsKey(t)) {
+				DebugTrace.trace();
+				return;
+			}
 			runs = remap(runs, i, r);
 			// Update sorted list of runs
 			List<Integer> s = relist(getRunList(t, p), i, new RunComp());
@@ -265,6 +275,10 @@ public class ContestImpl implements Contest {
 			teamRows = rerow(ranking);
 		} else if(a instanceof Testcase) {
 			Testcase t = (Testcase) a;
+			if (!runs.containsKey(t.getRunId())){
+				DebugTrace.trace();
+				return;
+			}
 			Map<Integer, Testcase> runTestcases = testcases.get(t.getRunId());
 			if(runTestcases==null) {
 				runTestcases = new TreeMap<Integer, Testcase>();

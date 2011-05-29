@@ -133,6 +133,9 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		c = nc;
 		for (int i = 1; i <= c.getTeams().size(); ++i) {
 			Team team = c.getRankedTeam(i);
+			if (team == null) {
+				System.out.println("Team is null! " + i + " / " + c.getTeams().size());
+			}
 			int id = team.getId();
 			stack.setPosition(id, i);
 			recent.set(id, c.getTeamScore(id));

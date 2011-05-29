@@ -6,7 +6,7 @@ import java.util.Map;
 public class AnimationStack<Key, Position extends Comparable<Position>> {
 	protected Map<Key, State> states = new HashMap<Key, State>();
 
-	public void setPosition(Key key, Position position) {
+	public synchronized void setPosition(Key key, Position position) {
 		State state;
 		if (states.containsKey(key)) {
 			state = states.get(key);
@@ -40,8 +40,8 @@ public class AnimationStack<Key, Position extends Comparable<Position>> {
 			}
 		}
 	}
-
-	public boolean advance(double advance) {
+	
+	public synchronized boolean advance(double advance) {
 		boolean r = false;
 		for (State state : this.states.values()) {
 			r |= state.advance(advance);

@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class RecentChange<Key, Value> {
 	protected Map<Key, State> states = new HashMap<Key, State>();
-	public boolean set(Key key, Value value) {
+	public synchronized boolean set(Key key, Value value) {
 		State state;
 		if (states.containsKey(key)) {
 			state = states.get(key);
@@ -32,7 +32,7 @@ public class RecentChange<Key, Value> {
 		State state = states.get(key);
 		return state.changeTime;
 	}
-	public boolean advance(double advance) {
+	public synchronized boolean advance(double advance) {
 		boolean r = false;
 		for (State state : this.states.values()) {
 			r |= state.advance(advance);

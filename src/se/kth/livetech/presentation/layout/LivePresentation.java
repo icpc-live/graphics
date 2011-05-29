@@ -222,9 +222,9 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 	public void paintComponent(Graphics gr, int W, int H) {
 		RenderCache.setQuality((Graphics2D)gr);
 		this.currentView.setSize(W, H);
-		if (!(this.currentView instanceof MagicComponent)) {
+		//if (!(this.currentView instanceof MagicComponent)) {
 			this.currentView.paint(gr);
-		} else {
+		/*} else {
 			MagicComponent mc = (MagicComponent) this.currentView;
 
 			Graphics2D g = (Graphics2D) gr;
@@ -235,7 +235,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 
 			System.err.println("magic paintComponent " + (this.currentView));
 			mc.paintComponent(gr, W, H);
-		}
+		}*/
 	}
 
 

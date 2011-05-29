@@ -72,12 +72,15 @@ public class ContestComponents {
 	}
 	
     private static boolean shouldGlow(int teamID, ContestContent content, RecentChange<Integer, TeamScore> recent){
+    	
+    	if(recent == null)	return false;
+    	
     	Contest contest = content.getContestRef().get();
         boolean glow = false;
         long now = System.currentTimeMillis();
 
         TeamScore ts = contest.getTeamScore(teamID);
-        TeamScore prev = recent.get(new Integer(teamID));
+        TeamScore prev = recent.get(teamID);
         if (ts.getSolved() != prev.getSolved()) {
             if(glowTimer.containsKey(teamID)) {
                 glow = (now - glowTimer.get(teamID)) < 5000;

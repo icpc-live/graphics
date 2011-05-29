@@ -163,6 +163,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		c.add(b);
 		getContentPane().add(c);
 		
+		
 		TitledBorder qcpBorder;
 		qcpBorder = BorderFactory.createTitledBorder("Quick Control Panel");
 		qcpBorder.setTitleJustification(TitledBorder.CENTER);

@@ -56,7 +56,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		this.base = base;
 //		DebugTrace.trace("Production panel from: "+base.toString());
 		this.presentationFrame = new ProductionSettingsFrame(base);
-		this.contestReplayFrame = new ContestReplayFrame(base);
+		this.contestReplayFrame = new ContestReplayFrame(base.get("replay"));
 		Box b = new Box(BoxLayout.Y_AXIS);
 		Box c;
 

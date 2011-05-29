@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.layout;
 
+import java.awt.AlphaComposite;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -32,6 +33,15 @@ public class LivePresentation extends JPanel implements ContestUpdateListener {
 	public static class Blank extends JPanel {
 		public Blank() {
 			this.setBackground(ICPCColors.COLOR_KEYING);
+		}
+
+		@Override
+		public void paintComponent(Graphics gr) {
+			Graphics2D g = (Graphics2D) gr;
+			g.setPaint(ICPCColors.TRANSPARENT_GREEN);
+			g.setComposite(AlphaComposite.Clear);
+			g.fillRect(0, 0, this.getWidth(), this.getHeight());
+			g.setComposite(AlphaComposite.SrcOver);
 		}
 	}
 	private Blank blankView = new Blank();

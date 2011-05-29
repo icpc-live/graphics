@@ -28,7 +28,7 @@ public class ContestReplayFrame extends JFrame {
 
 	public ContestReplayFrame(IProperty base) {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
-		this.base = base.get("replay");
+		this.base = base;
 		Box b = new Box(BoxLayout.Y_AXIS);
 		Box c = new Box(BoxLayout.X_AXIS);
 		c.add(new ToggleButton(base.get("state"), "pause", "Pause"));

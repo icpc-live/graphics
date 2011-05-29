@@ -15,19 +15,25 @@ public class ContestState implements AttrsUpdateListener {
 		listeners = new LinkedList<AttrsUpdateListener>();
 	}
 
-	public List<AttrsUpdateEvent> getEvents() {
+	public final List<AttrsUpdateEvent> getEvents() {
 		return events;
 	}
 
-	public synchronized void addAttrsUpdateListener(AttrsUpdateListener listener) {
-		for (AttrsUpdateEvent event : events) {
-			listener.attrsUpdated(event);
+	public void addAttrsUpdateListener(AttrsUpdateListener listener) {
+		synchronized(events) {
+			for (AttrsUpdateEvent event : events) {
+				listener.attrsUpdated(event);
+			}
 		}
-		listeners.add(listener);
+		synchronized(listeners){
+			listeners.add(listener);
+		}
 	}
 
-	public synchronized void removeAttrsUpdateListener(AttrsUpdateListener listener) {
-		listeners.remove(listener);
+	public void removeAttrsUpdateListener(AttrsUpdateListener listener) {
+		synchronized(listeners){
+			listeners.remove(listener);
+		}
 	}
 
 	protected void send(AttrsUpdateEvent e) {
@@ -38,10 +44,15 @@ public class ContestState implements AttrsUpdateListener {
 
 	@Override
 	public void attrsUpdated(AttrsUpdateEvent e) {
-		if (e.getType().equals("reset"))
-			events.clear();
+		if (e.getType().equals("reset")) {
+			synchronized (events) {
+				events.clear();
+			}
+		}
 		else
-			events.add(e);
+			synchronized (events) {
+				events.add(e);
+			}
 		this.send(e);
 	}
 }

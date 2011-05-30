@@ -154,7 +154,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		
 		setupLinksButton.addActionListener(new ActionListener() { 
 			public void actionPerformed(ActionEvent ae) { 
-				setupLinks(false);
+				setupLinks(true);
 				} 
 			} );
 		

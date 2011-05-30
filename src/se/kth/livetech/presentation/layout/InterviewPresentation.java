@@ -135,10 +135,10 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), 0);
 		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
 
-		g.setPaint(ICPCColors.TRANSPARENT_GREEN);
-		g.setComposite(AlphaComposite.Clear);
-		g.fillRect(0, 0, getWidth(), getHeight());
-		g.setComposite(AlphaComposite.SrcOver);
+		//g.setPaint(ICPCColors.TRANSPARENT_GREEN);
+		//g.setComposite(AlphaComposite.Clear);
+		//g.fillRect(0, 0, getWidth(), getHeight());
+		//g.setComposite(AlphaComposite.SrcOver);
 
 		boolean update = false;
 		{ // Advance

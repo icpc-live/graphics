@@ -35,7 +35,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 		public Blank() {
 			this.setBackground(ICPCColors.COLOR_KEYING);
 		}
-
+		/*
 		@Override
 		public void paintComponent(Graphics gr) {
 			Graphics2D g = (Graphics2D) gr;
@@ -44,6 +44,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 			g.fillRect(0, 0, this.getWidth(), this.getHeight());
 			g.setComposite(AlphaComposite.SrcOver);
 		}
+		*/
 	}
 	private Blank blankView = new Blank();
 

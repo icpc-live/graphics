@@ -93,7 +93,7 @@ public class ICPCImages {
 
 	static void loadResource(String resourceName) {
 		DebugTrace.trace("loadResource %s", resourceName);
-		ImageResource resource = new ImageResource(resourceName);
+		ImageResource resource = new ImageResource(resourceName.toLowerCase()); // TODO change either event feed or flag file names to correspond to eachother
 		resources.put(resourceName, resource);
 	}
 

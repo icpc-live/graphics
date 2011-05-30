@@ -1,6 +1,5 @@
 package se.kth.livetech.presentation.layout;
 
-import java.awt.AlphaComposite;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -239,7 +238,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 		int n = this.getComponentCount();
 		for (int i = 0; i < n; ++i) {
 			Component ci = this.getComponent(i);
-			if (ci != null && ci != this.currentView) {
+			if (ci != null && ci != this.currentView && ci.isVisible()) {
 				//ci.setBounds(0, 0, W, H);
 				ci.setSize(W, H);
 				ci.paint(gr);

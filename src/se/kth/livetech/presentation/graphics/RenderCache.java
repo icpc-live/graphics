@@ -12,8 +12,6 @@ import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 
-//import javax.media.j3d.Texture;
-
 import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.SoftHashMap;
 

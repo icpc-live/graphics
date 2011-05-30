@@ -1,6 +1,5 @@
 package se.kth.livetech.control.ui;
 
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -9,7 +8,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -21,8 +19,6 @@ import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.properties.ui.PropertyFrame;
-import se.kth.livetech.properties.ui.Text;
-import se.kth.livetech.properties.ui.ToggleButton;
 
 @SuppressWarnings("serial")
 public class ProductionFrame extends JFrame implements PropertyListener {

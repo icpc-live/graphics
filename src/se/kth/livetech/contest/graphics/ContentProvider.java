@@ -38,7 +38,7 @@ public class ContentProvider {
 	}
 
 	public static Renderable getIcpcLogoRenderable() {
-		ImageResource image = ICPCImages.getImage(ICPCImages.ID);
+		ImageResource image = ICPCImages.getImage(ICPCImages.LOGO2);
 		Renderable logo = new ImageRenderer("icpclogo", image);
 		return logo;
 	}

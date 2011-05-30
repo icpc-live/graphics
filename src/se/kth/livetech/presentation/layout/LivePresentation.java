@@ -141,6 +141,9 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 					else if(mode.equals("team")) {
 						LivePresentation.this.currentView = teamPresentation;
 					}
+					else if (mode.equals("logo")) {
+						LivePresentation.this.currentView = logoPanel;
+					}
 					else if(mode.equals("cam")) {
 						cam.activate();
 					}

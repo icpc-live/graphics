@@ -1,7 +1,9 @@
 package se.kth.livetech.control.ui.backup;
 
-import javax.swing.*;
 import java.awt.Component;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 
 public class Boxes {
 	

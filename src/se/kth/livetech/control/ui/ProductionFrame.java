@@ -95,10 +95,12 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		
 		JButton fullscreenOnButton = new JButton("Enable fullscreen");
 		JButton fullscreenOffButton = new JButton("Leave fullscreen");
+		JButton setupLinksButton = new JButton("Setup");
 
 		Box f = new Box(BoxLayout.X_AXIS);
 		f.add(fullscreenOnButton);
 		f.add(fullscreenOffButton);
+		f.add(setupLinksButton);
 		
 		c.add(f);
 		
@@ -149,8 +151,12 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 				fullScreen(false);
 			}
 		});
-			
 		
+		setupLinksButton.addActionListener(new ActionListener() { 
+			public void actionPerformed(ActionEvent ae) { 
+				setupLinks(false);
+				} 
+			} );
 		
 		QuickControlPanel qcp = new QuickControlPanel(clients, base.get("team"));
 		qcp.setAlignmentX(0);
@@ -159,12 +165,10 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 		c.add(b);
 		getContentPane().add(c);
 		
-		
 		TitledBorder qcpBorder;
 		qcpBorder = BorderFactory.createTitledBorder("Quick Control Panel");
 		qcpBorder.setTitleJustification(TitledBorder.CENTER);
 		a.setBorder(qcpBorder);
-		
 		
 		TitledBorder conBorder;
 		conBorder = BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(), "ICPC Live Controller");

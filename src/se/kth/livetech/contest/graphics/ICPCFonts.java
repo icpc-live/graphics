@@ -24,7 +24,7 @@ public class ICPCFonts {
 	public static Font getSevenSegmentFont(){
 		InputStream is;
 		try {
-			is = new FileInputStream("lib/DS-DIGII.TTF");
+			is = new FileInputStream("lib/digital-7 (mono).ttf");
 			Font font = Font.createFont(Font.TRUETYPE_FONT, is);
 			return font.deriveFont(Font.PLAIN, 20);
 		} catch (FileNotFoundException e) {

@@ -169,12 +169,12 @@ public class CountdownPresentation extends JPanel {
 			//Non-chinese countdown
 
 			g2d.setColor(Color.BLACK);
-			g2d.translate(0, this.getHeight() * .20);
-			g2d.fill(Rect.screenRect(getWidth(), (int) (getHeight() * .6), .05));
+			g2d.translate(0, this.getHeight() * .3);
+			g2d.fill(Rect.screenRect(getWidth(), (int) (getHeight() * .5), .05));
 
 			g2d.shear(-.15, 0);
 			//g2d.scale(1.2, 1);
-			g2d.translate(0, this.getHeight() * -.05);
+			g2d.translate(0, this.getHeight() * -.15);
 
 			if (diffMilli < 0) {
 				diffMilli -= 1000; // yes, this is true
@@ -185,10 +185,10 @@ public class CountdownPresentation extends JPanel {
 			long seconds = Math.abs(diffMilli / 1000 % 60);
 			Dimension dim = new Dimension(this.getWidth(), (int) (this.getHeight() * .8));
 			Renderable r0 = ContentProvider.getFloridaCountdownRenderable("+00:00:00");
-			g2d.setColor(new Color(87, 59, 20));
+			g2d.setColor(new Color(80, 55, 20));
 			r0.render(g2d, dim);
 			Renderable r = ContentProvider.getFloridaCountdownRenderable(String.format("%s%02d:%02d:%02d", negative ? "-" : "+", hours, minutes, seconds));
-			g2d.setColor(new Color(255, 234, 100));
+			g2d.setColor(new Color(255, 234, 80));
 			r.render(g2d, dim);
 
 			g2d.scale(1.3, 1);

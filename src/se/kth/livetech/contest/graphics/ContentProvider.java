@@ -233,6 +233,10 @@ public class ContentProvider {
 	public static ColoredTextBox.Style getCountdownStyle() {
 		return new ColoredTextBox.BaseStyle(null, null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
 	}
+	
+	public static ColoredTextBox.Style getFloridaCountdownStyle() {
+		return new ColoredTextBox.BaseStyle(null, null, ICPCFonts.SEVEN_SEGMENT_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
+	}
 
 	public static ColoredTextBox.Style getWinnerStyle() {
 		return new ColoredTextBox.BaseStyle(null, null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
@@ -245,7 +249,7 @@ public class ContentProvider {
 	}
 	
 	public static Renderable getFloridaCountdownRenderable(String timeString) {
-		return new ColoredTextBox(timeString, ContentProvider.getCountdownStyle());
+		return new ColoredTextBox(timeString, ContentProvider.getFloridaCountdownStyle());
 	}
 
 	public static Renderable getWinnerRenderable(String row1Text, String row2Text) {

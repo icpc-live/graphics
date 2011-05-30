@@ -1,6 +1,11 @@
 package se.kth.livetech.contest.graphics;
 
 import java.awt.Font;
+import java.awt.FontFormatException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class ICPCFonts {
 	//private static float size = 9.0f;
@@ -14,7 +19,27 @@ public class ICPCFonts {
 	public static final Font TEAM_RANK_FONT = derive(Font.ITALIC, 22);
 	public static final Font TEAM_NAME_FONT = derive(Font.BOLD, 22);
 	public static final Font PROBLEM_SCORE_FONT = derive(Font.PLAIN, 20);
+	public static final Font SEVEN_SEGMENT_FONT = getSevenSegmentFont(); 
 	
+	public static Font getSevenSegmentFont(){
+		InputStream is;
+		try {
+			is = new FileInputStream("lib/DS-DIGII.TTF");
+			Font font = Font.createFont(Font.TRUETYPE_FONT, is);
+			return font.deriveFont(Font.PLAIN, 20);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    catch (FontFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return MASTER_FONT;
+	}
 	/*
 	public static Font getClockFont(LayoutType layout, FormatType format, Rectangle2D rect) {
 		double multiplier = getFontMultiplier(format);

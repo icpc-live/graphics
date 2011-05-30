@@ -37,6 +37,10 @@ public class ContestReplayFrame extends JFrame {
 		c.add(new ToggleButton(base.get("state"), "resolver", "Resolver"));
 		b.add(c);
 		c = new Box(BoxLayout.X_AXIS);
+		c.add(new JLabel("Freeze time (seconds): "));
+		c.add(new Text(base.get("freezeTime")));
+		b.add(c);
+		c = new Box(BoxLayout.X_AXIS);
 		c.add(new JLabel("Replay delay: "));
 		c.add(new Text(base.get("replayDelay")));
 		b.add(c);
@@ -74,7 +78,6 @@ public class ContestReplayFrame extends JFrame {
 		resolveBorder.setTitleJustification(TitledBorder.CENTER);
 		b.setBorder(resolveBorder);
 		this.add(b);
-		this.setPreferredSize(new Dimension(400, 220));
 		this.pack();
 	}
 	

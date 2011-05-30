@@ -166,14 +166,36 @@ public class CountdownPresentation extends JPanel {
 		}
 		else {
 			//Non-chinese countdown
-			diffMilli -= 1000; // yes, this is true
+
+			g2d.setColor(Color.BLACK);
+			g2d.translate(0, this.getHeight() * .20);
+			g2d.fill(Rect.screenRect(getWidth(), (int) (getHeight() * .6), .05));
+
+			g2d.shear(-.15, 0);
+			//g2d.scale(1.2, 1);
+			g2d.translate(0, this.getHeight() * -.05);
+
+			if (diffMilli < 0) {
+				diffMilli -= 1000; // yes, this is true
+			}
 			boolean negative = diffMilli < 0;
 			long hours = Math.abs(diffMilli / 3600 / 1000);
 			long minutes = Math.abs(diffMilli / 60 / 1000 % 60);
 			long seconds = Math.abs(diffMilli / 1000 % 60);
-			Dimension dim = new Dimension(this.getWidth() / 5, this.getHeight() / 4);
+			Dimension dim = new Dimension(this.getWidth(), (int) (this.getHeight() * .8));
+			Renderable r0 = ContentProvider.getFloridaCountdownRenderable("+00:00:00");
+			g2d.setColor(new Color(87, 59, 20));
+			r0.render(g2d, dim);
 			Renderable r = ContentProvider.getFloridaCountdownRenderable(String.format("%s%02d:%02d:%02d", negative ? "-" : "+", hours, minutes, seconds));
+			g2d.setColor(new Color(255, 234, 100));
 			r.render(g2d, dim);
+
+			g2d.scale(1.3, 1);
+			Renderable r2 = ContentProvider.getFloridaCountdownRenderable("HOUR      MINUTE     SECOND");
+			Dimension d2 = new Dimension(this.getWidth(), this.getHeight() / 8);
+			g2d.translate(this.getWidth() * -.065, this.getHeight() * .6);
+			g2d.setColor(new Color(200, 210, 255));
+			r2.render(g2d, d2);
 		}
 		this.repaint(20);
 	}

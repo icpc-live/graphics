@@ -209,10 +209,16 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 					"live.clients.team.team.team");
 		}
 
-		hierarchy.getProperty("live.clients.magic-1.team.team").setLink(
-				"live.clients.team.team.team");
-		hierarchy.getProperty("live.clients.magic-2.team.team").setLink(
-				"live.clients.team.team.team");
+		//hierarchy.getProperty("live.clients.magic-1.team.team").setLink(
+		//		"live.clients.team.team.team");
+		//hierarchy.getProperty("live.clients.magic-2.team.team").setLink(
+		//		"live.clients.team.team.team");
+		hierarchy.getProperty("live.clients.cam.team.team").setLink(
+		"live.clients.team.team.team");
+		hierarchy.getProperty("live.clients.vnc.team.team").setLink(
+		"live.clients.team.team.team");
+		hierarchy.getProperty("live.clients.cam.team.team").clearValue();
+		hierarchy.getProperty("live.clients.vnc.team.team").clearValue();
 
 		if (linea) {
 			base.get("panel1.name").setValue("team");

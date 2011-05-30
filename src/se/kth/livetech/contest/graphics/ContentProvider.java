@@ -243,6 +243,10 @@ public class ContentProvider {
 		ColoredTextBox box2 = new ColoredTextBox(row2Text, ContentProvider.getCountdownStyle());
 		return new HorizontalSplitter(box1,box2,0.75);
 	}
+	
+	public static Renderable getFloridaCountdownRenderable(String timeString) {
+		return new ColoredTextBox(timeString, ContentProvider.getCountdownStyle());
+	}
 
 	public static Renderable getWinnerRenderable(String row1Text, String row2Text) {
 		ColoredTextBox box1 = new ColoredTextBox(row1Text, ContentProvider.getWinnerStyle());

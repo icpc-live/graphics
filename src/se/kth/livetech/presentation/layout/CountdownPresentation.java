@@ -107,59 +107,68 @@ public class CountdownPresentation extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D)g;
-
+		
 		long currentTime = System.currentTimeMillis() + timeshift;
 		long diffMilli = currentTime - targetServerTime;
 	
-		double ageOffset;
-		
-		long milliPart = (1000+diffMilli%1000)%1000;
-		if (milliPart < ANIMATE_FROM) {
-			ageOffset = Math.floor(diffMilli/1000.0); //floor
-		} else {
-			ageOffset = Math.floor(diffMilli/1000.0) + ((double)(milliPart - ANIMATE_FROM))/(1000 - ANIMATE_FROM);
-		}
-		
-		for(int i = 0; i<=displaySeconds; ++i) {
-			if (rows[i] != null)
-				rows[i].setAge(i+ageOffset);
-		}
-		Rectangle bounds = this.getBounds();
-//		
-//		{
-//			//DEBUG
-//			int x = (int) (milliPart/1000.0*bounds.width);
-//			g2d.setColor(Color.GREEN);
-//			g2d.fillRect(x, 0, 100, bounds.height);
-//			g2d.drawString("" + diffMilli, 100, 20);
-//		}
-		
-		
-		if (diffMilli < 0) {
-			g2d.translate(bounds.getCenterX(), bounds.getCenterY());
-			for(Row row : rows){
-				int x = (int) (row.getAge()*bounds.width/3);
-				g2d.translate(x, 0);	
-				row.paintComponent(g2d);
-				g2d.translate(-x, 0);
+		if (CHINESE_NUMERALS) {	
+			double ageOffset;
+			long milliPart = (1000+diffMilli%1000)%1000;
+			if (milliPart < ANIMATE_FROM) {
+				ageOffset = Math.floor(diffMilli/1000.0); //floor
+			} else {
+				ageOffset = Math.floor(diffMilli/1000.0) + ((double)(milliPart - ANIMATE_FROM))/(1000 - ANIMATE_FROM);
 			}
-			g2d.translate(-bounds.getCenterX(), -bounds.getCenterY());
-		} 
-		else if (diffMilli < START_MESSAGE_LENGTH * 1000 ){ //display for five minutes 
-			String row1Text = "Go!";
-			String row2Text = "The contest has started";
+		
+		
+			for(int i = 0; i<=displaySeconds; ++i) {
+				if (rows[i] != null)
+					rows[i].setAge(i+ageOffset);
+			}
+			Rectangle bounds = this.getBounds();
+	//		
+	//		{
+	//			//DEBUG
+	//			int x = (int) (milliPart/1000.0*bounds.width);
+	//			g2d.setColor(Color.GREEN);
+	//			g2d.fillRect(x, 0, 100, bounds.height);
+	//			g2d.drawString("" + diffMilli, 100, 20);
+	//		}
 			
-			Renderable r = ContentProvider.getCountdownRenderable(row1Text, row2Text);
 			
-			Dimension dim = new Dimension(bounds.width/2, bounds.width/3);
-			int x = (int) (bounds.getCenterX() - dim.width/2);
-			int y = (int) (bounds.getCenterY() - dim.height/2);
-			g2d.translate(x, y);
-			g2d.setColor(Color.WHITE);
-			r.render(g2d, dim);
-			g2d.translate(-x, -y);
+			if (diffMilli < 0) {
+				g2d.translate(bounds.getCenterX(), bounds.getCenterY());
+				for(Row row : rows){
+					int x = (int) (row.getAge()*bounds.width/3);
+					g2d.translate(x, 0);	
+					row.paintComponent(g2d);
+					g2d.translate(-x, 0);
+				}
+				g2d.translate(-bounds.getCenterX(), -bounds.getCenterY());
+			} 
+			else if (diffMilli < START_MESSAGE_LENGTH * 1000 ){ //display for five minutes 
+				String row1Text = "Go!";
+				String row2Text = "The contest has started";
+				
+				Renderable r = ContentProvider.getCountdownRenderable(row1Text, row2Text);
+				
+				Dimension dim = new Dimension(bounds.width/2, bounds.width/3);
+				int x = (int) (bounds.getCenterX() - dim.width/2);
+				int y = (int) (bounds.getCenterY() - dim.height/2);
+				g2d.translate(x, y);
+				g2d.setColor(Color.WHITE);
+				r.render(g2d, dim);
+				g2d.translate(-x, -y);
+			}
 		}
-
+		else {
+			//Non-chinese countdown
+			long minutes = -diffMilli / 60000;
+			long seconds = (-diffMilli - minutes*60000)/ 1000;
+			Renderable r = ContentProvider.getFloridaCountdownRenderable(String.format("%02d:%02d", minutes, seconds));
+			Dimension dim = new Dimension(this.getWidth(), this.getHeight());
+			r.render(g2d, dim);
+		}
 		this.repaint(20);
 	}
 	

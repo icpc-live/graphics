@@ -109,6 +109,7 @@ public class CountdownPresentation extends JPanel {
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		Graphics2D g2d = (Graphics2D)g;
+		RenderCache.setQuality(g2d);
 
 		long currentTime = System.currentTimeMillis() + this.timeshift;
 		long diffMilli = currentTime - this.targetServerTime;

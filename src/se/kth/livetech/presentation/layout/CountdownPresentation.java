@@ -166,6 +166,12 @@ public class CountdownPresentation extends JPanel {
 			}
 		}
 		else {
+
+			final boolean STOP = true;
+			if (STOP && diffMilli > 0) {
+				diffMilli = 0;
+			}
+
 			//Non-chinese countdown
 
 			g2d.setColor(Color.BLACK);

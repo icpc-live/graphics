@@ -135,14 +135,14 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 
 	@Override
 	public void paintComponent(Graphics gr, int W, int H) {
-		//super.paintComponent(gr);
+		super.paintComponent(gr);
 		Contest c = this.c;
 		Graphics2D g = (Graphics2D) gr;
 
-		g.setPaint(ICPCColors.TRANSPARENT);
-		g.setComposite(AlphaComposite.Clear);
-		g.fillRect(0, 0, W, H);
-		g.setComposite(AlphaComposite.SrcOver);
+		//g.setPaint(ICPCColors.TRANSPARENT);
+		//g.setComposite(AlphaComposite.Clear);
+		//g.fillRect(0, 0, W, H);
+		//g.setComposite(AlphaComposite.SrcOver);
 
 		Rectangle2D rect = Rect.screenRect(W, H, 0);
 		Dimension dim = new Dimension(W, (int) (H*100.0/576));

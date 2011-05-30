@@ -262,10 +262,10 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 				scene = submissionGraph(cumulative);
 				break;
 			case team:
-				g.setPaint(ICPCColors.TRANSPARENT);
-				g.setComposite(AlphaComposite.Clear);
-				g.fillRect(0, 0, width, height);
-				g.setComposite(AlphaComposite.SrcOver);
+				//g.setPaint(ICPCColors.TRANSPARENT);
+				//g.setComposite(AlphaComposite.Clear);
+				//g.fillRect(0, 0, width, height);
+				//g.setComposite(AlphaComposite.SrcOver);
 
 				scene = teamView();
 				break;

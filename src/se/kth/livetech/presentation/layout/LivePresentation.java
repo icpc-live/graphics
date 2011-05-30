@@ -219,6 +219,12 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 	}
 
 	@Override
+	public void paintChildren(Graphics gr) {
+		super.paintChildren(gr);
+		repaint();
+	}
+
+	@Override
 	public void paintComponent(Graphics gr, int W, int H) {
 		RenderCache.setQuality((Graphics2D)gr);
 		//this.component.setBounds(0, 0, W, H);

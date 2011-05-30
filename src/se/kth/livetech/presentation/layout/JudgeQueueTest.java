@@ -102,7 +102,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 
 	public JudgeQueueTest() {
 		//this.setBackground(Color.BLUE.darker());
-		this.setBackground(ICPCColors.TRANSPARENT);//??
+		this.setBackground(ICPCColors.TRANSPARENT);
 		this.setOpaque(false);
 		this.setPreferredSize(new Dimension(512, 576));
 	}

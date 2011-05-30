@@ -41,6 +41,10 @@ public class ContestReplayFrame extends JFrame {
 		c.add(new Text(base.get("freezeTime")));
 		b.add(c);
 		c = new Box(BoxLayout.X_AXIS);
+		c.add(new JLabel("Replay until time (seconds): "));
+		c.add(new Text(base.get("untilTime")));
+		b.add(c);
+		c = new Box(BoxLayout.X_AXIS);
 		c.add(new JLabel("Replay delay: "));
 		c.add(new Text(base.get("replayDelay")));
 		b.add(c);

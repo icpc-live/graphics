@@ -3,7 +3,6 @@ package se.kth.livetech.presentation.contest;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.TeamScore;
-//import se.kth.livetech.presentation.layout.Content;
 import se.kth.livetech.presentation.layout.ISceneDescriptionUpdater.ContentUpdater;
 
 public class ProblemScoreContent { // extends Content.Text {

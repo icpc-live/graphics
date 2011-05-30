@@ -8,7 +8,6 @@ import se.kth.livetech.contest.model.Attrs;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.Judgement;
-import se.kth.livetech.util.DebugTrace;
 
 public class AttrsUpdateEventImpl implements AttrsUpdateEvent {
 	long time;

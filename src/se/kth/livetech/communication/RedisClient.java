@@ -6,14 +6,12 @@ import java.util.Set;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.JedisShardInfo;
-import redis.clients.jedis.exceptions.JedisException;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.NodeId;
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
 import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.properties.IProperty;
-import se.kth.livetech.util.DebugTrace;
 
 public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 	

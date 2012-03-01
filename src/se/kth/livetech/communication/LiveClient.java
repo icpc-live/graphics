@@ -72,17 +72,28 @@ public class LiveClient {
 		@Option(longName="ip")
 		boolean isIp();
 
-		@Option(shortName="k",
-				longName="kattis")
-		boolean isKattis();
+		@Option(shortName="f",
+				longName="feed")
+		boolean isFeed();
 		
-		@Option(longName="kattis-host")
-		String getKattisHost();
-		boolean isKattisHost();
+		@Option(longName="feed-host")
+		String getFeedHost();
+		boolean isFeedHost();
 		
-		@Option(longName="kattis-port")
-		int getKattisPort();
-		boolean isKattisPort();
+		@Option(longName="feed-port")
+		int getFeedPort();
+		boolean isFeedPort();
+		
+		@Option(longName="ssl")
+		boolean isSSL();
+		
+		@Option(longName="user-name")
+		String getUserName();
+		boolean isUserName();
+		
+		@Option(longName="password")
+		String getPassword();
+		boolean isPassword();
 		
 		@Option(longName="file")
 		String getFileName();
@@ -275,34 +286,44 @@ public class LiveClient {
 			}
 			// Add contest update providers below!
 			
-			if (opts.isKattis()) {
-				final NetworkFeed kattisClient;
+			if (opts.isFeed()) {
+				final NetworkFeed feedClient;
 				
-				if (opts.isKattisHost()) {
-					if (opts.isKattisPort()) {
-						kattisClient = new NetworkFeed(opts.getKattisHost(), opts.getKattisPort());
+				if (opts.isFeedHost()) {
+					if (opts.isFeedPort()) {
+						feedClient = new NetworkFeed(opts.getFeedHost(), opts.getFeedPort());
 					} else {
-						kattisClient = new NetworkFeed(opts.getKattisHost());
+						feedClient = new NetworkFeed(opts.getFeedHost());
 					}
 				} else {
-					kattisClient = new NetworkFeed();
+					feedClient = new NetworkFeed();
 				}
 				
+				if (opts.isSSL())
+					feedClient.enableSSL();
+				if (opts.isUserName() || opts.isPassword()) {
+					if (!(opts.isUserName() && opts.isPassword())) {
+						System.err.println("Both user name and password required.");
+						System.exit(1);
+					}
+					feedClient.setAuthentication(opts.getUserName(), opts.getPassword());
+				}
+								
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 				final LogWriter log = new LogWriter("contestlog_"+dateFormat.format(new Date())+".txt");
-				kattisClient.addAttrsUpdateListener(log);
+				feedClient.addAttrsUpdateListener(log);
 				
-				// TODO: nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);
-				kattisClient.addAttrsUpdateListener(localState.getContest(new ContestId(opts.getContestName(), 0)));
+				// TODO: nodeRegistry.addContest(new ContestId("contest", 0), feedClient);
+				feedClient.addAttrsUpdateListener(localState.getContest(new ContestId(opts.getContestName(), 0)));
 
-				kattisClient.startPushReading();
+				feedClient.startPushReading();
 
 				localState.setContestSourceFlag(true);
 			}
 			if (opts.isFileName()) {
 				try {
 					final LogFeed logSpeaker = new LogFeed(opts.getFileName());
-					// TODO: nodeRegistry.addContest(new ContestId("contest", 0), kattisClient);
+					// TODO: nodeRegistry.addContest(new ContestId("contest", 0), feedClient);
 					logSpeaker.addAttrsUpdateListener(localState.getContest(new ContestId(opts.getContestName(), 0)));
 					try {
 						logSpeaker.parse();

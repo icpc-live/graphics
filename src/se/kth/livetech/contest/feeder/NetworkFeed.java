@@ -1,12 +1,15 @@
 package se.kth.livetech.contest.feeder;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import javax.net.ssl.SSLSocketFactory;
 
 import se.kth.livetech.contest.model.AttrsUpdateEvent;
 import se.kth.livetech.contest.model.AttrsUpdateListener;
@@ -19,6 +22,8 @@ public class NetworkFeed extends AttrsUpdaterImpl {
 	
 	private String host;
 	private int port;
+	private boolean ssl = false;
+	private String userName, password;
 
 	private Thread thread = null;
 	
@@ -35,9 +40,24 @@ public class NetworkFeed extends AttrsUpdaterImpl {
 		this.port = port;
 	}
 	
+	public void enableSSL() {
+		ssl = true;
+	}
+
+	public void setAuthentication(String userName, String password) {
+		this.userName = userName;
+		this.password = password;
+	}
+	
 	private void readFeed() {
 		try {
-			Socket socket = new Socket(host, port);
+			Socket socket;
+			if (ssl) {
+				SSLSocketFactory sslSocketFactory = (SSLSocketFactory) SSLSocketFactory.getDefault();
+				socket = sslSocketFactory.createSocket(host, port);
+			} else {
+				socket = new Socket(host, port);
+			}
 			DebugTrace.trace("Connecting to network feed "+host+":"+port);
 			socket.setKeepAlive(true);
 			socket.setSoTimeout(0);
@@ -48,10 +68,19 @@ public class NetworkFeed extends AttrsUpdaterImpl {
 					send(e);
 				}
 			});
+			// Authenticate
+			if (userName != null && password != null) {
+				DebugTrace.trace("Authenticating with feed server");
+				BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
+				String login = userName + "\n" + password + "\n";
+				out.write(login.getBytes());
+				out.close();
+			}
 			DebugTrace.trace("Network feed - start parsing xml");
 			logSpeaker.parse();
 			DebugTrace.trace("Network feed - finished parsing xml");
 			in.close();
+			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

@@ -1,6 +1,5 @@
 package se.kth.livetech.presentation.layout;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -209,6 +208,7 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 
 		// TODO: remove duplicate objects/code
 		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
+		@SuppressWarnings("unused")
 		double splitRatio = 0.4;
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
 

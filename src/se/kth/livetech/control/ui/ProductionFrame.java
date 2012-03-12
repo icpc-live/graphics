@@ -31,6 +31,7 @@ public class ProductionFrame extends JFrame implements PropertyListener {
 	PropertyHierarchy hierarchy;
 	private JMenuBar menuBar = new JMenuBar();
 	private JMenuItem mainPanelItem;
+	@SuppressWarnings("unused")
 	private JMenuItem resolverItem;
 	private JMenuItem closeItem;
 	//private JMenuItem presentationItem;

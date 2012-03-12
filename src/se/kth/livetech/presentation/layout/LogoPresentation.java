@@ -9,7 +9,6 @@ import javax.swing.JPanel;
 
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
-import se.kth.livetech.contest.graphics.ICPCImages;
 import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;

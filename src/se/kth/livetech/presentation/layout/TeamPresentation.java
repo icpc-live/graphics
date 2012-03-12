@@ -1,6 +1,5 @@
 package se.kth.livetech.presentation.layout;
 
-import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;

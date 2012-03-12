@@ -288,7 +288,7 @@ public class ContestImpl implements Contest {
 			}
 			testcases = remap(testcases, t.getRunId(), runTestcases);
 			Run r = getRun(t.getRunId());
-			if(r.isJudged()) { // Mark run as unjudged.
+			if(r.getRunJudgement().isJudged()) { // Mark run as unjudged.
 				Map<String, String> attrs = new LinkedHashMap<String, String>();
 				for (String name : r.getProperties())
 					attrs.put(name, r.getProperty(name));

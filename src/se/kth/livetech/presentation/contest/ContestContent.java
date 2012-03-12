@@ -130,12 +130,13 @@ public class ContestContent {
 	}
 
 	public void runLetter(Contest c, Run r, ContentUpdater updater, boolean problemColors) {
+		Run.RunJudgement rj = r.getRunJudgement();
 		String letter = c.getProblem(r.getProblem()).getName(); // FIXME: Problem letter!!!
 		updater.setText(letter);
 		if (problemColors) {
-			updater.setStyle(new ContestStyle.ProblemStyle(r.isJudged(), r.isSolved(), r.getProblem()));
+			updater.setStyle(new ContestStyle.ProblemStyle(rj.isJudged(), rj.isSolved(), r.getProblem()));
 		} else {
-			updater.setStyle(r.isJudged() ? r.isSolved() ? ContestStyle.solved : ContestStyle.failed : ContestStyle.pending);
+			updater.setStyle(rj.isJudged() ? rj.isSolved() ? ContestStyle.solved : ContestStyle.failed : ContestStyle.pending);
 		}
 	}
 	

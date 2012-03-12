@@ -15,12 +15,13 @@ public class ProblemScoreImpl implements ProblemScore {
 		int n = contest.getRuns(team, problem);
 		for (int i = 0; i < n; ++i) {
 			Run r = contest.getRun(team, problem, i);
-			if (r.isJudged()) {
-				if (r.isSolved() || r.isPenalty()) {
+			Run.RunJudgement rj = r.getRunJudgement();
+			if (rj.isJudged()) {
+				if (rj.isSolved() || rj.isPenalty()) {
 					time = r.getTime();
 					++attempts;
 				}
-				if (r.isSolved()) {
+				if (rj.isSolved()) {
 					solved = true;
 					penalty = contest.getInfo().getPenalty() * (attempts - 1);
 					score = time / contest.getInfo().getScoreFactor() + penalty;

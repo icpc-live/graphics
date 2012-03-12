@@ -41,13 +41,14 @@ public class SubmissionStats {
 		int lastTime = 0;
 		for (int i : contest.getRuns()) {
 			Run r = contest.getRun(i);
+			Run.RunJudgement rj = r.getRunJudgement();
 			int time = (r.getTime() + div - 1) / div * div;
 			lastTime = time;
 			if (!filter.include(r.getProblem())) {
 				continue;
 			}
 			inc(submitted, time, 1);
-			inc(solved, time, r.isSolved() ? 1 : 0);
+			inc(solved, time, rj.isSolved() ? 1 : 0);
 		}
 		// lastTime may be larger than the last non-filtered increment above
 		inc(submitted, lastTime, 0);

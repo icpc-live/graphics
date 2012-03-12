@@ -65,10 +65,11 @@ public class JudgeQueue implements ContestUpdateListener {
 
 		public void update(Run run) {
 			this.run = run;
-			if (run.isJudged()) {
+			Run.RunJudgement rj = run.getRunJudgement();
+			if (rj.isJudged()) {
 				compiling = TestcaseStatusRenderer.Status.passed;
 				running = TestcaseStatusRenderer.Status.passed;
-				if(run.isSolved()) {
+				if(rj.isSolved()) {
 					validating = TestcaseStatusRenderer.Status.passed;
 				}
 				else {

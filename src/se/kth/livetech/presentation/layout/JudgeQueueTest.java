@@ -84,11 +84,12 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 		}
 
 		public void update(Run run) {
+			Run.RunJudgement rj = run.getRunJudgement();
 			this.run = run;
-			if (run.isJudged()) {
+			if (rj.isJudged()) {
 				compiling = TestcaseStatusRenderer.Status.passed;
 				running = TestcaseStatusRenderer.Status.passed;
-				if(run.isSolved()) {
+				if(rj.isSolved()) {
 					validating = TestcaseStatusRenderer.Status.passed;
 				}
 				else {

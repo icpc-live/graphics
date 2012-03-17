@@ -1,2 +1,2 @@
-host="${1:-localhost:9099}"; shift
+host="${1:-${SPIDER:-localhost:9099}}"; shift
 ./run-client --control --port 6099 "$host" "$@"

@@ -1,3 +1,3 @@
-file="${1:-contest.log}"; shift
-host="${1:-localhost:9099}"; shift
+file="${1:-${CONTEST_LOG:-contest.log}}"; shift
+host="${1:-${SPIDER:-localhost:9099}}"; shift
 ./run-client --port 7099 --file "$file" "$host" "$@"

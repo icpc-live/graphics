@@ -23,11 +23,15 @@ public class CountdownPresentation extends JPanel {
 	long targetServerTime;
 
 	int displaySeconds = 30;
+	boolean pause;
+	int pauseSeconds;
 	boolean CHINESE_NUMERALS = false;
 	final static int ANIMATE_FROM = 800;
 	final static int START_MESSAGE_LENGTH = 300;
+	static boolean STOP_AT_ZERO = false;
 	Row[] rows;
 	PropertyListener countdownListener;
+	PropertyListener countdownPauseListener;
 
 	public CountdownPresentation(RemoteTime time, IProperty props) {
 		this.timeshift = time.getRemoteTimeMillis() - System.currentTimeMillis();
@@ -42,22 +46,21 @@ public class CountdownPresentation extends JPanel {
 					secondsFromNow = 99;
 				}
 				CountdownPresentation.this.displaySeconds = secondsFromNow;
+				if (secondsFromNow == pauseSeconds) {
+					pause = false;
+				}
 
-				CountdownPresentation.this.rows = new Row[CountdownPresentation.this.displaySeconds+1];
-				//rows[0] = new Row(ContentProvider.getCountdownRenderable("", ""));
+				if (CountdownPresentation.this.CHINESE_NUMERALS) {
+					CountdownPresentation.this.rows = new Row[CountdownPresentation.this.displaySeconds+1];
+					//rows[0] = new Row(ContentProvider.getCountdownRenderable("", ""));
 
-				for(int i = 0; i <= CountdownPresentation.this.displaySeconds; ++i) {
-					int secs = i;
-					String row1Text, row2Text;
-					if (CountdownPresentation.this.CHINESE_NUMERALS) {
+					for(int i = 0; i <= CountdownPresentation.this.displaySeconds; ++i) {
+						int secs = i;
+						String row1Text, row2Text;
 						row1Text = ChineseNumerals.moonspeak(secs);
 						row2Text = "" + secs + " [" + ChineseNumerals.pinyin(secs) + "]";
+						CountdownPresentation.this.rows[i] = new Row(ContentProvider.getCountdownRenderable(row1Text, row2Text));
 					}
-					else{
-						row1Text = "";
-						row2Text = "" + secs;
-					}
-					CountdownPresentation.this.rows[i] = new Row(ContentProvider.getCountdownRenderable(row1Text, row2Text));
 				}
 
 				CountdownPresentation.this.targetServerTime = System.currentTimeMillis() + CountdownPresentation.this.timeshift + secondsFromNow*1000;
@@ -67,6 +70,38 @@ public class CountdownPresentation extends JPanel {
 		};
 
 		props.get("countdown_from").addPropertyListener(this.countdownListener);
+
+		this.countdownPauseListener = new PropertyListener() {
+			@Override
+			public void propertyChanged(IProperty changed) {
+				boolean wasPaused;
+				int oldPauseSeconds = pauseSeconds;
+				if (pause) {
+					long currentTime = System.currentTimeMillis() + timeshift;
+					long diffMilli = currentTime - targetServerTime;
+					wasPaused = diffMilli > -1000 * pauseSeconds;
+				} else {
+					wasPaused = false;
+				}
+
+				boolean wasSetToLess;
+				if (changed.getValue().isEmpty()) {
+					pause = false;
+					wasSetToLess = wasPaused;
+				} else {
+					pause = true;
+					pauseSeconds = changed.getIntValue();
+					wasSetToLess = wasPaused && pauseSeconds < oldPauseSeconds;
+				}
+
+				if (wasPaused && wasSetToLess) {
+					// If the time had paused, and the pause time is updated, we need to update the target time to start from the previous pause time!
+					CountdownPresentation.this.targetServerTime = System.currentTimeMillis() + CountdownPresentation.this.timeshift + oldPauseSeconds*1000;
+				}
+			}
+		};
+
+		props.get("countdown_pause").addPropertyListener(this.countdownPauseListener);
 	}
 
 	class Row extends JPanel {
@@ -166,9 +201,11 @@ public class CountdownPresentation extends JPanel {
 			}
 		}
 		else {
+			if (pause && diffMilli > -pauseSeconds * 1000) {
+				diffMilli = -pauseSeconds * 1000 + 1;
+			}
 
-			final boolean STOP = true;
-			if (STOP && diffMilli > 0) {
+			if (STOP_AT_ZERO && diffMilli > 0) {
 				diffMilli = 0;
 			}
 

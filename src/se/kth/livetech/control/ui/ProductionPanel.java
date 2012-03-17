@@ -42,7 +42,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 	ProductionSettingsFrame presentationFrame;
 	ContestReplayFrame contestReplayFrame;
 	IProperty base;
-	
+
 	public ProductionPanel(IProperty base){
 
     this.interviewPresets = new Properties();
@@ -60,24 +60,24 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new ToggleButton(base.get("mode"), "score", "Scoreboard"));
 		c.add(new JLabel("Page: "));
 		c.add(new Text(base.get("score.page")));
-		
+
 		TitledBorder scoreBoarder;
 		scoreBoarder = BorderFactory.createTitledBorder("Scoreboard");
 		scoreBoarder.setTitleJustification(TitledBorder.CENTER);
 		c.setBorder(scoreBoarder);
-		
-		
+
+
 		JButton presentationButton = new JButton("Presentation");
 		presentationButton.addActionListener(new ActionListener() { @Override
 		public void actionPerformed(ActionEvent ae) { ProductionPanel.this.presentationFrame.setVisible(true); } } );
 		c.add(presentationButton);
-		
+
 		JButton resolverButton = new JButton("Resolver");
 		resolverButton.addActionListener(new ActionListener() { @Override
 		public void actionPerformed(ActionEvent ae) { ProductionPanel.this.contestReplayFrame.setVisible(true); } } );
 		c.add(resolverButton);
-		
-		
+
+
 //		String s = "org.icpc_cli.presentation.contest.internal.presentations.ProductionPresentation";
 //		c.add(new ToggleButton(base.get("presentation"), s, "Production"));
 		//c.add(new JLabel("Teams: "));
@@ -92,12 +92,12 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new CheckBox(base.get("show_clock"), "Clock"));
 		c.add(new CheckBox(base.get("show_nologo"), "No Logo"));
 		c.add(new CheckBox(base.get("old_views"), "Old Views"));
-		
+
 		TitledBorder overlay;
 		overlay = BorderFactory.createTitledBorder("Overlays");
 		overlay.setTitleJustification(TitledBorder.CENTER);
 		c.setBorder(overlay);
-		
+
 		b.add(c);
 		//b.add(new JSeparator(SwingConstants.HORIZONTAL));
 
@@ -108,7 +108,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		d.add(new ToggleButton(base.get("mode"), "layout", "Layout"));
             final JButton load = new JButton("Load Presets");
             load.addActionListener(new ActionListener() {
-            
+
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     updateInterviewPresets();
@@ -143,12 +143,12 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(d);
 		b.add(c);
 		//b.add(new JSeparator(SwingConstants.HORIZONTAL));
-		
+
 		TitledBorder interviewBorder;
 		interviewBorder = BorderFactory.createTitledBorder("Interview");
 		interviewBorder.setTitleJustification(TitledBorder.CENTER);
 		c.setBorder(interviewBorder);
-		
+
 		// Team
 		c = new Box(BoxLayout.X_AXIS);
 		TitledBorder teamBorder;
@@ -165,8 +165,8 @@ public class ProductionPanel extends JPanel implements ActionListener {
 
 		// Team selection, surveillance, clearing
 		c = new Box(BoxLayout.X_AXIS);
-		
-		
+
+
 		c.add(new JLabel("Team #"));
 		c.add(new Text(base.get("team.team")));
 		c.add(new ToggleButton(base.get("mode"), "vnc", "Vnc"));
@@ -174,7 +174,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new CheckBox(base.get("clear"), "Clear"));
 		b.add(c);
 
-		
+
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new JLabel("Team #"));
 		c.add(new Slider.Int(base.get("team.team"), 1, 105));
@@ -183,26 +183,28 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new ToggleButton(base.get("mode"), "countdown", "Countdown"));
 		c.add(new Text(base.get("countdown_from")));
+		c.add(new JLabel("(pause)"));
+		c.add(new Text(base.get("countdown_pause")));
 
 		b.add(c);
-		
+
 		/*
 		b.add(new JSeparator(SwingConstants.HORIZONTAL));
 		b.add(new ContestReplayPanel(base.get("replay")));
 		*/
-		
+
 		// Problemboard and Timeline
 		c = new Box(BoxLayout.X_AXIS);
 		c.add(new ToggleButton(base.get("mode"), "problemboard", "Problem board"));
 		c.add(new ToggleButton(base.get("mode"), "timeline", "Timeline"));
-		
+
 		b.add(c);
-	
+
 		this.add(b);
-		
-		
-		
-	
+
+
+
+
 	}
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -221,7 +223,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
             		name = formatString(name, names[1]);
             	}
             }
-            
+
             String title = "";
             if(namesTitles.length > 1) {
             	String[] titles = namesTitles[1].split("#");
@@ -230,7 +232,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
             		title = formatString(title, titles[1]);
             	}
             }
-            
+
             this.base.get("interview.name").setValue(name);
             this.base.get("interview.title").setValue(title);
         }
@@ -275,7 +277,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
     }
 
     private class ListComboBoxModel implements ComboBoxModel, ActionListener {
-    
+
         protected List<String> data;
         protected List<ListDataListener> listeners;
         protected Object selected;
@@ -332,7 +334,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
                 0,
                 data.size());
             for(int i=0; i<listeners.size(); i++) {
-                ListDataListener l = (ListDataListener)listeners.get(i);
+                ListDataListener l = listeners.get(i);
                 l.contentsChanged(le);
             }
         }

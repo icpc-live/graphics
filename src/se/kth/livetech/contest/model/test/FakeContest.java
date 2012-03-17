@@ -20,7 +20,8 @@ import se.kth.livetech.util.Frame;
 
 
 public class FakeContest extends Thread {
-	final static boolean SCREENSHOTS = true;
+	//final static boolean SCREENSHOTS = true;
+	final static boolean SCREENSHOTS = false;
 
 	final static int teams = 100;
 	final static int problems = 12;
@@ -147,8 +148,8 @@ public class FakeContest extends Thread {
 				lp.contestUpdated(e);
 			}
 		});
-		//Frame frame = new Frame("Fake Contest", bt, null, false);
-		Frame frame = new Frame("Fake Contest", lp, null, false);
+		Frame frame = new Frame("Fake Contest", bt, null, false);
+		//Frame frame = new Frame("Fake Contest", lp, null, false);
 		fc.start();
 		if (FULL_SCREEN) {
 			frame.fullScreen(0);

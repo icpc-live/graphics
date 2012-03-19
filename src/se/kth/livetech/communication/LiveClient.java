@@ -277,6 +277,16 @@ public class LiveClient {
 				contestListeners.add(lpr);
 				mainComponent("Live", lpr, opts, new Dimension(1024, 576));
 			}
+			if (opts.isHtmlOutput()) {
+				//final HtmlScoreboardTest htmlOutput = new HtmlScoreboardTest()
+				ContestUpdateListener listener = HtmlScoreboardTest.listener(opts.getHtmlOutput());
+				contestListeners.add(listener);
+			}
+
+			if (opts.isAnalystOutput()) {
+				contestListeners.add(new AnalystListener());
+			}
+
 
 			// Add contest update listeners above!
 			if (!contestListeners.isEmpty()) {
@@ -345,16 +355,6 @@ public class LiveClient {
 					System.exit(1);
 				}
 				localState.setContestSourceFlag(true);
-			}
-
-			if (opts.isHtmlOutput()) {
-				//final HtmlScoreboardTest htmlOutput = new HtmlScoreboardTest()
-				ContestUpdateListener listener = HtmlScoreboardTest.listener(opts.getHtmlOutput());
-				contestListeners.add(listener);
-			}
-
-			if (opts.isAnalystOutput()) {
-				contestListeners.add(new AnalystListener());
 			}
 
 			if (opts.isFake()) {

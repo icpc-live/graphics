@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 
 import org.apache.thrift.transport.TTransportException;
 
+import se.kth.livetech.analysis.AnalystListener;
+import se.kth.livetech.analysis.HtmlScoreboardTest;
 import se.kth.livetech.blackmagic.MagicPanel;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
@@ -51,14 +53,14 @@ public class LiveClient {
 	public interface Options {
 		@Option(shortName="s", longName="spider")
 		boolean isSpider();
-		
+
 		@Option(longName="name")
 		String getName();
 		boolean isName();
-		
+
 		@Option(longName="autoname")
 		boolean isAutoName();
-		
+
 		@Option(shortName="h",
 				longName="address")
 		String getLocalHost();
@@ -68,102 +70,109 @@ public class LiveClient {
 				longName="port")
 		int getPort();
 		boolean isPort();
-		
+
 		@Option(longName="ip")
 		boolean isIp();
 
 		@Option(shortName="f",
 				longName="feed")
 		boolean isFeed();
-		
+
 		@Option(longName="feed-host")
 		String getFeedHost();
 		boolean isFeedHost();
-		
+
 		@Option(longName="feed-port")
 		int getFeedPort();
 		boolean isFeedPort();
-		
+
 		@Option(longName="ssl")
 		boolean isSSL();
-		
+
 		@Option(longName="user-name")
 		String getUserName();
 		boolean isUserName();
-		
+
 		@Option(longName="password")
 		String getPassword();
 		boolean isPassword();
-		
+
 		@Option(longName="file")
 		String getFileName();
 		boolean isFileName();
-		
+
 		@Option(longName="redis")
 		boolean isRedis();
-		
+
 		@Option(longName="redis-host")
 		String getRedisHost();
 		boolean isRedisHost();
-		
+
 		@Option(longName="redis-port")
 		int getRedisPort();
 		boolean isRedisPort();
 
 		@Option(longName="test-triangle")
 		boolean isTestTriangle();
-		
+
 		@Option(longName="test-scoreboard")
 		boolean isTestScoreboard();
-		
+
 		@Option(longName="test-team")
 		boolean isTestTeam();
 
 		@Option(longName="test-judge-queue")
 		boolean isTestJudgeQueue();
-		
+
 		@Option(longName="live")
 		boolean isLive();
-		
+
 		@Option(longName="fake", description="Fake contest.")
 		boolean isFake();
-		
+
 		@Option(longName="control")
 		boolean isControl();
-		
+
 		@Option(longName="fullscreen")
 		boolean isFullscreen();
-		
+
 		@Option(longName="screen")
 		int getScreen();
 		boolean isScreen();
-		
+
 		@Option(longName="magic")
 		boolean isMagic();
-		
+
 		@Option(longName="device")
 		int getDevice();
 		boolean isDevice();
-		
+
 		@Option(helpRequest=true)
 		boolean getHelp();
-		
+
 		@Option(longName="vnc")
 		boolean isVnc();
 
 		@Option(longName="vlc")
 		boolean isVlc();
-		
+
 		@Option(longName="layout")
 		boolean isLayout();
-		
+
 		@Option(longName="contest-name", defaultValue="contest")
 		String getContestName();
-		
+
+		@Option(longName="html-output")
+		String getHtmlOutput();
+		boolean isHtmlOutput();
+
+		@Option(longName="analyst-output")
+		boolean isAnalystOutput();
+
 		@Unparsed
 		List<String> getArgs();
 		boolean isArgs();
-		
+
 	}
 	public static class HostPort {
 		String host;
@@ -201,9 +210,9 @@ public class LiveClient {
 				System.exit(1);
 				return;
 			}
-			
+
 			boolean spiderFlag = opts.isSpider() || !opts.isArgs();
-			
+
 
 			// Setup local node id
 			String name = opts.isName() ? opts.getName() : opts.isAutoName() ? null : "noname";
@@ -225,9 +234,9 @@ public class LiveClient {
 
 			// Remote node registry
 			NodeRegistry nodeRegistry = new NodeRegistry(localNode, localState);
-			
+
 			List<ContestUpdateListener> contestListeners = new ArrayList<ContestUpdateListener>();
-			
+
 			if (opts.isTestScoreboard()) {
 				final ContestImpl c = new ContestImpl();
 				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
@@ -285,10 +294,10 @@ public class LiveClient {
 				}
 			}
 			// Add contest update providers below!
-			
+
 			if (opts.isFeed()) {
 				final NetworkFeed feedClient;
-				
+
 				if (opts.isFeedHost()) {
 					if (opts.isFeedPort()) {
 						feedClient = new NetworkFeed(opts.getFeedHost(), opts.getFeedPort());
@@ -298,9 +307,10 @@ public class LiveClient {
 				} else {
 					feedClient = new NetworkFeed();
 				}
-				
-				if (opts.isSSL())
+
+				if (opts.isSSL()) {
 					feedClient.enableSSL();
+				}
 				if (opts.isUserName() || opts.isPassword()) {
 					if (!(opts.isUserName() && opts.isPassword())) {
 						System.err.println("Both user name and password required.");
@@ -308,11 +318,11 @@ public class LiveClient {
 					}
 					feedClient.setAuthentication(opts.getUserName(), opts.getPassword());
 				}
-								
+
 				DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss");
 				final LogWriter log = new LogWriter("contestlog_"+dateFormat.format(new Date())+".txt");
 				feedClient.addAttrsUpdateListener(log);
-				
+
 				// TODO: nodeRegistry.addContest(new ContestId("contest", 0), feedClient);
 				feedClient.addAttrsUpdateListener(localState.getContest(new ContestId(opts.getContestName(), 0)));
 
@@ -336,27 +346,38 @@ public class LiveClient {
 				}
 				localState.setContestSourceFlag(true);
 			}
+
+			if (opts.isHtmlOutput()) {
+				//final HtmlScoreboardTest htmlOutput = new HtmlScoreboardTest()
+				ContestUpdateListener listener = HtmlScoreboardTest.listener(opts.getHtmlOutput());
+				contestListeners.add(listener);
+			}
+
+			if (opts.isAnalystOutput()) {
+				contestListeners.add(new AnalystListener());
+			}
+
 			if (opts.isFake()) {
 				TestContest tc = new TestContest(100, 12, 15000);
 				FakeContest fc = new FakeContest(tc);
 				//TODO: nodeRegistry.addContest(new ContestId("contest", 0), tc);
 				tc.addAttrsUpdateListener(localState.getContest(new ContestId(opts.getContestName(), 0)));
 				fc.start();
-				
+
 				localState.setContestSourceFlag(true);
 			}
-			
+
 			if (opts.isControl()) {
 				PropertyHierarchy hierarchy = localState.getHierarchy();
 				IProperty base = hierarchy.getProperty("live.control." + localNode.name);
 				IProperty clients = hierarchy.getProperty("live.clients");
 				new ProductionFrame(hierarchy, base, clients);
 			}
-			
+
 			if (opts.isTestTriangle()) {
 				TestTriangle.test(localState.getHierarchy());
 			}
-			
+
 			if (opts.isVnc()) {
 				PropertyHierarchy hierarchy = localState.getHierarchy();
 				/*Frame foo = */new Frame("foo", new VNCPresentation(hierarchy.getProperty("live.clients.localhost.vnc")));
@@ -367,7 +388,7 @@ public class LiveClient {
 				VLCView view = new VLCView(hierarchy.getProperty("live.clients.localhost.vlc"), fullscreenFrame);
 				/*Frame foo = */new Frame("bar", view);
 			}
-			
+
 			if(opts.isRedis()) { /* Using Redis, connect! */
 				System.out.println("Connecting to Redis database");
 				String redisHost = "localhost";
@@ -386,7 +407,7 @@ public class LiveClient {
 				System.out.println("Listening on port " + port);
 				LiveService.Iface handler = new BaseHandler(nodeRegistry);
 				Connector.listen(handler, port, true);
-			
+
 				// Connect!
 				if (opts.isArgs()) {
 					for (String arg : opts.getArgs()) {
@@ -396,12 +417,12 @@ public class LiveClient {
 					}
 				}
 			}
-			
+
 			if (fullscreenFrame != null) {
 				int screen = opts.isScreen() ? opts.getScreen() : 0;
 				fullscreenFrame.fullScreen(screen);
 			}
-			
+
 			if (opts.isMagic()) {
 				int device = opts.isDevice() ? opts.getDevice() : 0;
 				JPanel magicPanel = new MagicPanel(magicComponent, device);

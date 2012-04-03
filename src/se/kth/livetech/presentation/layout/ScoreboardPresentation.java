@@ -62,15 +62,15 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	private Map<Integer, Color> rowColorations;
 
 	Contest c;
-	
+
 	public ScoreboardPresentation(Contest c, IProperty base) {
 		this.c = c;
 		this.setBackground(ICPCColors.SCOREBOARD_BG);				//(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
-		
+
 		propertyListeners = new ArrayList<PropertyListener>();
 		final IProperty scoreBase = base.get("score");
-		
+
 		final PropertyListener pageListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -80,7 +80,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		};
 		propertyListeners.add(pageListener);
 		scoreBase.get("page").addPropertyListener(pageListener);
-		
+
 		final PropertyListener rowListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -93,7 +93,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		};
 		propertyListeners.add(rowListener);
 		scoreBase.get("highlightRow").addPropertyListener(rowListener);
-		
+
 		final PropertyListener problemListener = new PropertyListener() {
 			@Override
 			public void propertyChanged(IProperty changed) {
@@ -103,12 +103,12 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		};
 		propertyListeners.add(problemListener);
 		scoreBase.get("highlightProblem").addPropertyListener(problemListener);
-		
+
 		final Map<String, Color> colorMap = new HashMap<String, Color>();
 		colorMap.put("bronze", ICPCColors.BRONZE);
 		colorMap.put("silver", ICPCColors.SILVER);
 		colorMap.put("gold", ICPCColors.GOLD);
-		
+
 		final IProperty colorProperties = scoreBase.get("color");
 		final PropertyListener colorListener = new PropertyListener() {
 			@Override
@@ -125,7 +125,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		};
 		propertyListeners.add(colorListener);
 		colorProperties.addPropertyListener(colorListener);
-		
+
 		this.rowColorations = new TreeMap<Integer, Color>();
 	}
 
@@ -149,18 +149,19 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		stack.setPosition(SCROLL_KEY, (int) startRow);
 		repaint();
 	}
-	
+
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
-		if (e.getUpdate() instanceof Reset)
+		if (e.getUpdate() instanceof Reset) {
 			reset();
+		}
 		setContest(e.getNewContest());
 	}
 
 	AnimationStack<Integer, Integer> stack;
 	RecentChange<Integer, TeamScore> recent;
 	{ reset(); }
-	
+
 	public void reset() {
 		stack = new AnimationStack<Integer, Integer>();
 		recent = new RecentChange<Integer, TeamScore>();
@@ -184,6 +185,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		}
 		return update;
 	}
+	@Override
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
 		Contest c = this.c;
@@ -206,7 +208,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			r.add(teamName, NAME_WEIGHT, 1, false);
 
 			Renderable resultsHeader = ContentProvider.getTeamResultsHeader(c);
-			r.add(resultsHeader, RESULTS_WEIGHT, 1, false);
+			r.addWithoutCache(resultsHeader, RESULTS_WEIGHT, 1, false);
 
 			Renderable solvedHeader = new ColoredTextBox("Solved", ContentProvider.getHeaderStyle(Alignment.center));
 			r.add(solvedHeader, 2, 1, true);
@@ -221,8 +223,8 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				g.translate(x, y);
 				r.render(g, dim);
 				g.translate(-x, -y);
-				
-	
+
+
 			}
 		}
 		Rect.setRow(rect, 1, ROWS + 1, ROWS + 1, rect);
@@ -234,10 +236,11 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			{ // Background
 				Color row1 = ICPCColors.BG_COLOR_1;
 				Color row2 = ICPCColors.BG_COLOR_2;
-				if (i % 2 == 0)
+				if (i % 2 == 0) {
 					r.setBackground(new RowFrameRenderer(row1, row2));
-				else
+				} else {
 					r.setBackground(new RowFrameRenderer(row2, row1));
+				}
 			}
 
 			{ // Render
@@ -247,11 +250,11 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				int y = (int) row.getY();
 				g.translate(x, y);
 				r.render(g, dim);
-				g.translate(-x, -y);	
-				
-			}	
+				g.translate(-x, -y);
+
+			}
 		}
-		
+
 		Shape clip = g.getClip();
 		g.setClip(rect);
 
@@ -288,8 +291,9 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		Team team = c.getRankedTeam(i);
 		int id = team.getId();
 
-		if (stack.isUp(id) != up)
+		if (stack.isUp(id) != up) {
 			return;
+		}
 
 		// TODO: remove duplicate objects/code
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
@@ -328,7 +332,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		r.addWithoutCache(teamResults, RESULTS_WEIGHT, 1, false);
 
 		{ // Solved and Time
-			double glowAlpha = ContentProvider.getGlowAlpha(team, recent); 
+			double glowAlpha = ContentProvider.getGlowAlpha(team, recent);
 			String statstr = "" + ts.getSolved();
 			Renderable solvedHeader = new ColoredTextBox(statstr, ContentProvider.getTeamSolvedStyle());
 			int key = r.add(solvedHeader, 2, 1, true);
@@ -341,7 +345,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			r.add(timeHeader, 2, 1, true);
 		}
 
-		
+
 		{ // Render
 			Interpolated.Double interpolator = new Interpolated.Double(i);
 			stack.interpolate(id, interpolator);
@@ -370,7 +374,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			g.translate(x, y);
 			r.render(g, dim, layer);
 			g.translate(-x, -y);
-			
+
 			// Highlight row
 			if (highlightedRow == i) {
 				double f = 3;
@@ -379,8 +383,8 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 				g.setStroke(new BasicStroke(2.5f));
 				g.draw(round);
 			}
-			
-			
+
+
 		}
 	}
 
@@ -391,8 +395,9 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			Utility.drawString3D(g, String.format("%.1f", Frame.fps(1)), r, ICPCFonts.HEADER_FONT, Alignment.right);
 		}
 	}
-	
+
 	private static class IconRenderer implements Renderable {
+		@Override
 		public void render(Graphics2D g, Dimension d) {
 			g.setColor(Color.GREEN);
 			g.setStroke(new BasicStroke((d.width + d.height) / 10));
@@ -400,7 +405,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			g.drawLine(d.width, 0, 0, d.height);
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		TestContest tc = new TestContest(50, 10, 0);
 		int id0 = tc.submit(1, 2, 11);

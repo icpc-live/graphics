@@ -34,21 +34,26 @@ public class FeedTool {
 		List<String> getArgs();
 	}
 
+	static volatile int linesFed = 0;
+
 	public void replay(BufferedReader in, PrintStream out) throws IOException {
 		//boolean firstRun = false;
+		int linesRead = 0;
 		while (true) {
 			String line = in.readLine();
+			++linesRead;
 			if (line == null) {
 				break;
 			}
 			boolean isRun = line.contains("<run>") || line.contains("<run ");
-			if (isRun) {
+			if (isRun && linesRead > linesFed) {
 				try {
 					Thread.sleep(50 + (int) (Math.random() * 2500));
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				linesFed = linesRead;
 			}
 			out.println(line);
 			out.flush();
@@ -58,8 +63,8 @@ public class FeedTool {
 
 	public static void main(String[] args) throws IOException {
 		if (args.length == 0) {
-			//args = new String[] { "rehersal_vm2011.txt" };
-			args = new String[] { "kattislog_vm2010.txt" };
+			args = new String[] { "rehersal_vm2011.txt" };
+			//args = new String[] { "kattislog_vm2010.txt" };
 		}
 
 		final Options opts;

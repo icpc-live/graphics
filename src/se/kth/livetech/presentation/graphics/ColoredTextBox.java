@@ -24,17 +24,22 @@ public class ColoredTextBox implements Renderable {
 		Shape shape;
 		Alignment alignment;
 		Color textColor;
-		
+
 		public BaseStyle(Color color, Font font, Shape shape, Alignment alignment) {
 			this(color, Color.WHITE, font, shape, alignment);
 		}
-		
+
 		public BaseStyle(Color color, Color textColor, Font font, Shape shape, Alignment alignment) {
 			this.color = color;
 			this.textColor = textColor;
 			this.font = font;
 			this.shape = shape;
 			this.alignment = alignment;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%s(%s, %s, %s, %s, %s)", this.getClass().getName(), color, textColor, font, shape, alignment);
 		}
 
 		@Override
@@ -69,43 +74,55 @@ public class ColoredTextBox implements Renderable {
 		}
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
+			if (this == obj) {
 				return true;
-			if (obj == null)
+			}
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
 			BaseStyle other = (BaseStyle) obj;
 			if (color == null) {
-				if (other.color != null)
+				if (other.color != null) {
 					return false;
-			} else if (!color.equals(other.color))
+				}
+			} else if (!color.equals(other.color)) {
 				return false;
+			}
 			if (font == null) {
-				if (other.font != null)
+				if (other.font != null) {
 					return false;
-			} else if (!font.equals(other.font))
+				}
+			} else if (!font.equals(other.font)) {
 				return false;
+			}
 			if (shape == null) {
-				if (other.shape != null)
+				if (other.shape != null) {
 					return false;
-			} else if (!shape.equals(other.shape))
+				}
+			} else if (!shape.equals(other.shape)) {
 				return false;
+			}
 			if (alignment == null) {
-				if (other.alignment != null)
+				if (other.alignment != null) {
 					return false;
-			} else if (!alignment.equals(other.alignment))
+				}
+			} else if (!alignment.equals(other.alignment)) {
 				return false;
+			}
 			return true;
 		}
 	}
-	
+
 	private String text;
 	private Style style;
 	public ColoredTextBox(String text, Style style) {
 		this.text = text;
 		this.style = style;
 	}
+	@Override
 	public void render(Graphics2D g, Dimension d) {
 		Color base = style.getColor();
 		if (base != null) {
@@ -120,27 +137,41 @@ public class ColoredTextBox implements Renderable {
 				break;
 			}
 		}
-		if (this.style.getTextColor() != null)
+		if (this.style.getTextColor() != null) {
 			g.setColor(this.style.getTextColor());
-		
+		}
+
 		Font font = style.getFont();
 		double magicScale = d.height / 30d; // TODO constant
 		Font nfont = font.deriveFont(AffineTransform.getScaleInstance(magicScale, magicScale));
 		double textMargin = .1;
 		Rectangle2D rect = new Rectangle2D.Double(d.width * textMargin / 2, 0, d.width * (1 - textMargin), d.height); //TODO: constant for raising text
-		if (text != null)
+		if (text != null) {
 			Utility.drawString3D(g, text, rect, nfont, style.getAlignment());
+		}
 	}
+	@Override
 	public int hashCode() {
 		return style.hashCode() * 31 + text.hashCode();
 	}
+	@Override
 	public boolean equals(Object that) {
-		if (this == that) return true;
-		if (that == null) return false;
-		if (this.getClass() != that.getClass()) return false;
+		if (this == that) {
+			return true;
+		}
+		if (that == null) {
+			return false;
+		}
+		if (this.getClass() != that.getClass()) {
+			return false;
+		}
 		ColoredTextBox b = (ColoredTextBox) that;
-		if (!text.equals(b.text)) return false;
-		if (!style.equals(b.style)) return false;
+		if (!text.equals(b.text)) {
+			return false;
+		}
+		if (!style.equals(b.style)) {
+			return false;
+		}
 		return true;
 	}
 	public String getText() {
@@ -154,5 +185,10 @@ public class ColoredTextBox implements Renderable {
 	}
 	public void setStyle(Style style) {
 		this.style = style;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("ColoredTextBox(%s, '%s')", this.style, this.text);
 	}
 }

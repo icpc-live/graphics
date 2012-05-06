@@ -91,7 +91,8 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new CheckBox(base.get("show_queue"), "Queue"));
 		c.add(new CheckBox(base.get("show_clock"), "Clock"));
 		c.add(new CheckBox(base.get("show_nologo"), "No Logo"));
-		c.add(new CheckBox(base.get("old_views"), "Old Views"));
+		c.add(new CheckBox(base.get("greenscreen"), "Green screen"));
+		//c.add(new CheckBox(base.get("old_views"), "Old Views"));
 
 		TitledBorder overlay;
 		overlay = BorderFactory.createTitledBorder("Overlays");

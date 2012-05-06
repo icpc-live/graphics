@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.layout;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -61,11 +62,13 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 		this.extraInfo = extraInfo;
 	}
 
+	IProperty props;
 	List<PropertyListener> listeners = new ArrayList<PropertyListener>();
 
 	Contest c;
 	public TeamPresentation(Contest c, IProperty props, TeamReader teamReader) {
 		this.c = c;
+		this.props = props;
 		this.teamReader = teamReader;
 		//this.setBackground(Color.BLUE.darker().darker());
 		//this.setBackground(ICPCColors.SCOREBOARD_BG);
@@ -138,10 +141,12 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 		Contest c = this.c;
 		Graphics2D g = (Graphics2D) gr;
 
-		//g.setPaint(ICPCColors.TRANSPARENT);
-		//g.setComposite(AlphaComposite.Clear);
-		//g.fillRect(0, 0, W, H);
-		//g.setComposite(AlphaComposite.SrcOver);
+		if (!this.props.get("greenscreen").getBooleanValue()) {
+			g.setPaint(ICPCColors.TRANSPARENT_GREEN);
+			g.setComposite(AlphaComposite.Clear);
+			g.fillRect(0, 0, W, H);
+			g.setComposite(AlphaComposite.SrcOver);
+		}
 
 		Rectangle2D rect = Rect.screenRect(W, H, 0);
 		Dimension dim = new Dimension(W, (int) (H*100.0/576));

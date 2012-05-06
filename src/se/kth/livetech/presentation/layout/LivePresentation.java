@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.layout;
 
+import java.awt.AlphaComposite;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -31,21 +32,25 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 	IProperty modeProp, clearProp, oldProp;
 
 	public static class Blank extends JPanel {
-		public Blank() {
+		IProperty base;
+		public Blank(IProperty base) {
+			this.base = base;
 			this.setBackground(ICPCColors.COLOR_KEYING);
 		}
-		/*
 		@Override
 		public void paintComponent(Graphics gr) {
-			Graphics2D g = (Graphics2D) gr;
-			g.setPaint(ICPCColors.TRANSPARENT);
-			g.setComposite(AlphaComposite.Clear);
-			g.fillRect(0, 0, this.getWidth(), this.getHeight());
-			g.setComposite(AlphaComposite.SrcOver);
+			if (!this.base.get("greenscreen").getBooleanValue()) {
+				Graphics2D g = (Graphics2D) gr;
+				g.setPaint(ICPCColors.TRANSPARENT);
+				g.setComposite(AlphaComposite.Clear);
+				g.fillRect(0, 0, this.getWidth(), this.getHeight());
+				g.setComposite(AlphaComposite.SrcOver);
+			} else {
+				super.paintComponent(gr);
+			}
 		}
-		*/
 	}
-	private Blank blankView = new Blank();
+	private Blank blankView;
 
 	public Component getCurrentView() {
 		return this.currentView;
@@ -53,6 +58,8 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 
 	public LivePresentation(Contest c, IProperty base, RemoteTime time, JFrame mainFrame) {
 		this.setLayout(null); //absolute positioning of subcomponents
+
+		this.blankView = new Blank(base);
 
 		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c, base);
 		TeamReader teamReader;

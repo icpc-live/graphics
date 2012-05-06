@@ -1,5 +1,6 @@
 package se.kth.livetech.presentation.layout;
 
+import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -53,10 +54,12 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 	Contest contest;
 	String extraInfo;
 
+	IProperty props;
 	List<PropertyListener> listeners = new ArrayList<PropertyListener>();
 
 	public InterviewPresentation(Contest c, IProperty props) {
 		this.contest = c;
+		this.props = props;
 
 		this.setBackground(ICPCColors.COLOR_KEYING);
 		this.setPreferredSize(new Dimension(1024, 576));
@@ -134,10 +137,12 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), 0);
 		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
 
-		//g.setPaint(ICPCColors.TRANSPARENT_GREEN);
-		//g.setComposite(AlphaComposite.Clear);
-		//g.fillRect(0, 0, getWidth(), getHeight());
-		//g.setComposite(AlphaComposite.SrcOver);
+		if (!this.props.get("greenscreen").getBooleanValue()) {
+			g.setPaint(ICPCColors.TRANSPARENT_GREEN);
+			g.setComposite(AlphaComposite.Clear);
+			g.fillRect(0, 0, getWidth(), getHeight());
+			g.setComposite(AlphaComposite.SrcOver);
+		}
 
 		boolean update = false;
 		{ // Advance

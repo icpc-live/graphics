@@ -193,19 +193,21 @@ public class RedisClient extends JedisPubSub implements NodeUpdateListener {
 					property.clearLink();
 				}
 			} else if("contest".equals(channel)) {
-				// Called when Redis publish a contest update.
-				String[] keys = message.split("\\.", 4);
-				assert(keys.length==4);
-				assert(keys[0].equals("contest"));
-				ContestId contestId = new ContestId(keys[1], Long.valueOf(keys[2]));
-				Set<String> fields = j.smembers(message + ".fields");
-				String type = j.get(message + ".type");
-				AttrsUpdateEventImpl e = new AttrsUpdateEventImpl(0, type);
-				for (String field : fields) {
-					e.setProperty(field, j.get(message + "." + field));
+				if (REDIS_CONTEST_SYNC) {
+					// Called when Redis publish a contest update.
+					String[] keys = message.split("\\.", 4);
+					assert(keys.length==4);
+					assert(keys[0].equals("contest"));
+					ContestId contestId = new ContestId(keys[1], Long.valueOf(keys[2]));
+					Set<String> fields = j.smembers(message + ".fields");
+					String type = j.get(message + ".type");
+					AttrsUpdateEventImpl e = new AttrsUpdateEventImpl(0, type);
+					for (String field : fields) {
+						e.setProperty(field, j.get(message + "." + field));
+					}
+					//DebugTrace.trace(e.toString());
+					localState.getContest(contestId).attrsUpdated(e);
 				}
-				//DebugTrace.trace(e.toString());
-				localState.getContest(contestId).attrsUpdated(e);
 			}
 		}
 	}

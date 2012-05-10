@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 
 import javax.swing.JPanel;
 
+import se.kth.livetech.blackmagic.MagicComponent;
 import se.kth.livetech.communication.RemoteTime;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
@@ -18,7 +19,7 @@ import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
 
 @SuppressWarnings("serial")
-public class CountdownPresentation extends JPanel {
+public class CountdownPresentation extends JPanel implements MagicComponent {
 	long timeshift;
 	long targetServerTime;
 
@@ -143,6 +144,11 @@ public class CountdownPresentation extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		paintComponent(g, getWidth(), getHeight());
+	}
+
+	@Override
+	public void paintComponent(Graphics g, int W, int H) {
 		Graphics2D g2d = (Graphics2D)g;
 		RenderCache.setQuality(g2d);
 
@@ -164,7 +170,7 @@ public class CountdownPresentation extends JPanel {
 					this.rows[i].setAge(i+ageOffset);
 				}
 			}
-			Rectangle bounds = this.getBounds();
+			Rectangle bounds = new Rectangle(0, 0, W, H); //this.getBounds();
 	//
 	//		{
 	//			//DEBUG
@@ -212,12 +218,12 @@ public class CountdownPresentation extends JPanel {
 			//Non-chinese countdown
 
 			g2d.setColor(Color.BLACK);
-			g2d.translate(0, this.getHeight() * .3);
-			g2d.fill(Rect.screenRect(getWidth(), (int) (getHeight() * .5), .05));
+			g2d.translate(0, H * .3);
+			g2d.fill(Rect.screenRect(W, (int) (H * .5), .05));
 
 			g2d.shear(-.15, 0);
 			//g2d.scale(1.2, 1);
-			g2d.translate(0, this.getHeight() * -.15);
+			g2d.translate(0, H * -.15);
 
 			if (diffMilli < 0) {
 				diffMilli -= 1000; // yes, this is true
@@ -226,7 +232,7 @@ public class CountdownPresentation extends JPanel {
 			long hours = Math.abs(diffMilli / 3600 / 1000);
 			long minutes = Math.abs(diffMilli / 60 / 1000 % 60);
 			long seconds = Math.abs(diffMilli / 1000 % 60);
-			Dimension dim = new Dimension(this.getWidth(), (int) (this.getHeight() * .8));
+			Dimension dim = new Dimension(W, (int) (H * .8));
 			Renderable r0 = ContentProvider.getFloridaCountdownRenderable("+00:00:00");
 			g2d.setColor(new Color(80, 55, 20));
 			r0.render(g2d, dim);
@@ -236,8 +242,8 @@ public class CountdownPresentation extends JPanel {
 
 			g2d.scale(1.3, 1);
 			Renderable r2 = ContentProvider.getFloridaCountdownRenderable("HOUR      MINUTE     SECOND");
-			Dimension d2 = new Dimension(this.getWidth(), this.getHeight() / 8);
-			g2d.translate(this.getWidth() * -.065, this.getHeight() * .6);
+			Dimension d2 = new Dimension(W, H / 8);
+			g2d.translate(W * -.065, H * .6);
 			g2d.setColor(new Color(200, 210, 255));
 			r2.render(g2d, d2);
 		}

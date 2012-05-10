@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.swing.JPanel;
 
+import se.kth.livetech.blackmagic.MagicComponent;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.model.Contest;
@@ -23,7 +24,7 @@ import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
-public class WinnerPresentation extends JPanel implements ContestUpdateListener, PropertyListener{
+public class WinnerPresentation extends JPanel implements ContestUpdateListener, PropertyListener, MagicComponent {
 	private IProperty awardsBase;
 	private Contest c;
 	private Team team;
@@ -43,10 +44,15 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener,
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		paintComponent(g, getWidth(), getHeight());
+	}
+
+	@Override
+	public void paintComponent(Graphics g, int W, int H) {
 		Graphics2D g2d = (Graphics2D)g;
 		RenderCache.setQuality(g2d);
 
-		Rectangle bounds = this.getBounds();
+		Rectangle bounds = new Rectangle(0, 0, W, H); //this.getBounds();
 
 		Renderable r = ContentProvider.getCountdownRenderable(award, team.getName());
 
@@ -60,7 +66,6 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener,
 
 		this.repaint(20);
 	}
-
 
 
 	@Override
@@ -87,7 +92,7 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener,
 		final TestContest tc = new TestContest(50, 10, 99000);
 		@SuppressWarnings("unused")
 		final Contest c1 = tc.getContest();
-		Frame frame = new Frame("Countdown Presentation", new WinnerPresentation(new Team() {
+		Frame frame = new Frame("Winner Presentation", new WinnerPresentation(new Team() {
 
 			@Override
 			public String getType() {

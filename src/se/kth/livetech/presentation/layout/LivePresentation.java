@@ -243,18 +243,19 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 		//this.component.setBounds(0, 0, W, H);
 		this.currentView.setSize(W, H);
 		if (!(this.currentView instanceof MagicComponent)) {
-		this.currentView.paint(gr);
+			this.currentView.paint(gr);
 
-		int n = this.getComponentCount();
-		for (int i = 0; i < n; ++i) {
-			Component ci = this.getComponent(i);
-			if (ci != null && ci != this.currentView && ci.isVisible()) {
-				//ci.setBounds(0, 0, W, H);
-				ci.setSize(W, H);
-				ci.paint(gr);
+			int n = this.getComponentCount();
+			for (int i = 0; i < n; ++i) {
+				Component ci = this.getComponent(i);
+				if (ci != null && ci != this.currentView && ci.isVisible()) {
+					//ci.setBounds(0, 0, W, H);
+					ci.setSize(W, H);
+					ci.paint(gr);
+				}
 			}
-		}
 		} else {
+			// TODO: de-duplicate code
 			MagicComponent mc = (MagicComponent) this.currentView;
 
 			Graphics2D g = (Graphics2D) gr;
@@ -265,9 +266,19 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 
 			System.err.println("magic paintComponent " + (this.currentView));
 			mc.paintComponent(gr, W, H);
+
+			int n = this.getComponentCount();
+			for (int i = 0; i < n; ++i) {
+				Component ci = this.getComponent(i);
+				if (ci != null && ci != this.currentView && ci.isVisible()) {
+					if (ci instanceof MagicComponent) {
+						MagicComponent mci = (MagicComponent) ci;
+						mci.paintComponent(gr, W, H);
+					}
+				}
+			}
 		}
 	}
-
 
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {

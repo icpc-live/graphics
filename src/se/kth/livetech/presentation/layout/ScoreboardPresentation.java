@@ -16,6 +16,7 @@ import java.util.TreeMap;
 
 import javax.swing.JPanel;
 
+import se.kth.livetech.blackmagic.MagicComponent;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.GlowRenderer;
 import se.kth.livetech.contest.graphics.ICPCColors;
@@ -43,7 +44,7 @@ import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
-public class ScoreboardPresentation extends JPanel implements ContestUpdateListener {
+public class ScoreboardPresentation extends JPanel implements ContestUpdateListener, MagicComponent {
 	public static final double ANIMATION_TIME = 1500; // ms
 	public static final double ROW_TIME = 1000; // ms
 	public static final double RECENT_TIME = 5000; // ms
@@ -188,11 +189,14 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	@Override
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
+		paintComponent(gr, getWidth(), getHeight());
+	}
+	public void paintComponent(Graphics gr, int W, int H) {
 		Contest c = this.c;
 		Graphics2D g = (Graphics2D) gr;
 		RenderCache.setQuality(g);
 
-		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
+		Rectangle2D rect = Rect.screenRect(W, H, .03);
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
 
@@ -259,19 +263,19 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		g.setClip(rect);
 
 		for (int i = c.getTeams().size(); i >= 1; --i) {
-			paintRow(g, c, i, PartitionedRowRenderer.Layer.decorations, false);
+			paintRow(g, W, H, c, i, PartitionedRowRenderer.Layer.decorations, false);
 		}
 
 		for (int i = c.getTeams().size(); i >= 1; --i) {
-			paintRow(g, c, i, PartitionedRowRenderer.Layer.contents, false);
+			paintRow(g, W, H, c, i, PartitionedRowRenderer.Layer.contents, false);
 		}
 
 		for (int i = c.getTeams().size(); i >= 1; --i) {
-			paintRow(g, c, i, PartitionedRowRenderer.Layer.decorations, true);
+			paintRow(g, W, H, c, i, PartitionedRowRenderer.Layer.decorations, true);
 		}
 
 		for (int i = c.getTeams().size(); i >= 1; --i) {
-			paintRow(g, c, i, PartitionedRowRenderer.Layer.contents, true);
+			paintRow(g, W, H, c, i, PartitionedRowRenderer.Layer.contents, true);
 		}
 
 		g.setClip(clip);
@@ -287,7 +291,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		}
 	}
 
-	public void paintRow(Graphics2D g, Contest c, int i, PartitionedRowRenderer.Layer layer, boolean up) {
+	public void paintRow(Graphics2D g, int W, int H, Contest c, int i, PartitionedRowRenderer.Layer layer, boolean up) {
 		Team team = c.getRankedTeam(i);
 		int id = team.getId();
 
@@ -296,7 +300,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		}
 
 		// TODO: remove duplicate objects/code
-		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), .03);
+		Rectangle2D rect = Rect.screenRect(W, H, .03);
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
 

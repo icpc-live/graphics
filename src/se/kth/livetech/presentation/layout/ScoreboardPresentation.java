@@ -16,6 +16,7 @@ import java.util.TreeMap;
 
 import javax.swing.JPanel;
 
+import se.kth.livetech.communication.RemoteTime;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.GlowRenderer;
 import se.kth.livetech.contest.graphics.ICPCColors;
@@ -62,14 +63,20 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	private Map<Integer, Color> rowColorations;
 
 	Contest c;
+	RemoteTime time;
+	IProperty base, scoreBase, hypothetical;
 
-	public ScoreboardPresentation(Contest c, IProperty base) {
+	public ScoreboardPresentation(Contest c, RemoteTime time, IProperty base) {
 		this.c = c;
+		this.time = time;
+		this.base = base;
 		this.setBackground(ICPCColors.SCOREBOARD_BG);				//(Color.BLUE.darker().darker());
 		this.setPreferredSize(new Dimension(1024, 576));
 
 		propertyListeners = new ArrayList<PropertyListener>();
 		final IProperty scoreBase = base.get("score");
+		this.scoreBase = scoreBase;
+		this.hypothetical = scoreBase.get("hypothetical");
 
 		final PropertyListener pageListener = new PropertyListener() {
 			@Override
@@ -185,6 +192,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		}
 		return update;
 	}
+	static final double HYPO_WEIGHT = 4;
 	@Override
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
@@ -198,10 +206,16 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 
 		boolean update = advance();
 
+		boolean hypothetical = this.hypothetical.getBooleanValue();
+
 		{ // Header
 			PartitionedRowRenderer r = new PartitionedRowRenderer();
 			Renderable rankHeader = new ColoredTextBox("Rank", ContentProvider.getHeaderStyle(Alignment.center));
 			r.add(rankHeader, 2, 1, true);
+			if (hypothetical) {
+				Renderable hypoHeader = new ColoredTextBox("Hypo", ContentProvider.getHeaderStyle(Alignment.center));
+				r.add(hypoHeader, HYPO_WEIGHT, 1, true);
+			}
 			r.add(null, 1, 0.9, true);
 			r.add(null, 1, 0.9, true);
 			Renderable teamName = new ColoredTextBox("Team", ContentProvider.getHeaderStyle(Alignment.left));
@@ -306,6 +320,15 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 			String rank = ContentProvider.getRankText(c, team);
 			Renderable rankHeader = new ColoredTextBox(rank, ContentProvider.getTeamRankStyle());
 			r.add(rankHeader, 2, 1, true);
+		}
+
+		{ // Hypothetical rank(s)
+			boolean hypothetical = this.hypothetical.getBooleanValue();
+			if (hypothetical) {
+				String hypo = ContentProvider.getHypoText(c, time, team);
+				Renderable hypoHeader = new ColoredTextBox(hypo, ContentProvider.getTeamRankStyle());
+				r.add(hypoHeader, HYPO_WEIGHT, 1, true);
+			}
 		}
 
 		{ // Flag
@@ -418,7 +441,8 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		Contest c1 = tc.getContest();
 		PropertyHierarchy hierarchy = new PropertyHierarchy();
 		IProperty base = hierarchy.getProperty("live.clients.noname");
-		Frame frame = new Frame("Scoreboard Presentation", new ScoreboardPresentation(c1, base));
+		RemoteTime time = new RemoteTime.LocalTime();
+		Frame frame = new Frame("Scoreboard Presentation", new ScoreboardPresentation(c1, time, base));
 		frame.setIconImage(RenderCache.getRenderCache().getImageFor(new IconRenderer(), new Dimension(128, 128)));
 	}
 

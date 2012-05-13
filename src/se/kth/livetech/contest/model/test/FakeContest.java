@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import se.kth.livetech.communication.RemoteTime;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
@@ -35,37 +36,38 @@ public class FakeContest extends Thread {
 		int counter;
 		int team;
 		int problem;
-		
+
 		enum Status {
 			none, success, fail
-		}	
+		}
 		Status status[] = new Status[testcases];
 		public ProblemStatus(int id) {
 			this.id = id;
 			this.counter = 0;
 			for (int i=0; i<status.length;i++) {
 				status[i] = Status.none;
-			}		
+			}
 		}
 	}
-	
+
 	public FakeContest(TestContest test) {
 		super("Fake contest");
 		this.test = test;
 	}
-	
+
 	Set<ContestUpdateListener> listeners = new HashSet<ContestUpdateListener>();
 	public void addContestUpdateListener(ContestUpdateListener listener) {
 		listeners.add(listener);
 	}
-	
+
+	@Override
 	public void run() {
 		int time = 0;
 		Contest contest = test.getContest();
-		LinkedList<ProblemStatus> submissions = new LinkedList<ProblemStatus>(); 
-		double teamSkill[][] = new double[teams][problems];	
+		LinkedList<ProblemStatus> submissions = new LinkedList<ProblemStatus>();
+		double teamSkill[][] = new double[teams][problems];
 		boolean problemSolved[][] = new boolean[teams][problems];
-		
+
 		for(int i = 0; i<problems; ++i) {
 			double base = .75*Math.random();
 			for (int j = 0; j < teams; j++) {
@@ -73,7 +75,7 @@ public class FakeContest extends Thread {
 				problemSolved[j][i] = false;
 			}
 		}
-		
+
 		while (true) {
 			try {
 				sleep(100);
@@ -96,8 +98,10 @@ public class FakeContest extends Thread {
 					//if(Math.random() < 0.9)
 					//	continue; //judge not finished TODO: should be based on time
 					if(ps.status[tc] != ProblemStatus.Status.none)
+					 {
 						continue; //already judged
-					
+					}
+
 					if(Math.random() < Math.pow(teamSkill[ps.team][ps.problem], 0.44/testcases)) {
 						TestContest.testCase(ps.id, tc, testcases, true, true);
 						ps.status[tc] = ProblemStatus.Status.success;
@@ -113,7 +117,7 @@ public class FakeContest extends Thread {
 					}
 					Contest newContest = test.getContest();
 					Run run = newContest.getRun(ps.id);
-					
+
 					ContestUpdateEvent update = new ContestUpdateEventImpl(contest, run, newContest);
 					for (ContestUpdateListener listener : listeners){
 						listener.contestUpdated(update);
@@ -121,25 +125,29 @@ public class FakeContest extends Thread {
 					removeLater.add(ps);
 				}
 			}
-			for(ProblemStatus ps : removeLater)
+			for(ProblemStatus ps : removeLater) {
 				submissions.remove(ps);
+			}
 			int doneCount = 0;
 			for (int j = 0; j < teams; ++j) {
 				TeamScore ts = test.getContest().getTeamScore(j);
-				if (ts != null && ts.getSolved() == problems)
+				if (ts != null && ts.getSolved() == problems) {
 					++doneCount;
+				}
 			}
-			if (doneCount > 3)
+			if (doneCount > 3) {
 				test.reset();
+			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		TestContest tc = new TestContest(teams, problems, 0);
 		FakeContest fc = new FakeContest(tc);
 		PropertyHierarchy hierarchy = new PropertyHierarchy();
 		IProperty base = hierarchy.getProperty("live.clients.noname");
-		final ScoreboardPresentation bt = new ScoreboardPresentation(tc.getContest(), base);
+		RemoteTime time = new RemoteTime.LocalTime();
+		final ScoreboardPresentation bt = new ScoreboardPresentation(tc.getContest(), time, base);
 		final LayoutPresentation lp = new LayoutPresentation(tc.getContest(), base);
 		fc.addContestUpdateListener(new ContestUpdateListener() {
 			@Override
@@ -158,9 +166,10 @@ public class FakeContest extends Thread {
 			frame.pack();
 			frame.setVisible(true);
 		}
-		
+
 		if (SCREENSHOTS) {
 			new Thread(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						Thread.sleep(50000);

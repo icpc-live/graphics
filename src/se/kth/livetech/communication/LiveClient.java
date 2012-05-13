@@ -240,7 +240,7 @@ public class LiveClient {
 			if (opts.isTestScoreboard()) {
 				final ContestImpl c = new ContestImpl();
 				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
-				final ScoreboardPresentation sp = new ScoreboardPresentation(c, prop_base);
+				final ScoreboardPresentation sp = new ScoreboardPresentation(c, nodeRegistry.getRemoteTime(), prop_base);
 				contestListeners.add(sp);
 				mainComponent("TestContest", sp, opts, null);
 			}

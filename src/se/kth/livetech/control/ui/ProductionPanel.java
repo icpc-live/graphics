@@ -60,6 +60,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new ToggleButton(base.get("mode"), "score", "Scoreboard"));
 		c.add(new JLabel("Page: "));
 		c.add(new Text(base.get("score.page")));
+		c.add(new CheckBox(base.get("score.hypothetical"), "Hypothetical"));
 
 		TitledBorder scoreBoarder;
 		scoreBoarder = BorderFactory.createTitledBorder("Scoreboard");

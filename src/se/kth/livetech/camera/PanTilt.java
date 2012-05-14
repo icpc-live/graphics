@@ -157,6 +157,7 @@ public class PanTilt {
 					//points.add(p);
 					target = p;
 					if (e.getClickCount() == 2) {
+						DebugTrace.trace("Position %.2f,%.2f", p.x, p.y);
 						points.add(p);
 					}
 					if (e.getClickCount() >= 3) {

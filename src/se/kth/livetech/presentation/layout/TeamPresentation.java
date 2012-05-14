@@ -62,13 +62,14 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 		this.extraInfo = extraInfo;
 	}
 
-	IProperty props;
+	IProperty props, polish;
 	List<PropertyListener> listeners = new ArrayList<PropertyListener>();
 
 	Contest c;
 	public TeamPresentation(Contest c, IProperty props, TeamReader teamReader) {
 		this.c = c;
 		this.props = props;
+		this.polish = props.get("polish");
 		this.teamReader = teamReader;
 		//this.setBackground(Color.BLUE.darker().darker());
 		//this.setBackground(ICPCColors.SCOREBOARD_BG);
@@ -237,6 +238,8 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 		if (this.stack.isUp(this.id) != up) {
 			return;
 		}
+		
+		boolean polish = this.polish.getBooleanValue();
 
 		// TODO: remove duplicate objects/code
 		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
@@ -244,7 +247,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
 		if (this.displayResults)	{ // Rank
 			String rank = ContentProvider.getRankText(c, this.team);
-			Renderable rankHeader = new ColoredTextBox("Rank", ContentProvider.getHeaderStyle(Alignment.right));
+			Renderable rankHeader = new ColoredTextBox(polish ? "Lp." : "Rank" , ContentProvider.getHeaderStyle(Alignment.right));
 			Renderable rankDisplay = new ColoredTextBox(rank, ContentProvider.getTeamRankStyle());
 			Renderable hsplit = new HorizontalSplitter(rankHeader, rankDisplay, splitRatio);
 			r.add(hsplit, 1, 1, true);
@@ -277,7 +280,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 			TeamScore ts = c.getTeamScore(this.id);
 			TeamScore prev = this.recent.get(this.id);
 			double glowAlpha = ContentProvider.getGlowAlpha(this.team, this.recent);
-			Renderable solvedHeader = new ColoredTextBox("Solved", ContentProvider.getHeaderStyle(Alignment.center));
+			Renderable solvedHeader = new ColoredTextBox(polish ? "Punkty" : "Solved", ContentProvider.getHeaderStyle(Alignment.center));
 			Renderable solvedDisplay = ContentProvider.getTeamSolvedRenderable(c, this.team);
 
 			Renderable hsplit1 = new HorizontalSplitter(solvedHeader, solvedDisplay, splitRatio);
@@ -288,7 +291,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 				r.setDecoration(key, glow, ContentProvider.STATS_GLOW_MARGIN);
 			}
 
-			Renderable timeHeader = new ColoredTextBox("Score", ContentProvider.getHeaderStyle(Alignment.center));
+			Renderable timeHeader = new ColoredTextBox(polish ? "Czas" : "Score", ContentProvider.getHeaderStyle(Alignment.center));
 			Renderable timeDisplay = ContentProvider.getTeamScoreRenderable(c, this.team);
 
 			Renderable hsplit2 = new HorizontalSplitter(timeHeader, timeDisplay, splitRatio);

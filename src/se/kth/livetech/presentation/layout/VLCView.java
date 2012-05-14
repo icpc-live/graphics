@@ -69,8 +69,9 @@ public class VLCView extends JPanel {
 		try { Thread.sleep(500); } catch (Exception e) {}
 
 		System.err.println("connecting webcam to team " + teamPort + " " + String.format("http://%s:%d/", host, basePort+teamPort));
-		
-		ProcessBuilder pb = new ProcessBuilder("vlc", "-vvv", "-f", String.format("http://%s:%d/", host, basePort+teamPort));
+
+		ProcessBuilder pb = new ProcessBuilder("vlc", "-vvv", "-f", String.format("http://%s:%d/", host, basePort+teamPort),
+				"--ffmpeg-threads=1");
 		try {
 			vlcInstance = pb.start();
 			vlcInstance.getErrorStream().close();

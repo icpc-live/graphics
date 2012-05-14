@@ -24,7 +24,6 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 	double topMargin, bottomMargin, leftMargin, rightMargin;
 	double aspectMin = 0, aspectMax = Double.POSITIVE_INFINITY;
 	Direction direction = Direction.ON_TOP;
-	int cols = 1;
 
 	SceneContentUpdater content;
 
@@ -138,11 +137,6 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 	@Override
 	public void setDirection(Direction direction) {
 		this.direction = direction;
-	}
-
-	@Override
-	public void setColumns(int cols) {
-		this.cols = cols;
 	}
 
 	private class SceneContentUpdater implements Content, ContentUpdater {
@@ -392,11 +386,6 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 	@Override
 	public Direction getDirection() {
 		return this.direction;
-	}
-
-	@Override
-	public int getColumns() {
-		return this.cols;
 	}
 
 	@Override

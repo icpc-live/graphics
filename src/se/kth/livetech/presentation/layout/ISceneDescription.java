@@ -26,7 +26,7 @@ public interface ISceneDescription {
 		VERTICAL,
 	}
 	public Direction getDirection();
-	public int getColumns();
+	//public int getColumns();
 	public Collection<Object> getSubOrder();
 	public Collection<? extends ISceneDescription> getSubs();
 	public ISceneDescription getSub(Object key);

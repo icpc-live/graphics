@@ -20,7 +20,7 @@ public interface ISceneDescriptionUpdater {
 	public void setAspect(double aspect);
 	public void setAspect(double aspectMin, double aspectMax);
 	public void setDirection(ISceneDescription.Direction direction);
-	public void setColumns(int cols);
+	//public void setColumns(int cols);
 
 	public void clearContent();
 	public ContentUpdater getContentUpdater();

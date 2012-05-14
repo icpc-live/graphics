@@ -247,7 +247,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
 		if (this.displayResults)	{ // Rank
 			String rank = ContentProvider.getRankText(c, this.team);
-			Renderable rankHeader = new ColoredTextBox(polish ? "Lp." : "Rank" , ContentProvider.getHeaderStyle(Alignment.right));
+			Renderable rankHeader = new ColoredTextBox(polish ? "Miejsce" : "Rank" , ContentProvider.getHeaderStyle(Alignment.right));
 			Renderable rankDisplay = new ColoredTextBox(rank, ContentProvider.getTeamRankStyle());
 			Renderable hsplit = new HorizontalSplitter(rankHeader, rankDisplay, splitRatio);
 			r.add(hsplit, 1, 1, true);

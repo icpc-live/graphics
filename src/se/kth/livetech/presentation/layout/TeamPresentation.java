@@ -291,6 +291,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 				r.setDecoration(key, glow, ContentProvider.STATS_GLOW_MARGIN);
 			}
 
+			// Wynik
 			Renderable timeHeader = new ColoredTextBox(polish ? "Czas" : "Score", ContentProvider.getHeaderStyle(Alignment.center));
 			Renderable timeDisplay = ContentProvider.getTeamScoreRenderable(c, this.team);
 

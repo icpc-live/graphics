@@ -65,7 +65,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 
 	Contest c;
 	RemoteTime time;
-	IProperty base, scoreBase, hypothetical;
+	IProperty base, scoreBase, hypothetical, polish;
 
 	public ScoreboardPresentation(Contest c, RemoteTime time, IProperty base) {
 		this.c = c;
@@ -78,6 +78,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		final IProperty scoreBase = base.get("score");
 		this.scoreBase = scoreBase;
 		this.hypothetical = scoreBase.get("hypothetical");
+		this.polish = base.get("polish");
 
 		final PropertyListener pageListener = new PropertyListener() {
 			@Override
@@ -212,27 +213,47 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 		boolean update = advance();
 
 		boolean hypothetical = this.hypothetical.getBooleanValue();
+		boolean polish = this.polish.getBooleanValue();
 
 		{ // Header
 			PartitionedRowRenderer r = new PartitionedRowRenderer();
-			Renderable rankHeader = new ColoredTextBox("Rank", ContentProvider.getHeaderStyle(Alignment.center));
-			r.add(rankHeader, 2, 1, true);
+			if (polish) {
+				Renderable rankHeader = new ColoredTextBox("Lp.", ContentProvider.getHeaderStyle(Alignment.center));
+				r.add(rankHeader, 2, 1, true);
+			} else {
+				Renderable rankHeader = new ColoredTextBox("Rank", ContentProvider.getHeaderStyle(Alignment.center));
+				r.add(rankHeader, 2, 1, true);
+			}
+			
 			if (hypothetical) {
 				Renderable hypoHeader = new ColoredTextBox("Hypo", ContentProvider.getHeaderStyle(Alignment.center));
 				r.add(hypoHeader, HYPO_WEIGHT, 1, true);
 			}
 			r.add(null, 1, 0.9, true);
 			r.add(null, 1, 0.9, true);
-			Renderable teamName = new ColoredTextBox("Team", ContentProvider.getHeaderStyle(Alignment.left));
-			r.add(teamName, NAME_WEIGHT, 1, false);
+			
+			if (polish) {
+				Renderable teamName = new ColoredTextBox("Drużyna", ContentProvider.getHeaderStyle(Alignment.left));
+				r.add(teamName, NAME_WEIGHT, 1, false);
+			} else {
+				Renderable teamName = new ColoredTextBox("Team", ContentProvider.getHeaderStyle(Alignment.left));
+				r.add(teamName, NAME_WEIGHT, 1, false);
+			}
 
 			Renderable resultsHeader = ContentProvider.getTeamResultsHeader(c);
 			r.addWithoutCache(resultsHeader, RESULTS_WEIGHT, 1, false);
-
-			Renderable solvedHeader = new ColoredTextBox("Solved", ContentProvider.getHeaderStyle(Alignment.center));
-			r.add(solvedHeader, 2, 1, true);
-			Renderable timeHeader = new ColoredTextBox("Time", ContentProvider.getHeaderStyle(Alignment.center));
-			r.add(timeHeader, 2, 1, true);
+			
+			if (polish) {
+				Renderable solvedHeader = new ColoredTextBox("Punkty", ContentProvider.getHeaderStyle(Alignment.center));
+				r.add(solvedHeader, 2, 1, true);
+				Renderable timeHeader = new ColoredTextBox("Czas", ContentProvider.getHeaderStyle(Alignment.center));
+				r.add(timeHeader, 2, 1, true);
+			} else {
+				Renderable solvedHeader = new ColoredTextBox("Solved", ContentProvider.getHeaderStyle(Alignment.center));
+				r.add(solvedHeader, 2, 1, true);
+				Renderable timeHeader = new ColoredTextBox("Time", ContentProvider.getHeaderStyle(Alignment.center));
+				r.add(timeHeader, 2, 1, true);
+			}
 
 			{ // Render
 				Rect.setRow(rect, 0, ROWS + 1, row);

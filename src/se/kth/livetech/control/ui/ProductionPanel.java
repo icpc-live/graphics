@@ -61,6 +61,7 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new JLabel("Page: "));
 		c.add(new Text(base.get("score.page")));
 		c.add(new CheckBox(base.get("score.hypothetical"), "Hypothetical"));
+		c.add(new CheckBox(base.get("polish"), "Polish"));
 
 		TitledBorder scoreBoarder;
 		scoreBoarder = BorderFactory.createTitledBorder("Scoreboard");

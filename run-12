@@ -1,0 +1,4 @@
+host="$(hostname)"
+name="${NAME:-$host}"
+redis=192.168.3.56
+echo ./run-client --live --name "$name" --redis --redis-host "$redis" --feed --feed-host 192.168.1.141 --feed-port 4714 "$@"

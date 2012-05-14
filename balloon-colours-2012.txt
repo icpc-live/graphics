@@ -1,0 +1,42 @@
+A
+White
+255, 255, 255
+B
+Red
+255,21,70
+C
+Purple
+120,24,164
+D
+Black
+0, 0, 0
+E
+Green
+65,170,95
+49,225,19
+F
+Pink
+243,179,200
+
+Unused:
+Dark Blue
+Dark Pink
+
+G
+Orange
+255,131,21
+H
+Silver
+198,198,198
+I
+Light Green
+202,247,39
+J
+Gold
+243,193,59
+K
+Blue
+0,160,220
+L
+Yellow
+247,244,23

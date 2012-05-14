@@ -15,27 +15,28 @@ import se.kth.livetech.presentation.layout.Content.Graph;
  */
 public class SceneDescription implements ISceneDescription, ISceneDescriptionUpdater {
 	final Object key;
-	
+
 	int generation;
 	int orderCounter;
-	
+
 	boolean weightFlag;
 	double fixedWidth, fixedHeight, stretchWeight;
 	double topMargin, bottomMargin, leftMargin, rightMargin;
 	double aspectMin = 0, aspectMax = Double.POSITIVE_INFINITY;
 	Direction direction = Direction.ON_TOP;
-	
+	int cols = 1;
+
 	SceneContentUpdater content;
 
 	Map<Object, SceneDescription> subLayouts;
 	Map<Integer, Object> layoutOrder;
-	
+
 	public SceneDescription(Object key) {
 		this.key = key;
 		this.subLayouts = new HashMap<Object, SceneDescription>();
 		this.layoutOrder = new TreeMap<Integer, Object>();
 	}
-	
+
 	// LayoutUpdater implementation:
 
 	@Override
@@ -54,13 +55,13 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 				it.remove();
 			}
 		}
-		
+
 		for (Iterator<Integer> it = this.layoutOrder.keySet().iterator(); it.hasNext(); ) {
 			if (it.next() >= this.orderCounter) {
 				it.remove();
 			}
 		}
-		
+
 		if (!this.weightFlag) {
 			calculateWeights();
 		}
@@ -70,7 +71,7 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 	public void clearWeights() {
 		this.weightFlag = false;
 	}
-	
+
 	private void calculateWeights() {
 		for (SceneDescription sub : this.subLayouts.values()) {
 			switch (this.direction) {
@@ -138,13 +139,18 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 	public void setDirection(Direction direction) {
 		this.direction = direction;
 	}
-	
+
+	@Override
+	public void setColumns(int cols) {
+		this.cols = cols;
+	}
+
 	private class SceneContentUpdater implements Content, ContentUpdater {
 		String text, imageName;
 		SceneGraphUpdater graph;
 		Object style;
 		int layer;
-		
+
 		@Override
 		public void setText(String text) {
 			this.text = text;
@@ -158,7 +164,8 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 			this.text = null;
 			this.graph = null;
 		}
-		
+
+		@Override
 		public GraphUpdater setGraph() {
 			if (this.graph == null) {
 				this.graph = new SceneGraphUpdater();
@@ -179,14 +186,17 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 			this.layer = layer;
 		}
 
+		@Override
 		public String getText() {
 			return text;
 		}
 
+		@Override
 		public Object getStyle() {
 			return style;
 		}
 
+		@Override
 		public int getLayer() {
 			return layer;
 		}
@@ -216,7 +226,7 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 			return this.graph;
 		}
 	}
-	
+
 	private static class SceneGraphUpdater implements Graph, GraphUpdater {
 		private static class SceneGraphNode implements Node {
 			Object key, style;
@@ -243,13 +253,13 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 		private Object lineStyle;
 		LinkedHashMap<Object, SceneGraphNode> nodes = new LinkedHashMap<Object, SceneGraphNode>();
 		LinkedHashMap<Object, SceneGraphNode> oldNodes = new LinkedHashMap<Object, SceneGraphNode>();
-		
+
 		private void reset() {
 			oldNodes.clear();
 			oldNodes.putAll(nodes);
 			nodes.clear();
 		}
-		
+
 		@Override
 		public void node(Object key, double x, double y, Object style) {
 			SceneGraphNode node = oldNodes.get(key);
@@ -316,7 +326,7 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 		}
 		return sub;
 	}
-	
+
 	// ISceneDescription implementation:
 
 	@Override
@@ -385,10 +395,15 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 	}
 
 	@Override
+	public int getColumns() {
+		return this.cols;
+	}
+
+	@Override
 	public Collection<Object> getSubOrder() {
 		return this.layoutOrder.values();
 	}
-	
+
 	@Override
 	public Collection<SceneDescription> getSubs() {
 		final Collection<Object> order = getSubOrder();
@@ -425,7 +440,8 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 	public SceneDescription getSub(Object key) {
 		return this.subLayouts.get(key);
 	}
-	
+
+	@Override
 	public String toString() {
 		StringBuilder s = new StringBuilder();
 		toString(s);
@@ -438,11 +454,11 @@ public class SceneDescription implements ISceneDescription, ISceneDescriptionUpd
 			s.append(this.direction);
 			s.append(' ');
 		}
-		
+
 		if (!this.weightFlag) {
 			s.append("calc ");
 		}
-		
+
 		s.append(this.fixedWidth);
 		s.append('/');
 		s.append(this.fixedHeight);

@@ -11,6 +11,13 @@ public class ProblemScoreContent { // extends Content.Text {
 
 	public static void label(ContestRef contestRef, int problem, ContentUpdater updater) {
 		Contest contest = contestRef.get();
+		String symbol = contest.getProblem(problem).getSymbol();
+		updater.setText(symbol);
+		updater.setStyle(new ContestStyle.ProblemStyle(true, true, problem));
+	}
+
+	public static void name(ContestRef contestRef, int problem, ContentUpdater updater) {
+		Contest contest = contestRef.get();
 		String name = contest.getProblem(problem).getName();
 		updater.setText(name);
 		updater.setStyle(new ContestStyle.ProblemStyle(true, true, problem));
@@ -37,7 +44,7 @@ public class ProblemScoreContent { // extends Content.Text {
 			updater.setStyle(ContestStyle.none);
 		}
 	}
-	
+
 	/*
 	@Deprecated
 	public ProblemScoreContent(ContestRef contestRef, int team, int problem) {

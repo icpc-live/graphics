@@ -15,9 +15,13 @@ public class ContestContent {
 	public ContestRef getContestRef() {
 		return this.contestRef;
 	}
-	
+
 	public void problemLabel(final int problem, ContentUpdater updater) {
 		ProblemScoreContent.label(this.contestRef, problem, updater);
+	}
+
+	public void problemName(final int problem, ContentUpdater updater) {
+		ProblemScoreContent.name(this.contestRef, problem, updater);
 	}
 
 	public void problemScore(final int team, final int problem, ContentUpdater updater) {
@@ -28,7 +32,7 @@ public class ContestContent {
 	public Content getProblemScore(final int team, final int problem) {
 		return new ProblemScoreContent(this.contestRef, team, problem);
 	}*/
-	
+
 	public void teamRank(final int team, ContentUpdater updater) {
 		TeamScoreContent.rank(this.contestRef, team, updater);
 	}
@@ -41,11 +45,11 @@ public class ContestContent {
 	public void teamName(final int team, ContentUpdater updater) {
 		TeamContent.name(this.contestRef, team, updater);
 	}
-	
+
 	public void backgroundGlow(final int team, ContentUpdater updater) {
 		TeamContent.backgroundGlow(this.contestRef, team, updater);
 	}
-	
+
 
 	@Deprecated
 	public Content getTeamName(final int team) {
@@ -87,7 +91,7 @@ public class ContestContent {
 	public Content getScore(final int team) {
 		return TeamScoreContent.getScore(this.contestRef, team);
 	}
-	
+
 	public void rowBackground(final int row, ContentUpdater updater, boolean glow) {
 		updater.setText(null);
 
@@ -100,10 +104,10 @@ public class ContestContent {
         if(glow) {
             updater.setStyle(ContestStyle.glowBackground);
         }
-		
+
 		updater.setLayer(-2);
 	}
-	
+
 	@Deprecated
 	public Content getRowBackground(final int row) {
 		return TeamContent.rowBackground(row);
@@ -113,17 +117,17 @@ public class ContestContent {
 		updater.setText(solved > 0 ? "" + solved : "");
 		updater.setStyle(solved > 0 ? ContestStyle.solved : ContestStyle.none);
 	}
-	
+
 	public void problemBoardFailed(int problem, int failed, ContentUpdater updater) {
 		updater.setText(failed > 0 ? "" + failed : "");
 		updater.setStyle(failed > 0 ? ContestStyle.failed : ContestStyle.none);
 	}
-	
+
 	public void problemBoardPendings(int problem, int pendings, ContentUpdater updater) {
 		updater.setText(pendings > 0 ? "" + pendings : "");
 		updater.setStyle(pendings > 0 ? ContestStyle.pending : ContestStyle.none);
 	}
-	
+
 	public void problemBoardScore(int problem, int score, ContentUpdater updater) {
 		updater.setText(score > 0 ? "" + score : "");
 		updater.setStyle(ContestStyle.none);
@@ -139,7 +143,7 @@ public class ContestContent {
 			updater.setStyle(rj.isJudged() ? rj.isSolved() ? ContestStyle.solved : ContestStyle.failed : ContestStyle.pending);
 		}
 	}
-	
+
 	public void space(ContentUpdater updater) {
 		final boolean SPACE_DEBUG = false;
 		if (SPACE_DEBUG) {

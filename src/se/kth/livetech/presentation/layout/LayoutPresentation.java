@@ -219,6 +219,8 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 	@Override
 	public synchronized void paintComponent(Graphics gr) {
 		this.screenshot = false;
+		// FIXME: can't we call this??
+		super.paintComponent(gr);
 		paintComponent(gr, getWidth(), getHeight());
 	}
 	public void paintComponent(Graphics gr, int width, int height) {
@@ -226,6 +228,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 			gr.setColor(getBackground());
 			gr.fillRect(0, 0, width, height);
 		} else {
+			//FIXME: why is this commented out?
 			//super.paintComponent(gr);
 		}
 
@@ -436,8 +439,8 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 		ISceneDescriptionUpdater problemsUpdater;
 		problemsUpdater = updater.getSubLayoutUpdater(0);
 		// Note: this overrides the otherwise calculated height!
-		problemsUpdater.setWeights(0, 17, 1);
-		ContestComponents.problemboard(this.content, problemsUpdater);
+		problemsUpdater.setWeights(0, 12, 1);
+		ContestComponents.problemboard(this.content, problemsUpdater, 2);
 
 		ISceneDescriptionUpdater backgroundUpdater;
 		backgroundUpdater = updater.getSubLayoutUpdater(-2);

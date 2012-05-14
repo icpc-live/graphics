@@ -12,7 +12,7 @@ import se.kth.livetech.properties.PropertyListener;
 @SuppressWarnings("serial")
 public class VLCView extends JPanel {
 	private String host = "192.168.1.141";
-	private int basePort = 58000;
+	private int basePort = 60000;
 	private int teamPort = 105;
 	private boolean isActive = false;
 	private Process vlcInstance;

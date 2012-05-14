@@ -161,7 +161,7 @@ public class ContestComponents {
 		content.problemBoardSolved(problem, stats.getSolved(), LayoutContent.fixed(Parts.problemBoardSolved, solvedWeight, .8, u));
 		content.problemBoardFailed(problem, stats.getFailed(), LayoutContent.fixed(Parts.problemBoardFailed, scoreWeight, .8, u));
 		content.problemBoardPendings(problem, stats.getPendings(), LayoutContent.fixed(Parts.problemBoardPendings, scoreWeight, .8, u));
-		content.problemBoardName(problem, LayoutContent.stretch(Parts.problemBoardName, nameWeight, .8, u));
+		content.problemName(problem, LayoutContent.stretch(Parts.problemBoardName, nameWeight, .8, u));
 		//content.problemBoardScore(problem, stats.getScoreStats().getFirst(), LayoutContent.fixed(Parts.problemBoardFirst, scoreWeight, .8, u));
 		//content.problemBoardScore(problem, stats.getScoreStats().getMedian(), LayoutContent.fixed(Parts.problemBoardMedian, scoreWeight, .8, u));
 		//content.problemBoardScore(problem, stats.getScoreStats().getAverage(), LayoutContent.fixed(Parts.problemBoardAverage, scoreWeight, .8, u));

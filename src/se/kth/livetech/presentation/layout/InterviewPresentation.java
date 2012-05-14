@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import se.kth.livetech.blackmagic.MagicComponent;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCFonts;
@@ -37,7 +38,7 @@ import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
 //public class InterviewPresentation extends TeamPresentation {
-public class InterviewPresentation extends JPanel implements ContestUpdateListener {
+public class InterviewPresentation extends JPanel implements ContestUpdateListener, MagicComponent {
 
 	public static final double ANIMATION_TIME = 1500; // ms
 	public static final double ROW_TIME = 1000; // ms
@@ -131,16 +132,21 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 	@Override
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
+		paintComponent(gr, getWidth(), getHeight());
+	}
+
+	@Override
+	public void paintComponent(Graphics gr, int W, int H) {
 		Contest c = this.contest;
 		Graphics2D g = (Graphics2D) gr;
 
-		Rectangle2D rect = Rect.screenRect(getWidth(), getHeight(), 0);
-		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
+		Rectangle2D rect = Rect.screenRect(W, H, 0);
+		Dimension dim = new Dimension(W, (int) (H*100.0/576));
 
 		if (!this.props.get("greenscreen").getBooleanValue()) {
 			g.setPaint(ICPCColors.TRANSPARENT_GREEN);
 			g.setComposite(AlphaComposite.Clear);
-			g.fillRect(0, 0, getWidth(), getHeight());
+			g.fillRect(0, 0, W, H);
 			g.setComposite(AlphaComposite.SrcOver);
 		}
 
@@ -166,7 +172,7 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 			r.setBackground(new RowFrameRenderer(row2, row1));
 		}
 
-		int posy = (int) (getHeight()*440.0/576);
+		int posy = (int) (H*440.0/576);
 
 		g.translate(0, posy);
 		{ // Render
@@ -181,18 +187,18 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 		/*TODO: unused: Shape clip = */g.getClip();
 		g.setClip(rect);
 
-		paintRow(g, c, PartitionedRowRenderer.Layer.decorations, false);
-		paintRow(g, c, PartitionedRowRenderer.Layer.contents, false);
-		paintRow(g, c, PartitionedRowRenderer.Layer.decorations, true);
-		paintRow(g, c, PartitionedRowRenderer.Layer.contents, true);
+		paintRow(g, W, H, c, PartitionedRowRenderer.Layer.decorations, false);
+		paintRow(g, W, H, c, PartitionedRowRenderer.Layer.contents, false);
+		paintRow(g, W, H, c, PartitionedRowRenderer.Layer.decorations, true);
+		paintRow(g, W, H, c, PartitionedRowRenderer.Layer.contents, true);
 
 		g.translate(0, -posy);//TODO: change to calculated value
 
 		g.setClip(this.getBounds());
 
-		double memberPosy = 0.7*getHeight();
-		g.translate(0.2*getWidth(), memberPosy);
-		g.translate(-0.2*getWidth(), memberPosy);
+		double memberPosy = 0.7*H;
+		g.translate(0.2*W, memberPosy);
+		g.translate(-0.2*H, memberPosy);
 
 		paintFps(g);
 
@@ -205,14 +211,14 @@ public class InterviewPresentation extends JPanel implements ContestUpdateListen
 		}
 	}
 
-	public void paintRow(Graphics2D g, Contest c, PartitionedRowRenderer.Layer layer, boolean up) {
+	public void paintRow(Graphics2D g, int W, int H, Contest c, PartitionedRowRenderer.Layer layer, boolean up) {
 
 		if (this.stack.isUp(this.fakeTeamId) != up) {
 			return;
 		}
 
 		// TODO: remove duplicate objects/code
-		Dimension dim = new Dimension(getWidth(), (int) (getHeight()*100.0/576));
+		Dimension dim = new Dimension(W, (int) (H*100.0/576));
 		@SuppressWarnings("unused")
 		double splitRatio = 0.4;
 		PartitionedRowRenderer r = new PartitionedRowRenderer();

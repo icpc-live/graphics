@@ -19,6 +19,7 @@ import java.util.TreeMap;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
+import se.kth.livetech.blackmagic.MagicComponent;
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
@@ -39,7 +40,7 @@ import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.util.DebugTrace;
 
 @SuppressWarnings("serial")
-public class LayoutPresentation extends JPanel implements ContestUpdateListener {
+public class LayoutPresentation extends JPanel implements ContestUpdateListener, MagicComponent {
 	public static final boolean DEBUG = false;
 
 	public static final double ANIMATION_TIME = 1000; // ms
@@ -319,7 +320,7 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener 
 
 		/*
 		g.setColor(Color.RED);
-		g.drawLine((int) (now % getWidth()), 0, (int) (System.currentTimeMillis() % getWidth()), 10);
+		g.drawLine((int) (now % width), 0, (int) (System.currentTimeMillis() % width), 10);
 		*/
 
 		if (this.anim.advance(0)) {

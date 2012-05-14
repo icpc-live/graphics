@@ -31,7 +31,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 	List<PropertyListener> propertyListeners;
 	IProperty modeProp, clearProp, oldProp;
 
-	public static class Blank extends JPanel {
+	public static class Blank extends JPanel implements MagicComponent {
 		IProperty base;
 		public Blank(IProperty base) {
 			this.base = base;
@@ -39,11 +39,14 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 		}
 		@Override
 		public void paintComponent(Graphics gr) {
+			paintComponent(gr, this.getWidth(), this.getHeight());
+		}
+		public void paintComponent(Graphics gr, int W, int H) {
 			if (!this.base.get("greenscreen").getBooleanValue()) {
 				Graphics2D g = (Graphics2D) gr;
-				g.setPaint(ICPCColors.TRANSPARENT);
-				g.setComposite(AlphaComposite.Clear);
-				g.fillRect(0, 0, this.getWidth(), this.getHeight());
+				g.setPaint(ICPCColors.TRANSPARENT_GREEN);
+				g.setComposite(AlphaComposite.Src);
+				g.fillRect(0, 0, W, H);
 				g.setComposite(AlphaComposite.SrcOver);
 			} else {
 				super.paintComponent(gr);
@@ -239,32 +242,43 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 		RenderCache.setQuality((Graphics2D)gr);
 		//this.component.setBounds(0, 0, W, H);
 		this.currentView.setSize(W, H);
-		//if (!(this.currentView instanceof MagicComponent)) {
-		this.currentView.paint(gr);
+		if (!(this.currentView instanceof MagicComponent)) {
+			this.currentView.paint(gr);
 
-		int n = this.getComponentCount();
-		for (int i = 0; i < n; ++i) {
-			Component ci = this.getComponent(i);
-			if (ci != null && ci != this.currentView && ci.isVisible()) {
-				//ci.setBounds(0, 0, W, H);
-				ci.setSize(W, H);
-				ci.paint(gr);
+			int n = this.getComponentCount();
+			for (int i = 0; i < n; ++i) {
+				Component ci = this.getComponent(i);
+				if (ci != null && ci != this.currentView && ci.isVisible()) {
+					//ci.setBounds(0, 0, W, H);
+					ci.setSize(W, H);
+					ci.paint(gr);
+				}
 			}
-		}
-		/*} else {
+		} else {
+			// TODO: de-duplicate code
 			MagicComponent mc = (MagicComponent) this.currentView;
 
 			Graphics2D g = (Graphics2D) gr;
-			g.setPaint(ICPCColors.TRANSPARENT);
-			g.setComposite(AlphaComposite.Clear);
+			g.setPaint(ICPCColors.TRANSPARENT_GREEN);
+			g.setComposite(AlphaComposite.Src);
 			g.fillRect(0, 0, W, H);
 			g.setComposite(AlphaComposite.SrcOver);
 
 			System.err.println("magic paintComponent " + (this.currentView));
 			mc.paintComponent(gr, W, H);
-		}*/
-	}
 
+			int n = this.getComponentCount();
+			for (int i = 0; i < n; ++i) {
+				Component ci = this.getComponent(i);
+				if (ci != null && ci != this.currentView && ci.isVisible()) {
+					if (ci instanceof MagicComponent) {
+						MagicComponent mci = (MagicComponent) ci;
+						mci.paintComponent(gr, W, H);
+					}
+				}
+			}
+		}
+	}
 
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {

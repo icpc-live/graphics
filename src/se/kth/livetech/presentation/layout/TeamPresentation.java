@@ -132,12 +132,12 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 	private boolean displayMembers = true;
 	@Override
 	public void paintComponent(Graphics gr) {
+		super.paintComponent(gr);
 		paintComponent(gr, getWidth(), getHeight());
 	}
 
 	@Override
 	public void paintComponent(Graphics gr, int W, int H) {
-		super.paintComponent(gr);
 		Contest c = this.c;
 		Graphics2D g = (Graphics2D) gr;
 

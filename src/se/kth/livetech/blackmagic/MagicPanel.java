@@ -31,6 +31,8 @@ public class MagicPanel extends JPanel {
 	int[] buffer;
 	Exception err;
 
+	//BufferedImage dummy; Graphics dummyGr;
+
 	Object device, output;
 	Method displayIntArrayFrameSync;
 
@@ -44,6 +46,9 @@ public class MagicPanel extends JPanel {
 		this.deviceN = deviceN;
 		this.img = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
 		this.buffer = ((DataBufferInt) this.img.getRaster().getDataBuffer()).getData();
+
+		//this.dummy = new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB);
+		//this.dummyGr = this.dummy.getGraphics();
 
 		Class<?> deckLinkDeviceClass;
 		Class<?> deckLinkOutputClass;
@@ -107,8 +112,16 @@ public class MagicPanel extends JPanel {
 		return new Dimension(IS_720_P ? W : W/2, IS_720_P ? H : H/2);
 	}
 
+	int frameCount;
 	@Override
 	public void paintChildren(Graphics gr) {
+		double f = IS_720_P ? 1 : 2;
+		((Graphics2D) gr).scale(1/f, 1/f);
+		super.paintChildren(gr); // flashes grey when dummyGr is used
+		((Graphics2D) gr).scale(f, f);
+		if (++frameCount % 250 < 10) {
+			afterPaintMagic(gr);
+		}
 		// Do not paint children, but schedule this panel to repaint...
 		repaint(20);
 	}
@@ -116,7 +129,29 @@ public class MagicPanel extends JPanel {
 	@Override
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
+		paintMagic();
+		//afterPaintMagic(gr);
 
+		if (repainter == null) {
+			repainter = new Thread(new Runnable() {
+				public void run() {
+					while (true) {
+						paintMagic();
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+						}
+						//repaint();
+					}
+				}
+			});
+			//repainter.start();
+		}
+	}
+
+	Thread repainter;
+
+	public void paintMagic() {
 		// FIXME: Thread away drawing and magic frame sync
 		{
 			Graphics2D g = (Graphics2D) this.img.getGraphics();
@@ -139,7 +174,9 @@ public class MagicPanel extends JPanel {
 				displayIntArrayFrameSync(W, H, this.buffer);
 			}
 		}
+	}
 
+	public void afterPaintMagic(Graphics gr) {
 		Rectangle2D rect = new Rectangle(0, 0, getWidth(), getHeight());
 		double aspect = (double) W / H;
 		rect = Rect.aspect(rect, aspect, aspect);

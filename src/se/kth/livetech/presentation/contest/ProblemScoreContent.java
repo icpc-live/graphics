@@ -12,7 +12,9 @@ public class ProblemScoreContent { // extends Content.Text {
 	public static void label(ContestRef contestRef, int problem, ContentUpdater updater) {
 		Contest contest = contestRef.get();
 		String symbol = contest.getProblem(problem).getSymbol();
-		updater.setText(symbol == null ? "" + (char) ('A' + problem) : symbol);
+		updater.setText(symbol == null ? "" + (char) ('A' + problem - 1) : symbol);
+		/*String name = contest.getProblem(problem).getName();
+		updater.setText(name);*/
 		updater.setStyle(new ContestStyle.ProblemStyle(true, true, problem));
 	}
 

@@ -1,0 +1,32 @@
+Hi!
+
+Attached is a jar file that will run the resolver presentation, and the contest log file from last year's world finals.
+
+To run the resolver, unzip and run the following commands:
+
+ nwerc$ resolver-server
+
+Then enter "noname" in the top-left text-box and press enter. Press the Scoreboard and Pause buttons. Enter millisecond delay values for Replay delay, etc, and number of medals (press enter in each text box, yellow boxes are not committed).
+
+ nwerc$ resolver-client
+
+then
+
+ nwerc$ resolver-load-contest
+
+Now the client is ready for a finals presentation. Press Replay or Resolver to start. When the medal places are reached, press Presentation step to step through the top places. Blank medals are used to pause at the end without showing any medal screens. Change the text box "Winner label" at the bottom.
+
+The contest log is in the file contest.log. This log has detailed events from each stage of the judging process. Only <run> tags with final judgements are required for the resolver (and the first unjudged <run> tag if you want blue markers for submissions that are not yet judged). The inner <time> tag in seconds is the one used for scoring.
+
+If you mkdir image/flags and image/logos directories, run the get-flags and get-logo scripts, and unpack the two zip files, you'll have flags and university logos for the teams as well.
+
+The scoreboard may be paged using the Page field. To disable fps or auto page, press the Presentation button and check no fps or Auto Page (after "noname" is entered).
+
+Change localhost:9099 in resolver-client to run remotely, and use --fullscreen (and --screen N to select external display) on the projector machine. And do remember to Pause before loading the contest and step carefully, since the resolver can not be rewinded!
+
+
+I hope this is enough info.
+
+Regards,
+Mattias
+

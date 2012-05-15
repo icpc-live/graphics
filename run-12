@@ -1,3 +1,8 @@
 host="$(hostname)"
 name="${NAME:-$host}"
-./run-client --live --name "$name" --redis --feed --feed-host 192.168.1.141 --feed-port 4714 "$@"
+if [ "$1" == "nolive" ]; then
+  live=""; shift
+else
+  live="--live"
+fi
+./run-client $live --name "$name" --redis --feed --feed-host 192.168.1.141 --feed-port 4714 "$@"

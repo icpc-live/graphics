@@ -109,7 +109,7 @@ public class MagicPanel extends JPanel {
 	@Override
 	public void paintChildren(Graphics gr) {
 		// Do not paint children, but schedule this panel to repaint...
-		repaint();
+		repaint(20);
 	}
 
 	@Override
@@ -142,10 +142,17 @@ public class MagicPanel extends JPanel {
 		Rectangle2D rect = new Rectangle(0, 0, getWidth(), getHeight());
 		double aspect = (double) W / H;
 		rect = Rect.aspect(rect, aspect, aspect);
-		gr.drawImage(this.img,
-				(int) rect.getMinX(), (int) rect.getMinY(), (int) rect.getMaxX(), (int) rect.getMaxY(),
-				0, 0, W, H,
-				this);
+		final boolean DRAW_IMG = true;
+		if (DRAW_IMG) {
+			gr.drawImage(this.img,
+					(int) rect.getMinX(), (int) rect.getMinY(), (int) rect.getMaxX(), (int) rect.getMaxY(),
+					0, 0, W, H,
+					this);
+		} else {
+			gr.setColor(Color.RED);
+			gr.drawLine((int) rect.getMinX(), (int) rect.getMinY(), (int) rect.getMaxX(), (int) rect.getMaxY());
+			gr.drawLine((int) rect.getMinX(), (int) rect.getMaxY(), (int) rect.getMaxX(), (int) rect.getMinY());
+		}
 
 		if (this.err != null) {
 			gr.setColor(Color.RED);
@@ -165,10 +172,10 @@ public class MagicPanel extends JPanel {
 			gr.setColor(Color.GREEN);
 			gr.drawString(String.format("%.1f fps", fps), 20, 20);
 			if (this.paintTimes.size() <= 1) {
-				repaint();
+				repaint(20);
 			}
 		}
 
-		repaint(); // Always repaint..
+		repaint(20); // Always repaint..
 	}
 }

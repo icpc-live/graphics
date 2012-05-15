@@ -3,6 +3,7 @@ package se.kth.livetech.control.ui;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,7 +32,8 @@ import se.kth.livetech.properties.ui.ToggleButton;
 @SuppressWarnings("serial")
 public class ProductionPanel extends JPanel implements ActionListener {
 
-	final String PROPERTIES_FILE = System.getenv("HOME") + "/livetech/presentation/conf/interviewpresets.properties";
+	//final String PROPERTIES_FILE = System.getenv("HOME") + "/livetech/presentation/conf/interviewpresets.properties";
+    final String PROPERTIES_FILE = "conf/interviewpresets.properties";
     final int INTERVIEW_SECOND_NAME_POSITION = 32;
 
     Properties interviewPresets;
@@ -60,6 +62,8 @@ public class ProductionPanel extends JPanel implements ActionListener {
 		c.add(new ToggleButton(base.get("mode"), "score", "Scoreboard"));
 		c.add(new JLabel("Page: "));
 		c.add(new Text(base.get("score.page")));
+		c.add(new CheckBox(base.get("score.hypothetical"), "Hypothetical"));
+		c.add(new CheckBox(base.get("polish"), "Polish"));
 
 		TitledBorder scoreBoarder;
 		scoreBoarder = BorderFactory.createTitledBorder("Scoreboard");

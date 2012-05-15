@@ -13,10 +13,11 @@ import java.awt.geom.Rectangle2D;
  */
 public class Utility {
 	private static int shade(int component, double f) {
-		if (f < .5)
+		if (f < .5) {
 			return (int) (2 * component * f);
-		else
+		} else {
 			return 255 - (int) (2 * (255 - component) * (1 - f));
+		}
 	}
 
 	public static Color shade(Color base, double a) {
@@ -40,18 +41,18 @@ public class Utility {
 	}
 
 	public static Color darker(Color c, float f) {
-		return new Color(Math.max((int)(c.getRed()*f), 0), 
+		return new Color(Math.max((int)(c.getRed()*f), 0),
 			Math.max((int)(c.getGreen()*f), 0),
 			Math.max((int)(c.getBlue()*f), 0),
 			c.getAlpha());
 	}
 
 	public static Color alphaDarker(Color c, int alpha, float f) {
-		return new Color(Math.max((int)(c.getRed()*f), 0), 
+		return new Color(Math.max((int)(c.getRed()*f), 0),
 				Math.max((int)(c.getGreen()*f), 0),
 				Math.max((int)(c.getBlue()*f), 0), alpha);
 	}
-	
+
 	private static double getStringX(String s, Rectangle2D rect, double width, Alignment alignment) {
 		switch (alignment) {
 		case left:
@@ -63,19 +64,19 @@ public class Utility {
 		default:
 			return rect.getX();
 		}
-		
+
 	}
-	
+
 	public static void drawString3D(Graphics2D g, String s, Rectangle2D rect, Font f, Alignment alignment) {
 		g.setFont(f);
 		AffineTransform gtrans = g.getTransform();
 		FontMetrics fm = g.getFontMetrics();
 		int width = fm.stringWidth(s);
 //		g.drawRect((int)rect.getX(), (int)rect.getY(), (int)rect.getWidth(), (int)rect.getHeight());
-	
+
 		// Incredibly annoying Java behaviour!
 		// Scaling a graphics does not necessarily cause the Font to be scaled by the same amount.
-		// Try to get around this by repeating the scaling a few times since the font does appear to 
+		// Try to get around this by repeating the scaling a few times since the font does appear to
 		// shrink a bit each time.  Seems to work OK with cases tested so far.
 		double rat = 1;
 		for (int iter = 0; width*rat > rect.getWidth() && iter < 5; ++iter) {
@@ -94,7 +95,7 @@ public class Utility {
 		g.scale(rat, 1);
 		drawString3D(g, s, 0, 0);
 		g.setTransform(gtrans);
-/*		
+/*
 		if (width <= rect.getWidth())
 			drawString3D(g, s, (float) x, (float) y);
 		else {
@@ -110,7 +111,7 @@ public class Utility {
 
 	/**
 	 * Draws a string with a black outline.
-	 * 
+	 *
 	 * @param g
 	 * @param s
 	 * @param x
@@ -130,7 +131,7 @@ public class Utility {
 
 	/**
 	 * Draws a string with a white outline.
-	 * 
+	 *
 	 * @param g
 	 * @param s
 	 * @param x

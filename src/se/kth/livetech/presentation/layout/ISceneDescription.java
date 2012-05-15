@@ -13,7 +13,7 @@ public interface ISceneDescription {
 	public double getBottomMargin(); // 0-1
 	public double getLeftMargin(); // 0-1
 	public double getRightMargin(); // 0-1
-	
+
 	public double getAspectMin();
 	public double getAspectMax();
 
@@ -26,6 +26,7 @@ public interface ISceneDescription {
 		VERTICAL,
 	}
 	public Direction getDirection();
+	//public int getColumns();
 	public Collection<Object> getSubOrder();
 	public Collection<? extends ISceneDescription> getSubs();
 	public ISceneDescription getSub(Object key);

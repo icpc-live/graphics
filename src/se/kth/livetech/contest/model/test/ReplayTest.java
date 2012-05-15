@@ -1,5 +1,6 @@
 package se.kth.livetech.contest.model.test;
 
+import se.kth.livetech.communication.RemoteTime;
 import se.kth.livetech.contest.feeder.NetworkFeed;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
@@ -12,19 +13,19 @@ import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.util.Frame;
 
 public class ReplayTest {
-	
+
 	/*private static PropertyListener l,l2,l3;
 	private static IProperty propertyBase;
 	private static IProperty propertyPause;
 	private static IProperty propertyPace;
-	
+
 	public static class Listen implements PropertyListener {
 		@Override
 		public void propertyChanged(IProperty changed) {
 			System.out.println("Changed " + changed + " " + changed.getValue());
 		}
 	}
-	
+
 	@SuppressWarnings("serial")
 	private static class Control extends JPanel {
 		public Control(IProperty base) {
@@ -32,14 +33,14 @@ public class ReplayTest {
 			this.add(new Slider(propertyPace, 0, 2000));
 		}
 	}*/
-	
+
 	Contest latestContest = null;
 
 	public static void main(String[] args) {
 		ReplayTest rt = new ReplayTest();
 		rt.go();
 	}
-	
+
 	public void go(){
 		/*TestContest tc = new TestContest(10, 10);
 		int id0 = tc.submit(1, 2, 11);
@@ -47,23 +48,25 @@ public class ReplayTest {
 		Contest c1 = tc.getContest();*/
 		PropertyHierarchy hierarchy = new PropertyHierarchy();
 		IProperty base = hierarchy.getProperty("live.clients.noname");
-		final ScoreboardPresentation bt2 = new ScoreboardPresentation(new ContestImpl(), base);
+		RemoteTime time = new RemoteTime.LocalTime();
+		final ScoreboardPresentation bt2 = new ScoreboardPresentation(new ContestImpl(), time, base);
 		new Frame("ReplayTest", bt2);
-		
+
 		final ContestReplayer replayer = new ContestReplayer();
 		//replayer.setPaused(false);
 		replayer.addContestUpdateListener(bt2);
 		replayer.addContestUpdateListener(new ContestUpdateListener() {
+			@Override
 			public void contestUpdated(ContestUpdateEvent e) {
 				latestContest = e.getNewContest();
 			}
 		});
-		
+
 		// Read directly from Kattis
 		NetworkFeed kattis = new NetworkFeed();
 		kattis.addAttrsUpdateListener(replayer);
 		kattis.startPushReading();
-		
+
 		// Read from log file
 		/*try {
 			LogSpeaker speaker = new LogSpeaker("kattislog.txt");
@@ -72,7 +75,7 @@ public class ReplayTest {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}*/
-		
+
 		/*Timer timer = new Timer();
 		timer.schedule(new TimerTask() {
 			public void run() {

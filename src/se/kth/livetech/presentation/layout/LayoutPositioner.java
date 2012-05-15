@@ -38,7 +38,7 @@ public class LayoutPositioner {
 			public Content getContent() {
 				if(description.hasContent()) {
 					return description.getContent();
-				} 
+				}
 				return null;
 			}
 
@@ -81,6 +81,7 @@ public class LayoutPositioner {
 					break;
 				}
 				case VERTICAL: {
+					//int cols = description.getColumns();
 					double n = description.getFixedHeight();
 					double i = 0;
 					for (ISceneDescription c : description.getSubs()) {
@@ -118,7 +119,7 @@ public class LayoutPositioner {
 			}
 		};
 	}
-	
+
 	public String toString(ISceneLayout scene) {
 		StringBuilder s = new StringBuilder();
 		toString(s, scene);

@@ -64,7 +64,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 
 		this.blankView = new Blank(base);
 
-		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c, base);
+		final ScoreboardPresentation scoreboard = new ScoreboardPresentation(c, time, base);
 		TeamReader teamReader;
 
 		this.modeProp = base.get("mode");

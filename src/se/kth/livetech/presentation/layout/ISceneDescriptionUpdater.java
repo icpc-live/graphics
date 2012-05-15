@@ -20,10 +20,11 @@ public interface ISceneDescriptionUpdater {
 	public void setAspect(double aspect);
 	public void setAspect(double aspectMin, double aspectMax);
 	public void setDirection(ISceneDescription.Direction direction);
+	//public void setColumns(int cols);
 
 	public void clearContent();
 	public ContentUpdater getContentUpdater();
-	
+
 	public interface ContentUpdater {
 		public void setText(String text);
 		public void setImageName(String name);
@@ -31,7 +32,7 @@ public interface ISceneDescriptionUpdater {
 		public void setStyle(Object style);
 		public void setLayer(int layer);
 	}
-	
+
 	public interface GraphUpdater {
 		public void setLineWidth(double lineWidth);
 		public void setLineStyle(Object lineStyle);

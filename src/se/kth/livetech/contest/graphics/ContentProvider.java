@@ -1,8 +1,12 @@
 package se.kth.livetech.contest.graphics;
 
 import java.awt.Color;
+import java.util.Set;
+import java.util.TreeSet;
 
+import se.kth.livetech.communication.RemoteTime;
 import se.kth.livetech.contest.model.Contest;
+import se.kth.livetech.contest.model.ContestUtil;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
@@ -21,6 +25,60 @@ public class ContentProvider {
 	public static String getRankText(Contest contest, Team team) {
 		// TODO "" + (TeamScore) teamScore.getRank();
 		return "" + contest.getTeamRank(team.getId());
+	}
+
+	public static String getHypoText(Contest contest, RemoteTime time, Team team) {
+		int rankNow = contest.getTeamRank(team.getId());
+		int timeNow = ContestUtil.time(contest, time);
+		TeamScore ts = contest.getTeamScore(team.getId());
+		Set<Integer> addScores = new TreeSet<Integer>();
+		Set<Integer> hypoRank1000Margins = new TreeSet<Integer>();
+		for (int problem : contest.getProblems()) {
+			ProblemScore ps = ts.getProblemScore(problem);
+			if (!ps.isSolved()) {
+				int att = ps.getAttempts() + ps.getPendings(); // FIXME: should pending be added?
+				int addSolved = 1;
+				int latestTime = (ps.getPendings() > 0 ? ps.getLastAttemptTime() : timeNow);
+				// FIXME: is the following score calculation correct?
+				int addScore = latestTime / contest.getInfo().getScoreFactor() + att * contest.getInfo().getPenalty();
+				int hypoRank1000Margin = ContestUtil.getHypotheticalRank1000Margin(contest, team, addSolved, addScore, latestTime);
+				addScores.add(addScore);
+				hypoRank1000Margins.add(hypoRank1000Margin);
+			}
+		}
+		StringBuilder sb = new StringBuilder("(");
+		boolean first = true;
+		for (int hypoRank1000Margin : hypoRank1000Margins) {
+			int hypoRank = hypoRank1000Margin / 1000;
+			int hypoMargin = hypoRank1000Margin % 1000;
+			if (first) {
+				first = false;
+			} else {
+				sb.append(", ");
+			}
+			sb.append(hypoRank);
+			if (hypoRank == rankNow) {
+				//sb.append('-');
+				continue;
+			}
+			/*
+			if (hypoRank <= rankNow) {
+				sb.append('+');
+			}
+			sb.append(rankNow - hypoRank);
+			*/
+			// TODO: check if margin is more than time remaining
+			// TODO: something like: if (hypoMargin > (contest.getInfo().getLength() - timeNow) / contest.getInfo().getScoreFactor()) {
+			if (hypoMargin == 999) {
+				sb.append("[-]");
+			} else {
+				sb.append('[');
+				sb.append(hypoMargin);
+				sb.append(']');
+			}
+		}
+		sb.append(')');
+		return sb.toString();
 	}
 
 	public static Renderable getTeamFlagRenderable(Team team) {
@@ -150,7 +208,7 @@ public class ContentProvider {
 		Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
 		return teamName;
 	}
-	
+
 	public static Renderable getInterviewedRenderable(String name) {
 		Renderable interviewedName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
 		return interviewedName;
@@ -233,7 +291,7 @@ public class ContentProvider {
 	public static ColoredTextBox.Style getCountdownStyle() {
 		return new ColoredTextBox.BaseStyle(null, null, ICPCFonts.TEAM_NAME_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
 	}
-	
+
 	public static ColoredTextBox.Style getFloridaCountdownStyle() {
 		return new ColoredTextBox.BaseStyle(null, null, ICPCFonts.SEVEN_SEGMENT_FONT, ColoredTextBox.Style.Shape.roundRect, Alignment.center);
 	}
@@ -247,7 +305,7 @@ public class ContentProvider {
 		ColoredTextBox box2 = new ColoredTextBox(row2Text, ContentProvider.getCountdownStyle());
 		return new HorizontalSplitter(box1,box2,0.75);
 	}
-	
+
 	public static Renderable getFloridaCountdownRenderable(String timeString) {
 		return new ColoredTextBox(timeString, ContentProvider.getFloridaCountdownStyle());
 	}

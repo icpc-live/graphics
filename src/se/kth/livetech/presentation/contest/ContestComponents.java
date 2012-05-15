@@ -26,41 +26,53 @@ public class ContestComponents {
 		problems,
 		solved,
 		score,
-		
+
 		rankGlow,
-		
+
 		judgeQueueCompiling,
 		judgeQueueRunning,
 		judgeQueueValidating,
-		
+
 		problemBoardSolved,
 		problemBoardFailed,
 		problemBoardPendings,
 		problemBoardFirst,
 		problemBoardMedian,
 		problemBoardAverage,
-		
+		problemBoardName,
+
 		submissionGraph,
 		submissionsSubmitted,
 		submissionsSolved,
 	}
 
 	static Map<Integer, Long> glowTimer = new HashMap<Integer, Long>();
-	
-	public static void problemboard(ContestContent content, ISceneDescriptionUpdater u) {
-		u.setDirection(ISceneDescription.Direction.VERTICAL);
-		final Contest contest = content.getContestRef().get();
-		int problems = contest.getProblems().size();
 
-		ProblemStats stats = new ProblemStats(contest);
+	public static void problemboard(ContestContent content, ISceneDescriptionUpdater uu, int columns) {
+		uu.setDirection(ISceneDescription.Direction.HORIZONTAL);
+		int count = 0;
+		for (int column = 0; column < columns; ++column) {
+			ISceneDescriptionUpdater u = uu.getSubLayoutUpdater(column);
+			u.setWeights(1, 6, 0);
 
-		List<Integer> problemOrder = stats.getProblemOrder();
-		for (int row = 0; row < problems; ++row) {
-			int problem = problemOrder.get(row);
-			problemRow(content, stats.getStats(problem), problem, false, u.getSubLayoutUpdater(problem));
+			u.setDirection(ISceneDescription.Direction.VERTICAL);
+			final Contest contest = content.getContestRef().get();
+			int problems = contest.getProblems().size();
+
+			ProblemStats stats = new ProblemStats(contest);
+
+			List<Integer> problemOrder = stats.getProblemOrder();
+			for (int row = 0; row < (problems + columns - 1) / columns; ++row) {
+				if (count >= problems) {
+					continue;
+				}
+				int problem = problemOrder.get(count);
+				++count;
+				problemRow(content, stats.getStats(problem), problem, false, u.getSubLayoutUpdater(problem));
+			}
 		}
 	}
-	
+
 	public static void scoreboard(ContestContent content, ISceneDescriptionUpdater u, RecentChange<Integer, TeamScore> recent) {
 		u.setDirection(ISceneDescription.Direction.VERTICAL);
 		Contest contest = content.getContestRef().get();
@@ -70,11 +82,13 @@ public class ContestComponents {
 			teamRow(content, teamID, false, u.getSubLayoutUpdater(teamID), recent);
 		}
 	}
-	
+
     private static boolean shouldGlow(int teamID, ContestContent content, RecentChange<Integer, TeamScore> recent){
-    	
-    	if(recent == null)	return false;
-    	
+
+    	if(recent == null) {
+			return false;
+		}
+
     	Contest contest = content.getContestRef().get();
         boolean glow = false;
         long now = System.currentTimeMillis();
@@ -89,11 +103,11 @@ public class ContestComponents {
                 glowTimer.put(teamID, now);
             }
         }
-       
+
         return glow;
     }
 
-	
+
 	public static void timeline(ContestContent content, ISceneDescriptionUpdater u, boolean problemColors) {
 		u.setDirection(ISceneDescription.Direction.VERTICAL);
 		Contest contest = content.getContestRef().get();
@@ -120,7 +134,7 @@ public class ContestComponents {
 	public static void teamBackground(ContestContent content, int row, ISceneDescriptionUpdater u, boolean glow) {
 		content.rowBackground(row, LayoutContent.stretch(-row, 1, 1, u), glow);
 	}
-	
+
 	/*@Deprecated
 	public static ISceneDescription teamBackground(ContestContent content, int row) {
 		return LayoutContent.stretch(-row, 1, .9, content.getRowBackground(row));
@@ -129,28 +143,31 @@ public class ContestComponents {
 	public static void problemRow(ContestContent content, ProblemStats.Stats stats, int problem, boolean teamPresentation, ISceneDescriptionUpdater u) {
 		final double solvedWeight = 1.5;
 		final double scoreWeight = 2;
+		final double nameWeight = 2;
 
 		int team = stats.getFirstTeam();
-		
+
 		u.setDirection(ISceneDescription.Direction.HORIZONTAL);
 
 		content.problemLabel(problem, LayoutContent.fixed(problem, 1, .8, u)); // TODO: Large letter with problem color
+		/*
 		if (stats.getSolved() > 0) {
 			content.teamLogo(team, LayoutContent.fixed(Parts.logo, 1, .8, u));
 			content.teamFlag(team, LayoutContent.fixed(Parts.flag, 1, .8, u));
 		} else {
 			LayoutContent.fixed(Parts.logo, 1, .8, u);
 			LayoutContent.fixed(Parts.flag, 1, .8, u);
-		}
+		}*/
 
 		content.problemBoardSolved(problem, stats.getSolved(), LayoutContent.fixed(Parts.problemBoardSolved, solvedWeight, .8, u));
-		content.problemBoardFailed(problem, stats.getFailed(), LayoutContent.fixed(Parts.problemBoardFailed, scoreWeight, .8, u));
-		content.problemBoardPendings(problem, stats.getPendings(), LayoutContent.fixed(Parts.problemBoardPendings, scoreWeight, .8, u));
-		content.problemBoardScore(problem, stats.getScoreStats().getFirst(), LayoutContent.fixed(Parts.problemBoardFirst, scoreWeight, .8, u));
-		content.problemBoardScore(problem, stats.getScoreStats().getMedian(), LayoutContent.fixed(Parts.problemBoardMedian, scoreWeight, .8, u));
-		content.problemBoardScore(problem, stats.getScoreStats().getAverage(), LayoutContent.fixed(Parts.problemBoardAverage, scoreWeight, .8, u));
+		content.problemBoardFailed(problem, stats.getFailed(), LayoutContent.fixed(Parts.problemBoardFailed, solvedWeight, .8, u));
+		content.problemBoardPendings(problem, stats.getPendings(), LayoutContent.fixed(Parts.problemBoardPendings, solvedWeight, .8, u));
+		//content.problemName(problem, LayoutContent.stretch(Parts.problemBoardName, nameWeight, .8, u));
+		//content.problemBoardScore(problem, stats.getScoreStats().getFirst(), LayoutContent.fixed(Parts.problemBoardFirst, scoreWeight, .8, u));
+		//content.problemBoardScore(problem, stats.getScoreStats().getMedian(), LayoutContent.fixed(Parts.problemBoardMedian, scoreWeight, .8, u));
+		//content.problemBoardScore(problem, stats.getScoreStats().getAverage(), LayoutContent.fixed(Parts.problemBoardAverage, scoreWeight, .8, u));
 	}
-	
+
 	public static void teamRow(ContestContent content, int team, boolean teamPresentation, ISceneDescriptionUpdater u,RecentChange<Integer, TeamScore> recent ) {
 		final double solvedWeight = 1.5;
 		final double scoreWeight = 2;
@@ -164,7 +181,7 @@ public class ContestComponents {
 		content.teamRank(team, LayoutContent.fixed(Parts.rank, 1, .8, rankU));
 		content.teamLogo(team, LayoutContent.fixed(Parts.logo, 1, .8, u));
 		content.teamFlag(team, LayoutContent.fixed(Parts.flag, 1, .8, u));
-		
+
 		/*
 		ISceneDescriptionUpdater nameU = u.getSubLayoutUpdater(Parts.name);
 		if(glow) {
@@ -183,7 +200,7 @@ public class ContestComponents {
 		content.teamSolved(team, LayoutContent.fixed(Parts.solved, solvedWeight, .8, u));
 		content.teamScore(team, LayoutContent.fixed(Parts.score, scoreWeight, .8, u));
 	}
-	
+
 	public static void timeRow(ContestContent content, int team, boolean teamPresentation, ISceneDescriptionUpdater u, boolean problemColors) {
 		final double solvedWeight = 1.5;
 		final double scoreWeight = 2;
@@ -192,7 +209,7 @@ public class ContestComponents {
 		content.teamRank(team, LayoutContent.fixed(Parts.rank, 1, .8, u));
 		content.teamLogo(team, LayoutContent.fixed(Parts.logo, 1, .8, u));
 		content.teamFlag(team, LayoutContent.fixed(Parts.flag, 1, .8, u));
-		
+
 		if (teamPresentation) {
 			ISceneDescriptionUpdater d = u.getSubLayoutUpdater(team);
 			d.setDirection(ISceneDescription.Direction.VERTICAL);
@@ -210,13 +227,13 @@ public class ContestComponents {
 	public static ISceneDescription teamRow(ContestContent content, int team, boolean teamPresentation) {
 		final double solvedWeight = 1.5;
 		final double scoreWeight = 2;
-		
+
 		LayoutComposition c;
 		c = new LayoutComposition(team, LayoutComposition.Direction.HORIZONTAL);
 		c.add(LayoutContent.fixed(Parts.rank, 1, .8, content.getTeamRank(team)));
 		c.add(LayoutContent.fixed(Parts.logo, 1, .8, content.getTeamLogo(team)));
 		c.add(LayoutContent.fixed(Parts.flag, 1, .8, content.getTeamFlag(team)));
-		
+
 		if (teamPresentation) {
 			LayoutComposition d;
 			d = new LayoutComposition(team, LayoutComposition.Direction.VERTICAL);
@@ -236,7 +253,7 @@ public class ContestComponents {
 	public static void teamProblems(ContestContent content, int team, boolean stretch, ISceneDescriptionUpdater u) {
 		final double labelHeight = .3;
 		Contest contest = content.getContestRef().get();
-		
+
 		if (stretch) {
 			ISceneDescriptionUpdater l = u.getSubLayoutUpdater(Parts.problemLabels);
 			l.setDirection(ISceneDescription.Direction.HORIZONTAL);
@@ -247,7 +264,7 @@ public class ContestComponents {
 			// decrease height
 			l.setWeights(0, labelHeight, contest.getProblems().size());
 		}
-		
+
 		ISceneDescriptionUpdater p = u.getSubLayoutUpdater(Parts.problems);
 		p.setDirection(ISceneDescription.Direction.HORIZONTAL);
 		for (int problem : contest.getProblems()) {
@@ -266,7 +283,7 @@ public class ContestComponents {
 	public static void glowProblems(ContestContent content, int team, boolean glow, ISceneDescriptionUpdater u) {
 		final double labelHeight = .3;
 		Contest contest = content.getContestRef().get();
-		
+
 		if (glow) {
 			ISceneDescriptionUpdater l = u.getSubLayoutUpdater(Parts.problemLabels);
 			l.setDirection(ISceneDescription.Direction.HORIZONTAL);
@@ -277,7 +294,7 @@ public class ContestComponents {
 			// decrease height
 			l.setWeights(0, labelHeight, contest.getProblems().size());
 		}
-		
+
 		ISceneDescriptionUpdater p = u.getSubLayoutUpdater(Parts.problems);
 		p.setDirection(ISceneDescription.Direction.HORIZONTAL);
 		for (int problem : contest.getProblems()) {
@@ -298,7 +315,7 @@ public class ContestComponents {
 	public static void timeProblems(ContestContent content, int team, boolean stretch, ISceneDescriptionUpdater u, boolean problemColors) {
 		final double labelHeight = .3;
 		Contest contest = content.getContestRef().get();
-		
+
 		if (stretch) {
 			ISceneDescriptionUpdater l = u.getSubLayoutUpdater(Parts.problemLabels);
 			l.setDirection(ISceneDescription.Direction.HORIZONTAL);
@@ -309,7 +326,7 @@ public class ContestComponents {
 			// decrease height
 			l.setWeights(0, labelHeight, contest.getProblems().size());
 		}
-		
+
 		ISceneDescriptionUpdater p = u.getSubLayoutUpdater(Parts.problems);
 		p.setDirection(ISceneDescription.Direction.ON_TOP);
 		TeamScore ts = contest.getTeamScore(team);
@@ -323,7 +340,7 @@ public class ContestComponents {
 				if (!ps.isSolved() || r.getTime() <= ps.getSolutionTime()) {
 					ISceneDescriptionUpdater q = p.getSubLayoutUpdater(problem);
 					q.setDirection(ISceneDescription.Direction.HORIZONTAL);
-					content.space(LayoutContent.stretch(-1, timeStretch * (double) r.getTime() / contestLength, .8, q)); // stretch before
+					content.space(LayoutContent.stretch(-1, timeStretch * r.getTime() / contestLength, .8, q)); // stretch before
 					content.runLetter(contest, r, LayoutContent.fixed(problem, timeWidth, .8, q), problemColors);
 					content.space(LayoutContent.stretch(-2, timeStretch * (1 - (double) r.getTime() / contestLength), .8, q)); // stretch after
 				}

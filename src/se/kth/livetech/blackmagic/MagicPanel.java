@@ -22,8 +22,9 @@ import se.kth.livetech.presentation.layout.Rect;
 
 @SuppressWarnings("serial")
 public class MagicPanel extends JPanel {
-	public static final int W = 1280;
-	public static final int H = 720;
+	public static final boolean IS_720_P = false;
+	public static final int W = IS_720_P ? 1280 : 1920;
+	public static final int H = IS_720_P ? 720 : 1080;
 	JComponent component;
 	int deviceN;
 	BufferedImage img;
@@ -57,9 +58,9 @@ public class MagicPanel extends JPanel {
 			return;
 		}
 
-		Method setup720p50, getOutput;
+		Method setupOutput, getOutput;
 		try {
-			setup720p50 = deckLinkTestClass.getMethod("setup720p50", int.class);
+			setupOutput = deckLinkTestClass.getMethod(IS_720_P ? "setup720p50" : "setup1080i50", int.class);
 			getOutput = deckLinkDeviceClass.getMethod("getOutput");
 			this.displayIntArrayFrameSync = deckLinkOutputClass.getMethod("displayIntArrayFrameSync", int.class, int.class, int[].class);
 		} catch (NoSuchMethodException e) {
@@ -69,7 +70,7 @@ public class MagicPanel extends JPanel {
 		}
 
 		try {
-			this.device = setup720p50.invoke(null, deviceN);
+			this.device = setupOutput.invoke(null, deviceN);
 			this.output = getOutput.invoke(this.device);
 		} catch (SecurityException e) {
 			this.err = e;
@@ -103,7 +104,7 @@ public class MagicPanel extends JPanel {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(W, H);
+		return new Dimension(IS_720_P ? W : W/2, IS_720_P ? H : H/2);
 	}
 
 	@Override

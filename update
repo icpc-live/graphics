@@ -1,0 +1,3 @@
+set -x
+git pull
+./run-client build

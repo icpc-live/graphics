@@ -51,6 +51,22 @@ public class ICPCColors {
 	public static final Color COLOR_KEYING = new Color(0, 255, 0, 255);
 
 	public static final Color[] PROBLEM_COLORS = new Color[] {
+		new Color(255,255,255).darker(), //Color.WHITE, //A
+		new Color(255,21,70), //Color.RED, //B
+		new Color(120,24,164), // C - purple
+		Color.BLACK, //D
+		new Color(49,225,19), // new Color(65,170,95), //Color.GREEN, //E
+		new Color(243,179,200), //Color.PINK, //F
+		new Color(255,131,21), //Color.ORANGE, //G
+		//SILVER,
+		new Color(198,198,198).darker().darker().darker(), // H - silver
+		new Color(202,247,39), // I - light green
+		//GOLD,
+		new Color(243,193,59), // J - gold
+		new Color(0,160,220), // Color.BLUE, // K
+		new Color(247,244,23), // Color.YELLOW // L
+		
+		/*
 		new Color(0,148,182),
 		new Color(99,0, 113),
 		new Color(251, 161, 178),
@@ -62,7 +78,7 @@ public class ICPCColors {
 		Color.YELLOW,
 		new Color(240,0,56),
 		new Color(3,221,62),
-		new Color(192,192,192),
+		new Color(192,192,192),*/
 	};
 
 	public static final Color BG_COLOR_CLOCK = new Color(40, 40, 90, 150);

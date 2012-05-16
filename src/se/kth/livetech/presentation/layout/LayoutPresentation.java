@@ -437,16 +437,19 @@ public class LayoutPresentation extends JPanel implements ContestUpdateListener,
 		updater.beginGeneration();
 		updater.setDirection(ISceneDescription.Direction.ON_TOP);
 
+		final int COLUMNS = 2;
+		
 		ISceneDescriptionUpdater problemsUpdater;
 		problemsUpdater = updater.getSubLayoutUpdater(0);
 		// Note: this overrides the otherwise calculated height!
 		problemsUpdater.setWeights(0, 12, 1);
-		ContestComponents.problemboard(this.content, problemsUpdater, 2);
+		ContestComponents.problemboard(this.content, problemsUpdater, COLUMNS);
 
 		ISceneDescriptionUpdater backgroundUpdater;
 		backgroundUpdater = updater.getSubLayoutUpdater(-2);
 		backgroundUpdater.setDirection(ISceneDescription.Direction.VERTICAL);
-		for (int i = 1; i <= 17; ++i) {
+		int rows = (this.contest.getProblems().size() + COLUMNS - 1) / COLUMNS;
+		for (int i = 1; i <= rows; ++i) {
 			boolean glow = false; // TODO: Problem glow?
 			ContestComponents.teamBackground(this.content, i, backgroundUpdater, glow);
 		}

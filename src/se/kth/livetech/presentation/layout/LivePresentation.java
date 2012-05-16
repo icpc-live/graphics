@@ -264,7 +264,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 			g.fillRect(0, 0, W, H);
 			g.setComposite(AlphaComposite.SrcOver);
 
-			System.err.println("magic paintComponent " + (this.currentView));
+			//System.err.println("magic paintComponent " + (this.currentView));
 			mc.paintComponent(gr, W, H);
 
 			int n = this.getComponentCount();

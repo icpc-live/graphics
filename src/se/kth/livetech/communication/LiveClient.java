@@ -424,6 +424,11 @@ public class LiveClient {
 			}
 
 			if (opts.isMagic()) {
+				try {
+					Thread.sleep(3000); // TODO All work, no sleep
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 				int device = opts.isDevice() ? opts.getDevice() : 0;
 				JPanel magicPanel = new MagicPanel(magicComponent, device);
 				@SuppressWarnings("unused")

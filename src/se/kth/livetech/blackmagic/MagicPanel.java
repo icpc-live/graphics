@@ -22,13 +22,16 @@ import se.kth.livetech.presentation.layout.Rect;
 
 @SuppressWarnings("serial")
 public class MagicPanel extends JPanel {
-	public static final int W = 1280;
-	public static final int H = 720;
+	public static final boolean IS_720_P = false;
+	public static final int W = IS_720_P ? 1280 : 1920;
+	public static final int H = IS_720_P ? 720 : 1080;
 	JComponent component;
 	int deviceN;
 	BufferedImage img;
 	int[] buffer;
 	Exception err;
+
+	//BufferedImage dummy; Graphics dummyGr;
 
 	Object device, output;
 	Method displayIntArrayFrameSync;
@@ -44,6 +47,9 @@ public class MagicPanel extends JPanel {
 		this.img = new BufferedImage(W, H, BufferedImage.TYPE_INT_ARGB);
 		this.buffer = ((DataBufferInt) this.img.getRaster().getDataBuffer()).getData();
 
+		//this.dummy = new BufferedImage(5, 5, BufferedImage.TYPE_INT_ARGB);
+		//this.dummyGr = this.dummy.getGraphics();
+
 		Class<?> deckLinkDeviceClass;
 		Class<?> deckLinkOutputClass;
 		Class<?> deckLinkTestClass;
@@ -57,9 +63,9 @@ public class MagicPanel extends JPanel {
 			return;
 		}
 
-		Method setup720p50, getOutput;
+		Method setupOutput, getOutput;
 		try {
-			setup720p50 = deckLinkTestClass.getMethod("setup720p50", int.class);
+			setupOutput = deckLinkTestClass.getMethod(IS_720_P ? "setup720p50" : "setup1080i50", int.class);
 			getOutput = deckLinkDeviceClass.getMethod("getOutput");
 			this.displayIntArrayFrameSync = deckLinkOutputClass.getMethod("displayIntArrayFrameSync", int.class, int.class, int[].class);
 		} catch (NoSuchMethodException e) {
@@ -69,7 +75,7 @@ public class MagicPanel extends JPanel {
 		}
 
 		try {
-			this.device = setup720p50.invoke(null, deviceN);
+			this.device = setupOutput.invoke(null, deviceN);
 			this.output = getOutput.invoke(this.device);
 		} catch (SecurityException e) {
 			this.err = e;
@@ -103,19 +109,49 @@ public class MagicPanel extends JPanel {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(W, H);
+		return new Dimension(IS_720_P ? W : W/2, IS_720_P ? H : H/2);
 	}
 
+	int frameCount;
 	@Override
 	public void paintChildren(Graphics gr) {
+		double f = IS_720_P ? 1 : 2;
+		((Graphics2D) gr).scale(1/f, 1/f);
+		super.paintChildren(gr); // flashes grey when dummyGr is used
+		((Graphics2D) gr).scale(f, f);
+		if (++frameCount % 250 < 10) {
+			afterPaintMagic(gr);
+		}
 		// Do not paint children, but schedule this panel to repaint...
-		repaint();
+		repaint(20);
 	}
 
 	@Override
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
+		paintMagic();
+		//afterPaintMagic(gr);
 
+		if (repainter == null) {
+			repainter = new Thread(new Runnable() {
+				public void run() {
+					while (true) {
+						paintMagic();
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+						}
+						//repaint();
+					}
+				}
+			});
+			repainter.start();
+		}
+	}
+
+	Thread repainter;
+
+	public void paintMagic() {
 		// FIXME: Thread away drawing and magic frame sync
 		{
 			Graphics2D g = (Graphics2D) this.img.getGraphics();
@@ -138,14 +174,23 @@ public class MagicPanel extends JPanel {
 				displayIntArrayFrameSync(W, H, this.buffer);
 			}
 		}
+	}
 
+	public void afterPaintMagic(Graphics gr) {
 		Rectangle2D rect = new Rectangle(0, 0, getWidth(), getHeight());
 		double aspect = (double) W / H;
 		rect = Rect.aspect(rect, aspect, aspect);
-		gr.drawImage(this.img,
-				(int) rect.getMinX(), (int) rect.getMinY(), (int) rect.getMaxX(), (int) rect.getMaxY(),
-				0, 0, W, H,
-				this);
+		final boolean DRAW_IMG = true;
+		if (DRAW_IMG) {
+			gr.drawImage(this.img,
+					(int) rect.getMinX(), (int) rect.getMinY(), (int) rect.getMaxX(), (int) rect.getMaxY(),
+					0, 0, W, H,
+					this);
+		} else {
+			gr.setColor(Color.RED);
+			gr.drawLine((int) rect.getMinX(), (int) rect.getMinY(), (int) rect.getMaxX(), (int) rect.getMaxY());
+			gr.drawLine((int) rect.getMinX(), (int) rect.getMaxY(), (int) rect.getMaxX(), (int) rect.getMinY());
+		}
 
 		if (this.err != null) {
 			gr.setColor(Color.RED);
@@ -165,10 +210,10 @@ public class MagicPanel extends JPanel {
 			gr.setColor(Color.GREEN);
 			gr.drawString(String.format("%.1f fps", fps), 20, 20);
 			if (this.paintTimes.size() <= 1) {
-				repaint();
+				repaint(20);
 			}
 		}
 
-		repaint(); // Always repaint..
+		repaint(20); // Always repaint..
 	}
 }

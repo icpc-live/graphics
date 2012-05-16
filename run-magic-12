@@ -1,0 +1,4 @@
+#!/bin/bash
+export NAME="${NAME:-magic$(hostname | egrep -o '[1-9]')}"
+echo NAME $NAME
+./run-12 --magic --control "$@"

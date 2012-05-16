@@ -54,7 +54,7 @@ public class ScoreboardPresentation extends JPanel implements ContestUpdateListe
 	public static final double RECENT_FADE_TIME = 500; // ms
 	static final int SCROLL_KEY = -1; // FIXME: hack, remove!
 	static final int SCROLL_EXTRA = 3; // FIXME: hack, remove!
-	final int ROWS = 21;
+	final int ROWS = 23; // ceil(112 / 5) == 23
 	final double NAME_WEIGHT = 5;
 	final double RESULTS_WEIGHT = 5;
 	private boolean showFps = true;

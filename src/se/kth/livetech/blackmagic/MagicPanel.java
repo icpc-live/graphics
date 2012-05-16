@@ -145,7 +145,7 @@ public class MagicPanel extends JPanel {
 					}
 				}
 			});
-			//repainter.start();
+			repainter.start();
 		}
 	}
 

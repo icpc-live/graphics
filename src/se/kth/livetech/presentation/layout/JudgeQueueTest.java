@@ -11,6 +11,7 @@ import java.util.TreeMap;
 
 import javax.swing.JPanel;
 
+import se.kth.livetech.blackmagic.MagicComponent;
 import se.kth.livetech.contest.graphics.ContentProvider;
 import se.kth.livetech.contest.graphics.ICPCColors;
 import se.kth.livetech.contest.graphics.ICPCImages;
@@ -35,7 +36,7 @@ import se.kth.livetech.presentation.graphics.Renderable;
 import se.kth.livetech.util.Frame;
 
 @SuppressWarnings("serial")
-public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
+public class JudgeQueueTest extends JPanel implements ContestUpdateListener, MagicComponent {
 	public static final boolean FULL_SCREEN = false;
 	public static final double ANIMATION_TIME = 1000; // ms
 	public static final double JUDGED_KEEP_TIME = 10000; // ms
@@ -113,6 +114,9 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 	long lastTime;
 	public void paintComponent(Graphics gr) {
 		super.paintComponent(gr);
+		paintComponent(gr, getWidth(), getHeight());
+	}
+	public void paintComponent(Graphics gr, int W, int H) {
 		Graphics2D g = (Graphics2D) gr;
 
 		long now = System.currentTimeMillis();
@@ -129,7 +133,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 			//update |= this.recent.advance(dt / RECENT_TIME);
 		}
 
-		Rectangle2D rect = Rect.screenRect(getWidth()/2, getHeight(), .03);
+		Rectangle2D rect = Rect.screenRect(W/2, H, .03);
 		
 		Rectangle2D row = new Rectangle2D.Double();
 		Dimension dim = new Dimension();
@@ -217,7 +221,7 @@ public class JudgeQueueTest extends JPanel implements ContestUpdateListener {
 				double rowPos = interpolator.getValue();
 				Rect.setRow(rect, rowPos, N, row);
 				Rect.setDim(row, dim);
-				int x = (int) getWidth() - dim.width - (int)0.02*getWidth();
+				int x = (int) W - dim.width - (int)0.02*H;
 				int y = (int) row.getY();
 				g.translate(x, y);
 				r.render(g, dim);

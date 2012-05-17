@@ -4,6 +4,7 @@ import java.awt.AlphaComposite;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -259,6 +260,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 			MagicComponent mc = (MagicComponent) this.currentView;
 
 			Graphics2D g = (Graphics2D) gr;
+			AffineTransform a = (AffineTransform) g.getTransform().clone();
 			g.setPaint(ICPCColors.TRANSPARENT_GREEN);
 			g.setComposite(AlphaComposite.Src);
 			g.fillRect(0, 0, W, H);
@@ -273,6 +275,7 @@ public class LivePresentation extends JPanel implements ContestUpdateListener, M
 				if (ci != null && ci != this.currentView && ci.isVisible()) {
 					if (ci instanceof MagicComponent) {
 						MagicComponent mci = (MagicComponent) ci;
+						g.setTransform(a);
 						mci.paintComponent(gr, W, H);
 					}
 				}

@@ -19,8 +19,8 @@ import se.kth.livetech.util.DebugTrace;
 
 public class JudgeQueue implements ContestUpdateListener {
 	public static final double ANIMATION_TIME = LayoutPresentation.ANIMATION_TIME; // ms
-	public static final double JUDGED_KEEP_TIME = 10000/7; // ms
-	public static final double PENDING_KEEP_TIME = 60000/7; // ms
+	public static final double JUDGED_KEEP_TIME = 20000; // ms
+	public static final double PENDING_KEEP_TIME = 60000; // ms
 	public static final int ROWS = 20;
 
 	Map<Integer, JudgeState> state = Collections.synchronizedMap(new TreeMap<Integer, JudgeState>());

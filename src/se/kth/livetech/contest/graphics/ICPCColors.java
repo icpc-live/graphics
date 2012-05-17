@@ -51,6 +51,7 @@ public class ICPCColors {
 	public static final Color COLOR_KEYING = new Color(0, 255, 0, 255);
 
 	public static final Color[] PROBLEM_COLORS = new Color[] {
+		new Color(191,191,191), // zeroeth problem
 		new Color(255,255,255).darker(), //Color.WHITE, //A
 		new Color(255,21,70), //Color.RED, //B
 		new Color(120,24,164), // C - purple

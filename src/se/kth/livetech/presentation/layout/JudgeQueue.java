@@ -45,8 +45,9 @@ public class JudgeQueue implements ContestUpdateListener {
 			int n = testcase.getN();
 			if (cases == null) {
 				cases = new TestcaseStatusRenderer.Status[n];
-				for (int i = 0; i < n; ++i)
+				for (int i = 0; i < n; ++i) {
 					cases[i] = TestcaseStatusRenderer.Status.none;
+				}
 			}
 			int i = testcase.getI() - 1;
 			if (testcase.isJudged()) {
@@ -83,7 +84,7 @@ public class JudgeQueue implements ContestUpdateListener {
 
 	public void update(SceneDescription scene) {
 		long now = System.currentTimeMillis();
-		
+
 		Map<Integer, JudgeState> state;
 		synchronized (this.state) {
 			state = new TreeMap<Integer, JudgeState>(this.state);
@@ -106,7 +107,7 @@ public class JudgeQueue implements ContestUpdateListener {
 		for (int i : state.keySet()) {
 			lastI = i;
 			JudgeState js = state.get(i);
-			
+
 			SceneDescription rowAndBack = scene.getSubLayoutUpdater(i);
 			if (js.first) {
 				// FIXME: Proper support for placing new rows with correct animation
@@ -121,7 +122,7 @@ public class JudgeQueue implements ContestUpdateListener {
 
 			Team team = c.getTeam(js.run.getTeam());
 			int teamId = team.getId();
-			
+
 			content.teamRank(teamId, LayoutContent.fixed(ContestComponents.Parts.rank, 1.5, .8, row));
 			content.teamLogo(teamId, LayoutContent.fixed(ContestComponents.Parts.logo, 1, .8, row));
 			content.teamFlag(teamId, LayoutContent.fixed(ContestComponents.Parts.flag, 1, .8, row));

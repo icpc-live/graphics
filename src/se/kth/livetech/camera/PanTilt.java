@@ -136,7 +136,7 @@ public class PanTilt {
 	}
 
 	public class Panel extends JPanel {
-		double scale = 26.25; // pixels per meter
+		double scale = stockholm ? 37 : 26.25; // pixels per meter
 		Image bg;
 
 		public Panel() {
@@ -156,11 +156,12 @@ public class PanTilt {
 					//points.clear(); // FIXME
 					//points.add(p);
 					target = p;
-					if (e.getClickCount() == 2) {
+					if (e.getClickCount() == 3) {
 						DebugTrace.trace("Position %.2f,%.2f", p.x, p.y);
+						points.clear();
 						points.add(p);
 					}
-					if (e.getClickCount() >= 3) {
+					if (e.getClickCount() == 2) {
 						for (Camera cam : cameras) {
 							go(cam, p);
 						}
@@ -179,7 +180,7 @@ public class PanTilt {
 			Graphics2D g = (Graphics2D) gr;
 			double Y = getHeight();
 
-			if (bg != null) {
+			if (bg != null && !stockholm) {
 				g.drawImage(bg, 0, (int) Y - bg.getHeight(this), this);
 			}
 
@@ -189,11 +190,15 @@ public class PanTilt {
 				g.scale(scale / 100, -scale / 100); // 1 cm units
 				g.setStroke(new BasicStroke(10f)); // 10 cm lines
 				g.setColor(Color.BLACK);
-				int FLOOR_W = 4180, FLOOR_H = 2030, FLOOR_H_OFF = 550;
-				g.drawRect(20, FLOOR_H_OFF, FLOOR_W, FLOOR_H);
-				//g.drawLine(120, 620, 320, 620);
-				//g.drawLine(500, 620, 700, 620);
-				//g.drawOval(120, 150, 200, 110);
+				if (stockholm) {
+					g.drawRect(10, 10, 2700, 600);
+					g.drawLine(120, 620, 320, 620);
+					g.drawLine(500, 620, 700, 620);
+					g.drawOval(120, 150, 200, 110);
+				} else {
+					int FLOOR_W = 4180, FLOOR_H = 2030, FLOOR_H_OFF = 550;
+					g.drawRect(20, FLOOR_H_OFF, FLOOR_W, FLOOR_H);
+				}
 
 				g.setTransform(a);
 			}
@@ -227,56 +232,61 @@ public class PanTilt {
 		}
 	}
 
-	public PanTilt() {
-		/*{
-			Camera cam = new Camera();
-			cam.name = "Sofa cam";
-			cam.x = 0.7;
-			cam.y = 0.3;
-			cam.z = 1.8;
-			cam.pan = 40 * Math.PI / 180;
-			cam.controller = new AwHe50("130.237.228.205");
-			cameras.add(cam);
-		}*/
-		/*{
-			Camera cam = new Camera();
-			cam.name = "Screen cam";
-			cam.x = 26.3;
-			cam.y = 5.6;
-			cam.z = 1.8;
-			cam.pan = (180 + 40) * Math.PI / 180;
-			cam.controller = new AwHe50("130.237.228.230");
-			cameras.add(cam);
-		}*/
-		{
-			Camera cam = new Camera();
-			cam.name = "Window";
-			cam.x = 0.3;
-			cam.y = 23;
-			cam.z = 4;
-			cam.pan = -40 * Math.PI / 180;
-			cam.controller = new AwHe50("130.237.228.205");
-			cameras.add(cam);
-		}
-		{
-			Camera cam = new Camera();
-			cam.name = "Centre";
-			cam.x = 21.15;
-			cam.y = 12.8+2.5;
-			cam.z = 6;
-			cam.pan = (180 + 90) * Math.PI / 180;
-			cam.controller = new AwHe50("130.237.228.230");
-			cameras.add(cam);
-		}
-		{
-			Camera cam = new Camera();
-			cam.name = "Proj";
-			cam.x = 27;
-			cam.y = 24.3;
-			cam.z = 3;
-			cam.pan = (180 + 40) * Math.PI / 180;
-			cam.controller = new AwHe50("130.237.228.205");
-			cameras.add(cam);
+	boolean stockholm;
+	public PanTilt(boolean stockholm) {
+		this.stockholm = stockholm;
+		if (stockholm) {
+			{
+				Camera cam = new Camera();
+				cam.name = "Sofa cam";
+				cam.x = 0.7;
+				cam.y = 0.3;
+				cam.z = 1.8;
+				cam.pan = 40 * Math.PI / 180;
+				cam.controller = new AwHe50("130.237.15.63"/*"130.237.228.205"*/);
+				cameras.add(cam);
+			}
+			{
+				Camera cam = new Camera();
+				cam.name = "Screen cam";
+				cam.x = 26.3;
+				cam.y = 5.6;
+				cam.z = 1.8;
+				cam.pan = (180 + 40) * Math.PI / 180;
+				cam.controller = new AwHe50("130.237.15.62"/*"130.237.228.230"*/);
+				cameras.add(cam);
+			}
+		} else {
+			{
+				Camera cam = new Camera();
+				cam.name = "Window";
+				cam.x = 0.3;
+				cam.y = 23;
+				cam.z = 4;
+				cam.pan = -40 * Math.PI / 180;
+				cam.controller = new AwHe50("130.237.15.37");
+				cameras.add(cam);
+			}
+			{
+				Camera cam = new Camera();
+				cam.name = "Centre";
+				cam.x = 21.15;
+				cam.y = 12.8+2.5;
+				cam.z = 6;
+				cam.pan = (180 + 90) * Math.PI / 180;
+				cam.controller = new AwHe50("130.237.15.38");
+				cameras.add(cam);
+			}
+			{
+				Camera cam = new Camera();
+				cam.name = "Proj";
+				cam.x = 27;
+				cam.y = 24.3;
+				cam.z = 3;
+				cam.pan = (180 + 40) * Math.PI / 180;
+				cam.controller = new AwHe50("130.237.15.39");
+				cameras.add(cam);
+			}
 		}
 		{
 			Point p = new Point();
@@ -297,7 +307,9 @@ public class PanTilt {
 	}
 
 	public static void main(String[] args) {
-		PanTilt pt = new PanTilt();
-		pt.frame();
+		PanTilt pts = new PanTilt(true);
+		pts.frame();
+		PanTilt ptw = new PanTilt(false);
+		ptw.frame();
 	}
 }

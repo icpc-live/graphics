@@ -40,7 +40,7 @@ public class AwHe50 implements IController {
 			String line = in.readLine();
 			DebugTrace.trace(line);
 			try {
-				Thread.sleep((long) (DELAY * 1100));
+				Thread.sleep((long) (DELAY * 11/*00*/));
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

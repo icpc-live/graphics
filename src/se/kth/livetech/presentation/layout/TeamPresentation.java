@@ -169,8 +169,8 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 		PartitionedRowRenderer r = new PartitionedRowRenderer();
 
 		{ // Background
-			Color row1 = ICPCColors.BG_COLOR_1;
-			Color row2 = ICPCColors.BG_COLOR_2;
+			Color row1 = ICPCColors.BG_COLOR_1_TR;
+			Color row2 = ICPCColors.BG_COLOR_2_TR;
 			r.setBackground(new RowFrameRenderer(row2, row1));
 		}
 
@@ -238,7 +238,7 @@ public class TeamPresentation extends JPanel implements ContestUpdateListener, M
 		if (this.stack.isUp(this.id) != up) {
 			return;
 		}
-		
+
 		boolean polish = this.polish.getBooleanValue();
 
 		// TODO: remove duplicate objects/code

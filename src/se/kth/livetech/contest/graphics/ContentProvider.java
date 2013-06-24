@@ -306,6 +306,13 @@ public class ContentProvider {
 		return new HorizontalSplitter(box1,box2,0.75);
 	}
 
+	public static Renderable getAwardRenderable(String row1Text, String row2Text, String row3Text) {
+		ColoredTextBox box1 = new ColoredTextBox(row1Text, ContentProvider.getCountdownStyle());
+		ColoredTextBox box2 = new ColoredTextBox(row2Text, ContentProvider.getCountdownStyle());
+		ColoredTextBox box3 = new ColoredTextBox(row3Text, ContentProvider.getCountdownStyle());
+		return new HorizontalSplitter(box1, new HorizontalSplitter(box2, box3, 2/3.0), 4/7.0);
+	}
+
 	public static Renderable getFloridaCountdownRenderable(String timeString) {
 		return new ColoredTextBox(timeString, ContentProvider.getFloridaCountdownStyle());
 	}

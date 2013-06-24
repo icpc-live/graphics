@@ -29,6 +29,7 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener,
 	private Contest c;
 	private Team team;
 	private String award;
+	private String subAward;
 
 	public WinnerPresentation(Team team, String award) {
 		this.team = team;
@@ -54,9 +55,9 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener,
 
 		Rectangle bounds = new Rectangle(0, 0, W, H); //this.getBounds();
 
-		Renderable r = ContentProvider.getCountdownRenderable(award, team.getName());
+		Renderable r = ContentProvider.getAwardRenderable(award, subAward, team.getName());
 
-		Dimension dim = new Dimension(bounds.width, bounds.height / 2);
+		Dimension dim = new Dimension(bounds.width, bounds.height * 3 / 4);
 		int x = (int) (bounds.getCenterX() - dim.width/2);
 		int y = (int) (bounds.getCenterY() - dim.height/2);
 		g2d.translate(x, y);
@@ -77,13 +78,15 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener,
 	public void contestUpdated(ContestUpdateEvent e) {
 		this.c = e.getNewContest();
 	}
-	
+
 	@Override
 	public void propertyChanged(IProperty changed) {
 		int teamId = awardsBase.get("team").getIntValue();
 		award = awardsBase.get("award").getValue();
-		if(c!=null && teamId>0)
+		subAward = awardsBase.get("subAward").getValue();
+		if(c!=null && teamId>0) {
 			team = c.getTeam(teamId);
+		}
 		this.repaint();
 	}
 

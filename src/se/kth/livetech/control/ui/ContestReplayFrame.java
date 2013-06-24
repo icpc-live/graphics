@@ -1,13 +1,18 @@
 package se.kth.livetech.control.ui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.border.TitledBorder;
 
 import se.kth.livetech.properties.IProperty;
+import se.kth.livetech.properties.ui.CheckBox;
 import se.kth.livetech.properties.ui.IncrementCountButton;
 import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
@@ -18,11 +23,11 @@ import se.kth.livetech.properties.ui.ToggleButton;
 public class ContestReplayFrame extends JFrame {
 	@SuppressWarnings("unused")
 	private IProperty base;
-	
-	public enum Dir {horizontal,vertical}
-	
 
-	public ContestReplayFrame(IProperty base) {
+	public enum Dir {horizontal,vertical}
+
+
+	public ContestReplayFrame(final IProperty base) {
 		setDefaultCloseOperation(HIDE_ON_CLOSE);
 		this.base = base;
 		Box b = new Box(BoxLayout.Y_AXIS);
@@ -73,6 +78,27 @@ public class ContestReplayFrame extends JFrame {
 		c.add(new JLabel("Contest ID: "));
 		c.add(new Text(base.get("contest_id")));
 		b.add(c);
+		c = new Box(BoxLayout.X_AXIS);
+		//c.add(new JLabel("Regional winner screens"));
+		c.add(new CheckBox(base.get("regionalWinners"), "Regional winner screens"));
+		JButton defaults = new JButton("Defaults");
+		defaults.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				base.get("state").setValue("pause");
+				base.get("freezeTime").setIntValue(14400);
+				base.get("untilTime").setIntValue(14400);
+				base.get("replayDelay").setIntValue(100);
+				base.get("resolveTeamDelay").setIntValue(1000);
+				base.get("resolveProblemDelay").setIntValue(1000);
+				base.get("goldMedals").setIntValue(4);
+				base.get("silverMedals").setIntValue(4);
+				base.get("bronzeMedals").setIntValue(4);
+				base.get("regionalWinners").setBooleanValue(true);
+			}
+		});
+		c.add(defaults);
+		b.add(c);
 		TitledBorder resolveBorder;
 		resolveBorder = BorderFactory.createTitledBorder("Resolver");
 		resolveBorder.setTitleJustification(TitledBorder.CENTER);
@@ -80,5 +106,5 @@ public class ContestReplayFrame extends JFrame {
 		this.add(b);
 		this.pack();
 	}
-	
+
 }

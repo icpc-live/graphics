@@ -13,7 +13,7 @@ import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
 
 public class ContestReplayControl implements PropertyListener, ContestUpdateListener {
-	
+
 	private ContestReplayer replayer;
 	private IProperty propertyReplay, propertyBase, propertyScore;
 	private int bronzeMedals, silverMedals, goldMedals, blankMedals, medals;
@@ -25,8 +25,9 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	private int replayDelay = 0;
 	private int resolveProblemDelay = 0;
 	private int resolveTeamDelay = 0;
+	private boolean showRegionalWinners = false;
 	private Timer timer;
-	
+
 	public ContestReplayControl(ContestReplayer replayer, IProperty propertyBase) {
 		this.replayer = replayer;
 		this.propertyReplay = propertyBase.get("replay");
@@ -34,9 +35,9 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		this.propertyBase = propertyBase;
 		propertyBase.addPropertyListener(this);
 	}
-	
+
 	@Override
-	public void propertyChanged(IProperty changed) {		
+	public void propertyChanged(IProperty changed) {
 		state = propertyReplay.get("state").getValue();
 		bronzeMedals = propertyReplay.get("bronzeMedals").getIntValue();
 		silverMedals = propertyReplay.get("silverMedals").getIntValue();
@@ -46,30 +47,37 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		replayDelay = propertyReplay.get("replayDelay").getIntValue();
 		resolveProblemDelay = propertyReplay.get("resolveProblemDelay").getIntValue();
 		resolveTeamDelay = propertyReplay.get("resolveTeamDelay").getIntValue();
-		
-		int freezeTime = propertyReplay.get("freezeTime").getIntValue();
-		if(freezeTime>0)
-			replayer.setFreezeTime(freezeTime);
-		int untilTime = propertyReplay.get("untilTime").getIntValue();
-		if(untilTime>0)
-			replayer.setUntilTime(untilTime);
+		showRegionalWinners = propertyReplay.get("regionalWinners").getBooleanValue();
 
-		if(state.equals("pause"))
+		int freezeTime = propertyReplay.get("freezeTime").getIntValue();
+		if(freezeTime>0) {
+			replayer.setFreezeTime(freezeTime);
+		}
+		int untilTime = propertyReplay.get("untilTime").getIntValue();
+		if(untilTime>0) {
+			replayer.setUntilTime(untilTime);
+		}
+
+		if(state.equals("pause")) {
 			replayer.setState(ContestReplayer.State.PAUSED);
-		else if(state.equals("live"))
+		} else if(state.equals("live")) {
 			replayer.setState(ContestReplayer.State.LIVE);
-		else if(state.equals("replay")) {
+		} else if(state.equals("replay")) {
 			replayer.setIntervals(replayDelay, 0);
 			replayer.setState(ContestReplayer.State.UNTIL_INTERVAL);
 		}
 		else if(state.equals("resolver")) {
 			// Assuming no new runs will be added from now and onwards.
-			
+
 			// Init resolver and ensure all earlier runs has been processed.
 			if(!hasFinishedReplayer) {
 				replayer.setState(ContestReplayer.State.UNTIL_INTERVAL);
-				while(replayer.processPendingState());
-				while(replayer.processEarliestRun());
+				while(replayer.processPendingState()) {
+					;
+				}
+				while(replayer.processEarliestRun()) {
+					;
+				}
 				hasFinishedReplayer = true;
 			}
 			replayer.setState(ContestReplayer.State.PAUSED);
@@ -77,17 +85,17 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			// Ensure task is running.
 			if(timer == null) {
 				timer = new Timer();
-				timer.schedule(new ResolverTask(), 0);
+				timer.schedule(new ResolverTask(), resolveTeamDelay);
 			}
 		}
-		
+
 		int stepUntil = propertyReplay.get("presentationStep").getIntValue();
 		while(stepCounter < stepUntil) {
 			initResolveRank();
 			step(true);
 		}
 	}
-	
+
 	private void highlightNext() {
 		propertyScore.set("highlightRow", String.valueOf(resolveRow));
 		int problemId = -1;
@@ -101,26 +109,35 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		}
 		propertyScore.set("highlightProblem", String.valueOf(problemId));
 	}
-	
+
 	private void showWinnerPresentation(int teamId, String award) {
+		String regionalAward = regionalAwardString();
+		String subAward;
+		if (award == null) {
+			award = regionalAward;
+			subAward = "";
+		} else {
+			subAward = regionalAward;
+		}
 		IProperty awardProperty = propertyBase.get("awards");
 		awardProperty.get("team").setIntValue(teamId);
 		awardProperty.set("award", award);
+		awardProperty.set("subAward", subAward);
 		propertyBase.set("mode", "award");
 	}
-	
+
 	private void showScoreboard() {
 		propertyBase.set("mode", "score");
 	}
-	
+
 	private void showBronzeMedal(int row) {
 		propertyScore.get("color").set(String.valueOf(row), "bronze");
 	}
-	
+
 	private void showSilverMedal(int row) {
 		propertyScore.get("color").set(String.valueOf(row), "silver");
 	}
-	
+
 	private void showGoldMedal(int row) {
 		propertyScore.get("color").set(String.valueOf(row), "gold");
 	}
@@ -137,8 +154,9 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			highlightNext();
 		}
 	}
-	
+
 	private class ResolverTask extends TimerTask {
+		@Override
 		public void run() {
 			if(resolveRow<=medals || !state.equals("resolver")) {
 				timer.cancel();
@@ -147,6 +165,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			}
 			// System.out.println("ResolveRank " + resolveRow);
 			int stepValue = step(false);
+			System.out.println("Step value " + stepValue);
 			switch(stepValue) {
 			case -1: // No processed run.
 				timer.cancel();
@@ -164,23 +183,52 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			case 1: // Processed run for this row.
 				timer.schedule(new ResolverTask(), resolveProblemDelay);
 				break;
+			case 8: // Regional winner.
+				break;
 			default:
 				System.out.println("Unknown return code: "+stepValue);
 			}
 		}
 	}
 
-	private int step(boolean updateStepCounter) {
+	private boolean isRegionalWinner() {
+		Contest contest = replayer.getContest();
+		Team team = contest.getRankedTeam(resolveRow);
+		String region = team.getRegion();
+		for (int i = 1; i < resolveRow; ++i) {
+			Team ti = contest.getRankedTeam(i);
+			if (ti.getRegion().equals(region)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private String regionalAwardString() {
+		if (showRegionalWinners && isRegionalWinner()) {
+			Contest contest = replayer.getContest();
+			Team team = contest.getRankedTeam(resolveRow);
+			String region = team.getRegion();
+			return region + " Champion";
+		}
+		return "";
+	}
+
+	private synchronized int step(boolean updateStepCounter) {
 		Contest contest = replayer.getContest();
 		//String winnerString = "2010 World Champion";
 		String winnerString = this.propertyReplay.get("winnerString").getValue();
 		if (winnerString == null || winnerString.length() == 0) {
 			//winnerString = "ICPC 2011 Champions";
-			winnerString = "ICPC 2012 Champions";
+			//winnerString = "ICPC 2012 Champions";
+			winnerString = "ICPC 2013 Champions";
 		}
-		if(updateStepCounter)
+		if(updateStepCounter) {
 			++stepCounter;
-		if(resolveRow<0) return -1;
+		}
+		if(resolveRow<0) {
+			return -1;
+		}
 		if(resolveRow==0) {
 			// Toggle between scoreboard and champion presentation.
 			if(showingPresentation) {
@@ -195,7 +243,9 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		}
 		int runId = replayer.getHighestRankedRun();
 		Run run = null;
-		if(runId>=0) run = contest.getRun(runId);
+		if(runId>=0) {
+			run = contest.getRun(runId);
+		}
 		Team team = contest.getRankedTeam(resolveRow);
 		if(run != null && run.getTeam() == team.getId()) {
 			showingPresentation = false;
@@ -204,11 +254,21 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 			replayer.processProblem(run.getTeam(), run.getProblem());
 			highlightNext();
 			Team team2 = replayer.getContest().getRankedTeam(resolveRow);
-			if(team.getId()==team2.getId()) return 1;
+			if(team.getId()==team2.getId()) {
+				return 1;
+			}
 			return 0;
 		} else if(resolveRow>silverMedals+goldMedals+bronzeMedals || showingPresentation) {
-			if(showingPresentation)
+			if(showingPresentation) {
 				showScoreboard();
+			} else if (showRegionalWinners && isRegionalWinner()) {
+				showingPresentation = true;
+				System.out.println("Regional winner to team " + team.getId() + " on row " + resolveRow);
+				showWinnerPresentation(team.getId(), null);
+				timer.cancel();
+				timer = null;
+				return 8;
+			}
 			showingPresentation = false;
 			// Highlight next row
 			--resolveRow;
@@ -245,5 +305,5 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 	public void contestUpdated(ContestUpdateEvent e) {
 		// TODO Auto-generated method stub
 		//System.out.println(e);
-	}		
+	}
 }

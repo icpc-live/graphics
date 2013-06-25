@@ -44,6 +44,8 @@ public class ICPCImages {
 
 	private static Map<Integer, ImageResource> teamLogos = new HashMap<Integer, ImageResource>();
 
+	private static Map<Integer, ImageResource> teamPictures = new HashMap<Integer, ImageResource>();
+
 	private static Map<String, ImageResource> flags = new HashMap<String, ImageResource>();
 
 	private static Map<String, ImageResource> resources = new HashMap<String, ImageResource>();
@@ -85,6 +87,14 @@ public class ICPCImages {
 		}
 	}
 
+	static void loadPicture(int i) {
+		if (i == 0) {
+			teamPictures.put(0, new ImageResource("pictures/unknown.png"));
+		} else {
+			teamPictures.put(i, new ImageResource(String.format("pictures/%d.png", i)));
+		}
+	}
+
 	static void loadFlag(String countryCode) {
 		DebugTrace.trace("loadFlag %s", "flags/" + countryCode.toLowerCase() + ".png");
 		ImageResource flag = new ImageResource("flags/" + countryCode.toLowerCase() + ".png");
@@ -119,6 +129,13 @@ public class ICPCImages {
 			loadLogo(teamId);
 		}
 		return teamLogos.get(teamId);
+	}
+
+	public static ImageResource getTeamPicture(int teamId) {
+		if (!teamPictures.containsKey(teamId)) {
+			loadPicture(teamId);
+		}
+		return teamPictures.get(teamId);
 	}
 
 	public static ImageResource getFlag(String countryCode) {

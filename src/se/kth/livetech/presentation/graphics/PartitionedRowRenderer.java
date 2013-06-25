@@ -17,12 +17,13 @@ public class PartitionedRowRenderer implements Renderable {
 	int keyCounter = 0;
 	Map<Integer, Part> parts = new HashMap<Integer, Part>();
 	Partitioner<Integer> partitioner = new Partitioner<Integer>();
-	
+	boolean debug;
+
 	private static class Part {
 		Renderable renderer, decorationRenderer;
 		double margin, decorationMargin;
 		boolean cacheImage, highlight;
-		
+
 		public Part(Renderable renderer, double margin, boolean cacheImage) {
 			this.renderer = renderer;
 			this.margin = margin;
@@ -33,11 +34,11 @@ public class PartitionedRowRenderer implements Renderable {
 	public PartitionedRowRenderer() {
 		background = new Optional<Renderable>();
 	}
-	
+
 	public void setBackground(Renderable background) {
 		this.background.set(background);
 	}
-	
+
 	public int add(Renderable renderer, double weight, double margin, boolean fixed, boolean cacheImage) {
 		Part part = new Part(renderer, margin, cacheImage);
 		int key = keyCounter++;
@@ -45,26 +46,30 @@ public class PartitionedRowRenderer implements Renderable {
 		partitioner.add(key, weight, fixed);
 		return key;
 	}
-	
+
 	public int add(Renderable renderer, double weight, double margin, boolean fixed){
 		return add(renderer, weight, margin, fixed, true);
 	}
-	
+
 	public int addWithoutCache(Renderable renderer, double weight, double margin, boolean fixed){
 		return add(renderer, weight, margin, fixed, false);
 	}
-	
+
 	public void setHighlight(int key, boolean highlight) {
 		Part part = parts.get(key);
 		part.highlight = highlight;
 	}
-	
+
 	public void setDecoration(int key, Renderable decoration, double margin) {
 		Part part = parts.get(key);
 		part.decorationRenderer = decoration;
 		part.decorationMargin = margin;
 	}
-	
+
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	}
+
 	public static enum Layer {
 		background, decorations, contents
 	}
@@ -81,6 +86,9 @@ public class PartitionedRowRenderer implements Renderable {
 				new Point2D.Double(0, d.height / 2.0),
 				new Point2D.Double(d.width, d.height / 2.0),
 				d.height);
+		if (debug) {
+			System.out.println("PRR set " + d);
+		}
 		for (Map.Entry<Integer, Part> it : this.parts.entrySet()) {
 			int key = it.getKey();
 			Part part = it.getValue();
@@ -98,7 +106,9 @@ public class PartitionedRowRenderer implements Renderable {
 			default:
 				return;
 			}
-			if (renderer == null) continue;
+			if (renderer == null) {
+				continue;
+			}
 			Point2D mid = partitioner.getPosition(key);
 			double width = partitioner.getSize(key) - (1 - margin) * partitioner.getH();
 			double height = margin * partitioner.getH();
@@ -106,6 +116,9 @@ public class PartitionedRowRenderer implements Renderable {
 			int x1 = (int) (mid.getX() + width / 2);
 			int y0 = (int) (mid.getY() - height / 2);
 			int y1 = (int) (mid.getY() + height / 2);
+			if (debug) {
+				System.out.println("PRR marg" + margin + " H" + partitioner.getH() + " K" + key + " " + x0 + "," + y0 + " " + x1 + "," + y1);
+			}
 			Dimension dim = new Dimension(x1 - x0, y1 - y0);
 			if(part.cacheImage) {
 				RenderCache.getRenderCache().render(g, x0, y0, renderer, dim);
@@ -115,7 +128,7 @@ public class PartitionedRowRenderer implements Renderable {
 				renderer.render(g, dim);
 				g.translate(-x0, -y0);
 			}
-			
+
 			if(part.highlight) {
 				//System.err.printf("highligtedRow = %d%n", highlightedRow);
 				double m = .95;
@@ -130,7 +143,7 @@ public class PartitionedRowRenderer implements Renderable {
 				g.setStroke(new BasicStroke(2.5f));
 				g.setColor(ICPCColors.YELLOW);
 				g.draw(round);
-				
+
 			}
 		}
 	}

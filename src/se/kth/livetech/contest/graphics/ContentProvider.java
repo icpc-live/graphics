@@ -95,6 +95,13 @@ public class ContentProvider {
 		return logo;
 	}
 
+	public static Renderable getTeamPictureRenderable(Team team) {
+		int id = team.getId();
+		ImageResource image = ICPCImages.getTeamPicture(id);
+		Renderable logo = new ImageRenderer("picture " + id, image);
+		return logo;
+	}
+
 	public static Renderable getIcpcLogoRenderable() {
 		ImageResource image = ICPCImages.getImage(ICPCImages.LOGO2);
 		Renderable logo = new ImageRenderer("icpclogo", image);
@@ -306,11 +313,20 @@ public class ContentProvider {
 		return new HorizontalSplitter(box1,box2,0.75);
 	}
 
-	public static Renderable getAwardRenderable(String row1Text, String row2Text, String row3Text) {
+	public static Renderable getAwardRenderable(String row1Text, String row2Text, String row3Text, Team team) {
 		ColoredTextBox box1 = new ColoredTextBox(row1Text, ContentProvider.getCountdownStyle());
+		ColoredTextBox margin = new ColoredTextBox("", ContentProvider.getCountdownStyle());
+		Renderable pr = getTeamPictureRenderable(team);
+		PartitionedRowRenderer r = new PartitionedRowRenderer();
+		//r.setDebug(true);
+		r.add(margin, 1, 1, false, false);
+		r.add(pr, 1, 1, true, false);
+		r.add(margin, 1, 1, false, false);
 		ColoredTextBox box2 = new ColoredTextBox(row2Text, ContentProvider.getCountdownStyle());
 		ColoredTextBox box3 = new ColoredTextBox(row3Text, ContentProvider.getCountdownStyle());
-		return new HorizontalSplitter(box1, new HorizontalSplitter(box2, box3, 2/3.0), 4/7.0);
+		HorizontalSplitter split1 = new HorizontalSplitter(box1, r, .5);
+		HorizontalSplitter split2 = new HorizontalSplitter(box2, box3, .66);
+		return new HorizontalSplitter(split1, split2, 8/11.0);
 	}
 
 	public static Renderable getFloridaCountdownRenderable(String timeString) {

@@ -212,6 +212,10 @@ public class ContentProvider {
 	public static Renderable getTeamNameRenderable(Team team) {
 		String name = team.getName(); // TODO: Contest parameter for team name display?
 		//String name = team.getUniversity();
+		String shortName = ICPCStrings.getTeamShortName(team.getId());
+		if (shortName != null) {
+			name = shortName;
+		}
 		Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
 		return teamName;
 	}

@@ -99,6 +99,15 @@ public class ContestReplayFrame extends JFrame {
 		});
 		c.add(defaults);
 		b.add(c);
+		c = new Box(BoxLayout.X_AXIS);
+		c.add(new CheckBox(base.get("finalizedCheck"), "Check"));
+		CheckBox fin = new CheckBox(base.get("finalized"), "Fin");
+		fin.setEnabled(false);
+		c.add(fin);
+		Text finComment = new Text(base.get("finalizedComment"));
+		finComment.setEnabled(false);
+		c.add(finComment);
+		b.add(c);
 		TitledBorder resolveBorder;
 		resolveBorder = BorderFactory.createTitledBorder("Resolver");
 		resolveBorder.setTitleJustification(TitledBorder.CENTER);

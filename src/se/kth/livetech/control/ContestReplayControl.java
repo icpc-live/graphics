@@ -6,8 +6,10 @@ import java.util.TimerTask;
 import se.kth.livetech.contest.model.Contest;
 import se.kth.livetech.contest.model.ContestUpdateEvent;
 import se.kth.livetech.contest.model.ContestUpdateListener;
+import se.kth.livetech.contest.model.Finalized;
 import se.kth.livetech.contest.model.Run;
 import se.kth.livetech.contest.model.Team;
+import se.kth.livetech.contest.replay.ContestCheck;
 import se.kth.livetech.contest.replay.ContestReplayer;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyListener;
@@ -56,6 +58,19 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		int untilTime = propertyReplay.get("untilTime").getIntValue();
 		if(untilTime>0) {
 			replayer.setUntilTime(untilTime);
+		}
+
+		if (changed == propertyReplay.get("finalizedCheck") && propertyReplay.get("finalizedCheck").getBooleanValue()) {
+			System.out.println("CHECK");
+			ContestCheck check = replayer.getContestCheck(true);
+			propertyReplay.get("finalized").setBooleanValue(check.isFinalized());
+			Finalized fin = check.fin();
+			String comment = "";
+			if (fin != null) {
+				comment = "" + fin.getComment() + " [" + fin.getLastGold() + "," + fin.getLastSilver() + "," + fin.getLastBronze() + "]";
+			}
+			propertyReplay.set("finalizedComment", comment);
+			System.out.println("Finalized check " + check.isFinalized() + " " + comment);
 		}
 
 		if(state.equals("pause")) {

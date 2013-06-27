@@ -24,6 +24,8 @@ public class ContestReplayer extends ContestPlayer {
 	private Map<Integer, LinkedList<AttrsUpdateEvent>> runEvents;
 	private Map<Integer, Long> runTimes;
 
+	private ContestCheck check = null;
+
 	/**
 	 * PAUSED = No runs are processed
 	 * LIVE = All runs before the freeze time are processed directly, might show pending runs after freeze time.
@@ -31,7 +33,7 @@ public class ContestReplayer extends ContestPlayer {
 	 * *SCALED_REAL_TIME = Runs are processed with delay proportional to the real contest.
 	 * *INTERVAL = Runs are processed at a fixed rate.
 	 * *SINGLE* = Next run is processed, and the state will be changed to PAUSED afterwards.
-	 * RANK* = Next run is selected by highest rank instead of lowest time. 
+	 * RANK* = Next run is selected by highest rank instead of lowest time.
 	 */
 	public enum State {
 		PAUSED, LIVE, UNTIL_SCALED_REAL_TIME, UNTIL_INTERVAL, SINGLE_TIME, RANK_INTERVAL, RANK_SINGLE;
@@ -52,13 +54,21 @@ public class ContestReplayer extends ContestPlayer {
 			return isSingle() || hasIntervalDelay() || this == UNTIL_SCALED_REAL_TIME;
 		}
 		private boolean showPendingAfterFreeze() {
-			return this != PAUSED && !isSingle(); 
+			return this != PAUSED && !isSingle();
 		}
 		private long limitTime(long freezeTime, long untilTime, long scaledTime) {
-			if(this == LIVE) return freezeTime;
-			if(this == UNTIL_INTERVAL) return untilTime;
-			if(this == UNTIL_SCALED_REAL_TIME) return Math.min(untilTime, scaledTime);
-			if(this == SINGLE_TIME) return Long.MAX_VALUE;
+			if(this == LIVE) {
+				return freezeTime;
+			}
+			if(this == UNTIL_INTERVAL) {
+				return untilTime;
+			}
+			if(this == UNTIL_SCALED_REAL_TIME) {
+				return Math.min(untilTime, scaledTime);
+			}
+			if(this == SINGLE_TIME) {
+				return Long.MAX_VALUE;
+			}
 			return -1;
 		}
 	}
@@ -81,15 +91,23 @@ public class ContestReplayer extends ContestPlayer {
 		thread = new PlayerThread();
 		thread.start();
 	}
-	
+
 	public void reset() {
 		contest = new ContestImpl();
 		runEvents = new LinkedHashMap<Integer, LinkedList<AttrsUpdateEvent>>(); // Careful: External synchronization!
 		runTimes = new TreeMap<Integer, Long>(); // Careful: External synchronization!
+		check = null;
 	}
-	
+
 	public Contest getContest() {
 		return contest;
+	}
+
+	public synchronized ContestCheck getContestCheck(boolean rerun) {
+		if (check == null || rerun) {
+			check = new ContestCheck(contest, runEvents);
+		}
+		return check;
 	}
 
 	public State getState() {
@@ -145,6 +163,7 @@ public class ContestReplayer extends ContestPlayer {
 		this.testcaseInterval = testcaseInterval;
 	}
 
+	@Override
 	public void attrsUpdated(AttrsUpdateEvent e) {
 		if (e.getType().equals("reset")) {
 			reset();
@@ -162,11 +181,12 @@ public class ContestReplayer extends ContestPlayer {
 				} else {
 					runTimes.put(runId, time);
 				}
-				if((state == State.LIVE && time<freezeTime) || (showRunsAfterFreezeAsPending && state.showPendingAfterFreeze() && !Boolean.parseBoolean(e.getProperty("judged"))))
+				if((state == State.LIVE && time<freezeTime) || (showRunsAfterFreezeAsPending && state.showPendingAfterFreeze() && !Boolean.parseBoolean(e.getProperty("judged")))) {
 					propagate(e); // Propagate directly
-				else {
-					if(!runEvents.containsKey(runId))
+				} else {
+					if(!runEvents.containsKey(runId)) {
 						runEvents.put(runId, new LinkedList<AttrsUpdateEvent>());
+					}
 					runEvents.get(runId).add(e);
 				}
 			}
@@ -179,17 +199,18 @@ public class ContestReplayer extends ContestPlayer {
 					runTimes.put(runId, Long.MAX_VALUE);
 				}
 				long time = runTimes.get(runId);
-				if(state == State.LIVE && time<freezeTime)
+				if(state == State.LIVE && time<freezeTime) {
 					propagate(e); // Propagate directly
-				else {
-					if(!runEvents.containsKey(runId))
+				} else {
+					if(!runEvents.containsKey(runId)) {
 						runEvents.put(runId, new LinkedList<AttrsUpdateEvent>());
+					}
 					runEvents.get(runId).add(e);
 				}
 			}
-		}
-		else
+		} else {
 			propagate(e);
+		}
 	}
 
 	public synchronized boolean processEarliestRun() {
@@ -225,7 +246,7 @@ public class ContestReplayer extends ContestPlayer {
 		}
 		return false;
 	}
-	
+
 	public synchronized int getHighestRankedRun() {
 		int rank = -1;
 		int runId = -1;
@@ -260,7 +281,7 @@ public class ContestReplayer extends ContestPlayer {
 		}
 		return false;
 	}
-	
+
 	public synchronized void processProblem(int team, int problem) {
 		ArrayList<Integer> ids = new ArrayList<Integer>();
 		for(Map.Entry<Integer, LinkedList<AttrsUpdateEvent>> entry : runEvents.entrySet()) {
@@ -273,18 +294,21 @@ public class ContestReplayer extends ContestPlayer {
 					try {
 						pId = Integer.parseInt(event.getProperty("problem"));
 						teamId = Integer.parseInt(teamIdStr);
-						if(pId == problem && team == teamId)
+						if(pId == problem && team == teamId) {
 							ids.add(entry.getKey());
+						}
 						break;
 					} catch (NumberFormatException e) {}
 				}
 			}
 		}
-		for(Integer id : ids)
+		for(Integer id : ids) {
 			playRun(id);
+		}
 	}
 
 	private class PlayerThread extends Thread {
+		@Override
 		public void run() {
 			while(!interrupted()) {
 				boolean processedRun = true;
@@ -292,14 +316,17 @@ public class ContestReplayer extends ContestPlayer {
 					startTime = System.currentTimeMillis();
 					processedRun = false;
 					if(state.isFirst()) {
-						if(processEarliestRun())
+						if(processEarliestRun()) {
 							processedRun = true;
-						else if(showRunsAfterFreezeAsPending)
-							if(processPendingState())
+						} else if(showRunsAfterFreezeAsPending) {
+							if(processPendingState()) {
 								processedRun = true;
+							}
+						}
 					} else if(state.isRank()) {
-						if(processHighestRank())
+						if(processHighestRank()) {
 							processedRun = true;
+						}
 					}
 					if(processedRun && state.hasIntervalDelay()) { // Sleep time
 						long sleepTime = runInterval - (System.currentTimeMillis()-startTime);
@@ -310,8 +337,9 @@ public class ContestReplayer extends ContestPlayer {
 							e.printStackTrace();
 						}
 					}
-					if(state.isSingle())
+					if(state.isSingle()) {
 						state = ContestReplayer.State.PAUSED;
+					}
 				}
 				try {
 					Thread.sleep(THREAD_PERIOD);
@@ -324,24 +352,25 @@ public class ContestReplayer extends ContestPlayer {
 
 	/**
 	 * Propagates each {@link AttrsUpdateEvent} for the given run id.
-	 * Notice that the updates are delayed, so this will block the calling thread! 
-	 * 
+	 * Notice that the updates are delayed, so this will block the calling thread!
+	 *
 	 * @param runId Run to propagate
 	 */
 	private void playRun(int runId) {
 		final Queue<AttrsUpdateEvent> events;
 		synchronized (this) {
-			events = runEvents.remove(runId);			
+			events = runEvents.remove(runId);
 		}
-		if(events == null || events.size()==0)
+		if(events == null || events.size()==0) {
 			new Error("No such run id: " + runId).printStackTrace();
-		else {
+		} else {
 			while(!events.isEmpty()) {
 				if(state.hasTestcaseDelay()) {
 					try {
 						int eventInterval = testcaseInterval;
-						if(state.hasIntervalDelay())
+						if(state.hasIntervalDelay()) {
 							eventInterval = Math.min(eventInterval, runInterval/events.size());
+						}
 						Thread.sleep(eventInterval);
 					} catch (InterruptedException e) {
 						e.printStackTrace();

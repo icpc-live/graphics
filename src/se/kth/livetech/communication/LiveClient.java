@@ -39,6 +39,7 @@ import se.kth.livetech.presentation.layout.VNCPresentation;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.properties.PropertyHierarchy;
 import se.kth.livetech.properties.ui.TestTriangle;
+import se.kth.livetech.rgbmix.RgbMix;
 import se.kth.livetech.util.DebugTrace;
 import se.kth.livetech.util.Frame;
 import uk.co.flamingpenguin.jewel.cli.ArgumentValidationException;
@@ -173,6 +174,9 @@ public class LiveClient {
 		@Option(longName="json-output")
 		boolean isJsonOutput();
 
+		@Option(longName="rgb-mix")
+		boolean isRgbMix();
+
 		@Unparsed
 		List<String> getArgs();
 		boolean isArgs();
@@ -201,6 +205,10 @@ public class LiveClient {
 			}
 			f.pack();
 			f.setVisible(true);
+		}
+		if (opts.isRgbMix()) {
+			@SuppressWarnings("unused")
+			RgbMix mix = new RgbMix(component);
 		}
 	}
 	public static void main(String[] args) {
@@ -279,7 +287,8 @@ public class LiveClient {
 				IProperty prop_base = localState.getHierarchy().getProperty("live.clients." + localNode.name);
 				final LivePresentation lpr = new LivePresentation(c, prop_base, nodeRegistry.getRemoteTime(), fullscreenFrame);
 				contestListeners.add(lpr);
-				mainComponent("Live", lpr, opts, new Dimension(1024, 576));
+				//mainComponent("Live", lpr, opts, new Dimension(1024, 576));
+				mainComponent("Live", lpr, opts, new Dimension(1280, 720));
 			}
 			if (opts.isHtmlOutput()) {
 				//final HtmlScoreboardTest htmlOutput = new HtmlScoreboardTest()

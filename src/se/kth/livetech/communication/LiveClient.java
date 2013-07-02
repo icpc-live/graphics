@@ -16,6 +16,7 @@ import org.apache.thrift.transport.TTransportException;
 
 import se.kth.livetech.analysis.AnalystListener;
 import se.kth.livetech.analysis.HtmlScoreboardTest;
+import se.kth.livetech.analysis.JsonGen;
 import se.kth.livetech.blackmagic.MagicPanel;
 import se.kth.livetech.communication.thrift.ContestId;
 import se.kth.livetech.communication.thrift.LiveService;
@@ -169,6 +170,9 @@ public class LiveClient {
 		@Option(longName="analyst-output")
 		boolean isAnalystOutput();
 
+		@Option(longName="json-output")
+		boolean isJsonOutput();
+
 		@Unparsed
 		List<String> getArgs();
 		boolean isArgs();
@@ -287,6 +291,9 @@ public class LiveClient {
 				contestListeners.add(new AnalystListener());
 			}
 
+			if (opts.isJsonOutput()) {
+				contestListeners.add(new JsonGen());
+			}
 
 			// Add contest update listeners above!
 			if (!contestListeners.isEmpty()) {

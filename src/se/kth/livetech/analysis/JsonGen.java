@@ -16,6 +16,7 @@ import se.kth.livetech.contest.model.ContestUpdateListener;
 import se.kth.livetech.contest.model.ProblemScore;
 import se.kth.livetech.contest.model.Team;
 import se.kth.livetech.contest.model.TeamScore;
+import se.kth.livetech.contest.model.Testcase;
 import se.kth.livetech.contest.replay.ContestReplay;
 
 @SuppressWarnings("deprecation")
@@ -54,6 +55,9 @@ public class JsonGen implements ContestUpdateListener {
 
 	@Override
 	public void contestUpdated(ContestUpdateEvent e) {
+		if (e.getUpdate() instanceof Testcase) {
+			return;
+		}
 		Contest c = e.getNewContest();
 		int n = c.getTeams().size();
 		List<Object> tl = new ArrayList<Object>(n);
@@ -65,7 +69,11 @@ public class JsonGen implements ContestUpdateListener {
 			tm.put("id", "" + tid);
 			tm.put("rank", c.getTeamRank(tid));
 			tm.put("solved", ts.getSolved());
-			tm.put("score", ts.getScore());
+			if (ts.getScore() == 0) {
+				tm.put("score", "0");
+			} else {
+				tm.put("score", ts.getScore());
+			}
 			tm.put("name", ti.getName());
 			tm.put("group", ti.getRegion());
 			char letter = 'A';
@@ -89,8 +97,7 @@ public class JsonGen implements ContestUpdateListener {
 			tl.add(tm);
 		}
 		latest = tl;
-		System.out.println("." + JSONValue.toJSONString(tl).length());
-		System.out.flush();
+		System.err.print(".");// + JSONValue.toJSONString(tl).length());
 	}
 
 	public static String uesc(String s) {
@@ -111,10 +118,12 @@ public class JsonGen implements ContestUpdateListener {
 		JsonGen gen = new JsonGen();
 		ContestReplay replay = new ContestReplay();
 		replay.addContestUpdateListener(gen);
-		final LogFeed feed = new LogFeed("finals-12-2.txt");
+		//final LogFeed feed = new LogFeed("finals-12-2.txt");
+		//final LogFeed feed = new LogFeed("rehearsal-2013-2h-1.txt");
+		final LogFeed feed = new LogFeed("feed/wf13-full-0h.txt");
 		feed.addAttrsUpdateListener(replay);
 		feed.parse();
-		System.out.println();
+		System.err.println();
 		System.out.println(uesc(JSONValue.toJSONString(gen.latest)));
 	}
 }

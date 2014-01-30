@@ -13,7 +13,7 @@ fi
 
 if [ "$1" == "build" ]; then
   mkdir -p bin
-  javac -d bin -sourcepath src -cp "$CP" $(find src -name '*.java')
+  javac -d bin -sourcepath src -encoding utf8 -cp "$CP" $(find src -name '*.java') "$@"
 else
   java -Xmx1000m $JVM_ARGS -cp "$CP$DECKLINK_CP" $DECKLINK_JNA $DECKLINK_PATH se.kth.livetech.communication.LiveClient "$@"
 fi

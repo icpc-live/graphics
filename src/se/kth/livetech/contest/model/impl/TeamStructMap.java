@@ -69,10 +69,10 @@ class TeamStructMap {
 		teamMap.put("Instituto Militar de Engenharia", new TeamStruct(
 				"Instituto Militar de Engenharia", "IME", "BRA"));
 		teamMap.put("Instituto Tecnolxgico de Aeronautica",
-				new TeamStruct("Instituto Tecnológico de Aeronautica",
+				new TeamStruct("Instituto TecnolÃ³gico de Aeronautica",
 						"IT Aeronautica", "BRA"));
 		teamMap.put("Instituto Tecnolxgico de Culiacxn", new TeamStruct(
-				"Instituto Tecnológico de Culiacán", "IT Culiacán", "MEX"));
+				"Instituto TecnolÃ³gico de CuliacÃ¡n", "IT CuliacÃ¡n", "MEX"));
 		teamMap.put("Iowa State University", new TeamStruct(
 				"Iowa State University", "Iowa State", "USA"));
 		teamMap.put("Izhevsk State Technical University", new TeamStruct(
@@ -172,11 +172,11 @@ class TeamStructMap {
 		teamMap.put("Universidad de los Andes", new TeamStruct(
 				"Universidad de los Andes", "UniAndes", "COL"));
 		teamMap.put("Universidad Nacional de Cxrdoba", new TeamStruct(
-				"Universidad Nacional de Córdoba", "UN Cxrdoba", "ARG"));
+				"Universidad Nacional de CÃ³rdoba", "UN Cxrdoba", "ARG"));
 		teamMap.put("Universidade de Sxo Paulo", new TeamStruct(
-				"Universidade de São Paulo", "U São Paulo", "BRA"));
+				"Universidade de SÃ£o Paulo", "U SÃ£o Paulo", "BRA"));
 		teamMap.put("Universitxt Karlsruhe (TH)", new TeamStruct(
-				"Universität Karlsruhe (TH)", "U Karlsruhe ", "DEU"));
+				"UniversitÃ¤t Karlsruhe (TH)", "U Karlsruhe ", "DEU"));
 		teamMap.put("University of Alberta", new TeamStruct(
 				"University of Alberta", "U Alberta", "CAN"));
 		teamMap.put("University of Auckland", new TeamStruct(

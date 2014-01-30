@@ -22,7 +22,6 @@ import se.kth.livetech.communication.thrift.PropertyEvent;
 import se.kth.livetech.contest.model.impl.AttrsUpdateEventImpl;
 import se.kth.livetech.properties.IProperty;
 import se.kth.livetech.util.DebugTrace;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class BaseHandler implements LiveService.Iface {
 	ThreadLocal<NodeId> attachedNode;
@@ -30,7 +29,7 @@ public class BaseHandler implements LiveService.Iface {
 
 	public BaseHandler() {
 		// TODO: Needed by SpiderHandler and maybe other legacy stuff
-		throw new NotImplementedException();
+		throw new UnsupportedOperationException();
 	}
 	
 	public BaseHandler(NodeRegistry registry) {

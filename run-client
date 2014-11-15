@@ -6,12 +6,13 @@ DECKLINK_JNA=-Djna.library.path=magiclib
 DECKLINK_PATH=-Djava.library.path=magiclib
 
 # For windows
-if [ "`uname -o`" = "Cygwin" ]; then
+if [ "`uname`" = "Cygwin" ]; then
     CP="$(echo "$CP" | sed 's/:/;/g' | sed 's+/+\\+g')"
     export PATH=$PATH:/cygdrive/c/Program\ Files\ \(x86\)/VideoLAN/VLC/
 fi
 
 if [ "$1" == "build" ]; then
+  shift
   mkdir -p bin
   javac -d bin -sourcepath src -encoding utf8 -cp "$CP" $(find src -name '*.java') "$@"
 else

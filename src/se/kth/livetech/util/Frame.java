@@ -7,8 +7,10 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.Method;
 
 import javax.swing.JFrame;
 
@@ -28,16 +30,17 @@ public class Frame extends JFrame {
 	public Frame(String title, Component panel, Runnable exitCall, boolean setVisible) {
 		super(title);
 		this.exitCall = exitCall;
-		addWindowListener(new Window());
+		addWindowListener(new WindowClosing());
 		//setIconImage(SketchIcon.getIcon());
 		getContentPane().add(panel);
 		if (setVisible) {
 			pack();
 			setVisible(true);
 		}
+		enableOSXFullscreen(this);
 	}
 	Runnable exitCall;
-	private class Window extends WindowAdapter {
+	private class WindowClosing extends WindowAdapter {
 		public void windowClosing(WindowEvent e) {
 			if (exitCall != null)
 				exitCall.run();
@@ -92,5 +95,20 @@ public class Frame extends JFrame {
 		int count = even ? evenCount : oddCount;
 		int other = !even ? evenCount : oddCount;
 		return count + (999 - part) * other / 1000d;
+	}
+
+	// Macosx fullscreenable, from:
+	// http://stackoverflow.com/questions/6873568/fullscreen-feature-for-java-apps-on-osx-lion
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public static void enableOSXFullscreen(Window window) {
+		//Preconditions.checkNotNull(window);
+		try {
+			Class util = Class.forName("com.apple.eawt.FullScreenUtilities");
+			Class params[] = new Class[]{Window.class, Boolean.TYPE};
+			Method method = util.getMethod("setWindowCanFullScreen", params);
+			method.invoke(util, window, true);
+		} catch (Exception e) {
+			System.err.println("OS X Fullscreen FAIL: " + e);
+		}
 	}
 }

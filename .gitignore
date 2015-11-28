@@ -1,0 +1,8 @@
+bin
+scaled
+contestlog_*
+.idea
+*.iml
+.DS_Store
+images/logos*
+images/flags

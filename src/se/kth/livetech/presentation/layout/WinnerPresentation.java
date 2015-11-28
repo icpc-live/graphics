@@ -55,7 +55,12 @@ public class WinnerPresentation extends JPanel implements ContestUpdateListener,
 
 		Rectangle bounds = new Rectangle(0, 0, W, H); //this.getBounds();
 
-		Renderable r = ContentProvider.getAwardRenderable(award, subAward, team.getName(), team);
+		String name = team.getName();
+		// FIXME NWERC15 Train
+		if (name.startsWith("I LIKE TRAINS")) {
+			name = "I LIKE TRAINS :+ /oO| |#| |#| |#| :+";
+		}
+		Renderable r = ContentProvider.getAwardRenderable(award, subAward, name, team);
 
 		Dimension dim = new Dimension(bounds.width, bounds.height * 7 / 8);
 		int x = (int) (bounds.getCenterX() - dim.width/2);

@@ -1,6 +1,8 @@
 package se.kth.livetech.contest.graphics;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -216,7 +218,49 @@ public class ContentProvider {
 		if (shortName != null) {
 			name = shortName;
 		}
-		Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
+
+		// FIXME: NWERC15 Train & Levitating
+		boolean train = false, levitating = false;
+		if (name.startsWith("I LIKE TRAINS")) {
+			name = "I LIKE TRAINS";
+			train = true;
+		} else if (name.startsWith("U+1F574")) {
+			levitating = true;
+		}
+
+		final Renderable teamName = new ColoredTextBox(name, ContentProvider.getTeamNameStyle());
+
+		// FIXME: NWERC15 Train
+		if (train || levitating) {
+			final PartitionedRowRenderer r = new PartitionedRowRenderer();
+			if (train) {
+				ImageResource image = ICPCImages.getImage(ICPCImages.SPARKLES_TRAIN);
+				final Renderable trainImage = new ImageRenderer("sparkles-train", image);
+				final Renderable space1 = new ColoredTextBox("       ", ContentProvider.getTeamNameStyle());
+				final Renderable space2 = new ColoredTextBox("       ", ContentProvider.getTeamNameStyle());
+				r.add(space1, 5.7, 1, false);
+				r.add(trainImage, 3.2, 2, true);
+				double trainSpaceTime = System.currentTimeMillis() % 6000 / 1000. + 1;
+				r.add(space2, trainSpaceTime, 1, false);
+			}
+			if (levitating) {
+				ImageResource image = ICPCImages.getImage(ICPCImages.LEVITATING);
+				final Renderable levitatingImage = new ImageRenderer("levitating", image);
+				final Renderable space1 = new ColoredTextBox("       ", ContentProvider.getTeamNameStyle());
+				final Renderable space2 = new ColoredTextBox("       ", ContentProvider.getTeamNameStyle());
+				r.add(space1, .1, 1, false);
+				r.add(levitatingImage, 77/251., 1, true);
+				r.add(space2, 7, 1, false);
+			}
+
+			return new Renderable() {
+				@Override
+				public void render(Graphics2D g, Dimension d) {
+					teamName.render(g, d);
+					r.render(g, d);
+				}
+			};
+		}
 		return teamName;
 	}
 

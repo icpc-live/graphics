@@ -36,6 +36,9 @@ public class ICPCImages {
 	public static final int STOP = 19;
 	public static final int BANFF_ICON = 20;
 	public static final int KTH_ICON = 21;
+	public static final int SPARKLES_TRAIN = 22;
+	public static final int LEVITATING = 23;
+	public static final int NUMBER_OF_FIXED_IMAGES = 24;
 
 	//public static final String[] COUNTRY_CODES = "egy zaf irn bgd chn idn hkg vnm ind kor sgp twn jpn rus blr geo pol swe ukr esp gbr fra col bra mex arg usa can nzl aus".split(" ");
 	public static final String[] COUNTRY_CODES = "egy zaf irn bgd chn hkg vnm ind kor sgp twn jpn rus blr pol swe ukr esp fra col bra mex arg usa can nzl aus cub deu fin lbn phl ven".split(" ");
@@ -51,7 +54,7 @@ public class ICPCImages {
 	private static Map<String, ImageResource> resources = new HashMap<String, ImageResource>();
 
 	static void loadMisc() {
-		images = new ImageResource[22];
+		images = new ImageResource[NUMBER_OF_FIXED_IMAGES];
 		try {
 			images[0] = new ImageResource("balloon3.png");
 			images[1] = new ImageResource("logo2.png");
@@ -74,6 +77,8 @@ public class ICPCImages {
 			images[19] = new ImageResource("stop2.png");
 			images[20] = new ImageResource("icons/banffIcon.gif");
 			images[21] = new ImageResource("kth.png");
+			images[22] = new ImageResource("sparkles-train.png");
+			images[23] = new ImageResource("levitating.png");
 		} catch (Exception e) {
 			DebugTrace.trace("Error loading images %s", e);
 		}

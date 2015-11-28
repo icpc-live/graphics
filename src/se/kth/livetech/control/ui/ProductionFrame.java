@@ -21,7 +21,7 @@ import se.kth.livetech.properties.PropertyListener;
 import se.kth.livetech.properties.ui.PropertyFrame;
 
 @SuppressWarnings("serial")
-public class ProductionFrame extends JFrame implements PropertyListener {
+public class ProductionFrame extends BaseFrame implements PropertyListener {
 
 	// Preview preview=null;
 	IProperty clients;

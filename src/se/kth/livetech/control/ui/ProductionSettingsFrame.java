@@ -20,7 +20,7 @@ import se.kth.livetech.properties.ui.Text;
 import se.kth.livetech.properties.ui.ToggleButton;
 
 @SuppressWarnings("serial")
-public class ProductionSettingsFrame extends JFrame{
+public class ProductionSettingsFrame extends BaseFrame{
 	
 	IProperty base;
 	Box b;
@@ -46,7 +46,7 @@ public class ProductionSettingsFrame extends JFrame{
 		autoPage.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFrame frame = new JFrame("Auto Page");
+				JFrame frame = new BaseFrame("Auto Page");
 				frame.getContentPane().add(new ScoreboardAutoScrollPanel(base));
 				frame.pack();
 				frame.setVisible(true);

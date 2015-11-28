@@ -20,7 +20,7 @@ import se.kth.livetech.properties.ui.ToggleButton;
 
 
 @SuppressWarnings("serial")
-public class ContestReplayFrame extends JFrame {
+public class ContestReplayFrame extends BaseFrame {
 	@SuppressWarnings("unused")
 	private IProperty base;
 

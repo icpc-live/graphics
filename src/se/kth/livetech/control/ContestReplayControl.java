@@ -236,7 +236,8 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		if (winnerString == null || winnerString.length() == 0) {
 			//winnerString = "ICPC 2011 Champions";
 			//winnerString = "ICPC 2012 Champions";
-			winnerString = "ICPC 2013 Champions";
+			//winnerString = "ICPC 2013 Champions";
+			winnerString = "NWERC 2015 Champions";
 		}
 		if(updateStepCounter) {
 			++stepCounter;
@@ -244,6 +245,7 @@ public class ContestReplayControl implements PropertyListener, ContestUpdateList
 		if(resolveRow<0) {
 			return -1;
 		}
+		System.out.println("resolveRow "+resolveRow + " showing? " + showingPresentation); // FIXME
 		if(resolveRow==0) {
 			// Toggle between scoreboard and champion presentation.
 			if(showingPresentation) {
